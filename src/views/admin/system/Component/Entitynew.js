@@ -13,9 +13,13 @@ import Loader from '../../../../assets/img/loader.gif';
 
 const Entitynew = ({ entities, loading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEntity, setSelecteEntity] = useState(null);
+  const [selectedEntity, setSelectedEntity] = useState(null);
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = () => {
+    setSelectedEntity(null); // Clear selected entity for adding a new one
+    setIsModalOpen(true);
+  };
+  
   const closeModal = () => setIsModalOpen(false);
   const dispatch = useDispatch();
 
@@ -58,7 +62,6 @@ const Entitynew = ({ entities, loading }) => {
                   <Th>Nominee</Th>
                   <Th>Reviewer</Th>
                   <Th></Th>
-                  {/* <Th>Category</Th> */}
                 </Tr>
               </Thead> 
               <Tbody> 
@@ -66,7 +69,7 @@ const Entitynew = ({ entities, loading }) => {
                   <Tr
                     key={entity?.id}
                     onClick={() => {
-                      setSelecteEntity(entity); // Set the selected user if needed
+                      setSelectedEntity(entity); // Set the selected entity when a row is clicked
                       setIsModalOpen(true);
                     }}
                     _hover={{ backgroundColor: "gray.100" }}
@@ -83,19 +86,21 @@ const Entitynew = ({ entities, loading }) => {
                         onClick={(e) => e.stopPropagation()} // Stop event propagation
                       />
                     </Td>
-                    {/* <Td>{entity.category}</Td> */}
                   </Tr>
                 ))}
               </Tbody>
             </Table>
 
-            {selectedEntity &&
-              <AddEntityModal isOpen={isModalOpen} onClose={closeModal} loading={loading} selectedEntity={selectedEntity} />
-            }
+            {/* Modal always rendered, only the selectedEntity is conditionally passed */}
+            <AddEntityModal 
+              isOpen={isModalOpen} 
+              onClose={closeModal} 
+              loading={loading} 
+              selectedEntity={selectedEntity} 
+            />
           </Box>
         ))}
     </>
-
   );
 }
 
