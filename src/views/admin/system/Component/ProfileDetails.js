@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text } from '@chakra-ui/react';
 import Select from 'react-select';
 import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import DeleteModal from './deleteModal';
@@ -60,10 +60,12 @@ const ProfileDetails = ({ formData, handleInputChange }) => {
                             </>
                         )}
                     </Box>
-                    <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
-                        <Texte>Delete</Texte>
-                        <DeleteModal selectedUser={formData._id}/>
-                    </Box>
+                    <Box display="flex" alignItems="center" mr={4}  cursor="pointer">
+         
+                        <DeleteModal selectedUser={formData}/>
+                        <Text>Delete</Text>
+                        
+                    </Box>
                 </FormControl>
                 <FormControl>
                     <FormLabel>User ID</FormLabel>
