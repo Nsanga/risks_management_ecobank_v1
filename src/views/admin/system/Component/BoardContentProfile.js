@@ -80,8 +80,8 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                         <Th>Location</Th>
                                         <Th>Status</Th>
                                         <Th>Active</Th>
-                                        <Th></Th> {/* Empty column for the trash icon */}
-                                    </Tr>
+                                        
+                                                                           </Tr>
                                 </Thead>
                                 <Tbody>
                                     {filteredUsers.map(user => (
@@ -106,12 +106,7 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                                     bg={user?.activeUser === true ? 'green.500' : 'red.500'}
                                                 />
                                             </Td>
-                                            <Td>
-                                                <DeleteModal
-                                                    selectedUser={user}
-                                                    onClick={(e) => e.stopPropagation()} // Stop event propagation
-                                                />
-                                            </Td>
+                                            
                                         </Tr>
                                     ))}
                                 </Tbody>
