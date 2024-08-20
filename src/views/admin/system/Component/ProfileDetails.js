@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea } from '@chakra-ui/react';
 import Select from 'react-select';
-import moment from 'moment/moment';
+import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
 
 const nomineeOptions = [
     { label: 'John Doe', value: 'john.doe@example.com' },
@@ -22,15 +22,46 @@ const userGroupOptions = [
 ];
 
 const ProfileDetails = ({ formData, handleInputChange }) => {
-    const handleSelectChange = (name, selectedOption) => {
-        handleInputChange({ target: { name, value: selectedOption.value } });
-    };
+    const isUserLocked = () => formData.lockedUser;
 
-    console.log('>>>>>>>', moment(formData.dateOfBirth).format('DD/MM/YYYY') )
+    const handleSelectChange = (name, selectedOption) => {
+        if (!isUserLocked()) {
+            handleInputChange({ target: { name, value: selectedOption.value } });
+        }
+    };
+   
 
     return (
         <Box flex="1">
             <SimpleGrid columns={2} spacing={4}>
+                <FormControl display="flex" alignItems="center">
+                    <Box display="flex" alignItems="center" mr={4}>
+                        <FormLabel mb="0" mr={2}>Active user</FormLabel>
+                        <Checkbox
+                            name="activeUser"
+                            isChecked={formData.activeUser}
+                            onChange={(e) => handleInputChange({ target: { name: 'activeUser', value: e.target.checked } })}
+                        />
+                    </Box>
+                    <Box display="flex" alignItems="center" mr={4}>
+                        <FormLabel mb="0" mr={2}>Locked User</FormLabel>
+                        <Checkbox
+                            name="lockedUser"
+                            isChecked={formData.lockedUser}
+                            onChange={(e) => handleInputChange({ target: { name: 'lockedUser', value: e.target.checked } })}
+                        />
+                        <LockIcon color={formData.lockedUser ? 'black' : 'gray.300'} ml={2} />
+                    </Box>
+                    <Box display="flex" alignItems="center">
+                        <FormLabel mb="0" mr={2}>Unlock User</FormLabel>
+                        <Checkbox
+                            name="unlockUser"
+                            isChecked={!formData.lockedUser}
+                            onChange={(e) => handleInputChange({ target: { name: 'lockedUser', value: !e.target.checked } })}
+                        />
+                        <UnlockIcon color={!formData.lockedUser ? 'black' : 'gray.300'} ml={2} />
+                    </Box>
+                </FormControl>
                 <FormControl>
                     <FormLabel>User ID</FormLabel>
                     <Input
@@ -55,15 +86,6 @@ const ProfileDetails = ({ formData, handleInputChange }) => {
                         type="text"
                         name="surname"
                         value={formData.surname || ''}
-                        onChange={handleInputChange}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormLabel>Date of Birth</FormLabel>
-                    <Input
-                        type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth || ''}
                         onChange={handleInputChange}
                     />
                 </FormControl>
@@ -154,27 +176,30 @@ const ProfileDetails = ({ formData, handleInputChange }) => {
                         onChange={handleInputChange}
                     />
                 </FormControl>
-                <FormControl display="flex" alignItems="center">
-                    <FormLabel mb="0">Administrator</FormLabel>
-                    <Checkbox
-                        name="administrator"
-                        isChecked={formData.administrator}
-                        onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            handleInputChange({ target: { name: 'administrator', value: isChecked } });
-                            handleInputChange({ target: { name: 'role', value: isChecked ? 'admin' : 'user' } });
-                        }}
-                    />
+                <FormControl display="flex" alignItems="center" justifyContent="space-between">
+                    <Box display="flex" alignItems="center">
+                        <FormLabel mb="0" mr={2}>Administrator</FormLabel>
+                        <Checkbox
+                            name="administrator"
+                            isChecked={formData.administrator}
+                            onChange={(e) => {
+                                const isChecked = e.target.checked;
+                                handleInputChange({ target: { name: 'administrator', value: isChecked } });
+                                handleInputChange({ target: { name: 'role', value: isChecked ? 'admin' : 'user' } });
+                            }}
+                        />
+                    </Box>
+                    <Box display="flex" alignItems="center" ml={4}>
+                        <FormLabel mb="0" mr={2}>Can Authorise</FormLabel>
+                        <Checkbox
+                            name="canAuthorise"
+                            isChecked={formData.canAuthorise}
+                            onChange={(e) => handleInputChange({ target: { name: 'canAuthorise', value: e.target.checked } })}
+                        />
+                    </Box>
+                </FormControl>
 
-                </FormControl>
-                <FormControl display="flex" alignItems="center">
-                    <FormLabel mb="0">Active user</FormLabel>
-                    <Checkbox
-                        name="activeUser"
-                        isChecked={formData.activeUser}
-                        onChange={(e) => handleInputChange({ target: { name: 'activeUser', value: e.target.checked } })}
-                    />
-                </FormControl>
+
                 {/* Add Regulatory Box below the "Administrator" and "Can Authorise" fields */}
                 <Box gridColumn="span 2">
                     <Box border="1px solid #E2E8F0" borderRadius="md" p={4} mt={4} backgroundColor="white">
