@@ -38,7 +38,7 @@ const DeleteModal = ({ selectedUser, selectedEntity, onClick }) => {
                 size="sm"
                 colorScheme="none"
                 onClick={(e) => {
-                onOpen();   // Open the delete modal
+                onOpen();   
                 }}
             />
 

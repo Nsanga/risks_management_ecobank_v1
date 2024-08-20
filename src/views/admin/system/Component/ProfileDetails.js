@@ -2,7 +2,6 @@ import React from 'react';
 import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea } from '@chakra-ui/react';
 import Select from 'react-select';
 import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
-import { BORDER_STYLE } from 'html2canvas/dist/types/css/property-descriptors/border-style';
 import DeleteModal from './deleteModal';
 
 const nomineeOptions = [
@@ -52,19 +51,18 @@ const ProfileDetails = ({ formData, handleInputChange }) => {
                         {formData.lockedUser ? (
                             <>
                                 <LockIcon color="black" ml={2} />
-                                <FormLabel mb="0" mr={2}>Locked User</FormLabel>
+                                <FormLabel mb="0" ml={2}>Locked User</FormLabel>
                             </>
                         ) : (
                             <>
                                 <UnlockIcon color="black" ml={2} />
-                                <FormLabel mb="0" mr={2}>Unlocked User</FormLabel>
+                                <FormLabel mb="0" ml={2}>Unlocked User</FormLabel>
                             </>
                         )}
                     </Box>
-                    <Box>
-                        <DeleteModal
-                            selectedUser={formData._id}
-                                                    />
+                    <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
+                        <Texte>Delete</Texte>
+                        <DeleteModal selectedUser={formData._id}/>
                     </Box>
                 </FormControl>
                 <FormControl>
