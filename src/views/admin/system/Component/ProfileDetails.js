@@ -2,6 +2,8 @@ import React from 'react';
 import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea } from '@chakra-ui/react';
 import Select from 'react-select';
 import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
+import { BORDER_STYLE } from 'html2canvas/dist/types/css/property-descriptors/border-style';
+import DeleteModal from './deleteModal';
 
 const nomineeOptions = [
     { label: 'John Doe', value: 'john.doe@example.com' },
@@ -29,37 +31,40 @@ const ProfileDetails = ({ formData, handleInputChange }) => {
             handleInputChange({ target: { name, value: selectedOption.value } });
         }
     };
-   
+    const toggleLockStatus = () => {
+        handleInputChange({ target: { name: 'lockedUser', value: !formData.lockedUser } });
+    };
 
     return (
         <Box flex="1">
             <SimpleGrid columns={2} spacing={4}>
                 <FormControl display="flex" alignItems="center">
                     <Box display="flex" alignItems="center" mr={4}>
-                        <FormLabel mb="0" mr={2}>Active user</FormLabel>
                         <Checkbox
-                            name="activeUser"
+                            name="activeUser" mr={2}
                             isChecked={formData.activeUser}
                             onChange={(e) => handleInputChange({ target: { name: 'activeUser', value: e.target.checked } })}
                         />
+                        <FormLabel mb="0" mr={2}>Active user</FormLabel>
+
                     </Box>
-                    <Box display="flex" alignItems="center" mr={4}>
-                        <FormLabel mb="0" mr={2}>Locked User</FormLabel>
-                        <Checkbox
-                            name="lockedUser"
-                            isChecked={formData.lockedUser}
-                            onChange={(e) => handleInputChange({ target: { name: 'lockedUser', value: e.target.checked } })}
-                        />
-                        <LockIcon color={formData.lockedUser ? 'black' : 'gray.300'} ml={2} />
+                    <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
+                        {formData.lockedUser ? (
+                            <>
+                                <LockIcon color="black" ml={2} />
+                                <FormLabel mb="0" mr={2}>Locked User</FormLabel>
+                            </>
+                        ) : (
+                            <>
+                                <UnlockIcon color="black" ml={2} />
+                                <FormLabel mb="0" mr={2}>Unlocked User</FormLabel>
+                            </>
+                        )}
                     </Box>
-                    <Box display="flex" alignItems="center">
-                        <FormLabel mb="0" mr={2}>Unlock User</FormLabel>
-                        <Checkbox
-                            name="unlockUser"
-                            isChecked={!formData.lockedUser}
-                            onChange={(e) => handleInputChange({ target: { name: 'lockedUser', value: !e.target.checked } })}
-                        />
-                        <UnlockIcon color={!formData.lockedUser ? 'black' : 'gray.300'} ml={2} />
+                    <Box>
+                        <DeleteModal
+                            selectedUser={formData._id}
+                                                    />
                     </Box>
                 </FormControl>
                 <FormControl>

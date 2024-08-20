@@ -38,8 +38,7 @@ const DeleteModal = ({ selectedUser, selectedEntity, onClick }) => {
                 size="sm"
                 colorScheme="none"
                 onClick={(e) => {
-                    onClick(e); // Stop event propagation
-                    onOpen();   // Open the delete modal
+                onOpen();   // Open the delete modal
                 }}
             />
 

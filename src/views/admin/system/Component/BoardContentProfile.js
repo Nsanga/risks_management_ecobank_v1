@@ -39,6 +39,7 @@ const BoardContentProfile = ({ profiles, loading }) => {
     const filteredUsers = profiles.filter(user =>
         user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user?.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user?.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user?.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -63,7 +64,7 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                     children={<SearchIcon color="blue.500" />}
                                 />
                                 <Input
-                                    placeholder="Search by name, location or status"
+                                    placeholder="Search by name, location, userId or status"
                                     value={searchTerm}
                                     onChange={handleSearchChange}
                                 />
