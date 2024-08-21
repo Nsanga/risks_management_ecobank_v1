@@ -55,10 +55,6 @@ const AddUserGroupForm = ({ onSubmit }) => {
             closeMenuOnSelect={false} // Keeps the dropdown open for multiple selections
           />
         </FormControl>
-
-        <Button variant="outline" colorScheme="blue" type="submit" width="full">
-          Save
-        </Button>
       </VStack>
     </form>
   );

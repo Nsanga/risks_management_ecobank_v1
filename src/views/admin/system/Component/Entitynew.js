@@ -61,7 +61,6 @@ const Entitynew = ({ entities, loading }) => {
                   <Th>Owner</Th>
                   <Th>Nominee</Th>
                   <Th>Reviewer</Th>
-                  <Th></Th>
                 </Tr>
               </Thead> 
               <Tbody> 
@@ -80,12 +79,6 @@ const Entitynew = ({ entities, loading }) => {
                     <Td>{entity.owner}</Td>
                     <Td>{entity.nominee}</Td>
                     <Td>{entity.reviewer}</Td>
-                    <Td>
-                      <DeleteModal
-                        selectedEntity={entity}
-                        onClick={(e) => e.stopPropagation()} // Stop event propagation
-                      />
-                    </Td>
                   </Tr>
                 ))}
               </Tbody>

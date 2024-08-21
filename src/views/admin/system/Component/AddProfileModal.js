@@ -12,6 +12,7 @@ import { connect, useDispatch } from 'react-redux';
 import { updateProfile } from 'redux/profile/action';
 
 const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true);
   const [formData, setFormData] = useState({});
 
@@ -42,11 +43,36 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
     onClose();
   };
 
+  useEffect(() => {
+    if (selectedUser && selectedUser.userId) {
+      setIsEditMode(true); // Mode édition
+    } else {
+      setIsEditMode(false); // Mode ajout
+    }
+  }, [selectedUser]);
+
+  const handleAmendClick = () => {
+    setIsEditMode(false); // Désactiver le mode lecture seule après avoir cliqué sur "Amend"
+  };
+
+  const handleClose = () => {
+    onClose();
+    setIsEditMode(true);
+  }
+
+  useEffect(() => {
+    if (isOpen && selectedUser?.userId) {
+      setIsEditMode(true); // Mode édition si un utilisateur est sélectionné
+    } else {
+      setIsEditMode(false); // Mode ajout sinon
+    }
+  }, [isOpen, selectedUser]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered scrollBehavior='inside'>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{!selectedUser?.userId ? "Add New Profile" : "Edit Profile"}</ModalHeader>
+        <ModalHeader>{!selectedUser?.userId ? "Add New Profile" : "Amend Profile"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box flex="1">
@@ -83,7 +109,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
             </Flex>
             <Box mt={4}>
               <Collapse in={isDetailsVisible}>
-                <ProfileDetails formData={formData} handleInputChange={handleInputChange} />
+                <ProfileDetails formData={formData} handleInputChange={handleInputChange} isReadOnly={isEditMode} handleAmendClick={handleAmendClick} />
               </Collapse>
               <Collapse in={!isDetailsVisible}>
                 <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />
@@ -92,10 +118,22 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
           </Box>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} isLoading={loading} onClick={!selectedUser?.userId ? handleSave : handleEdit}>
-            {!selectedUser?.userId ? "Save" : "Edit"}
-          </Button>
-          <Button colorScheme="red" onClick={onClose}>Cancel</Button>
+          {
+            !selectedUser?.userId ?
+              (
+                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
+                  Save
+                </Button>
+              ) : null
+          }
+          {
+            selectedUser?.userId && !isEditMode ? (
+              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
+                Save
+              </Button>
+            ) : null
+          }
+          <Button colorScheme="red" onClick={handleClose}>Cancel</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

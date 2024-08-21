@@ -21,23 +21,6 @@ const CustomerSummaryCard = () => {
             View a summary of all your customers over the last month.
           </Text>
         </Box>
-
-        {/* Icônes alignées à droite */}
-        <Flex justifyContent="flex-end">
-          <IconButton
-            aria-label="Modifier"
-            icon={<EditIcon />}
-            variant="ghost"
-            colorScheme="blue"
-            mr={2} // Espacement entre les icônes
-          />
-          <IconButton
-            aria-label="Supprimer"
-            icon={<DeleteIcon />}
-            variant="ghost"
-            colorScheme="red"
-          />
-        </Flex>
       </Flex>
     </CustomCard>
   );

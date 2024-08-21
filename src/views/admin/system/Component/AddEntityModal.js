@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
-  FormControl, FormLabel, Input, Select, Checkbox, Button, Box, Flex, Heading
+  FormControl, FormLabel, Input, Select, Checkbox, Button, Box, Flex, Heading,
+  InputGroup,
+  InputLeftElement
 } from '@chakra-ui/react';
 import { AddEntity } from 'redux/entitiy/action';
 import { useDispatch } from 'react-redux';
 import { updateEntity } from 'redux/entitiy/action';
+import DeleteModal from './deleteModal';
+import { EditIcon } from '@chakra-ui/icons';
 
 const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
   const [formValues, setFormValues] = useState({
-    isActive: false,
+    isActive: true,
     description: '',
     ram: '',
     createdOn: '',
@@ -32,17 +37,33 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
   const dispatch = useDispatch();
 
   const handleSave = () => {
-    console.log(formValues);
-    dispatch(AddEntity(formValues));
+    const updatedValues = {
+      ...formValues,
+      description: `CAM - ${formValues.description}` // Ajoutez le préfixe avant d'enregistrer
+    };
+    console.log(updatedValues);
+    dispatch(AddEntity(updatedValues));
     setFormValues({});
     onClose();
   };
 
   useEffect(() => {
-    if (selectedEntity) {
-      setFormValues(selectedEntity); // Pre-fill the form with selected user data
+    if (selectedEntity && isEditMode) {
+      setFormValues(selectedEntity); // Pré-remplir le formulaire uniquement en mode édition
+    } else {
+      setFormValues({}); // Réinitialiser le formulaire
     }
-  }, [selectedEntity]);
+  }, [selectedEntity, isEditMode]);
+
+  useEffect(() => {
+    // Initialiser la date du jour dans createdOn lors du montage du composant ou lorsque selectedEntity change
+    const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+    setFormValues(prevValues => ({
+      ...prevValues,
+      createdOn: prevValues.createdOn || today
+    }));
+  }, [isOpen, selectedEntity]);
+
 
   const handleEdit = () => {
     console.log(formValues);
@@ -51,32 +72,64 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
     onClose();
   };
 
+  const handleAmendClick = () => {
+    setIsEditMode(false); // Désactiver le mode lecture seule après avoir cliqué sur "Amend"
+  };
+
+  useEffect(() => {
+    if (isOpen && selectedEntity?.referenceId) {
+      setIsEditMode(true); // Mode édition si un utilisateur est sélectionné
+    } else {
+      setIsEditMode(false); // Mode ajout sinon
+    }
+  }, [isOpen, selectedEntity]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="5xl" isCentered scrollBehavior='inside'>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{selectedEntity?.referenceId ? "Edit Entity" : "Add Entity"}</ModalHeader>
+        <ModalHeader>{selectedEntity?.referenceId ? "Amend Entity" : "Add Entity"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <Flex gap={4} mb={8} alignItems='center'>
+            <Flex direction='row' gap={2} alignItems='center'>
+              <Checkbox
+                name="isActive"
+                isChecked={formValues.isActive}
+                onChange={handleChange}
+                isReadOnly={isEditMode}
+              />
+              <Box>Entity Active</Box>
+            </Flex>
+            <DeleteModal selectedEntity={formValues} disabled={!isEditMode} />
+            <Button leftIcon={<EditIcon color="white" />} colorScheme='blue' style={{ fontSize: 14 }} onClick={handleAmendClick}
+              disabled={!isEditMode}>Amend</Button>
+          </Flex>
           <Flex gap={8}>
             <Box width='50%' mr={4}>
-              <FormControl mb="4">
+            <FormControl mb="4">
                 <FormLabel>Description</FormLabel>
-                <Input
-                  name="description"
-                  value={formValues.description}
-                  onChange={handleChange}
-                />
+                <InputGroup >
+                  <InputLeftElement width={70}>
+                    <Box >CAM - </Box>
+                  </InputLeftElement>
+                  <Input
+                    name="description"
+                    value={formValues.description}
+                    onChange={handleChange}
+                    isReadOnly={isEditMode}
+                    pl="4rem"
+                    pb={0.5}
+                  />
+                </InputGroup>
               </FormControl>
               <FormControl mb="4">
                 <FormLabel>RAM</FormLabel>
-                <Select
-                  name="ram"
+                <Input
                   value={formValues.ram}
                   onChange={handleChange}
-                >
-                  {/* Add options here */}
-                </Select>
+                  isReadOnly={isEditMode}
+                />
               </FormControl>
               <FormControl mb="4">
                 <FormLabel>Created On</FormLabel>
@@ -85,6 +138,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
                   type="date"
                   value={formValues.createdOn}
                   onChange={handleChange}
+                  isReadOnly={isEditMode}
                 />
               </FormControl>
               <FormControl mb="4">
@@ -93,6 +147,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
                   name="owner"
                   value={formValues.owner}
                   onChange={handleChange}
+                  isReadOnly={isEditMode}
                 />
               </FormControl>
               <FormControl mb="4">
@@ -101,6 +156,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
                   name="nominee"
                   value={formValues.nominee}
                   onChange={handleChange}
+                  isReadOnly={isEditMode}
                 />
               </FormControl>
               <FormControl mb="4">
@@ -109,6 +165,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
                   name="reviewer"
                   value={formValues.reviewer}
                   onChange={handleChange}
+                  isReadOnly={isEditMode}
                 />
               </FormControl>
               <FormControl mb="4">
@@ -118,16 +175,9 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
                   type="date"
                   value={formValues.reviewDate}
                   onChange={handleChange}
+                  isReadOnly={isEditMode}
                 />
               </FormControl>
-                <Flex direction='row' gap={2} alignItems='center' mb="4">
-                <Checkbox
-                  name="isActive"
-                  isChecked={formValues.isActive}
-                  onChange={handleChange}
-                />
-                <Box>Entity Active</Box>
-                </Flex>
             </Box>
             <Box width='50%' height={250}>
               <Heading size="md" mb={4}>
@@ -135,13 +185,13 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
               </Heading>
               <FormControl mb="4">
                 <FormLabel>Location</FormLabel>
-                <Select
+                <Input
                   name="location"
-                  value={formValues.location}
+                  type="text"
+                  value={formValues.location || 'CAMEROUN'}
                   onChange={handleChange}
-                >
-                  {/* Add options here */}
-                </Select>
+                  isReadOnly={isEditMode}
+                />
               </FormControl>
               <FormControl mb="4">
                 <FormLabel>Business Line</FormLabel>
@@ -149,6 +199,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
                   name="businessLine"
                   value={formValues.businessLine}
                   onChange={handleChange}
+                  isReadOnly={isEditMode}
                 >
                   {/* Add options here */}
                 </Select>
@@ -157,10 +208,21 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
           </Flex>
         </ModalBody>
         <ModalFooter>
-          {/* <Button colorScheme="green" mr={3}>Documents</Button> */}
-          <Button colorScheme="blue" mr={3} onClick={selectedEntity?.referenceId ? handleEdit : handleSave} isLoading={loading} >
-            {selectedEntity?.referenceId ? "Edit" : "Save"}
-          </Button>
+          {
+            !selectedEntity?.referenceId ?
+              (
+                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
+                  Save
+                </Button>
+              ) : null
+          }
+          {
+            selectedEntity?.referenceId && !isEditMode ? (
+              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
+                Save
+              </Button>
+            ) : null
+          }
           <Button colorScheme="red" onClick={onClose}>Cancel</Button>
         </ModalFooter>
       </ModalContent>

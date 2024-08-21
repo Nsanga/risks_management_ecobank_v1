@@ -42,7 +42,10 @@ const UserGroup = () => {
                         <AddUserGroupForm onSubmit={handleFormSubmit} />
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                        <Button colorScheme="blue" type="submit" mr={4}>
+                            Save
+                        </Button>
+                        <Button colorScheme="red" mr={3} onClick={onClose}>
                             Close
                         </Button>
                     </ModalFooter>

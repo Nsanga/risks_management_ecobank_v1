@@ -20,7 +20,7 @@ import { useDispatch } from 'react-redux'
 import { deleteProfile } from 'redux/profile/action'
 import { deleteEntity } from 'redux/entitiy/action'
 
-const DeleteModal = ({ selectedUser, selectedEntity, onClick }) => {
+const DeleteModal = ({ selectedUser, selectedEntity, onClick, disabled }) => {
     const { onOpen, isOpen, onClose } = useDisclosure()
     const [reason, setReason] = useState('')
     const dispatch = useDispatch()
@@ -37,13 +37,14 @@ const DeleteModal = ({ selectedUser, selectedEntity, onClick }) => {
 
     return (
         <>
-            <IconButton
-                aria-label="Delete user"
-                icon={<DeleteIcon color="red" />}
-                size="sm"
-                colorScheme="none"
-                onClick={onOpen} // Open the delete modal
-            />
+            <Button
+                leftIcon={<DeleteIcon color="white" />}
+                colorScheme='red' onClick={onOpen}
+                style={{ fontSize: 14 }}
+                disabled={disabled}
+            >
+                Delete
+            </Button>
 
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
@@ -53,8 +54,8 @@ const DeleteModal = ({ selectedUser, selectedEntity, onClick }) => {
                     <ModalBody>
                         <Text mb={2}>
                             {selectedEntity?._id ?
-                                "Voulez-vous supprimer cette entité?" :
-                                "Voulez-vous supprimer ce profil utilisateur?"
+                                "Why do you want to delete this entity?" :
+                                "Why do you want to delete this user?"
                             }
                         </Text>
                         <Textarea
