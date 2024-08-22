@@ -8,7 +8,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import AddEntityModal from './AddEntityModal';
 import { connect, useDispatch } from 'react-redux';
 import { listEntities } from 'redux/entitiy/action';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 import Loader from '../../../../assets/img/loader.gif';
 
 const Entitynew = ({ entities, loading }) => {

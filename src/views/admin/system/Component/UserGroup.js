@@ -1,58 +1,97 @@
-import React from 'react';
-import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, Flex, Box } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import AddUserGroupForm from './AddUserGroupForm';
+import React, { useState } from 'react';
+import {
+  Box, Flex, Button, Modal, ModalOverlay, ModalContent,
+  ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure
+} from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
 import CustomerSummaryCard from './CustomerSummaryCard';
+import AddUserGroupForm from './AddUserGroupForm';
+import DeleteModal from './DeleteModal';
 
 const UserGroup = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [groupName, setGroupName] = useState('');
+  const [roles, setRoles] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isAmending, setIsAmending] = useState(false);
 
-    const handleFormSubmit = (formData) => {
-        console.log("Form Data Submitted: ", formData);
-        onClose();
-    };
+  const handleFormSubmit = (data) => {
+    setGroupName(data.groupName);
+    setRoles(data.roles);
+    setIsAmending(false); // Reset amending state after save
+    onClose();
+  };
 
-    return (
-        <>
-            {/* Conteneur pour le bouton et la carte */}
-            <Box mb={4}>
-                {/* Aligner le bouton à droite */}
-                <Flex justifyContent="flex-end" mb={4}>
-                    <Button
-                        variant="outline"
-                        colorScheme="blue"
-                        leftIcon={<AddIcon />}
-                        onClick={onOpen}
-                    >
-                        Add New User Group
-                    </Button>
-                </Flex>
+  const handleEdit = () => {
+    setIsEditing(true);
+    onOpen();
+  };
 
-                {/* Placer la carte en dessous du bouton */}
-                <CustomerSummaryCard />
-            </Box>
+  const handleAmendClick = () => {
+    setIsAmending(true);
+  };
 
-            {/* Modal pour ajouter un nouveau groupe d'utilisateurs */}
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Add New User Group</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <AddUserGroupForm onSubmit={handleFormSubmit} />
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="blue" type="submit" mr={4}>
-                            Save
-                        </Button>
-                        <Button colorScheme="red" mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </>
-    );
+  const handleDeleteClick = () => {
+    console.log('Delete action triggered');
+    // Implement your delete logic here
+  };
+
+  return (
+    <>
+      <Box mb={4}>
+        <Flex justifyContent="flex-end" mb={4}>
+          <Button
+            variant="outline"
+            colorScheme="blue"
+            leftIcon={<EditIcon />}
+            onClick={() => { setIsEditing(false); setIsAmending(false); onOpen(); }}
+          >
+            Add New User Group
+          </Button>
+        </Flex>
+
+        {/* Show Card with Group Info */}
+        {groupName && (
+          <CustomerSummaryCard
+            groupName={groupName}
+            roles={roles}
+            onEdit={handleEdit}
+          />
+        )}
+      </Box>
+
+      <Modal isOpen={isOpen} onClose={() => { setIsAmending(false); onClose(); }}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{isEditing ? 'Edit User Group' : 'Add New User Group'}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <AddUserGroupForm
+              onSubmit={handleFormSubmit}
+              formData={{ groupName, roles }}
+              isReadOnly={!isAmending && isEditing}
+              handleAmendClick={handleAmendClick}
+              isAmending={isAmending}
+            />
+          </ModalBody>
+          <ModalFooter>
+              <>
+                <Button
+                  colorScheme="blue"
+                  onClick={() => document.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))}
+                  mr={4}
+                >
+                  Save
+                </Button>
+                <Button colorScheme="red" onClick={onClose}>
+                  Cancel
+                </Button>
+              </>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
 };
 
 export default UserGroup;

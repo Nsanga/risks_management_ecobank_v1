@@ -1,27 +1,28 @@
 import React from 'react';
-import { Box, Text, Flex, IconButton } from '@chakra-ui/react';
-import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Box, Text, Flex } from '@chakra-ui/react';
 
-const CustomCard = ({ children }) => {
+const CustomCard = ({ children, onClick }) => {
   return (
-    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} boxShadow="md">
+    <Box
+      borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      p={4}
+      boxShadow="md"
+      cursor="pointer"
+      onClick={onClick}
+    >
       {children}
     </Box>
   );
 };
 
-const CustomerSummaryCard = () => {
+const CustomerSummaryCard = ({ groupName, roles, onEdit }) => {
   return (
-    <CustomCard>
-      {/* Flex container for text and icons */}
-      <Flex direction="row" alignItems="center" justifyContent="space-between">
-        {/* Texte à gauche */}
-        <Box flex="1">
-          <Text>
-            View a summary of all your customers over the last month.
-          </Text>
-        </Box>
-      </Flex>
+    <CustomCard onClick={onEdit}>
+      <Flex direction="column" alignItems="flex-start">
+        <Text fontWeight="bold">{groupName}</Text>
+              </Flex>
     </CustomCard>
   );
 };

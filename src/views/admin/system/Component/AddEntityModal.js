@@ -8,7 +8,7 @@ import {
 import { AddEntity } from 'redux/entitiy/action';
 import { useDispatch } from 'react-redux';
 import { updateEntity } from 'redux/entitiy/action';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 import { EditIcon } from '@chakra-ui/icons';
 
 const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
