@@ -1,56 +1,66 @@
-import React from 'react';
-import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, Flex, Box } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Button, Flex, Box } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import AddUserGroupForm from './AddUserGroupForm';
 import CustomerSummaryCard from './CustomerSummaryCard';
+import AddUserGroupModal from './AddUserGroupModal';
+
+const fakeData = [
+    { _id: '1', name: 'Group 1' },
+    { _id: '2', name: 'Group 2' },
+    { _id: '3', name: 'Group 3' },
+    { _id: '4', name: 'Group 4' }
+];
 
 const UserGroup = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUserGroup, setSelectedUserGroup] = useState(null);
+
+    const openModal = (userGroup = null) => {
+        setSelectedUserGroup(userGroup); // Set selected user group, or null for a new group
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => setIsModalOpen(false);
 
     const handleFormSubmit = (formData) => {
         console.log("Form Data Submitted: ", formData);
-        onClose();
+        setIsModalOpen(false);
+    };
+
+    const handleCardClick = (userGroup) => {
+        openModal(userGroup); // Open the modal with the selected group
     };
 
     return (
         <>
-            {/* Conteneur pour le bouton et la carte */}
             <Box mb={4}>
-                {/* Aligner le bouton à droite */}
                 <Flex justifyContent="flex-end" mb={4}>
                     <Button
                         variant="outline"
                         colorScheme="blue"
                         leftIcon={<AddIcon />}
-                        onClick={onOpen}
+                        onClick={() => openModal()}
                     >
                         Add New User Group
                     </Button>
                 </Flex>
 
-                {/* Placer la carte en dessous du bouton */}
-                <CustomerSummaryCard />
+                {fakeData.map((group) => (
+                    <CustomerSummaryCard
+                        key={group._id}
+                        selectedUserGroup={group}
+                        onCardClick={() => handleCardClick(group)}
+                    />
+                ))}
             </Box>
 
-            {/* Modal pour ajouter un nouveau groupe d'utilisateurs */}
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Add New User Group</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <AddUserGroupForm onSubmit={handleFormSubmit} />
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="blue" type="submit" mr={4}>
-                            Save
-                        </Button>
-                        <Button colorScheme="red" mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+            {/* Modal pour ajouter/éditer un groupe d'utilisateurs */}
+            <AddUserGroupModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                onSubmit={handleFormSubmit}
+                selectedUserGroup={selectedUserGroup} // Pass selected group data to the modal
+            />
         </>
     );
 };
