@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, Flex } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 
 const CustomCard = ({ children, onClick }) => {
   return (
@@ -9,20 +9,21 @@ const CustomCard = ({ children, onClick }) => {
       overflow="hidden"
       p={4}
       boxShadow="md"
-      cursor="pointer"
       onClick={onClick}
+      cursor="pointer"
+      mb={4}
     >
       {children}
     </Box>
   );
 };
 
-const CustomerSummaryCard = ({ groupName, roles, onEdit }) => {
+const CustomerSummaryCard = ({ selectedUserGroup, onCardClick }) => {
   return (
-    <CustomCard onClick={onEdit}>
-      <Flex direction="column" alignItems="flex-start">
-        <Text fontWeight="bold">{groupName}</Text>
-              </Flex>
+    <CustomCard onClick={onCardClick}>
+      <Box flex="1">
+        <Text>View a summary of {selectedUserGroup.name} over the last month.</Text>
+      </Box>
     </CustomCard>
   );
 };
