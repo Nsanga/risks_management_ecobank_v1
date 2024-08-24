@@ -83,7 +83,7 @@ const Entitynew = ({ entities, loading }) => {
                 </Flex>
 
                 {/* Right Side */}
-                <Flex direction="column" flex="1" ml={4}>
+                <Flex direction="column" flex="1" ml={2}>
                   <Flex mb={4} align="center">
                     <Text width="100px">RAM :</Text>
                     <Input placeholder="RAM" width="100%" />
