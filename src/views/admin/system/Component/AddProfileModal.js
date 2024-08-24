@@ -11,7 +11,7 @@ import { AddProfile } from 'redux/profile/action';
 import { connect, useDispatch } from 'react-redux';
 import { updateProfile } from 'redux/profile/action';
 
-const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
+const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true);
   const [formData, setFormData] = useState({});
@@ -38,7 +38,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
 
   const handleEdit = () => {
     console.log(formData);
-    dispatch(updateProfile(selectedUser._id));
+    dispatch(updateProfile(selectedUser._id, formData));
     setFormData({});
     onClose();
   };
@@ -109,7 +109,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser }) => {
             </Flex>
             <Box mt={4}>
               <Collapse in={isDetailsVisible}>
-                <ProfileDetails formData={formData} handleInputChange={handleInputChange} isReadOnly={isEditMode} handleAmendClick={handleAmendClick} />
+                <ProfileDetails formData={formData} handleInputChange={handleInputChange} isReadOnly={isEditMode} handleAmendClick={handleAmendClick} userGroups={userGroups} />
               </Collapse>
               <Collapse in={!isDetailsVisible}>
                 <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />
@@ -145,4 +145,4 @@ const mapStateToProps = ({ ProfileReducer }) => ({
   loading: ProfileReducer.loading,
 });
 
-export default connect(mapStateToProps)(AddProfileModal);;
+export default connect(mapStateToProps)(AddProfileModal);

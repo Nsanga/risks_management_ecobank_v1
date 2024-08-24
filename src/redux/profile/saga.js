@@ -28,7 +28,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         let link = `${url}/api/v1/profiles/update/${id}`;
-        const data = yield putRequest(link, action.payload.profileData);
+        const data = yield putRequest(link, JSON.stringify(action.payload.profileData));
         console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_PROFILE_SUCCESS, payload: data.data.profile });

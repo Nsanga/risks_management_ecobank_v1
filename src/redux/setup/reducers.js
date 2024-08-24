@@ -8,6 +8,7 @@ import PlateformeReducer from 'redux/plateforme/reducer';
 import ProfileReducer from 'redux/profile/reducer';
 import ServiceReducer from 'redux/service/reducer';
 import UserReducer from 'redux/user/reducer';
+import UserGroupReducer from 'redux/userGroup/reducer';
 
 /**
  * @description combine reducers
@@ -21,7 +22,8 @@ const rootReducer = combineReducers({
   LoginReducer,
   EventReducer,
   ProfileReducer,
-  EntityReducer
+  EntityReducer,
+  UserGroupReducer
 });
 
 export default rootReducer;

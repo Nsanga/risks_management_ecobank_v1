@@ -8,6 +8,7 @@ import PlateformeSaga from 'redux/plateforme/saga';
 import ProfileSaga from 'redux/profile/saga';
 import ServiceSaga from 'redux/service/saga';
 import UserSaga from 'redux/user/saga';
+import UserGroupSaga from 'redux/userGroup/saga';
 
 /**
  * @description combine sagas
@@ -22,6 +23,7 @@ export default function* Sagas() {
     LoginSaga(),
     EventSaga(),
     ProfileSaga(),
-    EntitySaga()
+    EntitySaga(),
+    UserGroupSaga()
   ]);
 }

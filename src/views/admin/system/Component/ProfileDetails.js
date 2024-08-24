@@ -16,13 +16,12 @@ const ccEmailOptions = [
     { label: 'Charlie Evans', value: 'charlie.evans@example.com' },
 ];
 
-const userGroupOptions = [
-    { label: 'Admin', value: 'admin' },
-    { label: 'Editor', value: 'editor' },
-    { label: 'Viewer', value: 'viewer' },
-];
+const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick, userGroups }) => {
 
-const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick }) => {
+    const userGroupOptions = userGroups.map(group => ({
+        value: group._id, // ou un autre identifiant unique pour l'option
+        label: group.groupName
+    }));
 
     const isUserLocked = () => formData.lockedUser;
 
@@ -62,7 +61,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                         </Button>
                     </Box>
                     <Box display="flex" alignItems="center" mr={4} cursor="pointer">
-                        <DeleteModal selectedUser={formData}  disabled={!isReadOnly}/>
+                        <DeleteModal selectedUser={formData} disabled={!isReadOnly} />
                     </Box>
                     <Button leftIcon={<EditIcon color="white" />} colorScheme='blue' style={{ fontSize: 14 }} onClick={handleAmendClick}
                         disabled={!isReadOnly}>Amend</Button>
@@ -141,7 +140,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     <FormLabel>User Group</FormLabel>
                     <Select
                         name="userGroup"
-                        options={userGroupOptions || ''}
+                        options={userGroupOptions}
                         onChange={(selectedOption) => handleSelectChange('userGroup', selectedOption)}
                     />
                 </FormControl>
