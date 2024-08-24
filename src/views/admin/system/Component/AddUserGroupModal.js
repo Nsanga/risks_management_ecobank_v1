@@ -3,7 +3,7 @@ import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButto
 import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { FormControl, FormLabel } from '@chakra-ui/react';
 import Select from 'react-select';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup }) => {
     const [isEditMode, setIsEditMode] = useState(!selectedUserGroup); // Default to true if no group is selected
     const [groupName, setGroupName] = useState('');

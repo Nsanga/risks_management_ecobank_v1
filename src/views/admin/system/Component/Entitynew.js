@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Flex, Box, Select, Button, Table, Thead, Tbody, Tr, Th, Td, Input,
-  Image,
-  Text
+  Flex, Box, Select, Button, Table, Thead, Tbody, Tr, Th, Td, Input, Image, Text, Radio, RadioGroup, Stack, Heading
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import AddEntityModal from './AddEntityModal';
 import { connect, useDispatch } from 'react-redux';
+import AddEntityModal from './AddEntityModal';
 import { listEntities } from 'redux/entitiy/action';
-import DeleteModal from './DeleteModal';
 import Loader from '../../../../assets/img/loader.gif';
 
 const Entitynew = ({ entities, loading }) => {
@@ -26,8 +23,6 @@ const Entitynew = ({ entities, loading }) => {
   useEffect(() => {
     dispatch(listEntities());
   }, [dispatch]);
-
-  console.log('list des entities', entities)
 
   return (
     <>
@@ -53,6 +48,61 @@ const Entitynew = ({ entities, loading }) => {
               </Button>
             </Flex>
 
+            {/* Form Section with Header */}
+            <Box p={1} border="1px" borderColor="gray.200" borderRadius="md" mb={4} width="105%">
+              <Heading as="h4" size="md" mb={4}>
+                Select Entity
+              </Heading>
+              
+              <Flex direction="row" justifyContent="space-between" align="center" mb={4}>
+                {/* Left Side */}
+                <Flex direction="column" flex="1" mr={1}>
+                  <Flex mb={4} align="center">
+                    <Text width="70px">Entity :</Text>
+                    <Select placeholder="Select Entity" />
+                  </Flex>
+                  <Flex mb={4} align="center">
+                    <Text width="70px">Show :</Text>
+                    <RadioGroup defaultValue="Risks">
+                      <Stack direction="row">
+                        <Radio value="Risks">Risks</Radio>
+                        <Radio value="Controls">Controls</Radio>
+                        <Radio value="Events">Events</Radio>
+                        <Radio value="Actions">Actions</Radio>
+                        <Radio value="Kits">Kits</Radio>
+                        <Radio value="Obligations">Obligations</Radio>
+                      </Stack>
+                    </RadioGroup>
+                  </Flex>
+                  <Flex mb={4} align="center">
+                    <Text width="70px">Filter on :</Text>
+                    <Select placeholder="All Approval State">
+                      {/* Add filter options here */}
+                    </Select>
+                  </Flex>
+                </Flex>
+
+                {/* Right Side */}
+                <Flex direction="column" flex="1" ml={4}>
+                  <Flex mb={4} align="center">
+                    <Text width="100px">RAM :</Text>
+                    <Input placeholder="RAM" width="100%" />
+                  </Flex>
+                  <Flex mb={4} align="center">
+                    <Text width="100px">Owner :</Text>
+                    <Input placeholder="Owner" width="100%" />
+                  </Flex>
+                </Flex>
+              </Flex>
+
+              <Flex align="center" justifyContent="flex-end">
+                <Text>Status : </Text>
+                <Text ml={2} mr={4}>Number of Risks : 0</Text>
+                <Text>Total Annual Residual Exposure : 0.00</Text>
+              </Flex>
+            </Box>
+
+            {/* Entity Table */}
             <Table>
               <Thead>
                 <Tr>
@@ -92,7 +142,8 @@ const Entitynew = ({ entities, loading }) => {
               selectedEntity={selectedEntity} 
             />
           </Box>
-        ))}
+        )
+      )}
     </>
   );
 }
