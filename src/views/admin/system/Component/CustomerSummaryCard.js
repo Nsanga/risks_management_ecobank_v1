@@ -22,7 +22,7 @@ const CustomerSummaryCard = ({ selectedUserGroup, onCardClick }) => {
   return (
     <CustomCard onClick={onCardClick}>
       <Box flex="1">
-        <Text>View a summary of {selectedUserGroup.name} over the last month.</Text>
+        <Text>{selectedUserGroup.groupName}</Text>
       </Box>
     </CustomCard>
   );

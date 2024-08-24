@@ -28,7 +28,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         let link = `${url}/api/v1/events/update?id=${id}`;
-        const data = yield putRequest(link, action.payload.eventData);
+        const data = yield putRequest(link, JSON.stringify(action.payload.eventData));
         console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_EVENT_SUCCESS, payload: data.data.event });

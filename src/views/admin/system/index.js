@@ -1,11 +1,20 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import Card from 'components/card/Card'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Entitynew from './Component/Entitynew'
 import CreateProfile from './Component/Createprofile'
 import UserGroup from './Component/UserGroup'
+import { connect, useDispatch } from 'react-redux'
+import { listUserGroups } from 'redux/userGroup/action'
 
-const System = () => {
+const System = ({ userGroups, loading }) => {
+
+  const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(listUserGroups());
+    }, [dispatch]);
+
   return (
     <div>
       <Card mt="100px">
@@ -17,13 +26,13 @@ const System = () => {
           </TabList>
           <TabPanels>
           <TabPanel>
-              <UserGroup />
+              <UserGroup userGroups={userGroups} loading={loading}/>
             </TabPanel>
             <TabPanel>
               <Entitynew />
             </TabPanel>
             <TabPanel>
-              <CreateProfile />
+              <CreateProfile userGroups={userGroups} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -32,4 +41,9 @@ const System = () => {
   )
 }
 
-export default System
+const mapStateToProps = ({ UserGroupReducer }) => ({
+  userGroups: UserGroupReducer.userGroups,
+  loading: UserGroupReducer.loading,
+});
+
+export default connect(mapStateToProps)(System);

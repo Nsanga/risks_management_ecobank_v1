@@ -4,7 +4,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import AddProfileModal from './AddProfileModal';
 import BoardContentProfile from './BoardContentProfile';
 
-const CreateProfile = () => {
+const CreateProfile = ({userGroups}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
@@ -18,7 +18,7 @@ const CreateProfile = () => {
                 </Button>
             </Flex>
             {/* Render the modal and pass isOpen and onClose props */}
-            <AddProfileModal isOpen={isModalOpen} onClose={closeModal} />
+            <AddProfileModal isOpen={isModalOpen} onClose={closeModal} userGroups={userGroups} />
             <BoardContentProfile />
         </>
     );

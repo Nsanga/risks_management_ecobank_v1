@@ -4,45 +4,100 @@ import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { FormControl, FormLabel } from '@chakra-ui/react';
 import Select from 'react-select';
 import DeleteModal from './DeleteModal';
-const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup }) => {
-    const [isEditMode, setIsEditMode] = useState(!selectedUserGroup); // Default to true if no group is selected
+import { connect, useDispatch } from 'react-redux';
+import { AddUserGroup } from 'redux/userGroup/action';
+import { updateUserGroup } from 'redux/userGroup/action';
+
+const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
+    const [isEditMode, setIsEditMode] = useState(!selectedUserGroup);
     const [groupName, setGroupName] = useState('');
     const [roles, setRoles] = useState([]);
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const dispatch = useDispatch();
 
     const roleOptions = [
-        // Your role options here
+        { value: 'admin-management', label: 'Management' },
+        { value: 'admin-hr', label: 'HR' },
+        { value: 'admin-it', label: 'IT' },
+        { value: 'user-sales', label: 'Sales' },
+        { value: 'user-support', label: 'Support' },
+        { value: 'user-development', label: 'Development' },
     ];
 
     const handleAmendClick = () => {
         setIsEditMode(true);
     };
 
-    const handleSave = () => {
-        // Handle save logic
+    const handleSave = async () => {
+        const roleValues = roles.map(role => role.value);
+
+        const formData = {
+            groupName,
+            roles: roleValues // Envoyer uniquement le tableau des valeurs des rôles
+        };
+
+        console.log(formData);
+
+        try {
+            await dispatch(AddUserGroup(formData)); // Assume AddUserGroup returns a promise
+            onClose(); // Close the modal after saving
+        } catch (error) {
+            console.error("Error saving user group:", error);
+        } finally {
+        }
     };
 
-    const handleEdit = () => {
-        // Handle edit logic
+    const handleEdit = async () => {
+        // Extraire seulement les valeurs des rôles sélectionnés
+        const roleValues = roles.map(role => role.value);
+
+        const formData = {
+            groupName,
+            roles: roleValues // Envoyer uniquement le tableau des valeurs des rôles
+        };
+
+        console.log(formData);
+
+        try {
+            await dispatch(updateUserGroup(selectedUserGroup._id, formData)); // Supposons que updateUserGroup retourne une promesse
+            onClose(); // Fermer la modal après l'enregistrement
+        } catch (error) {
+            console.error("Error updating user group:", error);
+        } finally {
+        }
     };
 
     const handleClose = () => {
         onClose();
-        setIsEditMode(!selectedUserGroup); // Reset edit mode based on whether a group is selected
+        setIsEditMode(!selectedUserGroup);
     };
 
     useEffect(() => {
         if (selectedUserGroup) {
-            setGroupName(selectedUserGroup?.name || '');
-            setRoles(selectedUserGroup?.roles || []);
-            setIsEditMode(false); // Set to read-only mode if a group is selected
+            setGroupName(selectedUserGroup?.groupName || '');
+
+            // Transformer les rôles en format compatible avec Select
+            const formattedRoles = selectedUserGroup?.roles.map(role => ({
+                label: role,
+                value: role
+            })) || [];
+
+            setRoles(formattedRoles);
+            setIsEditMode(false);
         } else {
             setGroupName('');
             setRoles([]);
-            setIsEditMode(true); // Allow editing if no group is selected
+            setIsEditMode(true);
         }
     }, [selectedUserGroup]);
 
+    const handleOpenDeleteModal = () => {
+        handleClose(); // Fermer la modal principale
+        setTimeout(() => setDeleteModalOpen(true), 300); // Ouvrir la modal de suppression après un délai
+    };
+
     return (
+        <>
         <Modal isOpen={isOpen} onClose={handleClose}>
             <ModalOverlay />
             <ModalContent>
@@ -50,15 +105,16 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup }) => {
                 <ModalCloseButton />
                 <ModalBody>
                     <Flex mb={4} align="center" gap={4}>
-                        <DeleteModal 
-                            selectedUserGroup={selectedUserGroup} 
-                            disabled={!selectedUserGroup || isEditMode} 
+                        <DeleteModal
+                            selectedUserGroup={selectedUserGroup}
+                            disabled={!selectedUserGroup || isEditMode}
+                            onClick={handleOpenDeleteModal}
                         />
-                        <Button 
-                            leftIcon={<EditIcon color="white" />} 
-                            colorScheme='blue' 
-                            style={{ fontSize: 14 }} 
-                            onClick={handleAmendClick} 
+                        <Button
+                            leftIcon={<EditIcon color="white" />}
+                            colorScheme='blue'
+                            style={{ fontSize: 14 }}
+                            onClick={handleAmendClick}
                             disabled={!selectedUserGroup || isEditMode}
                         >
                             Amend
@@ -92,12 +148,12 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup }) => {
                 </ModalBody>
                 <ModalFooter>
                     {!selectedUserGroup?._id && (
-                        <Button colorScheme="blue" mr={3} onClick={handleSave}>
+                        <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
                             Save
                         </Button>
                     )}
                     {selectedUserGroup?._id && isEditMode && (
-                        <Button colorScheme="blue" mr={3} onClick={handleEdit}>
+                        <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
                             Save
                         </Button>
                     )}
@@ -107,8 +163,13 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup }) => {
                 </ModalFooter>
             </ModalContent>
         </Modal>
+    </>
     );
 };
 
+const mapStateToProps = ({ UserGroupReducer }) => ({
+    userGroups: UserGroupReducer.userGroups,
+    loading: UserGroupReducer.loading,
+});
 
-export default AddUserGroupModal;
+export default connect(mapStateToProps)(AddUserGroupModal);
