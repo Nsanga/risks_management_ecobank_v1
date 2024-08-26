@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button } from '@chakra-ui/react';
+import {
+    FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button,
+} from '@chakra-ui/react';
 import Select from 'react-select';
 import { EditIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import DeleteModal from './DeleteModal';
@@ -17,9 +19,9 @@ const ccEmailOptions = [
 ];
 
 const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick, userGroups }) => {
-
-    const userGroupOptions = userGroups.map(group => ({
-        value: group._id, // ou un autre identifiant unique pour l'option
+    // Safely map over userGroups with fallback to empty array
+    const userGroupOptions = (userGroups || []).map(group => ({
+        value: group._id, 
         label: group.groupName
     }));
 
@@ -30,10 +32,10 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
             handleInputChange({ target: { name, value: selectedOption.value } });
         }
     };
+
     const toggleLockStatus = () => {
         handleInputChange({ target: { name: 'lockedUser', value: !formData.lockedUser } });
     };
-
 
     return (
         <Box flex="1">
@@ -41,12 +43,12 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                 <FormControl display="flex" alignItems="center">
                     <Box display="flex" alignItems="center" mr={4}>
                         <Checkbox
-                            name="activeUser" mr={2}
-                            isChecked={formData.activeUser}
+                            name="activeUser"
+                            mr={2}
+                            isChecked={formData.activeUser || false}
                             onChange={(e) => handleInputChange({ target: { name: 'activeUser', value: e.target.checked } })}
                         />
                         <FormLabel mb="0" mr={2}>Active user</FormLabel>
-
                     </Box>
                     <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
                         <Button
@@ -54,17 +56,24 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                             colorScheme={formData.lockedUser ? "yellow" : "green"}
                             fontSize={14}
                             onClick={toggleLockStatus}
-                            disabled={!isReadOnly} // Désactiver après clic sur Amend
-                            ml={4} // Pour espacer les boutons
+                            disabled={!isReadOnly}
+                            ml={4}
                         >
-                            {formData.lockedUser ? "Unlocked User" : "Locked Use"}
+                            {formData.lockedUser ? "Unlocked User" : "Locked User"}
                         </Button>
                     </Box>
                     <Box display="flex" alignItems="center" mr={4} cursor="pointer">
                         <DeleteModal selectedUser={formData} disabled={!isReadOnly} />
                     </Box>
-                    <Button leftIcon={<EditIcon color="white" />} colorScheme='blue' style={{ fontSize: 14 }} onClick={handleAmendClick}
-                        disabled={!isReadOnly}>Amend</Button>
+                    <Button
+                        leftIcon={<EditIcon color="white" />}
+                        colorScheme='blue'
+                        style={{ fontSize: 14 }}
+                        onClick={handleAmendClick}
+                        disabled={!isReadOnly}
+                    >
+                        Amend
+                    </Button>
                 </FormControl>
                 <FormControl>
                     <FormLabel>User ID</FormLabel>
@@ -76,7 +85,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                         isReadOnly={isReadOnly}
                     />
                 </FormControl>
-                <FormControl >
+                <FormControl>
                     <FormLabel>Name</FormLabel>
                     <Input
                         type="text"
@@ -126,7 +135,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                         isReadOnly={isReadOnly}
                     />
                 </FormControl>
-                <FormControl >
+                <FormControl>
                     <FormLabel>Email</FormLabel>
                     <Input
                         type="email"
@@ -141,7 +150,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     <Select
                         name="userGroup"
                         options={userGroupOptions}
+                        value={userGroupOptions.find(option => option.value === formData.userGroup) || null}
                         onChange={(selectedOption) => handleSelectChange('userGroup', selectedOption)}
+                        isDisabled={isReadOnly}
                     />
                 </FormControl>
                 <FormControl>
@@ -159,7 +170,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     <Select
                         name="ccEmailTo"
                         options={ccEmailOptions}
+                        value={ccEmailOptions.find(option => option.value === formData.ccEmailTo) || null}
                         onChange={(selectedOption) => handleSelectChange('ccEmailTo', selectedOption)}
+                        isDisabled={isReadOnly}
                     />
                 </FormControl>
                 <FormControl>
@@ -167,7 +180,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     <Select
                         name="nominee"
                         options={nomineeOptions}
+                        value={nomineeOptions.find(option => option.value === formData.nominee) || null}
                         onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
+                        isDisabled={isReadOnly}
                     />
                 </FormControl>
                 <FormControl>
@@ -175,7 +190,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     <Input
                         type="date"
                         name="passwordExpiryDate"
-                        value='31/12/2030'
+                        value={formData.passwordExpiryDate || '2030-12-31'}
                         onChange={handleInputChange}
                         isReadOnly
                     />
@@ -215,8 +230,6 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     </Box>
                 </FormControl>
 
-
-                {/* Add Regulatory Box below the "Administrator" and "Can Authorise" fields */}
                 <Box gridColumn="span 2">
                     <Box border="1px solid #E2E8F0" borderRadius="md" p={4} mt={4} backgroundColor="white">
                         <Heading as="h3" size="sm" mb={4} textAlign="left">Regulatory</Heading>
@@ -245,12 +258,11 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                                 <FormLabel>Status</FormLabel>
                                 <Select
                                     name="status"
+                                    options={[]}
                                     value={formData.status || ''}
-                                    onChange={handleInputChange}
-                                    isReadOnly={isReadOnly}
-                                >
-                                    {/* Options go here */}
-                                </Select>
+                                    onChange={(selectedOption) => handleSelectChange('status', selectedOption)}
+                                    isDisabled={isReadOnly}
+                                />
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Review Date</FormLabel>
