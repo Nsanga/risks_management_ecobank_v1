@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button } from '@chakra-ui/react';
 import Select from 'react-select';
 import { EditIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 
 const nomineeOptions = [
     { label: 'John Doe', value: 'john.doe@example.com' },
@@ -195,7 +195,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                         <FormLabel mb="0" mr={2}>Administrator</FormLabel>
                         <Checkbox
                             name="administrator"
-                            isChecked={formData.administrator || false}
+                            isChecked={formData.administrator}
                             onChange={(e) => {
                                 const isChecked = e.target.checked;
                                 handleInputChange({ target: { name: 'administrator', value: isChecked } });

@@ -11,7 +11,7 @@ import { connect, useDispatch } from 'react-redux';
 import { listProfiles } from 'redux/profile/action';
 import Loader from '../../../../assets/img/loader.gif';
 import { deleteProfile } from 'redux/profile/action';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 
 const BoardContentProfile = ({ profiles, loading }) => {
     const [searchTerm, setSearchTerm] = useState('');

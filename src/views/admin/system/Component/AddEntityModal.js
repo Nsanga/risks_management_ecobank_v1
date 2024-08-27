@@ -8,7 +8,7 @@ import {
 import { AddEntity } from 'redux/entitiy/action';
 import { useDispatch } from 'react-redux';
 import { updateEntity } from 'redux/entitiy/action';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 import { EditIcon } from '@chakra-ui/icons';
 
 const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
@@ -39,7 +39,8 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
   const handleSave = () => {
     const updatedValues = {
       ...formValues,
-      description: `CAM - ${formValues.description}` // Ajoutez le préfixe avant d'enregistrer
+      description: `CAM - ${formValues.description}`,
+      location: 'CAMEROUN'
     };
     console.log(updatedValues);
     dispatch(AddEntity(updatedValues));
@@ -95,7 +96,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading }) => {
             <Flex direction='row' gap={2} alignItems='center'>
               <Checkbox
                 name="isActive"
-                isChecked={formValues.isActive}
+                isChecked={formValues.isActive || true}
                 onChange={handleChange}
                 isReadOnly={isEditMode}
               />

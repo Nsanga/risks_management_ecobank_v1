@@ -3,7 +3,7 @@ import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButto
 import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { FormControl, FormLabel } from '@chakra-ui/react';
 import Select from 'react-select';
-import DeleteModal from './deleteModal';
+import DeleteModal from './DeleteModal';
 import { connect, useDispatch } from 'react-redux';
 import { AddUserGroup } from 'redux/userGroup/action';
 import { updateUserGroup } from 'redux/userGroup/action';
