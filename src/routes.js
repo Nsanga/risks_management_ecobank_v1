@@ -35,7 +35,7 @@ const routes = [
     component: MainDashboard,
   },
   {
-    name: "Events",
+    name: "Risks",
     layout: "/admin",
     path: "/risks",
     icon: <Icon as={RiSkull2Fill} width='20px' height='20px' color='inherit' />,

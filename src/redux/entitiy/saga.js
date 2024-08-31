@@ -28,10 +28,10 @@ function* update(action) {
     const { id } = action.payload;
     try {
         let link = `${url}/api/v1/entities/update/${id}`;
-        const data = yield putRequest(link, action.payload.entityData);
+        const data = yield putRequest(link, JSON.stringify(action.payload.entityData));
         console.log("data:::/", data)
         if (data.message === "Success") {
-            yield put({ type: types.UPDATE_ENTITY_SUCCESS, payload: data.data.entity });
+            yield put({ type: types.UPDATE_ENTITY_SUCCESS, payload: data.data.entity});
             toast.success("Entity updated successfully");
             yield put({ type: types.GET_ENTITIES_REQUEST});
         } else {

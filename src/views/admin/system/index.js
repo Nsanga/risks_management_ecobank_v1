@@ -7,7 +7,7 @@ import UserGroup from './Component/UserGroup'
 import { connect, useDispatch } from 'react-redux'
 import { listUserGroups } from 'redux/userGroup/action'
 
-const System = ({ userGroups, loading }) => {
+const System = ({ userGroups, loading, profiles }) => {
 
   const dispatch = useDispatch()
 
@@ -29,10 +29,10 @@ const System = ({ userGroups, loading }) => {
               <UserGroup userGroups={userGroups} loading={loading}/>
             </TabPanel>
             <TabPanel>
-              <Entitynew />
+              <Entitynew profiles={profiles}/>
             </TabPanel>
             <TabPanel>
-              <CreateProfile userGroups={userGroups} />
+              <CreateProfile userGroups={userGroups} profiles={profiles} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -41,7 +41,8 @@ const System = ({ userGroups, loading }) => {
   )
 }
 
-const mapStateToProps = ({ UserGroupReducer }) => ({
+const mapStateToProps = ({ UserGroupReducer, ProfileReducer }) => ({
+  profiles: ProfileReducer.profiles,
   userGroups: UserGroupReducer.userGroups,
   loading: UserGroupReducer.loading,
 });

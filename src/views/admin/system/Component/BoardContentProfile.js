@@ -3,7 +3,7 @@ import {
     FormControl, InputGroup, InputLeftElement, Input, TableContainer, Table, Thead, Tbody, Tr, Th, Td, Button,
     Box, Text, Flex, Image
 } from '@chakra-ui/react';
-import { SearchIcon, AddIcon } from '@chakra-ui/icons';
+import { SearchIcon, AddIcon, LockIcon } from '@chakra-ui/icons';
 import AddProfileModal from './AddProfileModal';
 import { IconButton } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
@@ -13,7 +13,7 @@ import Loader from '../../../../assets/img/loader.gif';
 import { deleteProfile } from 'redux/profile/action';
 import DeleteModal from './DeleteModal';
 
-const BoardContentProfile = ({ profiles, loading }) => {
+const BoardContentProfile = ({ profiles, loading, userGroups }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -64,6 +64,7 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                     children={<SearchIcon color="blue.500" />}
                                 />
                                 <Input
+                                    fontSize={14}
                                     placeholder="Search by name, location, userId or status"
                                     value={searchTerm}
                                     onChange={handleSearchChange}
@@ -75,13 +76,14 @@ const BoardContentProfile = ({ profiles, loading }) => {
                             <Table variant="simple">
                                 <Thead>
                                     <Tr>
-                                        <Th>User ID</Th>
-                                        <Th>Name</Th>
-                                        <Th>Location</Th>
-                                        <Th>Status</Th>
-                                        <Th>Active</Th>
-                                        
-                                                                           </Tr>
+                                        <Th fontSize={14}>User ID</Th>
+                                        <Th fontSize={14}>Name</Th>
+                                        <Th fontSize={14}>Location</Th>
+                                        <Th fontSize={14}>Status</Th>
+                                        <Th fontSize={14}>Active</Th>
+                                        <Th></Th>
+
+                                    </Tr>
                                 </Thead>
                                 <Tbody>
                                     {filteredUsers.map(user => (
@@ -94,11 +96,11 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                             _hover={{ backgroundColor: "gray.100" }}
                                             cursor="pointer"
                                         >
-                                            <Td>{user?.userId}</Td>
-                                            <Td>{user?.name}</Td>
-                                            <Td>{user?.location}</Td>
-                                            <Td color={user?.activeUser === true ? 'green.500' : 'red.500'}>{user?.activeUser === true ? 'Logged' : 'Pending'}</Td>
-                                            <Td>
+                                            <Td fontSize={14}>{user?.userId}</Td>
+                                            <Td fontSize={14}>{user?.name}</Td>
+                                            <Td fontSize={14}>{user?.location}</Td>
+                                            <Td color={user?.activeUser === true ? 'green.500' : 'red.500'}>{user?.activeUser === true ? 'Logged' : user?.lockedUser === true ? 'Blocked' : 'Pending'}</Td>
+                                            <Td fontSize={14}>
                                                 <Box
                                                     w="12px"
                                                     h="12px"
@@ -106,7 +108,14 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                                     bg={user?.activeUser === true ? 'green.500' : 'red.500'}
                                                 />
                                             </Td>
-                                            
+                                            {user?.lockedUser === true ?
+                                                (
+                                                    <Td fontSize={14}>
+                                                        <LockIcon color='red' />
+                                                    </Td>
+                                                ) : null
+                                            }
+
                                         </Tr>
                                     ))}
                                 </Tbody>
@@ -118,6 +127,7 @@ const BoardContentProfile = ({ profiles, loading }) => {
                                 isOpen={isModalOpen}
                                 onClose={closeModal}
                                 selectedUser={selectedUser}
+                                userGroups={userGroups}
                             />
                         )}
                     </Box>
@@ -127,9 +137,4 @@ const BoardContentProfile = ({ profiles, loading }) => {
     );
 };
 
-const mapStateToProps = ({ ProfileReducer }) => ({
-    profiles: ProfileReducer.profiles,
-    loading: ProfileReducer.loading,
-});
-
-export default connect(mapStateToProps)(BoardContentProfile);
+export default BoardContentProfile;

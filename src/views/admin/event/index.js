@@ -24,11 +24,15 @@ import DetailsForm from './components/DetailsForm'
 import Commentary from './components/commentary'
 import Finances from './components/Financials'
 import { FaPrint } from 'react-icons/fa'
-import { DeleteIcon } from '@chakra-ui/icons'
+import { ChevronLeftIcon, DeleteIcon } from '@chakra-ui/icons'
 import AddEventForm from '../risks/components/AddEventForm'
 import { FaEnvelope } from 'react-icons/fa6'
 import jsPDF from 'jspdf'
 import html2canvas from "html2canvas";
+import DeleteModal from './components/DeleteModal'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ChakraLink, LinkProps } from '@chakra-ui/react'
 
 const generatePDF = async () => {
     const headElement = document.getElementById('head-component'); // Assume the Head component has an ID
@@ -48,6 +52,8 @@ const Event = () => {
     const event = location.state?.event;
     const loading = location.state?.loading;
     const iframeRef = useRef(null);
+    const history = useHistory();
+
     console.log('evttttt:::', event.details)
 
     if (!event) {
@@ -120,77 +126,98 @@ const Event = () => {
         iframe.print();
     };
 
-
+    const handleBackToRiskPage = () => {
+        history.push(
+            '/admin/risks',
+        );
+    }
 
     return (
         <Card mt="100px">
+            <ChakraLink as={ReactRouterLink} to='/admin/risks' color='blue'>
+                <Flex alignItems='center' mb={4}>
+                    <ChevronLeftIcon />
+                    Back to Risks Page
+                </Flex>
+            </ChakraLink>
             {
                 loading ? (
                     <Flex alignItems='center' justifyContent='center'>
                         <Image src={Loader} alt="Loading..." height={50} width={50} />
                     </Flex>
                 ) : (
-                    <Flex direction='column' gap={6}>
-                        <div id='head-component' style={{ display: 'flex', flexDirection: 'column', gap: 12 }} >
-                            <Head
-                                eventRef={`EVT${event.num_ref}`}
-                                currentState={event.approved === true ? 'Approved' : 'Unapproved'}
-                                currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
-                                description={event.details.description}
-                                totalLosses=' '
-                                externalRef={event.details.externalRef}
-                            />
-                            <DetailsForm detailledDescription={event.details.descriptionDetailled} />
-                            <LossesEntities
-                                entityofDetection={event.details.entityOfDetection}
-                                subEntityofDetection={event.details.subentityOfDetection}
-                                entityofDOrigin={event.details.entityOfOrigin}
-                                subEntityofOrigin={event.details.subentityOfOrigin}
-                            />
-                            <Commentary
-                                eventDate={event.details.event_date}
-                                rag={event.details.RAG}
-                                activeEvent={event.details.activeEvent}
-                                eventTime={event.details.event_time}
-                                recordedBy={event.details.recorded_by}
-                                dateRecording={event.createdAt}
-                                timeRecording={event.createdAt}
-                                excludeFundLosse={event.details.excludeFundLosses}
-                                externalEvent={event.details.externalEvent}
-                                notify={event.details.notify}
-                                detectionDate={event.details.detection_date}
-                            />
-                            <Finances
-                                approved={event.details.approved_date}
-                                closed={event.details.closed_date}
-                                targetClosure={event.details.targetClosureDate}
-                                owner={event.details.owner}
-                                nominee={event.details.nominee}
-                                reviewer={event.details.reviewer}
-                                reviewerDate={event.details.reviewer_date}
-                            />
-                        </div>
-                        <Flex justifyContent='flex-end' gap={4}>
-                            <Flex>
-                                <Button leftIcon={<FaEnvelope />} variant='outline' colorScheme='red' onClick={handleEmailClick} isLoading={loader}>
-                                    E-mail
-                                </Button>
-                            </Flex>
-                            <Flex>
-                                <Button leftIcon={<FaPrint />} variant='outline' colorScheme='teal' onClick={handlePrint}>Print</Button>
-                            </Flex>
-                            <Flex>
-                                <Button leftIcon={<MdClose />} variant='outline' colorScheme='green'>Unapproved</Button>
-                            </Flex>
-                            <Flex>
-                                <AddEventForm event={event} />
-                            </Flex>
-                            <Flex>
-                                <Button leftIcon={<DeleteIcon />} variant='outline' colorScheme='red'>Delete</Button>
-                            </Flex>
+                    <>
+                        {
+                            !event ? (
+                                <Flex alignItems='center' justifyContent='center'>
+                                    <Text color='gray.500' fontSize='2xl'>This event do not exist.</Text>
+                                </Flex>
+                            ) : (
+                                <Flex direction='column' gap={6}>
+                                    <div id='head-component' style={{ display: 'flex', flexDirection: 'column', gap: 12 }} >
+                                        <Head
+                                            eventRef={`EVT${event.num_ref}`}
+                                            currentState={event.approved === true ? 'Approved' : 'Unapproved'}
+                                            currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
+                                            description={event.details.description}
+                                            totalLosses=' '
+                                            externalRef={event.details.externalRef}
+                                        />
+                                        <DetailsForm detailledDescription={event.details.descriptionDetailled} />
+                                        <LossesEntities
+                                            entityofDetection={event.details.entityOfDetection}
+                                            subEntityofDetection={event.details.subentityOfDetection}
+                                            entityofDOrigin={event.details.entityOfOrigin}
+                                            subEntityofOrigin={event.details.subentityOfOrigin}
+                                        />
+                                        <Commentary
+                                            eventDate={event.details.event_date}
+                                            rag={event.details.RAG}
+                                            activeEvent={event.details.activeEvent}
+                                            eventTime={event.details.event_time}
+                                            recordedBy={event.details.recorded_by}
+                                            dateRecording={event.createdAt}
+                                            timeRecording={event.createdAt}
+                                            excludeFundLosse={event.details.excludeFundLosses}
+                                            externalEvent={event.details.externalEvent}
+                                            notify={event.details.notify}
+                                            detectionDate={event.details.detection_date}
+                                        />
+                                        <Finances
+                                            approved={event.details.approved_date}
+                                            closed={event.details.closed_date}
+                                            targetClosure={event.details.targetClosureDate}
+                                            owner={event.details.owner.name}
+                                            nominee={event.details.nominee.name}
+                                            reviewer={event.details.reviewer.name}
+                                            reviewerDate={event.details.reviewer_date}
+                                        />
+                                    </div>
+                                    <Flex justifyContent='flex-end' gap={4}>
+                                        <Flex>
+                                            <Button leftIcon={<FaEnvelope />} variant='outline' colorScheme='red' onClick={handleEmailClick} isLoading={loader}>
+                                                E-mail
+                                            </Button>
+                                        </Flex>
+                                        <Flex>
+                                            <Button leftIcon={<FaPrint />} variant='outline' colorScheme='teal' onClick={handlePrint}>Print</Button>
+                                        </Flex>
+                                        <Flex>
+                                            <Button leftIcon={<MdClose />} variant='outline' colorScheme='green'>Unapproved</Button>
+                                        </Flex>
+                                        <Flex>
+                                            <AddEventForm event={event} />
+                                        </Flex>
+                                        <Flex>
+                                            < DeleteModal event={event} />
+                                        </Flex>
 
-                        </Flex>
-                    </Flex>
+                                    </Flex>
+                                </Flex>
+                            )
+                        }
+                    </>
+
                 )
             }
             <iframe ref={iframeRef} style={{ display: 'none' }} />

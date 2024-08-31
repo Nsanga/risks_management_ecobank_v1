@@ -15,6 +15,7 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
                     leftIcon={<AddIcon />}
                     colorScheme="blue"
                     size="sm"
+                    fontSize={14}
                     aria-label="Select all items"
                     onClick={onSelectAll}
                 >
@@ -24,6 +25,7 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
                     leftIcon={<MinusIcon />}
                     colorScheme="red"
                     size="sm"
+                    fontSize={14}
                     aria-label="Unselect all items"
                     onClick={onUnselectAll}
                 >
@@ -35,6 +37,7 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
                     size="sm"
                     aria-label="Copy user views"
                     onClick={onCopyViews}
+                    fontSize={14}
                 >
                     Copy User Views
                 </Button>
@@ -42,7 +45,7 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
             <Box mt={4}>
                 <Flex direction="column" gap={4}>
                     <FormControl>
-                        <FormLabel>Business Line</FormLabel>
+                        <FormLabel fontSize={14}>Business Line</FormLabel>
                         <Select placeholder="Select business line">
                             {businessLines.map((line) => (
                                 <option key={line.value} value={line.value}>
@@ -52,7 +55,7 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
                         </Select>
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Location</FormLabel>
+                        <FormLabel fontSize={14}>Location</FormLabel>
                         <Select placeholder="Select location">
                             {locations.map((location) => (
                                 <option key={location.value} value={location.value}>

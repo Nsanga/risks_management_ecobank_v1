@@ -17,6 +17,7 @@ import { PhoneIcon, SearchIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listEvents } from "redux/events/action";
+import toast from "react-hot-toast";
 
 export function SearchBar(props) {
   const { variant, background, children, borderRadius, ...rest } = props;
@@ -49,7 +50,7 @@ export function SearchBar(props) {
             state: { event, loading }
           });
         } else {
-          console.error('Aucun événement trouvé avec ce numéro de référence.');
+          toast.error('Aucun événement trouvé avec ce numéro de référence.');
         }
       } catch (error) {
         console.error("Erreur lors de la récupération des événements :", error);

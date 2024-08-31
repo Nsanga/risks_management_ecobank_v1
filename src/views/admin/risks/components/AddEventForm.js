@@ -25,6 +25,8 @@ import GlobalViewEvent from "./globalViewEvent/GlobalViewEvent";
 import { useState } from "react";
 import data from "../Data";
 import { FaFilePen } from "react-icons/fa6";
+import { connect, useDispatch } from "react-redux";
+import { AddEvent } from "redux/events/action";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -33,7 +35,7 @@ const truncateText = (text, maxLength) => {
   return text.substring(0, maxLength) + '...';
 };
 
-function AddEventForm({ event }) {
+function AddEventForm({ event, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [detailsData, setDetailsData] = useState({});
   const [commentaryData, setCommentaryData] = useState({});
@@ -57,6 +59,45 @@ function AddEventForm({ event }) {
   const handleAdditionalChange = (data) => {
     setAdditionalData(data);
   };
+
+  const dispatch = useDispatch();
+
+    const additionalInfoData = Object.keys(additionalData).map((key, index) => ({
+        category: categories[index],
+        description: additionalData[key]
+    }));
+
+    const approved = true
+
+    const handleSubmit = async () => {
+        const payload = {
+            details: {
+                ...detailsData,
+            },
+            commentary: {
+                ...commentaryData
+            },
+            financials: [
+                ...financesData
+            ],
+            additionnalInfo: [
+                ...additionalInfoData
+            ],
+            approved: approved
+        };
+
+        console.log(payload);
+
+        try {
+            // Affichage du payload dans la console
+            // console.log('Payload:', payload);
+            await dispatch(AddEvent(payload));
+            // onClose(); // Ferme la modal après la soumission réussie
+        } catch (error) {
+            console.error('Erreur lors de la soumission:', error);
+            // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+        }
+    };
 
   return (
     <>
@@ -87,7 +128,7 @@ function AddEventForm({ event }) {
 
               <TabPanels>
                 <TabPanel>
-                  <Details onDetailsChange={handleDetailsChange} event={event}/>
+                  <Details onDetailsChange={handleDetailsChange} event={event} entities={entities} profiles={profiles}/>
                 </TabPanel>
                 <TabPanel>
                   <Commentary onCommentaryChange={handleCommentaryChange} event={event}/>
@@ -103,7 +144,10 @@ function AddEventForm({ event }) {
           </ModalBody>
 
           <ModalFooter>
-            <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} />
+          <Button onClick={handleSubmit} colorScheme="blue" mr={2}>
+                Save and Approuve
+            </Button>
+            {/* <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} /> */}
             <Button colorScheme="red" mr={2} onClick={onClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
@@ -112,4 +156,9 @@ function AddEventForm({ event }) {
   );
 }
 
-export default AddEventForm;
+const mapStateToProps = ({ EventReducer }) => ({
+  events: EventReducer.events,
+  loading: EventReducer.loading,
+});
+
+export default connect(mapStateToProps)(AddEventForm);

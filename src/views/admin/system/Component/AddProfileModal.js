@@ -11,10 +11,59 @@ import { AddProfile } from 'redux/profile/action';
 import { connect, useDispatch } from 'react-redux';
 import { updateProfile } from 'redux/profile/action';
 
-const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups }) => {
+const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    userId: '',
+    name: '',
+    surname: '',
+    jobTitle: '',
+    location: '',
+    telephone: '',
+    email: '',
+    userGroup: '',
+    language: '',
+    ccEmailTo: '',
+    nominee: '',
+    passwordExpiryDate: '2030-12-31',
+    lockedOutReason: '',
+    administrator: false,
+    canAuthorize: false,
+    activeUser: false
+  });
+
+  useEffect(() => {
+    console.log("selectedUser:", selectedUser);
+    console.log("userGroups:", userGroups);
+    if (selectedUser && selectedUser.userId) {
+      setIsEditMode(true);
+      // setFormData({
+      //   ...formData,
+      //   ...selectedUser,
+      // });
+    } else {
+      setIsEditMode(false);
+      setFormData({
+        userId: '',
+        name: '',
+        surname: '',
+        jobTitle: '',
+        location: '',
+        telephone: '',
+        email: '',
+        userGroup: '',
+        language: '',
+        ccEmailTo: '',
+        nominee: '',
+        passwordExpiryDate: '2030-12-31',
+        lockedOutReason: '',
+        administrator: false,
+        canAuthorize: false,
+        activeUser: false
+      });
+    }
+  }, [selectedUser]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,30 +75,72 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
   const handleSave = () => {
     console.log(formData);
     dispatch(AddProfile(formData));
-    setFormData({});
+    setFormData({
+      userId: '',
+      name: '',
+      surname: '',
+      jobTitle: '',
+      location: '',
+      telephone: '',
+      email: '',
+      userGroup: '',
+      language: '',
+      ccEmailTo: '',
+      nominee: '',
+      passwordExpiryDate: '2030-12-31',
+      lockedOutReason: '',
+      administrator: false,
+      canAuthorize: false,
+      activeUser: false
+    });
     onClose();
   };
 
   useEffect(() => {
+
     if (selectedUser) {
-      setFormData(selectedUser); // Pre-fill the form with selected user data
+      setFormData({
+        ...selectedUser,
+        passwordExpiryDate: selectedUser.passwordExpiryDate
+          ? new Date(selectedUser.passwordExpiryDate).toISOString().split('T')[0]
+          : '2030-12-31',
+        userGroup: selectedUser.userGroup || '',
+      });
     }
-  }, [selectedUser]);
+  }, [selectedUser, userGroups]);
 
   const handleEdit = () => {
     console.log(formData);
     dispatch(updateProfile(selectedUser._id, formData));
-    setFormData({});
+    setFormData({
+      userId: '',
+      name: '',
+      surname: '',
+      jobTitle: '',
+      location: '',
+      telephone: '',
+      email: '',
+      userGroup: '',
+      language: '',
+      ccEmailTo: '',
+      nominee: '',
+      passwordExpiryDate: '2030-12-31',
+      lockedOutReason: '',
+      administrator: false,
+      canAuthorize: false,
+      activeUser: false,
+      lockedUser: false
+    });
     onClose();
   };
 
-  useEffect(() => {
-    if (selectedUser && selectedUser.userId) {
-      setIsEditMode(true); // Mode édition
-    } else {
-      setIsEditMode(false); // Mode ajout
-    }
-  }, [selectedUser]);
+  // useEffect(() => {
+  //   if (selectedUser && selectedUser.userId) {
+  //     setIsEditMode(true); // Mode édition
+  //   } else {
+  //     setIsEditMode(false); // Mode ajout
+  //   }
+  // }, [selectedUser]);
 
   const handleAmendClick = () => {
     setIsEditMode(false); // Désactiver le mode lecture seule après avoir cliqué sur "Amend"
@@ -68,6 +159,24 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
     }
   }, [isOpen, selectedUser]);
 
+  const handleLockedUser = async () => {
+    const updatedLockedUser = !formData.lockedUser;
+    const updatedActiveUser = !formData.activeUser;
+
+    // Met à jour l'état local du formulaire
+    setFormData({ ...formData, lockedUser: updatedLockedUser });
+
+    try {
+      // Met à jour le profil dans le store
+      await dispatch(updateProfile(selectedUser._id, { ...formData, lockedUser: updatedLockedUser, activeUser: updatedActiveUser }));
+      onClose();
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil :", error);
+    }
+  };
+
+  const isSaveDisabled = !formData.userId || !formData.name || !formData.surname || !formData.telephone || !formData.email;
+  
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered scrollBehavior='inside'>
       <ModalOverlay />
@@ -82,7 +191,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
                 colorScheme={isDetailsVisible ? 'blue' : 'gray'}
                 variant={isDetailsVisible ? 'solid' : 'outline'}
                 leftIcon={<AddIcon />}
-                fontSize="sm"
+                fontSize={14}
                 size="sm"
               >
                 User Details
@@ -92,7 +201,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
                 colorScheme={!isDetailsVisible ? 'blue' : 'gray'}
                 variant={!isDetailsVisible ? 'solid' : 'outline'}
                 leftIcon={<AddIcon />}
-                fontSize="sm"
+                fontSize={14}
                 size="sm"
               >
                 User Entity Views
@@ -101,7 +210,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
                 colorScheme="blue"
                 variant="outline"
                 leftIcon={<AddIcon />}
-                fontSize="sm"
+                fontSize={14}
                 size="sm"
               >
                 User Entities
@@ -109,7 +218,15 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
             </Flex>
             <Box mt={4}>
               <Collapse in={isDetailsVisible}>
-                <ProfileDetails formData={formData} handleInputChange={handleInputChange} isReadOnly={isEditMode} handleAmendClick={handleAmendClick} userGroups={userGroups} />
+                <ProfileDetails
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                  isReadOnly={isEditMode}
+                  handleAmendClick={handleAmendClick}
+                  handleLockedUser={handleLockedUser}
+                  profiles={profiles}
+                  userGroups={userGroups}
+                  onClose={onClose} />
               </Collapse>
               <Collapse in={!isDetailsVisible}>
                 <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />
@@ -121,14 +238,14 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups })
           {
             !selectedUser?.userId ?
               (
-                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
+                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave} fontSize={14} disabled={isSaveDisabled}>
                   Save
                 </Button>
               ) : null
           }
           {
             selectedUser?.userId && !isEditMode ? (
-              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
+              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit} fontSize={14}>
                 Save
               </Button>
             ) : null
