@@ -6,6 +6,7 @@ import CreateProfile from './Component/Createprofile'
 import UserGroup from './Component/UserGroup'
 import { connect, useDispatch } from 'react-redux'
 import { listUserGroups } from 'redux/userGroup/action'
+import { listProfiles } from 'redux/profile/action'
 
 const System = ({ userGroups, loading, profiles }) => {
 
@@ -13,6 +14,7 @@ const System = ({ userGroups, loading, profiles }) => {
 
     useEffect(() => {
         dispatch(listUserGroups());
+        dispatch(listProfiles());
     }, [dispatch]);
 
   return (
