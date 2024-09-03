@@ -8,7 +8,7 @@ import AddEntityModal from './AddEntityModal';
 import { listEntities } from 'redux/entitiy/action';
 import Loader from '../../../../assets/img/loader.gif';
 
-const Entitynew = ({ entities, loading }) => {
+const Entitynew = ({ entities, loading, profiles }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
 
@@ -16,7 +16,7 @@ const Entitynew = ({ entities, loading }) => {
     setSelectedEntity(null); // Clear selected entity for adding a new one
     setIsModalOpen(true);
   };
-  
+
   const closeModal = () => setIsModalOpen(false);
   const dispatch = useDispatch();
 
@@ -26,6 +26,16 @@ const Entitynew = ({ entities, loading }) => {
 
   return (
     <>
+      {/* Button aligned to the right with AddIcon and "Add Entity" text */}
+      <Flex direction="row" justifyContent="flex-end" align="center" mb={4}>
+        <Button
+          variant="outline" color='blue'
+          leftIcon={<AddIcon />}
+          onClick={openModal}
+        >
+          Add Entity
+        </Button>
+      </Flex>
       {loading ? (
         <Flex alignItems='center' justifyContent='center'>
           <Image src={Loader} alt="Loading..." height={50} width={50} />
@@ -37,16 +47,6 @@ const Entitynew = ({ entities, loading }) => {
           </Flex>
         ) : (
           <Box p={4}>
-            {/* Button aligned to the right with AddIcon and "Add Entity" text */}
-            <Flex direction="row" justifyContent="flex-end" align="center" mb={4}>
-              <Button
-                variant="outline" color='blue' 
-                leftIcon={<AddIcon />}
-                onClick={openModal}
-              >
-                Add Entity
-              </Button>
-            </Flex>
 
             {/* Entity Table */}
             <Table>
@@ -58,11 +58,11 @@ const Entitynew = ({ entities, loading }) => {
                   <Th>Nominee</Th>
                   <Th>Reviewer</Th>
                 </Tr>
-              </Thead> 
-              <Tbody> 
+              </Thead>
+              <Tbody>
                 {entities.map(entity => (
                   <Tr
-                    key={entity?.id}
+                    key={entity?._id}
                     onClick={() => {
                       setSelectedEntity(entity); // Set the selected entity when a row is clicked
                       setIsModalOpen(true);
@@ -70,26 +70,26 @@ const Entitynew = ({ entities, loading }) => {
                     _hover={{ backgroundColor: "gray.100" }}
                     cursor="pointer"
                   >
-                    <Td>{entity.referenceId}</Td>
-                    <Td>{entity.description}</Td>
-                    <Td>{entity.owner}</Td>
-                    <Td>{entity.nominee}</Td>
-                    <Td>{entity.reviewer}</Td>
+                    <Td>ENT{entity?.referenceId}</Td>
+                    <Td>CAM - {entity?.description}</Td>
+                    <Td>{entity?.owner.surname} {entity?.owner.name}</Td>
+                    <Td>{entity?.nominee ? `${entity?.nominee?.surname + " " + entity?.nominee?.name}` : null}</Td>
+                    <Td>{entity?.reviewer ? `${entity?.reviewer?.surname + " " + entity?.reviewer?.name}` : null}</Td>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
-
-            {/* Modal always rendered, only the selectedEntity is conditionally passed */}
-            <AddEntityModal 
-              isOpen={isModalOpen} 
-              onClose={closeModal} 
-              loading={loading} 
-              selectedEntity={selectedEntity} 
-            />
           </Box>
         )
       )}
+      {/* Modal always rendered, only the selectedEntity is conditionally passed */}
+      <AddEntityModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        loading={loading}
+        selectedEntity={selectedEntity}
+        profiles={profiles}
+      />
     </>
   );
 }

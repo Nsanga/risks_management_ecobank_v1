@@ -73,23 +73,24 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
     };
 
     useEffect(() => {
-        if (selectedUserGroup) {
-            setGroupName(selectedUserGroup?.groupName || '');
+        if (isOpen) {  // Ajout de la vérification pour réinitialiser l'état lors de l'ouverture de la modal
+            if (selectedUserGroup) {
+                setGroupName(selectedUserGroup.groupName || '');
 
-            // Transformer les rôles en format compatible avec Select
-            const formattedRoles = selectedUserGroup?.roles.map(role => ({
-                label: role,
-                value: role
-            })) || [];
+                const formattedRoles = selectedUserGroup.roles.map(role => ({
+                    label: role,
+                    value: role
+                })) || [];
 
-            setRoles(formattedRoles);
-            setIsEditMode(false);
-        } else {
-            setGroupName('');
-            setRoles([]);
-            setIsEditMode(true);
+                setRoles(formattedRoles);
+                setIsEditMode(false);
+            } else {
+                setGroupName('');
+                setRoles([]);
+                setIsEditMode(true);
+            }
         }
-    }, [selectedUserGroup]);
+    }, [selectedUserGroup, isOpen]);
 
     const handleOpenDeleteModal = () => {
         handleClose(); // Fermer la modal principale
@@ -109,6 +110,7 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                                 selectedUserGroup={selectedUserGroup}
                                 disabled={!selectedUserGroup || isEditMode}
                                 onClick={handleOpenDeleteModal}
+                                onCloseAddUserGroupModal={onClose}
                             />
                             <Button
                                 leftIcon={<EditIcon color="white" />}
@@ -122,8 +124,9 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                         </Flex>
                         <VStack spacing={4} align="stretch">
                             <FormControl id="group-name" isRequired>
-                                <FormLabel>Group Name</FormLabel>
+                                <FormLabel fontSize={14}>Group Name</FormLabel>
                                 <Input
+                                    fontSize={14}
                                     name="group_name"
                                     type="text"
                                     value={groupName}
@@ -133,8 +136,9 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                             </FormControl>
 
                             <FormControl id="role">
-                                <FormLabel>Role</FormLabel>
+                                <FormLabel fontSize={14}>Role</FormLabel>
                                 <Select
+                                    fontSize={14}
                                     isMulti
                                     options={roleOptions}
                                     value={roles}
@@ -142,7 +146,6 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                                     placeholder="Select roles for user group"
                                     closeMenuOnSelect={false}
                                     isDisabled={!isEditMode}
-
                                 />
                             </FormControl>
                         </VStack>

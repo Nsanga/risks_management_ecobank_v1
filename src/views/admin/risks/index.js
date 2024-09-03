@@ -6,7 +6,7 @@ import { connect, useDispatch } from 'react-redux';
 import { listEvents } from 'redux/events/action';
 import AddEventForm from './components/AddEventForm';
 
-const Risks = ({ events, loading }) => {
+const Risks = ({ events, loading, entities, profiles }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -20,14 +20,16 @@ const Risks = ({ events, loading }) => {
 
   return (
     <Card mt="100px">
-      <AddEventForm />
+      <AddEventForm entities={entities} profiles={profiles} />
       <CardDetails events={recentEvents} loading={loading} />
     </Card>
   );
 };
 
-const mapStateToProps = ({ EventReducer }) => ({
+const mapStateToProps = ({ EventReducer, EntityReducer, ProfileReducer }) => ({
+  profiles: ProfileReducer.profiles,
   events: EventReducer.events,
+  entities: EntityReducer.entities,
   loading: EventReducer.loading,
 });
 

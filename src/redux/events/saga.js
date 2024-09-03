@@ -69,7 +69,7 @@ function* add(action) {
 function* deleteEvent(action) {
     const { id, type } = action.payload;
     try {
-        const link = `${url}/api/v1/events/delete?id=${id}`;
+        const link = `${url}/api/v1/events/delete/${id}`;
 
         const data = yield deleteRequest(link);
         if (data) {
