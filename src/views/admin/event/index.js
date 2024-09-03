@@ -165,9 +165,9 @@ const Event = () => {
                                         />
                                         <DetailsForm detailledDescription={event.details.descriptionDetailled} />
                                         <LossesEntities
-                                            entityofDetection={event.details.entityOfDetection}
+                                            entityofDetection={'ENT' + event.details.entityOfDetection.referenceId + ' ' + event.details.entityOfDetection.description}
                                             subEntityofDetection={event.details.subentityOfDetection}
-                                            entityofDOrigin={event.details.entityOfOrigin}
+                                            entityofDOrigin={'ENT' + event.details.entityOfOrigin.referenceId + ' ' + event.details.entityOfOrigin.description}
                                             subEntityofOrigin={event.details.subentityOfOrigin}
                                         />
                                         <Commentary
@@ -187,9 +187,9 @@ const Event = () => {
                                             approved={event.details.approved_date}
                                             closed={event.details.closed_date}
                                             targetClosure={event.details.targetClosureDate}
-                                            owner={event.details.owner.name}
-                                            nominee={event.details.nominee.name}
-                                            reviewer={event.details.reviewer.name}
+                                            owner={event.details.owner.name + ' ' + event.details.owner.surname}
+                                            nominee={event.details.nominee.name + ' ' + event.details.nominee.surname}
+                                            reviewer={event.details.reviewer.name + ' ' + event.details.reviewer.surname}
                                             reviewerDate={event.details.reviewer_date}
                                         />
                                     </div>

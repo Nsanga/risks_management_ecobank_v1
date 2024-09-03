@@ -10,7 +10,6 @@ import entityAreaOfOrigin from '../entityOfOrigin';
 import moment from 'moment';
 
 const Details = ({ event, onDetailsChange, entities, profiles }) => {
-    const [options, setOptions] = useState([]);
     const [rag, setRag] = useState([]);
 
     function getCurrentTime() {
@@ -54,23 +53,28 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     });
 
     const profilesOptions = profiles
-        .filter(profile => profile.activeUser)  // Filtrer les profils actifs
-        .map(profile => ({
-            value: profile._id,  // Utiliser _id au lieu de l'email
-            label: `${profile.name} ${profile.surname}`
+        .filter(profile => profile.activeUser)
+        .map((profile, index) => ({
+            key: `${profile._id}-${index}`, // Ajoutez un index pour garantir l'unicité
+            value: profile._id,
+            label: `${profile.name} ${profile.surname}`,
         }));
 
-    const entitiesOptions = entities.map(entity => ({
-        value: entity._id,  // Utiliser _id au lieu de l'email
-        label: `ENT${entity.referenceId} CAM - ${entity.description}`
+    const entitiesOptions = entities.map((entity, index) => ({
+        key: `${entity._id}-${index}`, // Ajoutez un index pour garantir l'unicité
+        value: entity._id,
+        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
     }));
 
     const handleSelectChange = (name, selectedOption) => {
-        console.log(selectedOption.value)
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: selectedOption ? selectedOption.value : null
-        }));
+        setFormData(prevState => {
+            const updatedFormData = {
+                ...prevState,
+                [name]: selectedOption ? selectedOption.value : null,
+            };
+            onDetailsChange(updatedFormData); // Notify parent about changes
+            return updatedFormData;
+        });
     };
 
     useEffect(() => {

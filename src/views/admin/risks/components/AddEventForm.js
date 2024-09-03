@@ -89,10 +89,8 @@ function AddEventForm({ event, entities, profiles }) {
         console.log(payload);
 
         try {
-            // Affichage du payload dans la console
-            // console.log('Payload:', payload);
             await dispatch(AddEvent(payload));
-            // onClose(); // Ferme la modal après la soumission réussie
+            onClose(); // Ferme la modal après la soumission réussie
         } catch (error) {
             console.error('Erreur lors de la soumission:', error);
             // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
