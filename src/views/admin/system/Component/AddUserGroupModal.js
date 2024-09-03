@@ -98,72 +98,73 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
 
     return (
         <>
-        <Modal isOpen={isOpen} onClose={handleClose}>
-            <ModalOverlay />
-            <ModalContent>
-                <ModalHeader>{selectedUserGroup?._id ? "Amend User Group" : "Add User Group"}</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                    <Flex mb={4} align="center" gap={4}>
-                        <DeleteModal
-                            selectedUserGroup={selectedUserGroup}
-                            disabled={!selectedUserGroup || isEditMode}
-                            onClick={handleOpenDeleteModal}
-                        />
-                        <Button
-                            leftIcon={<EditIcon color="white" />}
-                            colorScheme='blue'
-                            style={{ fontSize: 14 }}
-                            onClick={handleAmendClick}
-                            disabled={!selectedUserGroup || isEditMode}
-                        >
-                            Amend
-                        </Button>
-                    </Flex>
-                    <VStack spacing={4} align="stretch">
-                        <FormControl id="group-name" isRequired>
-                            <FormLabel>Group Name</FormLabel>
-                            <Input
-                                name="group_name"
-                                type="text"
-                                value={groupName}
-                                onChange={(e) => setGroupName(e.target.value)}
-                                isReadOnly={!isEditMode}
+            <Modal isOpen={isOpen} onClose={handleClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>{selectedUserGroup?._id ? "Amend User Group" : "Add User Group"}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Flex mb={4} align="center" gap={4}>
+                            <DeleteModal
+                                selectedUserGroup={selectedUserGroup}
+                                disabled={!selectedUserGroup || isEditMode}
+                                onClick={handleOpenDeleteModal}
                             />
-                        </FormControl>
+                            <Button
+                                leftIcon={<EditIcon color="white" />}
+                                colorScheme='blue'
+                                style={{ fontSize: 14 }}
+                                onClick={handleAmendClick}
+                                disabled={!selectedUserGroup || isEditMode}
+                            >
+                                Amend
+                            </Button>
+                        </Flex>
+                        <VStack spacing={4} align="stretch">
+                            <FormControl id="group-name" isRequired>
+                                <FormLabel>Group Name</FormLabel>
+                                <Input
+                                    name="group_name"
+                                    type="text"
+                                    value={groupName}
+                                    onChange={(e) => setGroupName(e.target.value)}
+                                    isReadOnly={!isEditMode}
+                                />
+                            </FormControl>
 
-                        <FormControl id="role" isRequired>
-                            <FormLabel>Role</FormLabel>
-                            <Select
-                                isMulti
-                                options={roleOptions}
-                                value={roles}
-                                onChange={(selectedOptions) => setRoles(selectedOptions)}
-                                placeholder="Select roles for user group"
-                                closeMenuOnSelect={false}
-                                isReadOnly={!isEditMode}
-                            />
-                        </FormControl>
-                    </VStack>
-                </ModalBody>
-                <ModalFooter>
-                    {!selectedUserGroup?._id && (
-                        <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
-                            Save
+                            <FormControl id="role">
+                                <FormLabel>Role</FormLabel>
+                                <Select
+                                    isMulti
+                                    options={roleOptions}
+                                    value={roles}
+                                    onChange={(selectedOptions) => setRoles(selectedOptions)}
+                                    placeholder="Select roles for user group"
+                                    closeMenuOnSelect={false}
+                                    isDisabled={!isEditMode}
+
+                                />
+                            </FormControl>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        {!selectedUserGroup?._id && (
+                            <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
+                                Save
+                            </Button>
+                        )}
+                        {selectedUserGroup?._id && isEditMode && (
+                            <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
+                                Save
+                            </Button>
+                        )}
+                        <Button colorScheme="red" mr={3} onClick={handleClose}>
+                            Cancel
                         </Button>
-                    )}
-                    {selectedUserGroup?._id && isEditMode && (
-                        <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
-                            Save
-                        </Button>
-                    )}
-                    <Button colorScheme="red" mr={3} onClick={handleClose}>
-                        Cancel
-                    </Button>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
-    </>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     );
 };
 
