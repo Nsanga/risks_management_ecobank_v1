@@ -3,10 +3,7 @@ import Select from 'react-select';
 import { FaFilePdf, FaFileWord, FaFileAlt, FaFileImage } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import DocumentUploader from './DocumentUploader';
-import Profiles from '../profiles';
-import Entity from '../entity';
 import RAG from '../RAG';
-import entityAreaOfOrigin from '../entityOfOrigin';
 import moment from 'moment';
 
 const Details = ({ event, onDetailsChange, entities, profiles }) => {
@@ -22,7 +19,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
         return formattedTime;
     }
-    console.log('>>>>>>>>>>>>>>', entities)
+    console.log('>>>>>>>>>>>>>>', event)
 
     const [formData, setFormData] = useState({
         event_date: '',
@@ -53,18 +50,18 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     });
 
     const profilesOptions = profiles
-        .filter(profile => profile.activeUser)
-        .map((profile, index) => ({
-            key: `${profile._id}-${index}`, // Ajoutez un index pour garantir l'unicité
+        ?.filter(profile => profile.activeUser)
+        ?.map((profile, index) => ({
+            key: `${profile._id}-${index}`, // Unicité assurée
             value: profile._id,
             label: `${profile.name} ${profile.surname}`,
         }));
 
-    const entitiesOptions = entities.map((entity, index) => ({
-        key: `${entity._id}-${index}`, // Ajoutez un index pour garantir l'unicité
-        value: entity._id,
-        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
-    }));
+        const entitiesOptions = entities?.map((entity, index) => ({
+            key: `${entity._id}-${index}`, // Unicité assurée
+            value: entity._id,
+            label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+        }));
 
     const handleSelectChange = (name, selectedOption) => {
         setFormData(prevState => {
@@ -89,36 +86,38 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     }, []);
 
     useEffect(() => {
-        if (event) {
-            setFormData({
+        if (event && event.details) {
+            setFormData(prevState => ({
+                ...prevState,
                 event_date: event.details.event_date || '',
-                RAG: event.details.RAG || '',
-                activeEvent: event.details.activeEvent || false,
-                event_time: event.details.event_time || '',
-                excludeFundLosses: event.details.excludeFundLosses || false,
-                externalEvent: event.details.externalEvent || false,
+                event_time: event.details.event_time || getCurrentTime(),
+                detection_date: event.details.detection_date ? new Date(event.details.detection_date).toISOString().split('T')[0] : '',
+                approved_date: event.details.approved_date ? new Date(event.details.approved_date).toISOString().split('T')[0] : '',
+                closed_date: event.details.closed_date ? new Date(event.details.closed_date).toISOString().split('T')[0] : '',
                 recorded_by: event.details.recorded_by || '',
                 recorded_date: event.details.recorded_date || '',
-                externalRef: event.details.externalRef || '',
-                notify: event.details.notify || false,
-                entityOfDetection: event.details.entityOfDetection || '',
-                subentityOfDetection: event.details.subentityOfDetection || '',
-                detection_date: event.details.detection_date || '',
-                entityOfOrigin: event.details.entityOfOrigin || '',
-                subentityOfOrigin: event.details.subentityOfOrigin || '',
                 description: event.details.description || '',
                 descriptionDetailled: event.details.descriptionDetailled || '',
-                approved_date: event.details.approved_date || '',
-                closed_date: event.details.closed_date || '',
+                owner: event.details.owner ? event.details.owner._id : '',
+                nominee: event.details.nominee ? event.details.nominee._id : '',
+                reviewer: event.details.reviewer ? event.details.reviewer._id : '',
+                reviewer_date: event.details.reviewer_date ? new Date(event.details.reviewer_date).toISOString().split('T')[0] : '',
+                activeEvent: event.details.activeEvent || false,
+                excludeFundLosses: event.details.excludeFundLosses || false,
+                notify: event.details.notify || false,
+                externalEvent: event.details.externalEvent || false,
+                externalRef: event.details.externalRef || '',
+                entityOfDetection: event.details.entityOfDetection ? event.details.entityOfDetection._id : '', // Stocker l'ID
+                subentityOfDetection: event.details.subentityOfDetection || '',
+                entityOfOrigin: event.details.entityOfOrigin ? event.details.entityOfOrigin._id : '', // Stocker l'ID
+                subentityOfOrigin: event.details.subentityOfOrigin || '',
+                RAG: event.details.RAG || '',
                 targetClosureDate: event.details.targetClosureDate || '',
-                owner: event.details.owner || '',
-                nominee: event.details.nominee || '',
-                reviewer: event.details.reviewer || '',
-                reviewer_date: event.details.reviewer_date || '',
-                documents: [],
-            });
+                documents: event.details.documents || [],
+            }));
         }
     }, [event]);
+    
 
     useEffect(() => {
         // Initialiser la date du jour dans createdOn lors du montage du composant ou lorsque selectedEntity change
@@ -256,7 +255,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                         options={entitiesOptions}
                                         styles={customStyles}
                                         placeholder='Select Entity'
-                                        value={entitiesOptions.find(ent => ent.value === formData.entityOfDetection)}
+                                        value={entitiesOptions?.find(ent => ent.value === formData.entityOfDetection)}
                                         onChange={(selectedOption) => handleSelectChange('entityOfDetection', selectedOption)}
                                     />
                                 </Box>
@@ -291,7 +290,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                         options={entitiesOptions}
                                         styles={customStyles}
                                         placeholder='Select Entity'
-                                        value={entitiesOptions.find(ent => ent.value === formData.entityOfOrigin)}
+                                        value={entitiesOptions?.find(ent => ent.value === formData.entityOfOrigin)}
                                         onChange={(selectedOption) => handleSelectChange('entityOfOrigin', selectedOption)}
                                     />
                                 </Box>
@@ -346,7 +345,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="owner"
                                     placeholder='Select owner'
                                     options={profilesOptions}
-                                    value={profilesOptions.find(option => option.value === formData.owner) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.owner) || null}
                                     onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                                 />
                             </Box>
@@ -358,7 +357,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="nominee"
                                     placeholder='Select nominee'
                                     options={profilesOptions}
-                                    value={profilesOptions.find(option => option.value === formData.nominee) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.nominee) || null}
                                     onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                                 />
                             </Box>
@@ -370,7 +369,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="reviewer"
                                     placeholder='Select reviewer'
                                     options={profilesOptions}
-                                    value={profilesOptions.find(option => option.value === formData.reviewer) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.reviewer) || null}
                                     onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                                 />
                             </Box>

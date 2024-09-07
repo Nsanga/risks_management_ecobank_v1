@@ -1,5 +1,5 @@
 import Card from 'components/card/Card'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     Modal,
     ModalOverlay,
@@ -33,6 +33,9 @@ import DeleteModal from './components/DeleteModal'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { Link as ChakraLink, LinkProps } from '@chakra-ui/react'
+import { connect, useDispatch } from 'react-redux'
+import { listEntities } from 'redux/entitiy/action'
+import { listProfiles } from 'redux/profile/action'
 
 const generatePDF = async () => {
     const headElement = document.getElementById('head-component'); // Assume the Head component has an ID
@@ -46,7 +49,7 @@ const generatePDF = async () => {
     return pdfBlob;
 };
 
-const Event = () => {
+const Event = ({ profiles, entities }) => {
     const [loader, setLoader] = useState(false);
     const location = useLocation();
     const event = location.state?.event;
@@ -55,6 +58,13 @@ const Event = () => {
     const history = useHistory();
 
     console.log('evttttt:::', event.details)
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(listEntities());
+        dispatch(listProfiles());
+    }, [dispatch]);
 
     if (!event) {
         return <Text>Cet évènement n'existe pas.</Text>;
@@ -206,7 +216,7 @@ const Event = () => {
                                             <Button leftIcon={<MdClose />} variant='outline' colorScheme='green'>Unapproved</Button>
                                         </Flex>
                                         <Flex>
-                                            <AddEventForm event={event} />
+                                            <AddEventForm event={event} entities={entities} profiles={profiles}/>
                                         </Flex>
                                         <Flex>
                                             < DeleteModal event={event} />
@@ -225,4 +235,10 @@ const Event = () => {
     )
 }
 
-export default Event
+const mapStateToProps = ({ EntityReducer, ProfileReducer }) => ({
+    profiles: ProfileReducer.profiles,
+    entities: EntityReducer.entities,
+    loading: EntityReducer.loading,
+});
+
+export default connect(mapStateToProps)(Event);
