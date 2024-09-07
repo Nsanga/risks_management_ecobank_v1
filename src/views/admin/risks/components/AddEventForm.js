@@ -154,9 +154,9 @@ function AddEventForm({ event, entities, profiles }) {
   );
 }
 
-const mapStateToProps = ({ EventReducer }) => ({
-  events: EventReducer.events,
-  loading: EventReducer.loading,
-});
+// const mapStateToProps = ({ EventReducer }) => ({
+//   events: EventReducer.events,
+//   loading: EventReducer.loading,
+// });
 
-export default connect(mapStateToProps)(AddEventForm);
+export default AddEventForm;
