@@ -1,16 +1,13 @@
-import React from 'react'; 
-import { createRoot } from 'react-dom/client'; // For React 18
-import { Card } from '@chakra-ui/react'; // Import Card component
-import Addcontrol from './Addcontrol';
+import React from 'react'
+import Addcontrol from './Addcontrol'
+import Card from 'components/card/Card'
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-
-root.render(
-  <React.StrictMode>
+const Control = () => {
+  return (
     <Card p={4} boxShadow="lg">
       <Addcontrol />
     </Card>
-  </React.StrictMode>
-);
+  )
+}
 
+export default Control
