@@ -144,10 +144,10 @@ const Event = ({ profiles, entities }) => {
 
     return (
         <Card mt="100px">
-            <ChakraLink as={ReactRouterLink} to='/admin/risks' color='blue'>
+            <ChakraLink as={ReactRouterLink} to='/admin/events' color='blue'>
                 <Flex alignItems='center' mb={4}>
                     <ChevronLeftIcon />
-                    Back to Risks Page
+                    Back to Events Page
                 </Flex>
             </ChakraLink>
             {
@@ -181,17 +181,17 @@ const Event = ({ profiles, entities }) => {
                                             subEntityofOrigin={event.details.subentityOfOrigin}
                                         />
                                         <Commentary
-                                            eventDate={event.details.event_date}
-                                            rag={event.details.RAG}
-                                            activeEvent={event.details.activeEvent}
-                                            eventTime={event.details.event_time}
-                                            recordedBy={event.details.recorded_by}
-                                            dateRecording={event.createdAt}
-                                            timeRecording={event.createdAt}
+                                            eventDate={event.details?.event_date ? event.details?.event_date : ""}
+                                            rag={event.details?.RAG}
+                                            activeEvent={event.details?.activeEvent ? event.details?.activeEvent : ""}
+                                            eventTime={event.details?.event_time ? event.details?.event_time : ""}
+                                            recordedBy={event.details?.recorded_by ? event.details?.recorded_by : ""}
+                                            dateRecording={event?.createdAt ? event?.createdAt : ""}
+                                            timeRecording={event?.createdAt ? event?.createdAt : ""}
                                             excludeFundLosse={event.details.excludeFundLosses}
                                             externalEvent={event.details.externalEvent}
                                             notify={event.details.notify}
-                                            detectionDate={event.details.detection_date}
+                                            detectionDate={event.details?.detection_date ? event.details?.detection_date : ""}
                                         />
                                         <Finances
                                             approved={event.details.approved_date}
@@ -200,7 +200,7 @@ const Event = ({ profiles, entities }) => {
                                             owner={event.details.owner?.name ? event.details.owner?.name + ' ' + event.details.owner?.surname : ""}
                                             nominee= {event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
                                             reviewer={event.details.reviewer?.name ? event.details.reviewer?.name + ' ' + event.details.reviewer?.surname : ""}
-                                            reviewerDate={event.details.reviewer_date}
+                                            reviewerDate={event.details.reviewer_date ? event.details.reviewer_date : ""}
                                         />
                                     </div>
                                     <Flex justifyContent='flex-end' gap={4}>

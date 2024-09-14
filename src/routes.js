@@ -43,7 +43,7 @@ const routes = [
     component: Risks,
   },
   {
-    name: "Control",
+    name: "RCSA",
     layout: "/admin",
     path: "/control",
     icon: <Icon as={RiSkull2Fill} width='20px' height='20px' color='inherit' />,

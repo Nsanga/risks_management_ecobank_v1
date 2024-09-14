@@ -53,7 +53,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
         ?.filter(profile => profile.activeUser)
         ?.map((profile, index) => ({
             key: `${profile._id}-${index}`, // Unicité assurée
-            value: profile._id,
+            value: profile.email,
             label: `${profile.name} ${profile.surname}`,
         }));
 
