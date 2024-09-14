@@ -46,7 +46,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
         nominee: null,
         reviewer: null,
         reviewer_date: '',
-        documents: [],
+        document: [],
     });
 
     const profilesOptions = profiles
@@ -57,11 +57,11 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
             label: `${profile.name} ${profile.surname}`,
         }));
 
-        const entitiesOptions = entities?.map((entity, index) => ({
-            key: `${entity._id}-${index}`, // Unicité assurée
-            value: entity._id,
-            label: `ENT${entity.referenceId} CAM - ${entity.description}`,
-        }));
+    const entitiesOptions = entities?.map((entity, index) => ({
+        key: `${entity._id}-${index}`, // Unicité assurée
+        value: entity._id,
+        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    }));
 
     const handleSelectChange = (name, selectedOption) => {
         setFormData(prevState => {
@@ -113,11 +113,11 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 subentityOfOrigin: event.details.subentityOfOrigin || '',
                 RAG: event.details.RAG || '',
                 targetClosureDate: event.details.targetClosureDate || '',
-                documents: event.details.documents || [],
+                document: event.details.document || [],
             }));
         }
     }, [event]);
-    
+
 
     useEffect(() => {
         // Initialiser la date du jour dans createdOn lors du montage du composant ou lorsque selectedEntity change
@@ -158,8 +158,8 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
     const handleUploadLinks = (newLinks) => {
         setFormData(prevData => {
-            const updatedDocuments = [...prevData.documents, ...newLinks];
-            const newData = { ...prevData, documents: updatedDocuments };
+            const updatedDocuments = [...prevData.document, ...newLinks];
+            const newData = { ...prevData, document: updatedDocuments };
             onDetailsChange(newData); // Notify parent about changes
             return newData;
         });
@@ -190,7 +190,12 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                     <Flex gap={6} alignItems="center">
                         <Text fontSize={14}>Event Date :</Text>
                         <Box width={200}>
-                            <Input placeholder='Select Date' size='sm' type='texte' value={moment(formData.event_date).format('DD/MM/YYYY')} isReadOnly />
+                            <Input
+                                placeholder='Select Date'
+                                size='sm'
+                                type='date'
+                                value={formData.event_date}
+                                onChange={(e) => handleInputChange('event_date', e.target.value)} />
                         </Box>
                     </Flex>
                     <Flex gap={5} alignItems="center">

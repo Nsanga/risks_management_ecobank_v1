@@ -175,9 +175,9 @@ const Event = ({ profiles, entities }) => {
                                         />
                                         <DetailsForm detailledDescription={event.details.descriptionDetailled} />
                                         <LossesEntities
-                                            entityofDetection={'ENT' + event.details.entityOfDetection.referenceId + ' ' + event.details.entityOfDetection.description}
+                                            entityofDetection={'ENT' + event.details.entityOfDetection.referenceId + ' ' + 'CAM - ' + event.details.entityOfDetection.description}
                                             subEntityofDetection={event.details.subentityOfDetection}
-                                            entityofDOrigin={'ENT' + event.details.entityOfOrigin.referenceId + ' ' + event.details.entityOfOrigin.description}
+                                            entityofDOrigin={'ENT' + event.details.entityOfOrigin.referenceId + ' ' + 'CAM - ' + event.details.entityOfOrigin.description}
                                             subEntityofOrigin={event.details.subentityOfOrigin}
                                         />
                                         <Commentary
@@ -197,9 +197,9 @@ const Event = ({ profiles, entities }) => {
                                             approved={event.details.approved_date}
                                             closed={event.details.closed_date}
                                             targetClosure={event.details.targetClosureDate}
-                                            owner={event.details.owner.name + ' ' + event.details.owner.surname}
-                                            nominee={event.details.nominee.name + ' ' + event.details.nominee.surname}
-                                            reviewer={event.details.reviewer.name + ' ' + event.details.reviewer.surname}
+                                            owner={event.details.owner?.name ? event.details.owner?.name + ' ' + event.details.owner?.surname : ""}
+                                            nominee= {event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
+                                            reviewer={event.details.reviewer?.name ? event.details.reviewer?.name + ' ' + event.details.reviewer?.surname : ""}
                                             reviewerDate={event.details.reviewer_date}
                                         />
                                     </div>

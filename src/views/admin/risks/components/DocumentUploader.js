@@ -43,7 +43,6 @@ const DocumentUploader = ({ onMediaUpload }) => {
         setIsLoading(true);
         const formData = new FormData();
         files.forEach(file => formData.append('files', file)); // Ajouter tous les fichiers
-
         formData.append('upload_preset', 'your_upload_preset');
 
         try {
@@ -56,7 +55,7 @@ const DocumentUploader = ({ onMediaUpload }) => {
 
             // Vérifier si data.data.downloadLinks est un tableau avant de l'utiliser
             if (Array.isArray(data.data.downloadLinks)) {
-                onMediaUpload(data.data.downloadLinks);
+                onMediaUpload(data.data.downloadLinks); // Appel du callback avec les liens
             } else {
                 console.error('Les liens de téléchargement ne sont pas un tableau:', data.data.downloadLinks);
             }
