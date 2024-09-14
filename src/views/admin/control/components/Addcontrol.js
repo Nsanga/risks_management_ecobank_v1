@@ -5,9 +5,12 @@ import {
   Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td 
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
+import RiskForm from './RiskForm'; // Import the RiskForm component
 
 function AddControl() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for adding a new control
+  const { isOpen: isRiskModalOpen, onOpen: onRiskModalOpen, onClose: onRiskModalClose } = useDisclosure(); // Modal for displaying the risk form
+  const [selectedRisk, setSelectedRisk] = useState(null); // State to hold the selected risk
   const initialRef = React.useRef();
   const finalRef = React.useRef();
 
@@ -56,6 +59,11 @@ function AddControl() {
 
   // State for toggling between risks and controls
   const [showRisks, setShowRisks] = useState(true);
+  
+  const handleRowClick = (risk) => {
+    setSelectedRisk(risk); // Set the clicked risk data
+    onRiskModalOpen(); // Open the modal to display the risk form
+  };
 
   return (
     <>
@@ -153,8 +161,8 @@ function AddControl() {
             </Tr>
           </Thead>
           <Tbody>
-            {(showRisks ? risksData : controlsData).map((row, index) => (
-              <Tr key={index}>
+          {(showRisks ? risksData : controlsData).map((row, index) => (
+              <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
                 <Td>{row.refId}</Td>
                 <Td>{row.description}</Td>
                 <Td>{row.owner}</Td>
@@ -188,6 +196,21 @@ function AddControl() {
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>Save</Button>
             <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal for displaying the RiskForm */}
+      <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Risk Details</ModalHeader>
+          <ModalBody>
+            {/* Pass the selectedRisk data to the RiskForm */}
+            <RiskForm riskData={selectedRisk} />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
