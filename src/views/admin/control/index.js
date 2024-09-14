@@ -1,13 +1,14 @@
-import React from 'react'
-import Addcontrol from './Addcontrol'
-import Card from 'components/card/Card'
+import React from 'react'; 
+import AddControl from './components/Addcontrol';
+import Card from 'components/card/Card';
+
 
 const Control = () => {
   return (
-    <Card p={4} boxShadow="lg">
-      <Addcontrol />
+    <Card mt="100px">
+      <AddControl />
     </Card>
-  )
-}
+  );
+};
 
-export default Control
+export default Control; 
