@@ -20,14 +20,14 @@ const App = ({ userAuth }) => {
             {authenticate ? (
                 <Switch>
                     <Route exact path="/admin/dashboard" render={(props) => <AdminLayout {...props} />} />
-                    <Route exact path="/admin/risks" render={(props) => <AdminLayout {...props} />} />
+                    <Route exact path="/admin/events" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/settings" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/reports" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/system" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/integration" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/configuration" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/logout" render={(props) => <AdminLayout {...props} />} />
-                    <Route exact path="/admin/events" render={(props) => <AdminLayout {...props} />} />
+                    <Route exact path="/admin/event" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/control" render={(props) => <AdminLayout {...props} />} />
 
                     <Redirect from='/' to='/admin/dashboard' />

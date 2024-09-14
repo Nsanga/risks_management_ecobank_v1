@@ -81,10 +81,10 @@ function AddControl() {
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="250px">
-              <FormLabel>Control</FormLabel>
-              <Select placeholder="Select Control">
-                <option value="control1">Control 1</option>
-                <option value="control2">Control 2</option>
+              <FormLabel>Entity</FormLabel>
+              <Select placeholder="Select entity">
+                <option value="entity1">Entity 1</option>
+                <option value="entity2">Entity 2</option>
               </Select>
             </FormControl>
 

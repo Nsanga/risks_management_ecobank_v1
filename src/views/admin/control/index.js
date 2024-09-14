@@ -1,6 +1,6 @@
 import React from 'react'; 
-import { Card } from '@chakra-ui/react'; // Import Card component
 import AddControl from './components/Addcontrol';
+import Card from 'components/card/Card';
 
 
 const Control = () => {
@@ -12,4 +12,3 @@ const Control = () => {
 };
 
 export default Control; 
-
