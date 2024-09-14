@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, 
   ModalFooter, FormControl, FormLabel, Input, useDisclosure, Flex, 
@@ -11,8 +11,8 @@ function AddControl() {
   const initialRef = React.useRef();
   const finalRef = React.useRef();
 
-  // Mock table data
-  const tableData = [
+  // Mock table data for risks and controls
+  const risksData = [
     {
       refId: 'R001',
       description: 'Risk related to system performance',
@@ -32,6 +32,30 @@ function AddControl() {
       exposure: 'High'
     }
   ];
+
+  const controlsData = [
+    {
+      refId: 'C001',
+      description: 'Control on system updates',
+      owner: 'Amanda Paul',
+      nominee: 'Chris Evert',
+      reviewer: 'Nick',
+      category: 'Update',
+      exposure: 'Medium'
+    },
+    {
+      refId: 'C002',
+      description: 'Control on security patches',
+      owner: 'Mike Tyson',
+      nominee: 'Bruce Wayne',
+      reviewer: 'Clark Kent',
+      category: 'Security',
+      exposure: 'High'
+    }
+  ];
+
+  // State for toggling between risks and controls
+  const [showRisks, setShowRisks] = useState(true);
 
   return (
     <>
@@ -67,10 +91,13 @@ function AddControl() {
             </FormControl>
           </Flex>
 
-          {/* Radio buttons for Show */}
+          {/* Toggle between Risks and Controls */}
           <Flex direction="row" align="center" mb={4}>
             <FormLabel mr={4}>Show:</FormLabel>
-            <RadioGroup defaultValue="Risks">
+            <RadioGroup
+              defaultValue="Risks"
+              onChange={(value) => setShowRisks(value === 'Risks')}
+            >
               <HStack spacing={4}>
                 <Radio value="Risks">Risks</Radio>
                 <Radio value="Controls">Controls</Radio>
@@ -112,7 +139,7 @@ function AddControl() {
           </Flex>
         </Box>
 
-        {/* Displaying the table below */}
+        {/* Displaying the table below based on the selection */}
         <Table variant="simple" mt={4}>
           <Thead>
             <Tr>
@@ -126,7 +153,7 @@ function AddControl() {
             </Tr>
           </Thead>
           <Tbody>
-            {tableData.map((row, index) => (
+            {(showRisks ? risksData : controlsData).map((row, index) => (
               <Tr key={index}>
                 <Td>{row.refId}</Td>
                 <Td>{row.description}</Td>
