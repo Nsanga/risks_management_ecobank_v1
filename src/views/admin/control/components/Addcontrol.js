@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, 
   ModalFooter, FormControl, FormLabel, Input, useDisclosure, Flex, 
-  Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td 
+  Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
+  Tabs, TabList, TabPanels, Tab, TabPanel // Import Chakra UI Tabs components
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import RiskForm from './RiskForm'; // Import the RiskForm component
@@ -200,14 +201,32 @@ function AddControl() {
         </ModalContent>
       </Modal>
 
-      {/* Modal for displaying the RiskForm */}
-      <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="xl">
+      {/* Modal for displaying the RiskForm with Tabs */}
+      <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="xll">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Risk Details</ModalHeader>
           <ModalBody>
-            {/* Pass the selectedRisk data to the RiskForm */}
-            <RiskForm riskData={selectedRisk} />
+            <Tabs variant="soft-rounded" colorScheme="green">
+              <TabList>
+                <Tab>General</Tab>
+                <Tab>Control</Tab>
+                <Tab>Action</Tab>
+              </TabList>
+
+              <TabPanels>
+                <TabPanel>
+                  {/* Pass the selectedRisk data to the RiskForm in General Tab */}
+                  <RiskForm riskData={selectedRisk} />
+                </TabPanel>
+                <TabPanel>
+                  <p>Control-related content goes here.</p>
+                </TabPanel>
+                <TabPanel>
+                  <p>Action-related content goes here.</p>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
