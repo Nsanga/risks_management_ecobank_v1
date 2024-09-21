@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import RiskForm from './RiskForm'; // Import the RiskForm component
+import RiskPage from './RiskPage';
 
 function AddControl() {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for adding a new control
@@ -202,16 +203,21 @@ function AddControl() {
       </Modal>
 
       {/* Modal for displaying the RiskForm with Tabs */}
-      <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="xll">
+      <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="full">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Risk Details</ModalHeader>
-          <ModalBody>
-            <Tabs variant="soft-rounded" colorScheme="green">
+          <ModalBody p={4}>
+            <RiskPage />
+            <Tabs variant="soft-rounded" colorScheme="green" mt={6}>
               <TabList>
                 <Tab>General</Tab>
-                <Tab>Control</Tab>
-                <Tab>Action</Tab>
+                <Tab>Goals</Tab>
+                <Tab>Controls</Tab>
+                <Tab>Actions</Tab>
+                <Tab>Risk focus</Tab>
+                <Tab>Risks logs</Tab>
+                <Tab>Linked items</Tab>
               </TabList>
 
               <TabPanels>

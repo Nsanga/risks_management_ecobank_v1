@@ -10,7 +10,7 @@ function RiskForm({ riskData }) {
   }
 
   return (
-    <Box w="100%" p={5} borderWidth="1px" borderRadius="md" boxShadow="md">
+    <Box bg="white" p={6} rounded="md" shadow="md">
       <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between">
         {/* Left Column */}
         <Box flex="1" mr={{ md: 4 }}>
@@ -62,18 +62,16 @@ function RiskForm({ riskData }) {
           </FormControl>
 
           {/* Buttons in Right Column */}
-          <Flex justifyContent="center" mt={8}>
-            <HStack spacing={4} w="100%" justify="center">
+          <Flex justifyContent="flex-end" mt={8}>
               <Button colorScheme="blue" variant="solid" width="auto" minWidth="120px">
                 Sign Off/add next
               </Button>
-            </HStack>
           </Flex>
         </Box>
       </Flex>
 
       {/* Buttons Section */}
-      <HStack spacing={4} mt={6}>
+      <HStack spacing={4} mt={6} justify='center'>
         <Button colorScheme="blue" variant="outline" leftIcon={<ArrowBackIcon />}>
           Home
         </Button>
