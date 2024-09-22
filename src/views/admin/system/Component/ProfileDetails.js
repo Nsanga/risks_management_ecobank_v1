@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button, Flex} from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button, Flex } from '@chakra-ui/react';
 import Select from 'react-select';
 import { EditIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import DeleteModal from './DeleteModal';
 
-const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, onClose }) => {
+const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, username, onClose }) => {
 
     const userGroupOptions = userGroups.map(group => ({
         value: group._id,
@@ -12,11 +12,11 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
     }));
 
     const profilesOptions = profiles
-    .filter(profile => profile.activeUser)  // Filtrer les profils actifs
-    .map(profile => ({
-      value: profile.email,
-      label: `${profile.name} ${profile.surname}`
-    }));
+        .filter(profile => profile.activeUser)  // Filtrer les profils actifs
+        .map(profile => ({
+            value: profile.email,
+            label: `${profile.name} ${profile.surname}`
+        }));
 
     const handleSelectChange = (name, selectedOption) => {
         handleInputChange({ target: { name, value: selectedOption.value } });
@@ -40,30 +40,36 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                         />
                         <FormLabel mb="0" mr={2} fontSize={14}>Active user</FormLabel>
                     </Box>
-                    <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
-                        <Button
-                            leftIcon={formData.lockedUser ? <LockIcon /> : <UnlockIcon />}
-                            colorScheme={formData.lockedUser ? "yellow" : "green"}
-                            fontSize={14}
-                            onClick={toggleLockStatus}
-                            disabled={!isReadOnly}
-                            ml={4}
-                        >
-                            {formData.lockedUser ? "Unlocked User" : "Locked User"}
-                        </Button>
-                    </Box>
-                    <Box display="flex" alignItems="center" mr={4} cursor="pointer">
-                        <DeleteModal selectedUser={formData} disabled={!isReadOnly} onCloseAddProfileModal={onClose}/>
-                    </Box>
-                    <Button
-                        leftIcon={<EditIcon color="white" />}
-                        colorScheme='blue'
-                        style={{ fontSize: 14 }}
-                        onClick={handleAmendClick}
-                        disabled={!isReadOnly || formData.lockedUser}
-                    >
-                        Amend
-                    </Button>
+                    {username !== localStorage.getItem('username') ?
+                        (
+                            <>
+                                <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
+                                    <Button
+                                        leftIcon={formData.lockedUser ? <LockIcon /> : <UnlockIcon />}
+                                        colorScheme={formData.lockedUser ? "yellow" : "green"}
+                                        fontSize={14}
+                                        onClick={toggleLockStatus}
+                                        disabled={!isReadOnly}
+                                        ml={4}
+                                    >
+                                        {formData.lockedUser ? "Unlocked User" : "Locked User"}
+                                    </Button>
+                                </Box>
+                                <Box display="flex" alignItems="center" mr={4} cursor="pointer">
+                                    <DeleteModal selectedUser={formData} disabled={!isReadOnly} onCloseAddProfileModal={onClose} />
+                                </Box>
+                                <Button
+                                    leftIcon={<EditIcon color="white" />}
+                                    colorScheme='blue'
+                                    style={{ fontSize: 14 }}
+                                    onClick={handleAmendClick}
+                                    disabled={!isReadOnly || formData.lockedUser}
+                                >
+                                    Amend
+                                </Button>
+                            </>
+                        ) : null}
+
                 </FormControl>
                 <FormControl>
                     <FormLabel fontSize={14}>User ID <span style={{ color: 'red' }}>*</span></FormLabel>

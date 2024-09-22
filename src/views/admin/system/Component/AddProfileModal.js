@@ -175,6 +175,8 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     }
   };
 
+  const username = selectedUser?.surname + " " + selectedUser?.name;
+
   const isSaveDisabled = !formData.userId || !formData.name || !formData.surname || !formData.telephone || !formData.email;
   
   return (
@@ -226,7 +228,8 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                   handleLockedUser={handleLockedUser}
                   profiles={profiles}
                   userGroups={userGroups}
-                  onClose={onClose} />
+                  onClose={onClose} 
+                  username={username}/>
               </Collapse>
               <Collapse in={!isDetailsVisible}>
                 <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />

@@ -35,19 +35,19 @@ const CameroonFlag = () => (
 
 const SignIn = ({ error }) => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
+  const [userId, setuserId] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [emailError, setEmailError] = useState("");
+  const [userIdError, setUserIdError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const handleLogin = async () => {
-    setEmailError("");
+    setUserIdError("");
     setPasswordError("");
 
     // Vérifiez les champs manquants et mettez à jour les messages d'erreur
-    if (!email) {
-      setEmailError("Veuillez entrer une adresse mail valide.");
+    if (!userId) {
+      setUserIdError("Veuillez entrer un user Id valide.");
     }
 
     if (!password) {
@@ -55,14 +55,14 @@ const SignIn = ({ error }) => {
     }
 
     // Si des champs sont manquants, arrêtez la procédure de connexion
-    if (!email || !password) {
+    if (!userId || !password) {
       return;
     }
 
     setIsLoading(true);
 
     try {
-      dispatch(loginRequest(email, password));
+      dispatch(loginRequest(userId, password));
       // Simulez une attente (remplacez cela par votre logique de connexion réelle)
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -79,15 +79,15 @@ const SignIn = ({ error }) => {
       <Flex p={8} flex={1} align={"center"} justify={"center"}>
         <Stack spacing={4} w={"full"} maxW={"md"}>
           <Heading fontSize={"2xl"}>Sign in to your account</Heading>
-          <FormControl id="email" isRequired>
-            <FormLabel htmlFor="email">Email address</FormLabel>
+          <FormControl id="userId" isRequired>
+            <FormLabel htmlFor="userId">user Id</FormLabel>
             <Input
-              id="email"
+              id="userId"
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={userId}
+              onChange={(e) => setuserId(e.target.value)}
             />
-            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
+            {userIdError && <p style={{ color: "red" }}>{userIdError}</p>}
           </FormControl>
           <PasswordField
             value={password}
@@ -100,7 +100,7 @@ const SignIn = ({ error }) => {
                 bg="blue.300"
                 color="white"
                 isLoading={isLoading}
-                disabled={!email || !password}
+                disabled={!userId || !password}
                 loadingText="Connexion"
                 spinnerPlacement="end"
                 _hover={{ bg: "blue.500", color: "white" }}

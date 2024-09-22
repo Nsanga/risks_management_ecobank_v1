@@ -1,8 +1,8 @@
 import * as types from './types';
 
-export const loginRequest = (email, password) => ({
+export const loginRequest = (userId, password) => ({
   type: types.LOGIN_REQUEST,
-  payload: {email, password},
+  payload: {userId, password},
 });
 
 export const logoutSuccess = () => ({

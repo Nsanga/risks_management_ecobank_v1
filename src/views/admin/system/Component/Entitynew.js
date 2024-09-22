@@ -11,7 +11,7 @@ import Loader from '../../../../assets/img/loader.gif';
 const Entitynew = ({ entities, loading, profiles }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
-
+console.log(entities)
   const openModal = () => {
     setSelectedEntity(null); // Clear selected entity for adding a new one
     setIsModalOpen(true);
@@ -72,7 +72,7 @@ const Entitynew = ({ entities, loading, profiles }) => {
                   >
                     <Td>ENT{entity?.referenceId}</Td>
                     <Td>CAM - {entity?.description}</Td>
-                    <Td>{entity?.owner.surname} {entity?.owner.name}</Td>
+                    <Td>{entity?.owner ? `${entity?.owner?.surname + " " + entity?.owner?.name}` : null}</Td>
                     <Td>{entity?.nominee ? `${entity?.nominee?.surname + " " + entity?.nominee?.name}` : null}</Td>
                     <Td>{entity?.reviewer ? `${entity?.reviewer?.surname + " " + entity?.reviewer?.name}` : null}</Td>
                   </Tr>
