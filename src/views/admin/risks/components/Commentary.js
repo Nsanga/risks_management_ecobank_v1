@@ -9,7 +9,7 @@ const Commentary = ({ event, onCommentaryChange }) => {
   useEffect(() => {
     if (event) {
       setComment({
-        commentary: event?.commentary?.comment || '',
+        commentary: event?.details.descriptionDetailled || '',
       })
     }
   }, [event]);

@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Image, Text } from '@chakra-ui/react';
 import React from 'react';
 import Loader from '../../../../assets/img/loader.gif'
 
@@ -30,9 +30,9 @@ const CardDetails = ({ events, loading }) => {
                     <Text fontWeight="bold" mr={10} style={{ color: 'blue' }} fontSize={14}>EVT{event.num_ref}</Text>
                     <Text fontWeight="bold" mr={10} fontSize={14}>{truncateText(event?.details.description, 90)}</Text>
                   </Flex>
-                  <Box p={1} shadow='md' borderWidth='1px' borderColor={event?.approved === true ? 'blue' : 'red'}>
-                    <Text style={{ color: event?.approved === true ? 'blue' : 'red' }} fontSize={14}>{event?.approved === true ? "Approved" : "Unapproved"} </Text>
-                  </Box>
+                  <Badge variant='solid' colorScheme={event?.approved === true ? 'blue' : 'red'}>
+                    {event?.approved === true ? "Approved" : "Unapproved"}
+                  </Badge>
                 </Flex>
               </Flex>
             ))

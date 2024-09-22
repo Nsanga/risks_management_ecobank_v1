@@ -11,6 +11,7 @@ import { deleteRequest } from 'helper/api';
 function* list(action) {
     try {
         let link = `${url}/api/v1/profiles/all`;
+        console.log(link)
         const data = yield getRequest(link);
         console.log(data)
         if (data.message === "Success") {

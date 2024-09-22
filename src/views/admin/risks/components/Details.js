@@ -89,7 +89,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
         if (event && event.details) {
             setFormData(prevState => ({
                 ...prevState,
-                event_date: event.details.event_date || '',
+                event_date: moment(event.details.event_date).format('YYYY-MM-DD') || '',
                 event_time: event.details.event_time || getCurrentTime(),
                 detection_date: event.details.detection_date ? new Date(event.details.detection_date).toISOString().split('T')[0] : '',
                 approved_date: event.details.approved_date ? new Date(event.details.approved_date).toISOString().split('T')[0] : '',

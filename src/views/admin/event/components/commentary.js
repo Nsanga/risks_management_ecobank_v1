@@ -63,7 +63,7 @@ const Commentary = (
                 <Flex gap={5} alignItems="center">
                     <Text>Detection Date:</Text>
                     <Box >
-                    <Text style={{ color: 'blue', fontWeight: 'bold' }}>{moment(detectionDate).format('DD/MM/YYYY')}</Text>
+                    <Text style={{ color: 'blue', fontWeight: 'bold' }}>{detectionDate === null ? "" : moment(detectionDate).format('DD/MM/YYYY')}</Text>
                     </Box>
                 </Flex>
                 <Flex width={155}>

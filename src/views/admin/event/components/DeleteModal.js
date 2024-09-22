@@ -20,7 +20,7 @@ import { useDispatch } from 'react-redux'
 import { deleteEvent } from 'redux/events/action'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom'
 
-const DeleteModal = ({ event, disabled }) => {
+const DeleteModal = ({ event, isDeleteDisabled }) => {
     const { onOpen, isOpen, onClose } = useDisclosure()
     const [reason, setReason] = useState('')
     const dispatch = useDispatch()
@@ -40,7 +40,7 @@ const DeleteModal = ({ event, disabled }) => {
                 leftIcon={<DeleteIcon color="white" />}
                 colorScheme='red' onClick={onOpen} variant='solid'
                 style={{ fontSize: 14 }}
-                disabled={disabled}
+                disabled={isDeleteDisabled}
             >
                 Delete
             </Button>

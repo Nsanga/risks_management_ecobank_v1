@@ -8,6 +8,7 @@ const Head = ({
     description,
     totalLosses,
     externalRef,
+    devise,
     ...rest
 }) => {
     return (
@@ -37,7 +38,7 @@ const Head = ({
                     <Flex alignItems='center' gap={4}>
                         <Text>Total Losses: </Text>
                         <Box>
-                            <span style={{ color: 'blue', fontWeight: 'bold' }}>{totalLosses}</span> <span style={{ fontWeight: 'bold' }}>USD</span>
+                            <span style={{ color: 'blue', fontWeight: 'bold' }}>{totalLosses}</span> <span style={{ fontWeight: 'bold' }}>{devise}</span>
                         </Box>
                     </Flex>
                     <Flex alignItems='center' gap={4}>

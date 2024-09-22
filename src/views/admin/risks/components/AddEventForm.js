@@ -27,6 +27,7 @@ import data from "../Data";
 import { FaFilePen } from "react-icons/fa6";
 import { connect, useDispatch } from "react-redux";
 import { AddEvent } from "redux/events/action";
+import { updateEvent } from "redux/events/action";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -35,12 +36,13 @@ const truncateText = (text, maxLength) => {
   return text.substring(0, maxLength) + '...';
 };
 
-function AddEventForm({ event, entities, profiles }) {
+function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [detailsData, setDetailsData] = useState({});
   const [commentaryData, setCommentaryData] = useState({});
   const [financesData, setFinancesData] = useState([]);
   const [additionalData, setAdditionalData] = useState({});
+  const [currency, setCurrency] = useState(null);
 
   const categories = data.map(item => item.title);
 
@@ -52,8 +54,9 @@ function AddEventForm({ event, entities, profiles }) {
     setCommentaryData(data);
   };
 
-  const handleFinancesChange = (data) => {
+  const handleFinancesChange = (data, selectedCurrency) => {
     setFinancesData(data);
+    setCurrency(selectedCurrency);
   };
 
   const handleAdditionalChange = (data) => {
@@ -62,47 +65,77 @@ function AddEventForm({ event, entities, profiles }) {
 
   const dispatch = useDispatch();
 
-    const additionalInfoData = Object.keys(additionalData).map((key, index) => ({
-        category: categories[index],
-        description: additionalData[key]
-    }));
+  const additionalInfoData = Object.keys(additionalData).map((key, index) => ({
+    category: categories[index],
+    description: additionalData[key]
+  }));
 
-    const approved = true
+  const approved = true
 
-    const handleSubmit = async () => {
-        const payload = {
-            details: {
-                ...detailsData,
-            },
-            commentary: {
-                ...commentaryData
-            },
-            financials: [
-                ...financesData
-            ],
-            additionnalInfo: [
-                ...additionalInfoData
-            ],
-            approved: approved
-        };
-
-        console.log(payload);
-
-        try {
-            await dispatch(AddEvent(payload));
-            onClose(); // Ferme la modal après la soumission réussie
-        } catch (error) {
-            console.error('Erreur lors de la soumission:', error);
-            // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
-        }
+  const handleSubmit = async () => {
+    const payload = {
+      details: {
+        ...detailsData,
+        rate: currency,
+      },
+      commentary: {
+        ...commentaryData
+      },
+      financials: [
+        ...financesData
+      ],
+      additionnalInfo: [
+        ...additionalInfoData
+      ],
+      approved: approved
     };
+
+    console.log(payload);
+
+    try {
+      await dispatch(AddEvent(payload));
+      onClose(); // Ferme la modal après la soumission réussie
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+    }
+  };
+
+  const handleUpdate = async () => {
+    const payload = {
+      details: {
+        ...detailsData,
+        rate: currency,
+      },
+      commentary: {
+        ...commentaryData
+      },
+      financials: [
+        ...financesData
+      ],
+      additionnalInfo: [
+        ...additionalInfoData
+      ],
+      approved: approved
+    };
+
+    console.log(payload);
+
+    try {
+      await dispatch(updateEvent(event._id, payload));
+      onClose(); // Ferme la modal après la soumission réussie
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+    }
+  };
 
   return (
     <>
       <Flex justifyContent='flex-end'>
         <Box top="20px">
           {event ?
-            <Button leftIcon={<FaFilePen />} onClick={onOpen} variant='outline' colorScheme='blue'>Amend </Button> :
+            <Button leftIcon={<FaFilePen />} onClick={onOpen} variant='outline' colorScheme='blue' disabled={isAmendDisabled}>Amend </Button> :
             <Button leftIcon={<AddIcon />} onClick={onOpen} variant="outline" colorScheme='blue' size='sm'>
               Add new event
             </Button>}
@@ -126,24 +159,24 @@ function AddEventForm({ event, entities, profiles }) {
 
               <TabPanels>
                 <TabPanel>
-                  <Details onDetailsChange={handleDetailsChange} event={event} entities={entities} profiles={profiles}/>
+                  <Details onDetailsChange={handleDetailsChange} event={event} entities={entities} profiles={profiles} />
                 </TabPanel>
                 <TabPanel>
-                  <Commentary onCommentaryChange={handleCommentaryChange} event={event}/>
+                  <Commentary onCommentaryChange={handleCommentaryChange} event={event} />
                 </TabPanel>
                 <TabPanel>
-                  <Finances onFinancesChange={handleFinancesChange} financesData={financesData} />
+                  <Finances onFinancesChange={handleFinancesChange} financesData={financesData} isEdit={isEdit} event={event} />
                 </TabPanel>
                 <TabPanel>
-                  <Additional onAdditionalChange={handleAdditionalChange} />
+                  <Additional onAdditionalChange={handleAdditionalChange} event={event} />
                 </TabPanel>
               </TabPanels>
             </Tabs>
           </ModalBody>
 
           <ModalFooter>
-          <Button onClick={handleSubmit} colorScheme="blue" mr={2}>
-                Save and Approuve
+            <Button onClick={ event ? handleUpdate : handleSubmit} colorScheme="blue" mr={2}>
+              {event ? "Amend and Approuve" : "Save and Approuve"}
             </Button>
             {/* <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} /> */}
             <Button colorScheme="red" mr={2} onClick={onClose}>Cancel</Button>

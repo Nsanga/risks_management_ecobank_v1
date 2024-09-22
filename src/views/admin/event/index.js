@@ -36,6 +36,7 @@ import { Link as ChakraLink, LinkProps } from '@chakra-ui/react'
 import { connect, useDispatch } from 'react-redux'
 import { listEntities } from 'redux/entitiy/action'
 import { listProfiles } from 'redux/profile/action'
+import { url } from 'urlLoader'
 
 const generatePDF = async () => {
     const headElement = document.getElementById('head-component'); // Assume the Head component has an ID
@@ -51,13 +52,19 @@ const generatePDF = async () => {
 
 const Event = ({ profiles, entities }) => {
     const [loader, setLoader] = useState(false);
+    const [isEdit, setIsEdit] = useState(true);
+    const [isEmailDisabled, setIsEmailDisabled] = useState(false);
+    const [isPrintDisabled, setIsPrintDisabled] = useState(false);
+    const [isUnapprovedDisabled, setIsUnapprovedDisabled] = useState(false);
+    const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
+    const [isAmendDisabled, setIsAmendDisabled] = useState(true);
     const location = useLocation();
     const event = location.state?.event;
     const loading = location.state?.loading;
     const iframeRef = useRef(null);
     const history = useHistory();
 
-    console.log('evttttt:::', event.details)
+    console.log('evttttt:::', event)
 
     const dispatch = useDispatch();
 
@@ -74,7 +81,7 @@ const Event = ({ profiles, entities }) => {
         const formData = new FormData();
         formData.append('files', pdfBlob, 'event-head.pdf');
 
-        const response = await fetch('http://localhost:4500/api/v1/upload/files', {
+        const response = await fetch(`${url}/api/v1/upload/files`, {
             method: 'POST',
             body: formData
         });
@@ -85,6 +92,14 @@ const Event = ({ profiles, entities }) => {
         } else {
             throw new Error('Failed to upload PDF');
         }
+    };
+
+    const handleUnapprovedClick = () => {
+        setIsEmailDisabled(true);
+        setIsPrintDisabled(true);
+        setIsUnapprovedDisabled(true);
+        setIsDeleteDisabled(true);
+        setIsAmendDisabled(false);
     };
 
     const handleEmailClick = async () => {
@@ -136,11 +151,7 @@ const Event = ({ profiles, entities }) => {
         iframe.print();
     };
 
-    const handleBackToRiskPage = () => {
-        history.push(
-            '/admin/risks',
-        );
-    }
+    const totalRow = event?.financials.find(f => f.name === 'Total');
 
     return (
         <Card mt="100px">
@@ -170,7 +181,8 @@ const Event = ({ profiles, entities }) => {
                                             currentState={event.approved === true ? 'Approved' : 'Unapproved'}
                                             currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
                                             description={event.details.description}
-                                            totalLosses=' '
+                                            totalLosses={totalRow?.values ? totalRow?.values[0] + totalRow?.values[1] + totalRow?.values[2] + totalRow?.values[3] : ''}
+                                            devise={event?.details?.rate}
                                             externalRef={event.details.externalRef}
                                         />
                                         <DetailsForm detailledDescription={event.details.descriptionDetailled} />
@@ -191,35 +203,35 @@ const Event = ({ profiles, entities }) => {
                                             excludeFundLosse={event.details.excludeFundLosses}
                                             externalEvent={event.details.externalEvent}
                                             notify={event.details.notify}
-                                            detectionDate={event.details?.detection_date ? event.details?.detection_date : ""}
+                                            detectionDate={event.details?.detection_date}
                                         />
                                         <Finances
                                             approved={event.details.approved_date}
                                             closed={event.details.closed_date}
                                             targetClosure={event.details.targetClosureDate}
                                             owner={event.details.owner?.name ? event.details.owner?.name + ' ' + event.details.owner?.surname : ""}
-                                            nominee= {event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
+                                            nominee={event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
                                             reviewer={event.details.reviewer?.name ? event.details.reviewer?.name + ' ' + event.details.reviewer?.surname : ""}
-                                            reviewerDate={event.details.reviewer_date ? event.details.reviewer_date : ""}
+                                            reviewerDate={event.details.reviewer_date}
                                         />
                                     </div>
                                     <Flex justifyContent='flex-end' gap={4}>
                                         <Flex>
-                                            <Button leftIcon={<FaEnvelope />} variant='outline' colorScheme='red' onClick={handleEmailClick} isLoading={loader}>
+                                            <Button leftIcon={<FaEnvelope />} variant='outline' colorScheme='red' onClick={handleEmailClick} isLoading={loader} isDisabled={isEmailDisabled}>
                                                 E-mail
                                             </Button>
                                         </Flex>
                                         <Flex>
-                                            <Button leftIcon={<FaPrint />} variant='outline' colorScheme='teal' onClick={handlePrint}>Print</Button>
+                                            <Button leftIcon={<FaPrint />} variant='outline' colorScheme='teal' onClick={handlePrint} isDisabled={isPrintDisabled}>Print</Button>
                                         </Flex>
                                         <Flex>
-                                            <Button leftIcon={<MdClose />} variant='outline' colorScheme='green'>Unapproved</Button>
+                                            <Button leftIcon={<MdClose />} variant='outline' colorScheme='green' onClick={handleUnapprovedClick} isDisabled={isUnapprovedDisabled}>Unapproved</Button>
                                         </Flex>
                                         <Flex>
-                                            <AddEventForm event={event} entities={entities} profiles={profiles}/>
+                                            <AddEventForm event={event} entities={entities} profiles={profiles} isEdit={isEdit} isAmendDisabled={isAmendDisabled}/>
                                         </Flex>
                                         <Flex>
-                                            < DeleteModal event={event} />
+                                            <DeleteModal event={event} isDeleteDisabled={isDeleteDisabled}/>
                                         </Flex>
 
                                     </Flex>
