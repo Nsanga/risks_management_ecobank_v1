@@ -8,6 +8,8 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import RiskForm from './RiskForm'; // Import the RiskForm component
 import RiskPage from './RiskPage';
+import MyTableComponent from './MyTableComponent';
+import RiskControl from './RiskControl';
 
 function AddControl() {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for adding a new control
@@ -204,41 +206,53 @@ function AddControl() {
 
       {/* Modal for displaying the RiskForm with Tabs */}
       <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="full">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Risk Details</ModalHeader>
-          <ModalBody p={4}>
-            <RiskPage />
-            <Tabs variant="soft-rounded" colorScheme="green" mt={6}>
-              <TabList>
-                <Tab>General</Tab>
-                <Tab>Goals</Tab>
-                <Tab>Controls</Tab>
-                <Tab>Actions</Tab>
-                <Tab>Risk focus</Tab>
-                <Tab>Risks logs</Tab>
-                <Tab>Linked items</Tab>
-              </TabList>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>Risk Details</ModalHeader>
+    <ModalBody p={4}>
+      <RiskPage />
+      <Tabs variant="soft-rounded" colorScheme="green" mt={6}>
+        <TabList>
+          <Tab>General</Tab>
+          <Tab>Goals</Tab>
+          <Tab>Controls</Tab>
+          <Tab>Actions</Tab>
+          <Tab>Risk focus</Tab>
+          <Tab>Risks logs</Tab>
+          <Tab>Linked items</Tab>
+        </TabList>
 
-              <TabPanels>
-                <TabPanel>
-                  {/* Pass the selectedRisk data to the RiskForm in General Tab */}
-                  <RiskForm riskData={selectedRisk} />
-                </TabPanel>
-                <TabPanel>
-                  <p>Control-related content goes here.</p>
-                </TabPanel>
-                <TabPanel>
-                  <p>Action-related content goes here.</p>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        <TabPanels>
+          <TabPanel>
+            <RiskForm riskData={selectedRisk} />
+          </TabPanel>
+          <TabPanel>
+            <MyTableComponent />
+          </TabPanel>
+          <TabPanel>
+            <RiskControl />  {/* Added RiskControl here */}
+          </TabPanel>
+          <TabPanel>
+            <p>Action-related content goes here.</p>
+          </TabPanel>
+          <TabPanel>
+            <p>Risk focus-related content goes here.</p>
+          </TabPanel>
+          <TabPanel>
+            <p>Risks logs-related content goes here.</p>
+          </TabPanel>
+          <TabPanel>
+            <p>Linked items-related content goes here.</p>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </ModalBody>
+    <ModalFooter>
+      <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
+
     </>
   );
 }
