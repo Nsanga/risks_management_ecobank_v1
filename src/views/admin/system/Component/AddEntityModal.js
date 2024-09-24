@@ -9,9 +9,9 @@ import {
 import { AddEntity } from 'redux/entitiy/action';
 import { useDispatch } from 'react-redux';
 import { updateEntity } from 'redux/entitiy/action';
-import DeleteModal from './DeleteModal';
 import { EditIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
+import DeleteModal from 'views/admin/event/components/DeleteModal';
 
 const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) => {
   const [isEditMode, setIsEditMode] = useState(false);

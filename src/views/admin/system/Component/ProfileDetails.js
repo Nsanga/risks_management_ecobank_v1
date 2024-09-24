@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button, Flex } from '@chakra-ui/react';
 import Select from 'react-select';
 import { EditIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
-import DeleteModal from './DeleteModal';
+import DeleteModal from 'views/admin/event/components/DeleteModal';
 
 const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, username, onClose }) => {
 
