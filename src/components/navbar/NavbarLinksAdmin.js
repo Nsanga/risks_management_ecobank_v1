@@ -42,12 +42,13 @@ export default function HeaderLinks(props) {
 	};
 
 	const getInitials = (name) => {
+		console.log(name)
 		const words = name.split(' ');
 		if (words.length === 1) {
 			return name.slice(0, 2).toUpperCase();
 		} else if (words.length >= 2) {
 			const firstWord = words[0].slice(0, 1).toUpperCase();
-			const secondWord = words[1].slice(0, 1).toUpperCase();
+			const secondWord = words[2].slice(0, 1).toUpperCase();
 			return `${firstWord}${secondWord}`;
 		} else {
 			return '';

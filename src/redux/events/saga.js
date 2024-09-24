@@ -27,7 +27,7 @@ function* list(action) {
 function* update(action) {
     const { id } = action.payload;
     try {
-        let link = `${url}/api/v1/events/update?id=${id}`;
+        let link = `${url}/api/v1/events/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.eventData));
         console.log("data:::/", data)
         if (data.message === "Success") {
@@ -69,7 +69,7 @@ function* add(action) {
 function* deleteEvent(action) {
     const { id, type } = action.payload;
     try {
-        const link = `${url}/api/v1/events/delete?id=${id}`;
+        const link = `${url}/api/v1/events/delete/${id}`;
 
         const data = yield deleteRequest(link);
         if (data) {

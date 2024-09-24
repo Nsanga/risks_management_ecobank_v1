@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, Input, Box, Flex, Select, Text, TableCaption } from '@chakra-ui/react';
 import FinancesEvent from './globalViewEvent/FinancesEvent';
 
-const Finances = ({ onFinancesChange, financesData }) => {
+const Finances = ({ onFinancesChange, financesData, isEdit, event }) => {
   const initialData = [
     { id: 1, name: 'Actual Loss', values: [0, 0, 0, 0] },
     { id: 2, name: 'Potential Loss', values: [0, 0, 0, 0] },
@@ -23,6 +23,28 @@ const Finances = ({ onFinancesChange, financesData }) => {
     EUR_to_USD: 1.208,
     EUR_to_XAF: 655.957,
   });
+  const [availableCurrencies, setAvailableCurrencies] = useState({
+    USD: true,
+    EUR: true,
+    XAF: true,
+  });
+
+  useEffect(() => {
+    if (event?.financials) {
+      const updatedData = initialData.map(item => {
+        const financialItem = event.financials.find(f => f.name === item.name);
+        return financialItem
+          ? { ...item, values: financialItem.values }
+          : item;
+      });
+      setTableData(updatedData);
+
+      const totalRow = event.financials.find(f => f.name === 'Total');
+      if (totalRow && totalRow.values[0] != null) {
+        setTotalCurrencies(totalRow.values[0]); // Stocker la valeur dans le contexte
+      }
+    }
+  }, [event]);
 
   const handleRateChange = (rate, value) => {
     setExchangeRates(prevRates => ({
@@ -134,7 +156,7 @@ const Finances = ({ onFinancesChange, financesData }) => {
 
     setTableData(updatedData);
     onFinancesChange(updatedData); // Notify parent about changes
-    updateTotalCurrencies(updatedData);
+    updateTotalCurrencies(updatedData, selectedCurrency);
   };
 
   useEffect(() => {
@@ -147,23 +169,6 @@ const Finances = ({ onFinancesChange, financesData }) => {
     }));
     updateTotalCurrencies(totals);
   }, []);
-
-  // const handleCurrencyChange = (e) => {
-  //   const newCurrency = e.target.value;
-  //   const oldCurrency = selectedCurrency;
-  //   const conversionRate = oldCurrency === 'EUR' && newCurrency === 'XAF' ? exchangeRates.EUR_to_XAF : (exchangeRates[newCurrency] / exchangeRates[oldCurrency]);
-
-  //   const convertedData = tableData.map(row => {
-  //     const convertedValues = row.values.map(value => value * conversionRate);
-  //     return { ...row, values: convertedValues, total: calculateRowTotal({ ...row, values: convertedValues }) };
-  //   });
-
-  //   const newTotalCurrencies = (totalCurrencies * conversionRate);
-
-  //   setTableData(convertedData);
-  //   setSelectedCurrency(newCurrency);
-  //   setTotalCurrencies(newTotalCurrencies);
-  // };
 
   const handleCurrencyChange = (e) => {
     const newCurrency = e.target.value;
@@ -185,15 +190,26 @@ const Finances = ({ onFinancesChange, financesData }) => {
       conversionRate = exchangeRates.EUR_to_USD;
     }
 
-   const convertedData = tableData.map(row => {
+    const convertedData = tableData.map(row => {
       const convertedValues = row.values.map(value => value * conversionRate);
       return { ...row, values: convertedValues };
     });
 
+    let updatedAvailableCurrencies = { USD: true, EUR: true, XAF: true };
+    if (newCurrency === 'USD') {
+      updatedAvailableCurrencies = { USD: true, EUR: true, XAF: true };
+    } else if (newCurrency === 'EUR') {
+      updatedAvailableCurrencies = { USD: true, EUR: true, XAF: false };
+    } else if (newCurrency === 'XAF') {
+      updatedAvailableCurrencies = { USD: true, EUR: false, XAF: true };
+    }
+
     const newTotalCurrencies = (totalCurrencies * conversionRate).toFixed(3);
     setTableData(convertedData);
     setSelectedCurrency(newCurrency);
+    setAvailableCurrencies(updatedAvailableCurrencies);
     setTotalCurrencies(newTotalCurrencies);
+    onFinancesChange(financesData, selectedCurrency);
   };
 
   return (
@@ -218,66 +234,75 @@ const Finances = ({ onFinancesChange, financesData }) => {
           <Box w='30%'>
             <Select
               fontSize={12}
-              placeholder="Select currency"
               value={selectedCurrency}
               onChange={handleCurrencyChange}
+              style={{ color: !selectedCurrency ? 'gray' : 'black' }}
             >
-              <option value="USD">USD</option>
-              <option value="XAF">XAF</option>
-              <option value="EUR">EUR</option>
+              <option value="USD" disabled={!availableCurrencies.USD}>
+                USD
+              </option>
+              <option value="XAF" disabled={!availableCurrencies.XAF}>
+                XAF
+              </option>
+              <option value="EUR" disabled={!availableCurrencies.EUR}>
+                EUR
+              </option>
             </Select>
+
           </Box>
         </Flex>
       </Flex>
 
-      <Flex gap={16} mb={10}>
-        <Table variant='striped' colorScheme='teal'>
-          <Thead>
-            <Tr>
-              <Th textAlign="start"></Th>
-              <Th textAlign="start" fontSize={10}>Total</Th>
-              <Th textAlign="start" fontSize={10}>Direct</Th>
-              <Th textAlign="start" fontSize={10}>Regulatory fines</Th>
-              <Th textAlign="start" fontSize={10}>Asset write-down</Th>
-              <Th textAlign="start" fontSize={10}>Other</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {tableData.map(row => (
-              <Tr key={row.id} height="10px">
-                <Td fontSize={12} width='20%' height="10px">{row.name}</Td>
-                <Td height="10px">
-                  <Text fontSize={12}>{row.name === 'Total' ? row.total : calculateRowTotal(row)}</Text>
-                </Td>
-                {row.values.map((value, index) => (
-                  <Td key={index} height="10px">
-                    <Text fontSize={12}>{value || 0}</Text>
-                  </Td>
-                ))}
+      {isEdit && (
+        <Flex gap={16} mb={10}>
+          <Table variant='striped' colorScheme='teal'>
+            <Thead>
+              <Tr>
+                <Th textAlign="start"></Th>
+                <Th textAlign="start" fontSize={10}>Total</Th>
+                <Th textAlign="start" fontSize={10}>Direct</Th>
+                <Th textAlign="start" fontSize={10}>Regulatory fines</Th>
+                <Th textAlign="start" fontSize={10}>Asset write-down</Th>
+                <Th textAlign="start" fontSize={10}>Other</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-        <Box maxW="300px">
-          <Table variant="simple" >
-            <TableCaption placement="top" fontSize={12}>DAILY RATE</TableCaption>
+            </Thead>
             <Tbody>
-              <Tr>
-                <Td maxW="150px" fontSize={12}>EUR/USD</Td>
-                <Td maxW="150px" fontSize={12}>1,208</Td>
-              </Tr>
-              <Tr>
-                <Td maxW="150px" fontSize={12}>USD/XAF</Td>
-                <Td maxW="150px" fontSize={12}>{exchangeRates.USD_to_XAF}</Td>
-              </Tr>
-              <Tr>
-                <Td maxW="150px" fontSize={12}>EUR/XAF</Td>
-                <Td maxW="150px" fontSize={12}>{exchangeRates.EUR_to_XAF}</Td>
-              </Tr>
+              {tableData.map(row => (
+                <Tr key={row.id} height="10px">
+                  <Td fontSize={12} width='20%' height="10px">{row.name}</Td>
+                  <Td height="10px">
+                    <Text fontSize={12}>{row.name === 'Total' ? row.total : calculateRowTotal(row)}</Text>
+                  </Td>
+                  {row.values.map((value, index) => (
+                    <Td key={index} height="10px">
+                      <Text fontSize={12}>{value || 0}</Text>
+                    </Td>
+                  ))}
+                </Tr>
+              ))}
             </Tbody>
           </Table>
-        </Box>
-      </Flex>
+          <Box maxW="300px">
+            <Table variant="simple" >
+              <TableCaption placement="top" fontSize={12}>DAILY RATE</TableCaption>
+              <Tbody>
+                <Tr>
+                  <Td maxW="150px" fontSize={12}>EUR/USD</Td>
+                  <Td maxW="150px" fontSize={12}>1,208</Td>
+                </Tr>
+                <Tr>
+                  <Td maxW="150px" fontSize={12}>USD/XAF</Td>
+                  <Td maxW="150px" fontSize={12}>{exchangeRates.USD_to_XAF}</Td>
+                </Tr>
+                <Tr>
+                  <Td maxW="150px" fontSize={12}>EUR/XAF</Td>
+                  <Td maxW="150px" fontSize={12}>{exchangeRates.EUR_to_XAF}</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Box>
+        </Flex>
+      )}
 
       <Flex gap={16}>
         <Table variant="simple">
@@ -321,36 +346,36 @@ const Finances = ({ onFinancesChange, financesData }) => {
           </Tbody>
         </Table>
         <Box maxW="300px">
-      <Table variant="simple">
-        <TableCaption placement="top" fontSize={12}>DAILY RATE</TableCaption>
-        <Tbody>
-          <Tr>
-            <Td maxW="150px" fontSize={12}>EUR/USD</Td>
-            <Td maxW="200px" fontSize={12}>{exchangeRates.EUR_to_USD}</Td>
-          </Tr>
-          <Tr>
-            <Td maxW="150px" fontSize={12}>USD/XAF</Td>
-            <Td maxW="200px" fontSize={12}>
-              <Input
-              fontSize={12}
-                value={exchangeRates.USD_to_XAF}
-                onChange={(e) => handleRateChange('USD_to_XAF', e.target.value)}
-              />
-            </Td>
-          </Tr>
-          <Tr>
-            <Td maxW="150px" fontSize={12}>EUR/XAF</Td>
-            <Td maxW="200px" fontSize={12}>
-              <Input
-              fontSize={12}
-                value={exchangeRates.EUR_to_XAF}
-                onChange={(e) => handleRateChange('EUR_to_XAF', e.target.value)}
-              />
-            </Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </Box>
+          <Table variant="simple">
+            <TableCaption placement="top" fontSize={12}>DAILY RATE</TableCaption>
+            <Tbody>
+              <Tr>
+                <Td maxW="150px" fontSize={12}>EUR/USD</Td>
+                <Td maxW="200px" fontSize={12}>{exchangeRates.EUR_to_USD}</Td>
+              </Tr>
+              <Tr>
+                <Td maxW="150px" fontSize={12}>USD/XAF</Td>
+                <Td maxW="200px" fontSize={12}>
+                  <Input
+                    fontSize={12}
+                    value={exchangeRates.USD_to_XAF}
+                    onChange={(e) => handleRateChange('USD_to_XAF', e.target.value)}
+                  />
+                </Td>
+              </Tr>
+              <Tr>
+                <Td maxW="150px" fontSize={12}>EUR/XAF</Td>
+                <Td maxW="200px" fontSize={12}>
+                  <Input
+                    fontSize={12}
+                    value={exchangeRates.EUR_to_XAF}
+                    onChange={(e) => handleRateChange('EUR_to_XAF', e.target.value)}
+                  />
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </Box>
       </Flex>
       {/* <Button mt={4} colorScheme="blue" onClick={handleButtonClick}>
         Send Payload

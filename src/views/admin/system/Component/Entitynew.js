@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Flex, Box, Select, Button, Table, Thead, Tbody, Tr, Th, Td, Input,
-  Image,
-  Text
+  Flex, Box, Select, Button, Table, Thead, Tbody, Tr, Th, Td, Input, Image, Text, Radio, RadioGroup, Stack, Heading
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import AddEntityModal from './AddEntityModal';
 import { connect, useDispatch } from 'react-redux';
+import AddEntityModal from './AddEntityModal';
 import { listEntities } from 'redux/entitiy/action';
-import DeleteModal from './DeleteModal';
 import Loader from '../../../../assets/img/loader.gif';
 
-const Entitynew = ({ entities, loading }) => {
+const Entitynew = ({ entities, loading, profiles }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
-
+console.log(entities)
   const openModal = () => {
     setSelectedEntity(null); // Clear selected entity for adding a new one
     setIsModalOpen(true);
@@ -26,8 +23,6 @@ const Entitynew = ({ entities, loading }) => {
   useEffect(() => {
     dispatch(listEntities());
   }, [dispatch]);
-
-  console.log('list des entities', entities)
 
   return (
     <>
@@ -53,6 +48,7 @@ const Entitynew = ({ entities, loading }) => {
         ) : (
           <Box p={4}>
 
+            {/* Entity Table */}
             <Table>
               <Thead>
                 <Tr>
@@ -66,7 +62,7 @@ const Entitynew = ({ entities, loading }) => {
               <Tbody>
                 {entities.map(entity => (
                   <Tr
-                    key={entity?.id}
+                    key={entity?._id}
                     onClick={() => {
                       setSelectedEntity(entity); // Set the selected entity when a row is clicked
                       setIsModalOpen(true);
@@ -74,25 +70,25 @@ const Entitynew = ({ entities, loading }) => {
                     _hover={{ backgroundColor: "gray.100" }}
                     cursor="pointer"
                   >
-                    <Td>ENT{entity.referenceId}</Td>
-                    <Td>{entity.description}</Td>
-                    <Td>{entity.owner}</Td>
-                    <Td>{entity.nominee}</Td>
-                    <Td>{entity.reviewer}</Td>
+                    <Td>ENT{entity?.referenceId}</Td>
+                    <Td>CAM - {entity?.description}</Td>
+                    <Td>{entity?.owner ? `${entity?.owner?.surname + " " + entity?.owner?.name}` : null}</Td>
+                    <Td>{entity?.nominee ? `${entity?.nominee?.surname + " " + entity?.nominee?.name}` : null}</Td>
+                    <Td>{entity?.reviewer ? `${entity?.reviewer?.surname + " " + entity?.reviewer?.name}` : null}</Td>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
-
-
           </Box>
-        ))}
+        )
+      )}
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}
       <AddEntityModal
         isOpen={isModalOpen}
         onClose={closeModal}
         loading={loading}
         selectedEntity={selectedEntity}
+        profiles={profiles}
       />
     </>
   );

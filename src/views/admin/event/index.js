@@ -1,5 +1,5 @@
 import Card from 'components/card/Card'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     Modal,
     ModalOverlay,
@@ -24,11 +24,19 @@ import DetailsForm from './components/DetailsForm'
 import Commentary from './components/commentary'
 import Finances from './components/Financials'
 import { FaPrint } from 'react-icons/fa'
-import { DeleteIcon } from '@chakra-ui/icons'
+import { ChevronLeftIcon, DeleteIcon } from '@chakra-ui/icons'
 import AddEventForm from '../risks/components/AddEventForm'
 import { FaEnvelope } from 'react-icons/fa6'
 import jsPDF from 'jspdf'
 import html2canvas from "html2canvas";
+import DeleteModal from './components/DeleteModal'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ChakraLink, LinkProps } from '@chakra-ui/react'
+import { connect, useDispatch } from 'react-redux'
+import { listEntities } from 'redux/entitiy/action'
+import { listProfiles } from 'redux/profile/action'
+import { url } from 'urlLoader'
 
 const generatePDF = async () => {
     const headElement = document.getElementById('head-component'); // Assume the Head component has an ID
@@ -42,13 +50,28 @@ const generatePDF = async () => {
     return pdfBlob;
 };
 
-const Event = () => {
+const Event = ({ profiles, entities }) => {
     const [loader, setLoader] = useState(false);
+    const [isEdit, setIsEdit] = useState(true);
+    const [isEmailDisabled, setIsEmailDisabled] = useState(false);
+    const [isPrintDisabled, setIsPrintDisabled] = useState(false);
+    const [isUnapprovedDisabled, setIsUnapprovedDisabled] = useState(false);
+    const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
+    const [isAmendDisabled, setIsAmendDisabled] = useState(true);
     const location = useLocation();
     const event = location.state?.event;
     const loading = location.state?.loading;
     const iframeRef = useRef(null);
-    console.log('evttttt:::', event.details)
+    const history = useHistory();
+
+    console.log('evttttt:::', event)
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(listEntities());
+        dispatch(listProfiles());
+    }, [dispatch]);
 
     if (!event) {
         return <Text>Cet évènement n'existe pas.</Text>;
@@ -58,7 +81,7 @@ const Event = () => {
         const formData = new FormData();
         formData.append('files', pdfBlob, 'event-head.pdf');
 
-        const response = await fetch('http://localhost:4500/api/v1/upload/files', {
+        const response = await fetch(`${url}/api/v1/upload/files`, {
             method: 'POST',
             body: formData
         });
@@ -69,6 +92,14 @@ const Event = () => {
         } else {
             throw new Error('Failed to upload PDF');
         }
+    };
+
+    const handleUnapprovedClick = () => {
+        setIsEmailDisabled(true);
+        setIsPrintDisabled(true);
+        setIsUnapprovedDisabled(true);
+        setIsDeleteDisabled(true);
+        setIsAmendDisabled(false);
     };
 
     const handleEmailClick = async () => {
@@ -120,77 +151,95 @@ const Event = () => {
         iframe.print();
     };
 
-
+    const totalRow = event?.financials.find(f => f.name === 'Total');
 
     return (
         <Card mt="100px">
+            <ChakraLink as={ReactRouterLink} to='/admin/events' color='blue'>
+                <Flex alignItems='center' mb={4}>
+                    <ChevronLeftIcon />
+                    Back to Events Page
+                </Flex>
+            </ChakraLink>
             {
                 loading ? (
                     <Flex alignItems='center' justifyContent='center'>
                         <Image src={Loader} alt="Loading..." height={50} width={50} />
                     </Flex>
                 ) : (
-                    <Flex direction='column' gap={6}>
-                        <div id='head-component' style={{ display: 'flex', flexDirection: 'column', gap: 12 }} >
-                            <Head
-                                eventRef={`EVT${event.num_ref}`}
-                                currentState={event.approved === true ? 'Approved' : 'Unapproved'}
-                                currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
-                                description={event.details.description}
-                                totalLosses=' '
-                                externalRef={event.details.externalRef}
-                            />
-                            <DetailsForm detailledDescription={event.details.descriptionDetailled} />
-                            <LossesEntities
-                                entityofDetection={event.details.entityOfDetection}
-                                subEntityofDetection={event.details.subentityOfDetection}
-                                entityofDOrigin={event.details.entityOfOrigin}
-                                subEntityofOrigin={event.details.subentityOfOrigin}
-                            />
-                            <Commentary
-                                eventDate={event.details.event_date}
-                                rag={event.details.RAG}
-                                activeEvent={event.details.activeEvent}
-                                eventTime={event.details.event_time}
-                                recordedBy={event.details.recorded_by}
-                                dateRecording={event.createdAt}
-                                timeRecording={event.createdAt}
-                                excludeFundLosse={event.details.excludeFundLosses}
-                                externalEvent={event.details.externalEvent}
-                                notify={event.details.notify}
-                                detectionDate={event.details.detection_date}
-                            />
-                            <Finances
-                                approved={event.details.approved_date}
-                                closed={event.details.closed_date}
-                                targetClosure={event.details.targetClosureDate}
-                                owner={event.details.owner}
-                                nominee={event.details.nominee}
-                                reviewer={event.details.reviewer}
-                                reviewerDate={event.details.reviewer_date}
-                            />
-                        </div>
-                        <Flex justifyContent='flex-end' gap={4}>
-                            <Flex>
-                                <Button leftIcon={<FaEnvelope />} variant='outline' colorScheme='red' onClick={handleEmailClick} isLoading={loader}>
-                                    E-mail
-                                </Button>
-                            </Flex>
-                            <Flex>
-                                <Button leftIcon={<FaPrint />} variant='outline' colorScheme='teal' onClick={handlePrint}>Print</Button>
-                            </Flex>
-                            <Flex>
-                                <Button leftIcon={<MdClose />} variant='outline' colorScheme='green'>Unapproved</Button>
-                            </Flex>
-                            <Flex>
-                                <AddEventForm event={event} />
-                            </Flex>
-                            <Flex>
-                                <Button leftIcon={<DeleteIcon />} variant='outline' colorScheme='red'>Delete</Button>
-                            </Flex>
+                    <>
+                        {
+                            !event ? (
+                                <Flex alignItems='center' justifyContent='center'>
+                                    <Text color='gray.500' fontSize='2xl'>This event do not exist.</Text>
+                                </Flex>
+                            ) : (
+                                <Flex direction='column' gap={6}>
+                                    <div id='head-component' style={{ display: 'flex', flexDirection: 'column', gap: 12 }} >
+                                        <Head
+                                            eventRef={`EVT${event.num_ref}`}
+                                            currentState={event.approved === true ? 'Approved' : 'Unapproved'}
+                                            currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
+                                            description={event.details.description}
+                                            totalLosses={totalRow?.values ? totalRow?.values[0] + totalRow?.values[1] + totalRow?.values[2] + totalRow?.values[3] : ''}
+                                            devise={event?.details?.rate}
+                                            externalRef={event.details.externalRef}
+                                        />
+                                        <DetailsForm detailledDescription={event.details.descriptionDetailled} />
+                                        <LossesEntities
+                                            entityofDetection={'ENT' + event.details.entityOfDetection.referenceId + ' ' + 'CAM - ' + event.details.entityOfDetection.description}
+                                            subEntityofDetection={event.details.subentityOfDetection}
+                                            entityofDOrigin={'ENT' + event.details.entityOfOrigin.referenceId + ' ' + 'CAM - ' + event.details.entityOfOrigin.description}
+                                            subEntityofOrigin={event.details.subentityOfOrigin}
+                                        />
+                                        <Commentary
+                                            eventDate={event.details?.event_date ? event.details?.event_date : ""}
+                                            rag={event.details?.RAG}
+                                            activeEvent={event.details?.activeEvent ? event.details?.activeEvent : ""}
+                                            eventTime={event.details?.event_time ? event.details?.event_time : ""}
+                                            recordedBy={event.details?.recorded_by ? event.details?.recorded_by : ""}
+                                            dateRecording={event?.createdAt ? event?.createdAt : ""}
+                                            timeRecording={event?.createdAt ? event?.createdAt : ""}
+                                            excludeFundLosse={event.details.excludeFundLosses}
+                                            externalEvent={event.details.externalEvent}
+                                            notify={event.details.notify}
+                                            detectionDate={event.details?.detection_date}
+                                        />
+                                        <Finances
+                                            approved={event.details.approved_date}
+                                            closed={event.details.closed_date}
+                                            targetClosure={event.details.targetClosureDate}
+                                            owner={event.details.owner?.name ? event.details.owner?.name + ' ' + event.details.owner?.surname : ""}
+                                            nominee={event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
+                                            reviewer={event.details.reviewer?.name ? event.details.reviewer?.name + ' ' + event.details.reviewer?.surname : ""}
+                                            reviewerDate={event.details.reviewer_date}
+                                        />
+                                    </div>
+                                    <Flex justifyContent='flex-end' gap={4}>
+                                        <Flex>
+                                            <Button leftIcon={<FaEnvelope />} variant='outline' colorScheme='red' onClick={handleEmailClick} isLoading={loader} isDisabled={isEmailDisabled}>
+                                                E-mail
+                                            </Button>
+                                        </Flex>
+                                        <Flex>
+                                            <Button leftIcon={<FaPrint />} variant='outline' colorScheme='teal' onClick={handlePrint} isDisabled={isPrintDisabled}>Print</Button>
+                                        </Flex>
+                                        <Flex>
+                                            <Button leftIcon={<MdClose />} variant='outline' colorScheme='green' onClick={handleUnapprovedClick} isDisabled={isUnapprovedDisabled}>Unapproved</Button>
+                                        </Flex>
+                                        <Flex>
+                                            <AddEventForm event={event} entities={entities} profiles={profiles} isEdit={isEdit} isAmendDisabled={isAmendDisabled}/>
+                                        </Flex>
+                                        <Flex>
+                                            <DeleteModal event={event} isDeleteDisabled={isDeleteDisabled}/>
+                                        </Flex>
 
-                        </Flex>
-                    </Flex>
+                                    </Flex>
+                                </Flex>
+                            )
+                        }
+                    </>
+
                 )
             }
             <iframe ref={iframeRef} style={{ display: 'none' }} />
@@ -198,4 +247,10 @@ const Event = () => {
     )
 }
 
-export default Event
+const mapStateToProps = ({ EntityReducer, ProfileReducer }) => ({
+    profiles: ProfileReducer.profiles,
+    entities: EntityReducer.entities,
+    loading: EntityReducer.loading,
+});
+
+export default connect(mapStateToProps)(Event);

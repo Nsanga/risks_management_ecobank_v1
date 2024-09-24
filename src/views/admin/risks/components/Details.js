@@ -3,29 +3,11 @@ import Select from 'react-select';
 import { FaFilePdf, FaFileWord, FaFileAlt, FaFileImage } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import DocumentUploader from './DocumentUploader';
-import Profiles from '../profiles';
-import Entity from '../entity';
 import RAG from '../RAG';
-import entityAreaOfOrigin from '../entityOfOrigin';
 import moment from 'moment';
 
-const Details = ({ event, onDetailsChange }) => {
-    const [options, setOptions] = useState([]);
-    const [entityofdetection, setEntityofdetection] = useState([]);
-    const [entityOfOrigin, setEntityOfOrigin] = useState([]);
+const Details = ({ event, onDetailsChange, entities, profiles }) => {
     const [rag, setRag] = useState([]);
-
-    function getCurrentDate() {
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Les mois sont de 0 à 11
-        const day = String(currentDate.getDate()).padStart(2, '0');
-
-        // Format 
-        const formattedDate = `${day}/${month}/${year}`;
-
-        return formattedDate;
-    }
 
     function getCurrentTime() {
         const currentDate = new Date();
@@ -37,7 +19,7 @@ const Details = ({ event, onDetailsChange }) => {
 
         return formattedTime;
     }
-    // console.log('>>>>>>>>>>>>>>', event.details.RAG)
+    console.log('>>>>>>>>>>>>>>', event)
 
     const [formData, setFormData] = useState({
         event_date: '',
@@ -50,48 +32,49 @@ const Details = ({ event, onDetailsChange }) => {
         recorded_date: '',
         externalRef: '',
         notify: false,
-        entityOfDetection: '',
+        entityOfDetection: null,
         subentityOfDetection: '',
         detection_date: '',
-        entityOfOrigin: '',
+        entityOfOrigin: null,
         subentityOfOrigin: '',
         description: '',
         descriptionDetailled: '',
         approved_date: '',
         closed_date: '',
         targetClosureDate: '',
-        owner: '',
-        nominee: '',
-        reviewer: '',
+        owner: null,
+        nominee: null,
+        reviewer: null,
         reviewer_date: '',
-        documents: [],
+        document: [],
     });
 
+    const profilesOptions = profiles
+        ?.filter(profile => profile.activeUser)
+        ?.map((profile, index) => ({
+            key: `${profile._id}-${index}`, // Unicité assurée
+            value: profile.email,
+            label: `${profile.name} ${profile.surname}`,
+        }));
+
+    const entitiesOptions = entities?.map((entity, index) => ({
+        key: `${entity._id}-${index}`, // Unicité assurée
+        value: entity._id,
+        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    }));
+
+    const handleSelectChange = (name, selectedOption) => {
+        setFormData(prevState => {
+            const updatedFormData = {
+                ...prevState,
+                [name]: selectedOption ? selectedOption.value : null,
+            };
+            onDetailsChange(updatedFormData); // Notify parent about changes
+            return updatedFormData;
+        });
+    };
+
     useEffect(() => {
-        const loadOptions = async () => {
-            const formattedOptions = Profiles.map(user => ({
-                value: user.email,
-                label: user.name
-            }));
-            setOptions(formattedOptions);
-        };
-
-        const loadEntityOfDetection = async () => {
-            const formattedEntities = Entity.map(entityofdetection => ({
-                value: entityofdetection.name,
-                label: entityofdetection.name
-            }));
-            setEntityofdetection(formattedEntities);
-        };
-
-        const loadEntityOfOrigin = async () => {
-            const formattedEntityOfOrigin = entityAreaOfOrigin.map(entityoforigin => ({
-                value: entityoforigin.name,
-                label: entityoforigin.name
-            }));
-            setEntityOfOrigin(formattedEntityOfOrigin);
-        };
-
         const loadRag = async () => {
             const formattedRag = RAG.map(rag => ({
                 value: rag.name,
@@ -99,43 +82,51 @@ const Details = ({ event, onDetailsChange }) => {
             }));
             setRag(formattedRag);
         };
-
-        loadOptions();
-        loadEntityOfDetection();
-        loadEntityOfOrigin();
         loadRag();
     }, []);
 
     useEffect(() => {
-        if (event) {
-            setFormData({
-                event_date: event.details.event_date || getCurrentDate(),
-                RAG: event.details.RAG || '',
-                activeEvent: event.details.activeEvent || false,
+        if (event && event.details) {
+            setFormData(prevState => ({
+                ...prevState,
+                event_date: moment(event.details.event_date).format('YYYY-MM-DD') || '',
                 event_time: event.details.event_time || getCurrentTime(),
-                excludeFundLosses: event.details.excludeFundLosses || false,
-                externalEvent: event.details.externalEvent || false,
+                detection_date: event.details.detection_date ? new Date(event.details.detection_date).toISOString().split('T')[0] : '',
+                approved_date: event.details.approved_date ? new Date(event.details.approved_date).toISOString().split('T')[0] : '',
+                closed_date: event.details.closed_date ? new Date(event.details.closed_date).toISOString().split('T')[0] : '',
                 recorded_by: event.details.recorded_by || '',
                 recorded_date: event.details.recorded_date || '',
-                externalRef: event.details.externalRef || '',
-                notify: event.details.notify || false,
-                entityOfDetection: event.details.entityOfDetection || '',
-                subentityOfDetection: event.details.subentityOfDetection || '',
-                detection_date: event.details.detection_date || '',
-                entityOfOrigin: event.details.entityOfOrigin || '',
-                subentityOfOrigin: event.details.subentityOfOrigin || '',
                 description: event.details.description || '',
                 descriptionDetailled: event.details.descriptionDetailled || '',
-                approved_date: event.details.approved_date || '',
-                closed_date: event.details.closed_date || '',
+                owner: event.details.owner ? event.details.owner._id : null,
+                nominee: event.details.nominee ? event.details.nominee._id : null,
+                reviewer: event.details.reviewer ? event.details.reviewer._id : null,
+                reviewer_date: event.details.reviewer_date ? new Date(event.details.reviewer_date).toISOString().split('T')[0] : '',
+                activeEvent: event.details.activeEvent || false,
+                excludeFundLosses: event.details.excludeFundLosses || false,
+                notify: event.details.notify || false,
+                externalEvent: event.details.externalEvent || false,
+                externalRef: event.details.externalRef || '',
+                entityOfDetection: event.details.entityOfDetection ? event.details.entityOfDetection._id : null, // Stocker l'ID
+                subentityOfDetection: event.details.subentityOfDetection || '',
+                entityOfOrigin: event.details.entityOfOrigin ? event.details.entityOfOrigin._id : null, // Stocker l'ID
+                subentityOfOrigin: event.details.subentityOfOrigin || '',
+                RAG: event.details.RAG || '',
                 targetClosureDate: event.details.targetClosureDate || '',
-                owner: event.details.owner || '',
-                nominee: event.details.nominee || '',
-                reviewer: event.details.reviewer || '',
-                reviewer_date: event.details.reviewer_date || '',
-                documents: [],
-            });
+                document: event.details.document || [],
+            }));
         }
+    }, [event]);
+
+
+    useEffect(() => {
+        // Initialiser la date du jour dans createdOn lors du montage du composant ou lorsque selectedEntity change
+        const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+        setFormData(prevValues => ({
+            ...prevValues,
+            event_date: prevValues.event_date || today,
+            recorded_date: prevValues.recorded_date || today,
+        }));
     }, [event]);
 
     const customStyles = {
@@ -167,8 +158,8 @@ const Details = ({ event, onDetailsChange }) => {
 
     const handleUploadLinks = (newLinks) => {
         setFormData(prevData => {
-            const updatedDocuments = [...prevData.documents, ...newLinks];
-            const newData = { ...prevData, documents: updatedDocuments };
+            const updatedDocuments = [...prevData.document, ...newLinks];
+            const newData = { ...prevData, document: updatedDocuments };
             onDetailsChange(newData); // Notify parent about changes
             return newData;
         });
@@ -199,7 +190,12 @@ const Details = ({ event, onDetailsChange }) => {
                     <Flex gap={6} alignItems="center">
                         <Text fontSize={14}>Event Date :</Text>
                         <Box width={200}>
-                            <Input placeholder='Select Date' size='sm' type='texte' value={moment(formData.event_date).format('DD-MM-YYYY')} isReadOnly />
+                            <Input
+                                placeholder='Select Date'
+                                size='sm'
+                                type='date'
+                                value={formData.event_date}
+                                onChange={(e) => handleInputChange('event_date', e.target.value)} />
                         </Box>
                     </Flex>
                     <Flex gap={5} alignItems="center">
@@ -233,7 +229,7 @@ const Details = ({ event, onDetailsChange }) => {
                     </Flex>
                     <Flex gap={5} alignItems="center">
                         <Text fontSize={14}>On :</Text>
-                        <Text color='blue' fontSize={14}>{moment(formData.reviewer_date).format('DD-MM-YYYY')}</Text>
+                        <Text color='blue' fontSize={14}>{moment(formData.recorded_date).format('DD/MM/YYYY')}</Text>
                     </Flex>
                     <Flex width={155}>
                         <Checkbox size='sm' isChecked={formData.excludeFundLosses} onChange={(e) => handleInputChange('excludeFundLosses', e.target.checked)}>Exclude Fund Losses</Checkbox>
@@ -261,11 +257,11 @@ const Details = ({ event, onDetailsChange }) => {
                                 <Text fontSize={14}>Entity : <span style={{ color: 'red' }}>*</span></Text>
                                 <Box width={200}>
                                     <Select
-                                        options={entityofdetection} 
+                                        options={entitiesOptions}
                                         styles={customStyles}
                                         placeholder='Select Entity'
-                                        value={entityofdetection.find(ent => ent.value === formData.entityOfDetection)}
-                                        onChange={(selectedOption) => handleInputChange('entityOfDetection', selectedOption ? selectedOption.value : '')}
+                                        value={entitiesOptions?.find(ent => ent.value === formData.entityOfDetection)}
+                                        onChange={(selectedOption) => handleSelectChange('entityOfDetection', selectedOption)}
                                     />
                                 </Box>
                             </Flex>
@@ -281,7 +277,7 @@ const Details = ({ event, onDetailsChange }) => {
                                     <Input
                                         placeholder='Select Date'
                                         size='sm' type='date'
-                                        value={moment(formData.detection_date, 'DD-MM-YYYY').format('YYYY-MM-DD')}
+                                        value={formData.detection_date}
                                         onChange={(e) => handleInputChange('detection_date', e.target.value)} />
                                 </Box>
                             </Flex>
@@ -296,11 +292,11 @@ const Details = ({ event, onDetailsChange }) => {
                                 <Text fontSize={14}>Entity : <span style={{ color: 'red' }}>*</span></Text>
                                 <Box width={200}>
                                     <Select
-                                        options={entityOfOrigin}
+                                        options={entitiesOptions}
                                         styles={customStyles}
                                         placeholder='Select Entity'
-                                        value={entityOfOrigin.find(ent => ent.value === formData.entityOfOrigin)}
-                                        onChange={(selectedOption) => handleInputChange('entityOfOrigin', selectedOption ? selectedOption.value : '')}
+                                        value={entitiesOptions?.find(ent => ent.value === formData.entityOfOrigin)}
+                                        onChange={(selectedOption) => handleSelectChange('entityOfOrigin', selectedOption)}
                                     />
                                 </Box>
                             </Flex>
@@ -321,7 +317,7 @@ const Details = ({ event, onDetailsChange }) => {
                                 <Input
                                     placeholder='Select Date'
                                     size='sm' type='date'
-                                    value={moment(formData.approved_date, 'DD-MM-YYYY').format('YYYY-MM-DD')}
+                                    value={formData.approved_date}
                                     onChange={(e) => handleInputChange('approved_date', e.target.value)} />
                             </Box>
                         </Flex>
@@ -331,7 +327,7 @@ const Details = ({ event, onDetailsChange }) => {
                                 <Input
                                     placeholder='Select Date'
                                     size='sm' type='date'
-                                    value={moment(formData.closed_date, 'DD-MM-YYYY').format('YYYY-MM-DD')}
+                                    value={formData.closed_date}
                                     onChange={(e) => handleInputChange('closed_date', e.target.value)} />
                             </Box>
                         </Flex>
@@ -341,7 +337,7 @@ const Details = ({ event, onDetailsChange }) => {
                                 <Input
                                     placeholder='Select Date'
                                     size='sm' type='date'
-                                    value={moment(formData.targetClosureDate, 'DD-MM-YYYY').format('YYYY-MM-DD')}
+                                    value={formData.targetClosureDate}
                                     onChange={(e) => handleInputChange('targetClosureDate', e.target.value)} />
                             </Box>
                         </Flex>
@@ -351,11 +347,11 @@ const Details = ({ event, onDetailsChange }) => {
                             <Text fontSize={14}>Owner : <span style={{ color: 'red' }}>*</span></Text>
                             <Box width={200} marginLeft={1}>
                                 <Select
-                                    options={options}
-                                    styles={customStyles}
+                                    name="owner"
                                     placeholder='Select owner'
-                                    value={options.find(o => o.value === formData.owner)}
-                                    onChange={(selectedOption) => handleInputChange('owner', selectedOption ? selectedOption.value : '')}
+                                    options={profilesOptions}
+                                    value={profilesOptions?.find(option => option.value === formData.owner) || null}
+                                    onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                                 />
                             </Box>
                         </Flex>
@@ -363,18 +359,24 @@ const Details = ({ event, onDetailsChange }) => {
                             <Text fontSize={14}>Nominee : <span style={{ color: 'red' }}>*</span></Text>
                             <Box width={200} >
                                 <Select
-                                    options={options}
-                                    styles={customStyles}
+                                    name="nominee"
                                     placeholder='Select nominee'
-                                    value={options.find(o => o.value === formData.nominee)}
-                                    onChange={(selectedOption) => handleInputChange('nominee', selectedOption ? selectedOption.value : '')}
+                                    options={profilesOptions}
+                                    value={profilesOptions?.find(option => option.value === formData.nominee) || null}
+                                    onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                                 />
                             </Box>
                         </Flex>
                         <Flex gap={10} alignItems="center">
                             <Text fontSize={14}>Reviewer :</Text>
                             <Box width={200} marginLeft={1}>
-                                <Input size='sm' type='text' value={formData.reviewer} onChange={(e) => handleInputChange('reviewer', e.target.value)} />
+                                <Select
+                                    name="reviewer"
+                                    placeholder='Select reviewer'
+                                    options={profilesOptions}
+                                    value={profilesOptions?.find(option => option.value === formData.reviewer) || null}
+                                    onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
+                                />
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
@@ -383,7 +385,7 @@ const Details = ({ event, onDetailsChange }) => {
                                 <Input
                                     placeholder='Select Date'
                                     size='sm' type='date'
-                                    value={moment(formData.reviewer_date, 'DD-MM-YYYY').format('YYYY-MM-DD')}
+                                    value={formData.reviewer_date}
                                     onChange={(e) => handleInputChange('reviewer_date', e.target.value)} />
                             </Box>
                         </Flex>

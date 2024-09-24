@@ -19,13 +19,13 @@ const Finances = ({
           <Flex gap={20} alignItems="center">
             <Text fontSize={14}>Approved  :</Text>
             <Box width={200} >
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{moment(approved).format('DD/MM/YYYY')}</Text>
+              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{approved === null ? "" : moment(approved).format('DD/MM/YYYY')}</Text>
             </Box>
           </Flex>
           <Flex gap={14} alignItems="center">
             <Text fontSize={14}>Closed Date :</Text>
             <Box width={200} marginLeft={3}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{moment(closed).format('DD/MM/YYYY')}</Text>
+              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{closed === null ? "" : moment(closed).format('DD/MM/YYYY')}</Text>
             </Box>
           </Flex>
           <Flex gap={6} alignItems="center">
@@ -57,7 +57,7 @@ const Finances = ({
           <Flex gap={6} alignItems="center">
             <Text fontSize={14}>Reviewer Date :</Text>
             <Box width={200}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{moment(reviewerDate).format('DD/MM/YYYY')}</Text>
+              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{reviewerDate === null ? "" : moment(reviewerDate).format('DD/MM/YYYY')}</Text> 
             </Box>
           </Flex>
         </Flex>

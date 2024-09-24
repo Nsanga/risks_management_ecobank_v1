@@ -5,12 +5,16 @@ import CardDetails from './components/cardDetails';
 import { connect, useDispatch } from 'react-redux';
 import { listEvents } from 'redux/events/action';
 import AddEventForm from './components/AddEventForm';
+import { listEntities } from 'redux/entitiy/action';
+import { listProfiles } from 'redux/profile/action';
 
-const Risks = ({ events, loading }) => {
+const Risks = ({ events, loading, entities, profiles }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(listEvents());
+    dispatch(listEntities());
+    dispatch(listProfiles());
   }, [dispatch]);
 
   // Trier les événements par date de création et sélectionner les 5 plus récents
@@ -20,14 +24,16 @@ const Risks = ({ events, loading }) => {
 
   return (
     <Card mt="100px">
-      <AddEventForm />
+      <AddEventForm entities={entities} profiles={profiles} />
       <CardDetails events={recentEvents} loading={loading} />
     </Card>
   );
 };
 
-const mapStateToProps = ({ EventReducer }) => ({
+const mapStateToProps = ({ EventReducer, EntityReducer, ProfileReducer }) => ({
+  profiles: ProfileReducer.profiles,
   events: EventReducer.events,
+  entities: EntityReducer.entities,
   loading: EventReducer.loading,
 });
 

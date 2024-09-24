@@ -39,10 +39,10 @@ const UserGroup = ({ userGroups, loading }) => {
             <Box mb={4}>
                 <Flex justifyContent="flex-end" mb={4}>
                     <Button
-                        variant="outline"
-                        colorScheme="blue"
+                        variant="outline" color='blue'
                         leftIcon={<AddIcon />}
                         onClick={() => openModal()}
+                        fontSize={14}
                     >
                         Add New User Group
                     </Button>

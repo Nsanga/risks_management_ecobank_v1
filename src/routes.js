@@ -25,6 +25,7 @@ import signIn from "views/auth/signIn";
 import Logout from "views/admin/Logout";
 import { RiSkull2Fill } from "react-icons/ri";
 import Event from "views/admin/event";
+import Control from "views/admin/control";
 
 const routes = [
   {
@@ -37,9 +38,16 @@ const routes = [
   {
     name: "Events",
     layout: "/admin",
-    path: "/risks",
+    path: "/events",
     icon: <Icon as={RiSkull2Fill} width='20px' height='20px' color='inherit' />,
     component: Risks,
+  },
+  {
+    name: "RCSA",
+    layout: "/admin",
+    path: "/control",
+    icon: <Icon as={RiSkull2Fill} width='20px' height='20px' color='inherit' />,
+    component: Control,
   },
   {
     name: "Configuration",
