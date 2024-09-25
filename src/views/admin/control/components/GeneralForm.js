@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   Button,
   useToast,
+  Text,
 } from '@chakra-ui/react';
 
 const GeneralForm = ({ formData, handleChange, handleSubmit }) => {
@@ -21,14 +22,14 @@ const GeneralForm = ({ formData, handleChange, handleSubmit }) => {
           
           {/* Checkbox section moved here */}
           <Flex justifyContent="space-between" mb={4}>
-            <Checkbox 
+            <Checkbox fontWeight="bold" mb={2}
               name="keyControl" 
               isChecked={formData.keyControl} 
               onChange={handleChange} 
             >
               Key Control
             </Checkbox>
-            <Checkbox 
+            <Checkbox fontWeight="bold" mb={2}
               name="activeControl" 
               isChecked={formData.activeControl} 
               onChange={handleChange} 
@@ -38,42 +39,46 @@ const GeneralForm = ({ formData, handleChange, handleSubmit }) => {
           </Flex>
 
           <FormControl mb={4}>
-            <FormLabel>Control Library Reference</FormLabel>
+          <Text fontWeight="bold" mb={2}>Control Library Reference</Text>
             <Input 
               type="text" 
               name="controlRef" 
               value={formData.controlRef} 
               onChange={handleChange} 
+              isDisabled
             />
           </FormControl>
 
           <FormControl mb={4}>
-            <FormLabel>Control Category</FormLabel>
+          <Text fontWeight="bold" mb={2}>Control Category</Text>
             <Input 
               type="text" 
               name="controlCategory" 
               value={formData.controlCategory} 
-              onChange={handleChange} 
+              onChange={handleChange}
+              isDisabled
             />
           </FormControl>
           
           <FormControl mb={4}>
-            <FormLabel>Description</FormLabel>
+          <Text fontWeight="bold" mb={2}>Description</Text>
             <Textarea 
               name="description" 
               value={formData.description} 
-              onChange={handleChange} 
+              onChange={handleChange}
+              isDisabled 
             />
           </FormControl>
           
           <Flex mb={4}>
             <FormControl mr={4}>
-              <FormLabel>Nominee</FormLabel>
+            <Text fontWeight="bold" mb={2}>Nominee</Text>
               <Input 
                 type="text" 
                 name="nominee" 
                 value={formData.nominee} 
-                onChange={handleChange} 
+                onChange={handleChange}
+                isDisabled 
               />
             </FormControl>
             <FormControl>
@@ -82,51 +87,56 @@ const GeneralForm = ({ formData, handleChange, handleSubmit }) => {
                 type="text" 
                 name="reviewer" 
                 value={formData.reviewer} 
-                onChange={handleChange} 
+                onChange={handleChange}
+                isDisabled 
               />
             </FormControl>
           </Flex>
 
           <FormControl mb={4}>
-            <FormLabel>Review Date</FormLabel>
+          <Text fontWeight="bold" mb={2}>Review Date</Text>
             <Input 
               type="date" 
               name="reviewDate" 
               value={formData.reviewDate} 
               onChange={handleChange} 
+              isDisabled
             />
           </FormControl>
         </Box>
 
         {/* Right section */}
         <Box flex="1" width={{ base: "100%", md: "100%" }} height={350} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
-          <FormLabel>Operation:</FormLabel>
+        <Text fontWeight="bold" mb={2}>Operation:</Text>
           <Flex direction="column">
             <FormControl mb={2}>
-              <FormLabel>Frequency</FormLabel>
+            <Text fontWeight="bold" mb={2}>Frequency</Text>
               <Input 
                 type="text" 
                 name="frequency" 
                 value={formData.frequency} 
-                onChange={handleChange} 
+                onChange={handleChange}
+                isDisabled 
               />
             </FormControl>
             <FormControl mb={2}>
-              <FormLabel>Last Operator</FormLabel>
+            <Text fontWeight="bold" mb={2}>Last Operator</Text>
               <Input 
                 type="text" 
                 name="lastOperator" 
                 value={formData.lastOperator} 
                 onChange={handleChange} 
+                isDisabled
               />
             </FormControl>
             <FormControl mb={2}>
-              <FormLabel>Next Operation</FormLabel>
+            <Text fontWeight="bold" mb={2}>Next Operation</Text>
               <Input 
                 type="text" 
                 name="nextOperation" 
                 value={formData.nextOperation} 
                 onChange={handleChange} 
+                isDisabled
               />
             </FormControl>
           </Flex>

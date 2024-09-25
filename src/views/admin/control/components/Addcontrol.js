@@ -3,13 +3,18 @@ import {
   Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, 
   ModalFooter, FormControl, FormLabel, Input, useDisclosure, Flex, 
   Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel // Import Chakra UI Tabs components
+  Tabs, TabList, TabPanels, Tab, TabPanel, // Import Chakra UI Tabs components
+  Text
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import RiskForm from './RiskForm'; // Import the RiskForm component
 import RiskPage from './RiskPage';
 import MyTableComponent from './MyTableComponent';
 import RiskControl from './RiskControl';
+import ActionsPanel from './ActionsPanel';
+import TreeSelect from './TreeSelect';
+import LogTable from './LogTable';
+import DataDisplay from './DataDisplay';
 
 function AddControl() {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for adding a new control
@@ -233,16 +238,18 @@ function AddControl() {
             <RiskControl />  {/* Added RiskControl here */}
           </TabPanel>
           <TabPanel>
-            <p>Action-related content goes here.</p>
+          <ActionsPanel />  {/* Add ActionsPanel to the Actions tab */}
           </TabPanel>
           <TabPanel>
-            <p>Risk focus-related content goes here.</p>
+          <Text fontWeight="bold">Risk Focus</Text>
+          <TreeSelect />  {/* Add TreeSelect to the Risk focus tab */}
           </TabPanel>
           <TabPanel>
-            <p>Risks logs-related content goes here.</p>
+          <LogTable /> {/* Include LogTable here for Risks logs */}
           </TabPanel>
           <TabPanel>
-            <p>Linked items-related content goes here.</p>
+            {/* Integrate the DataDisplay component here */}
+            <DataDisplay />
           </TabPanel>
         </TabPanels>
       </Tabs>

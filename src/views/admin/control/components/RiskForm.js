@@ -1,6 +1,7 @@
 import React from 'react';
 import {
-  Box, FormControl, FormLabel, Input, Textarea, Checkbox, Select, Button, HStack, Flex
+  Box, FormControl, FormLabel, Input, Textarea, Checkbox, Select, Button, HStack, Flex,
+  Text
 } from '@chakra-ui/react';
 import { DeleteIcon, CheckIcon, CloseIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons';
 
@@ -15,32 +16,32 @@ function RiskForm({ riskData }) {
         {/* Left Column */}
         <Box flex="1" mr={{ md: 4 }}>
           <FormControl>
-            <FormLabel>Owner</FormLabel>
+            <Text fontWeight="bold" mb={2}>Owner</Text>
             <HStack spacing={2} alignItems="center">
-              <Input value={riskData.owner} isReadOnly />
-              <Checkbox size="sm">Owner Email</Checkbox>
+              <Input value={riskData.owner} isReadOnly isDisabled />
+              <Checkbox size="sm" fontWeight="bold" mb={2}>Owner Email</Checkbox>
             </HStack>
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Nominee</FormLabel>
-            <Input value={riskData.nominee} isReadOnly />
+          <Text fontWeight="bold" mb={2}>Nominee</Text>
+            <Input value={riskData.nominee} isReadOnly isDisabled />
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Reviewer</FormLabel>
-            <Input value={riskData.reviewer} isReadOnly />
+          <Text fontWeight="bold" mb={2}>Reviewer</Text>
+            <Input value={riskData.reviewer} isReadOnly isDisabled/>
           </FormControl>
 
           <FormControl mt={4} display="flex" alignItems="center">
-            <Checkbox isChecked={riskData.isActive} isReadOnly>
+            <Checkbox isChecked={riskData.isActive} isReadOnly fontWeight="bold" mb={2}>
               Active Risk
             </Checkbox>
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Description</FormLabel>
-            <Textarea value={riskData.description} isReadOnly />
+          <Text fontWeight="bold" mb={2}>Description</Text>
+            <Textarea value={riskData.description} isReadOnly isDisabled/>
           </FormControl>
 
         </Box>
@@ -48,7 +49,7 @@ function RiskForm({ riskData }) {
         {/* Right Column with shadow and buttons */}
         <Box flex="1" width={{ base: "100%", md: "40%" }} height={250} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
           <FormControl>
-            <FormLabel>Frequency</FormLabel>
+          <Text fontWeight="bold" mb={2}>Frequency</Text>
             <Select value={riskData.frequency || ''} isReadOnly>
               <option value="Daily">Daily</option>
               <option value="Weekly">Weekly</option>
@@ -57,7 +58,7 @@ function RiskForm({ riskData }) {
           </FormControl>
 
           <FormControl mt={1}> {/* Reduced margin */}
-            <FormLabel>Remind One</FormLabel>
+          <Text fontWeight="bold" mb={2}>Remind One</Text>
             <Input type="date" value={riskData.remindDate || ''} isReadOnly />
           </FormControl>
 
