@@ -43,6 +43,15 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     {username !== localStorage.getItem('username') ?
                         (
                             <>
+                                <Button
+                                    leftIcon={<EditIcon color="white" />}
+                                    colorScheme='blue'
+                                    style={{ fontSize: 14 }}
+                                    onClick={handleAmendClick}
+                                    disabled={!isReadOnly || formData.lockedUser}
+                                >
+                                    Amend
+                                </Button>
                                 <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
                                     <Button
                                         leftIcon={formData.lockedUser ? <LockIcon /> : <UnlockIcon />}
@@ -58,15 +67,6 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                                 <Box display="flex" alignItems="center" mr={4} cursor="pointer">
                                     <DeleteModal selectedUser={formData} disabled={!isReadOnly} onCloseAddProfileModal={onClose} />
                                 </Box>
-                                <Button
-                                    leftIcon={<EditIcon color="white" />}
-                                    colorScheme='blue'
-                                    style={{ fontSize: 14 }}
-                                    onClick={handleAmendClick}
-                                    disabled={!isReadOnly || formData.lockedUser}
-                                >
-                                    Amend
-                                </Button>
                             </>
                         ) : null}
 

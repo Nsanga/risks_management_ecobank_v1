@@ -79,7 +79,7 @@ const RiskPage = () => {
                         </GridItem>
                         <GridItem>
                             <Text fontWeight="bold">Risk Status:</Text>
-                            <Badge colorScheme="green">Approved</Badge>
+                            <Badge colorScheme="blue">Approved</Badge>
                         </GridItem>
                     </SimpleGrid>
                 </Box>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-  Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, 
-  ModalFooter, FormControl, FormLabel, Input, useDisclosure, Flex, 
+import {
+  Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
+  ModalFooter, FormControl, FormLabel, Input, useDisclosure, Flex,
   Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
   Tabs, TabList, TabPanels, Tab, TabPanel, // Import Chakra UI Tabs components
   Text
@@ -16,7 +16,7 @@ import TreeSelect from './TreeSelect';
 import LogTable from './LogTable';
 import DataDisplay from './DataDisplay';
 
-function AddControl() {
+function AddControl({ riskControls }) {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for adding a new control
   const { isOpen: isRiskModalOpen, onOpen: onRiskModalOpen, onClose: onRiskModalClose } = useDisclosure(); // Modal for displaying the risk form
   const [selectedRisk, setSelectedRisk] = useState(null); // State to hold the selected risk
@@ -24,67 +24,74 @@ function AddControl() {
   const finalRef = React.useRef();
 
   // Mock table data for risks and controls
-  const risksData = [
-    {
-      refId: 'R001',
-      description: 'Risk related to system performance',
-      owner: 'John Doe',
-      nominee: 'Jane Doe',
-      reviewer: 'Alice',
-      category: 'Performance',
-      exposure: 'Low'
-    },
-    {
-      refId: 'R002',
-      description: 'Security vulnerability in application',
-      owner: 'Mike Ross',
-      nominee: 'Harvey Specter',
-      reviewer: 'Rachel Zane',
-      category: 'Security',
-      exposure: 'High'
-    }
-  ];
+  const risksData = riskControls[0]?.risks || [];
+  const controlsData = riskControls[0]?.controls || [];
+  console.log(risksData);
 
-  const controlsData = [
-    {
-      refId: 'C001',
-      description: 'Control on system updates',
-      owner: 'Amanda Paul',
-      nominee: 'Chris Evert',
-      reviewer: 'Nick',
-      category: 'Update',
-      exposure: 'Medium'
-    },
-    {
-      refId: 'C002',
-      description: 'Control on security patches',
-      owner: 'Mike Tyson',
-      nominee: 'Bruce Wayne',
-      reviewer: 'Clark Kent',
-      category: 'Security',
-      exposure: 'High'
-    }
-  ];
+  // const risksData = [
+  //   {
+  //     refId: 'R001',
+  //     description: 'Risk related to system performance',
+  //     owner: 'John Doe',
+  //     nominee: 'Jane Doe',
+  //     reviewer: 'Alice',
+  //     category: 'Performance',
+  //     exposure: 'Low'
+  //   },
+  //   {
+  //     refId: 'R002',
+  //     description: 'Security vulnerability in application',
+  //     owner: 'Mike Ross',
+  //     nominee: 'Harvey Specter',
+  //     reviewer: 'Rachel Zane',
+  //     category: 'Security',
+  //     exposure: 'High'
+  //   }
+  // ];
+
+  // const controlsData = [
+  //   {
+  //     refId: 'C001',
+  //     description: 'Control on system updates',
+  //     owner: 'Amanda Paul',
+  //     nominee: 'Chris Evert',
+  //     reviewer: 'Nick',
+  //     category: 'Update',
+  //     exposure: 'Medium'
+  //   },
+  //   {
+  //     refId: 'C002',
+  //     description: 'Control on security patches',
+  //     owner: 'Mike Tyson',
+  //     nominee: 'Bruce Wayne',
+  //     reviewer: 'Clark Kent',
+  //     category: 'Security',
+  //     exposure: 'High'
+  //   }
+  // ];
 
   // State for toggling between risks and controls
   const [showRisks, setShowRisks] = useState(true);
-  
+
   const handleRowClick = (risk) => {
     setSelectedRisk(risk); // Set the clicked risk data
     onRiskModalOpen(); // Open the modal to display the risk form
   };
 
+  const numberOfRisks = risksData.length;
+  const numberOfControls = controlsData.length;
+
   return (
     <>
       <Flex direction="column" justifyContent="flex-end" align="flex-end" mb={5} w="100%">
-        <Button
+        {/* <Button
           variant="outline"
           color="blue"
           leftIcon={<AddIcon />}
           onClick={onOpen}
         >
           Add Control
-        </Button>
+        </Button> */}
 
         {/* Layout container with fields */}
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
@@ -145,8 +152,8 @@ function AddControl() {
             </FormControl>
 
             <FormControl mr={4} maxW="150px">
-              <FormLabel>Number of Risks</FormLabel>
-              <Input type="number" placeholder="0" />
+              <FormLabel>Number of {showRisks ? "Risks" : "Controls"}</FormLabel>
+              <Input type="number" value={showRisks ? numberOfRisks : numberOfControls} readOnly />
             </FormControl>
 
             <FormControl maxW="250px">
@@ -156,33 +163,64 @@ function AddControl() {
           </Flex>
         </Box>
 
-        {/* Displaying the table below based on the selection */}
-        <Table variant="simple" mt={4}>
-          <Thead>
-            <Tr>
-              <Th>Reference Id</Th>
-              <Th>Description</Th>
-              <Th>Owner</Th>
-              <Th>Nominee</Th>
-              <Th>Reviewer</Th>
-              <Th>Category</Th>
-              <Th>Residual Exposure</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-          {(showRisks ? risksData : controlsData).map((row, index) => (
-              <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
-                <Td>{row.refId}</Td>
-                <Td>{row.description}</Td>
-                <Td>{row.owner}</Td>
-                <Td>{row.nominee}</Td>
-                <Td>{row.reviewer}</Td>
-                <Td>{row.category}</Td>
-                <Td>{row.exposure}</Td>
+        {showRisks && (
+          <Table variant="simple" mt={4}>
+            <Thead>
+              <Tr>
+                <Th>Reference Id</Th>
+                <Th>Description</Th>
+                <Th>Owner</Th>
+                <Th>Nominee</Th>
+                <Th>Reviewer</Th>
+                <Th>Category</Th>
+                <Th>Residual Exposure</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {risksData.map((row, index) => (
+                <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
+                  <Td>{row.refId}</Td>
+                  <Td>{row.keyRiskSummary}</Td>
+                  <Td>{row.owner}</Td>
+                  <Td>{row.nominee}</Td>
+                  <Td>{row.reviewer}</Td>
+                  <Td>{row.category}</Td>
+                  <Td>{row.exposure}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+
+        {!showRisks && (
+          <Table variant="simple" mt={4}>
+            <Thead>
+              <Tr>
+                <Th>Reference Id</Th>
+                <Th>Description</Th>
+                <Th>Library</Th>
+                <Th>Category</Th>
+                <Th>Owner</Th>
+                <Th>Nominee</Th>
+                <Th>Reviewer</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {controlsData.map((row, index) => (
+                <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
+                  <Td>{row.refId}</Td>
+                  <Td>{row.keyRiskSummary}</Td>
+                  <Td>{row.owner}</Td>
+                  <Td>{row.nominee}</Td>
+                  <Td>{row.reviewer}</Td>
+                  <Td>{row.category}</Td>
+                  <Td>{row.exposure}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+
       </Flex>
 
       {/* Modal for adding a new control */}
@@ -211,54 +249,54 @@ function AddControl() {
 
       {/* Modal for displaying the RiskForm with Tabs */}
       <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="full">
-  <ModalOverlay />
-  <ModalContent>
-    <ModalHeader>Risk Details</ModalHeader>
-    <ModalBody p={4}>
-      <RiskPage />
-      <Tabs variant="soft-rounded" colorScheme="green" mt={6}>
-        <TabList>
-          <Tab>General</Tab>
-          <Tab>Goals</Tab>
-          <Tab>Controls</Tab>
-          <Tab>Actions</Tab>
-          <Tab>Risk focus</Tab>
-          <Tab>Risks logs</Tab>
-          <Tab>Linked items</Tab>
-        </TabList>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Risk Details</ModalHeader>
+          <ModalBody p={4}>
+            <RiskPage />
+            <Tabs variant="soft-rounded" colorScheme="green" mt={6}>
+              <TabList>
+                <Tab>General</Tab>
+                <Tab>Goals</Tab>
+                <Tab>Controls</Tab>
+                <Tab>Actions</Tab>
+                <Tab>Risk focus</Tab>
+                <Tab>Risks logs</Tab>
+                <Tab>Linked items</Tab>
+              </TabList>
 
-        <TabPanels>
-          <TabPanel>
-            <RiskForm riskData={selectedRisk} />
-          </TabPanel>
-          <TabPanel>
-            <MyTableComponent />
-          </TabPanel>
-          <TabPanel>
-            <RiskControl />  {/* Added RiskControl here */}
-          </TabPanel>
-          <TabPanel>
-          <ActionsPanel />  {/* Add ActionsPanel to the Actions tab */}
-          </TabPanel>
-          <TabPanel>
-          <Text fontWeight="bold">Risk Focus</Text>
-          <TreeSelect />  {/* Add TreeSelect to the Risk focus tab */}
-          </TabPanel>
-          <TabPanel>
-          <LogTable /> {/* Include LogTable here for Risks logs */}
-          </TabPanel>
-          <TabPanel>
-            {/* Integrate the DataDisplay component here */}
-            <DataDisplay />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </ModalBody>
-    <ModalFooter>
-      <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
-    </ModalFooter>
-  </ModalContent>
-</Modal>
+              <TabPanels>
+                <TabPanel>
+                  <RiskForm riskData={selectedRisk} />
+                </TabPanel>
+                <TabPanel>
+                  <MyTableComponent />
+                </TabPanel>
+                <TabPanel>
+                  <RiskControl />  {/* Added RiskControl here */}
+                </TabPanel>
+                <TabPanel>
+                  <ActionsPanel />  {/* Add ActionsPanel to the Actions tab */}
+                </TabPanel>
+                <TabPanel>
+                  <Text fontWeight="bold">Risk Focus</Text>
+                  <TreeSelect />  {/* Add TreeSelect to the Risk focus tab */}
+                </TabPanel>
+                <TabPanel>
+                  <LogTable /> {/* Include LogTable here for Risks logs */}
+                </TabPanel>
+                <TabPanel>
+                  {/* Integrate the DataDisplay component here */}
+                  <DataDisplay />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
     </>
   );
