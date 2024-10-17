@@ -17,14 +17,15 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import GeneralForm from './GeneralForm'; // Adjust the path as needed
+import { CheckCircleIcon } from '@chakra-ui/icons';
 
 const RiskControl = () => {
   const [formData, setFormData] = useState({
-    controlRef: "CTAB097",
-    controlCategory: "Preventive",
-    description: "Savoir que le client peut...",
-    nominee: "Database Administrator",
-    reviewer: "Database Administrator",
+    controlRef: "",
+    controlCategory: "",
+    description: "",
+    nominee: "",
+    reviewer: "",
     reviewDate: "",
     frequency: "N/A",
     lastOperator: "",
@@ -71,62 +72,56 @@ const RiskControl = () => {
   };
 
   return (
-    <Box className="container" p={5}>
-      <Heading as="h1" mb={4}>Risk Control</Heading>
-      
+    <Box className="container">
       <Table variant="simple" mb={6}>
-        <Thead bg="blue.100"> 
+        <Thead bg="blue.100">
           <Tr>
-            <Th>Ref</Th>
-            <Th>Description</Th>
-            <Th>Active</Th>
-            <Th>Key Ctrl</Th>
-            <Th>Last Assess. Date</Th>
-            <Th>Last Assess. Design</Th>
-            <Th>Last Assess. Performance</Th>
-            <Th>Last Assess. Creator</Th>
-            <Th>Last Assess. Status</Th>
+            <Th style={{ fontSize: '10px' }}>Ref</Th>
+            <Th style={{ fontSize: '10px' }}>Description</Th>
+            <Th style={{ fontSize: '10px' }}>Active</Th>
+            <Th style={{ fontSize: '10px' }}>Key Ctrl</Th>
+            <Th style={{ fontSize: '10px' }}>Last Assess. Date</Th>
+            <Th style={{ fontSize: '10px' }}>Last Assess. Design</Th>
+            <Th style={{ fontSize: '10px' }}>Last Assess. Performance</Th>
+            <Th style={{ fontSize: '10px' }}>Last Assess. Creator</Th>
+            <Th style={{ fontSize: '10px' }}>Last Assess. Status</Th>
           </Tr>
         </Thead>
         <Tbody>
           <Tr>
-            <Td>{formData.controlRef}</Td>
-            <Td>{formData.description}</Td>
-            <Td>
-              <Checkbox 
-                isChecked={formData.activeControl} 
-                onChange={handleChange} 
-                name="activeControl" 
-              />
+            <Td fontSize={12}>{formData.controlRef}</Td>
+            <Td fontSize={12}>{formData.description}</Td>
+            <Td fontSize={12}>
+              <CheckCircleIcon color="green.500" />
             </Td>
-            <Td>{formData.keyControl ? 'Y' : 'N'}</Td>
-            <Td>Acceptable</Td>
-            <Td>Not Assessed</Td>
-            <Td>Not Attended</Td>
-            <Td>---</Td>
-            <Td>---</Td>
+            <Td fontSize={12}>{formData.keyControl ? 'Y' : 'N'}</Td>
+            <Td fontSize={12}>Acceptable</Td>
+            <Td fontSize={12}>Not Assessed</Td>
+            <Td fontSize={12}>Not Attended</Td>
+            <Td fontSize={12}>---</Td>
+            <Td fontSize={12}>---</Td>
           </Tr>
         </Tbody>
       </Table>
 
       <Tabs variant="soft-rounded" colorScheme="green" mt={6} index={tabIndex} onChange={(index) => setTabIndex(index)}>
         <TabList>
-          <Tab>Details</Tab>
-          <Tab>History</Tab>
-          <Tab>Documents</Tab>
-          <Tab>Actions</Tab>
-          <Tab>Risk focus</Tab>
-          <Tab>Risks logs</Tab>
-          <Tab>Linked items</Tab>
+          <Tab fontSize={12}>Details</Tab>
+          <Tab fontSize={12}>History</Tab>
+          <Tab fontSize={12}>Documents</Tab>
+          <Tab fontSize={12}>Actions</Tab>
+          <Tab fontSize={12}>Risk focus</Tab>
+          <Tab fontSize={12}>Risks logs</Tab>
+          <Tab fontSize={12}>Linked items</Tab>
         </TabList>
 
         <TabPanels>
           <TabPanel>
             {/* Import the GeneralForm component */}
-            <GeneralForm 
-              formData={formData} 
-              handleChange={handleChange} 
-              handleSubmit={handleSubmit} 
+            <GeneralForm
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
             />
           </TabPanel>
           {/* Additional TabPanels for other tabs can go here */}

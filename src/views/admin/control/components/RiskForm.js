@@ -1,97 +1,165 @@
-import React from 'react';
+import { useState } from 'react';
 import {
-  Box, FormControl, FormLabel, Input, Textarea, Checkbox, Select, Button, HStack, Flex,
-  Text
+  Box,
+  Flex,
+  FormControl,
+  Text,
+  HStack,
+  Input,
+  Checkbox,
+  Textarea,
+  Select,
+  Button,
+  VStack
 } from '@chakra-ui/react';
-import { DeleteIcon, CheckIcon, CloseIcon, EditIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import {
+  ArrowBackIcon,
+  CheckIcon,
+  CloseIcon,
+  EditIcon,
+  DeleteIcon,
+} from '@chakra-ui/icons';
 
-function RiskForm({ riskData }) {
-  if (!riskData) {
-    return <div>No Risk Data Selected</div>; // Fallback if no risk is selected
-  }
+function RiskForm() {
+  // State for form inputs
+  const [owner, setOwner] = useState('');
+  const [ownerEmailChecked, setOwnerEmailChecked] = useState(false);
+  const [nominee, setNominee] = useState('');
+  const [reviewer, setReviewer] = useState('');
+  const [activeRisk, setActiveRisk] = useState(false);
+  const [description, setDescription] = useState('');
+  const [frequency, setFrequency] = useState('');
+  const [remindOne, setRemindOne] = useState('');
+
+  // Handle form submission
+  const handleSave = () => {
+    const payload = {
+      owner,
+      ownerEmailChecked,
+      nominee,
+      reviewer,
+      activeRisk,
+      description,
+      frequency,
+      remindOne,
+    };
+
+    console.log('Form Payload:', payload);
+    // Here, you can also add logic to submit the payload to an API or service
+  };
 
   return (
-    <Box bg="white" p={6} rounded="md" shadow="md">
-      <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between">
+    <Box>
+      <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" alignItems="flex-start" p={4}>
         {/* Left Column */}
-        <Box flex="1" mr={{ md: 4 }}>
+        <Box width={{ base: "100%", md: "40%" }}>
           <FormControl>
-            <Text fontWeight="bold" mb={2}>Owner</Text>
             <HStack spacing={2} alignItems="center">
-              <Input value={riskData.owner} isReadOnly isDisabled />
-              <Checkbox size="sm" fontWeight="bold" mb={2}>Owner Email</Checkbox>
+              <Text fontWeight="bold" fontSize={12} mb={2}>Owner: </Text>
+              <Input fontSize={12} value={owner} onChange={(e) => setOwner(e.target.value)} />
             </HStack>
           </FormControl>
 
           <FormControl mt={4}>
-          <Text fontWeight="bold" mb={2}>Nominee</Text>
-            <Input value={riskData.nominee} isReadOnly isDisabled />
+            <HStack spacing={2} alignItems="center">
+              <Text fontWeight="bold" fontSize={12} mb={2}>Nominee: </Text>
+              <Input fontSize={12} value={nominee} onChange={(e) => setNominee(e.target.value)} />
+            </HStack>
           </FormControl>
 
           <FormControl mt={4}>
-          <Text fontWeight="bold" mb={2}>Reviewer</Text>
-            <Input value={riskData.reviewer} isReadOnly isDisabled/>
+            <HStack spacing={2} alignItems="center">
+              <Text fontWeight="bold" fontSize={12} mb={2}>Reviewer: </Text>
+              <Input fontSize={12} value={reviewer} onChange={(e) => setReviewer(e.target.value)} />
+            </HStack>
           </FormControl>
 
-          <FormControl mt={4} display="flex" alignItems="center">
-            <Checkbox isChecked={riskData.isActive} isReadOnly fontWeight="bold" mb={2}>
-              Active Risk
+          <FormControl mt={4} display="flex" alignItems="center" >
+            <Checkbox
+              isChecked={activeRisk}
+              onChange={(e) => setActiveRisk(e.target.checked)}
+              fontWeight="bold"
+              mb={2}
+            >
+              <span style={{fontSize:12}}>Active Risk</span>
             </Checkbox>
           </FormControl>
+        </Box>
 
-          <FormControl mt={4}>
-          <Text fontWeight="bold" mb={2}>Description</Text>
-            <Textarea value={riskData.description} isReadOnly isDisabled/>
-          </FormControl>
-
+        <Box width={{ base: "100%", md: "40%" }} textAlign="center">
+          <Checkbox
+            size="sm"
+            fontWeight="bold"
+            mb={2}
+            isChecked={ownerEmailChecked}
+            onChange={(e) => setOwnerEmailChecked(e.target.checked)}
+          >
+            <span style={{fontSize:12}}>Owner Email</span>
+          </Checkbox>
         </Box>
 
         {/* Right Column with shadow and buttons */}
-        <Box flex="1" width={{ base: "100%", md: "40%" }} height={250} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
+        <Box width={{ base: "100%", md: "40%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
           <FormControl>
-          <Text fontWeight="bold" mb={2}>Frequency</Text>
-            <Select value={riskData.frequency || ''} isReadOnly>
-              <option value="Daily">Daily</option>
-              <option value="Weekly">Weekly</option>
-              <option value="Monthly">Monthly</option>
-            </Select>
+            <HStack spacing={2} alignItems="center">
+              <Text fontWeight="bold" fontSize={12} mb={2}>Frequency: </Text>
+              <Select value={frequency} onChange={(e) => setFrequency(e.target.value)} fontSize={12}>
+                <option value="" >Select Frequency</option>
+                <option value="Daily" >Daily</option>
+                <option value="Weekly" >Weekly</option>
+                <option value="Monthly" >Monthly</option>
+              </Select>
+            </HStack>
           </FormControl>
 
-          <FormControl mt={1}> {/* Reduced margin */}
-          <Text fontWeight="bold" mb={2}>Remind One</Text>
-            <Input type="date" value={riskData.remindDate || ''} isReadOnly />
+          <FormControl mt={4}>
+            <HStack spacing={2} alignItems="center">
+              <Text fontWeight="bold" fontSize={12} mb={2}>Remind One: </Text>
+              <Input fontSize={12} type="date" value={remindOne} onChange={(e) => setRemindOne(e.target.value)} />
+            </HStack>
           </FormControl>
 
           {/* Buttons in Right Column */}
-          <Flex justifyContent="flex-end" mt={8}>
-              <Button colorScheme="blue" variant="solid" width="auto" minWidth="120px">
-                Sign Off/add next
-              </Button>
+          <Flex justifyContent="flex-end" mt={6}>
+            <Button fontSize={12}
+              colorScheme="blue"
+              variant="solid"
+              width="auto"
+              minWidth="120px"
+              onClick={handleSave}
+            >
+              Sign Off/add next
+            </Button>
           </Flex>
         </Box>
       </Flex>
 
+      <FormControl mt={4}>
+        <Text fontWeight="bold" fontSize={12} mb={2}>Description: </Text>
+        <Textarea fontSize={12} value={description} onChange={(e) => setDescription(e.target.value)} />
+      </FormControl>
+
       {/* Buttons Section */}
       <HStack spacing={4} mt={6} justify='center'>
-        <Button colorScheme="blue" variant="outline" leftIcon={<ArrowBackIcon />}>
+        <Button fontSize={12} colorScheme="blue" variant="outline" leftIcon={<ArrowBackIcon />}>
           Home
         </Button>
-        <Button colorScheme="green" variant="outline" leftIcon={<CheckIcon />}>
+        <Button fontSize={12} colorScheme="green" variant="outline" leftIcon={<CheckIcon />} onClick={handleSave}>
           Approve
         </Button>
-        <Button colorScheme="yellow" variant="outline" leftIcon={<CloseIcon />}>
+        <Button fontSize={12} colorScheme="yellow" variant="outline" leftIcon={<CloseIcon />}>
           Unapprove
         </Button>
-        <Button colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
+        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} onClick={handleSave}>
           Save
         </Button>
-        <Button colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
+        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
           Amend
         </Button>
-        <Button colorScheme="red" variant="outline" leftIcon={<DeleteIcon />}>
+        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<DeleteIcon />}>
           Delete
         </Button>
-        <Button colorScheme="red" variant="outline" leftIcon={<CheckIcon />}>
+        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<CheckIcon />} onClick={handleSave}>
           Save and Approve
         </Button>
       </HStack>

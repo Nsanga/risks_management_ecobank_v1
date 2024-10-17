@@ -16,7 +16,7 @@ const Control = ({ riskControls, loading }) => {
   return (
     <Card mt="100px">
       <AddControl riskControls={riskControls} loading={loading}/>
-      <ExcelReader />
+      {/* <ExcelReader /> */}
     </Card>
   );
 };

@@ -1,147 +1,242 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
+  SimpleGrid,
   Flex,
+  Checkbox,
   FormControl,
-  FormLabel,
   Input,
   Textarea,
-  Checkbox,
-  SimpleGrid,
-  Button,
-  useToast,
   Text,
+  FormLabel,
+  HStack,
+  Button
 } from '@chakra-ui/react';
+import { AddIcon, CheckCircleIcon, CloseIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
-const GeneralForm = ({ formData, handleChange, handleSubmit }) => {
+const GeneralForm = ({ handleSubmit }) => {
+  // Déclaration des états locaux
+  const [controlRef, setControlRef] = useState('');
+  const [controlCategory, setControlCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [nominee, setNominee] = useState('');
+  const [reviewer, setReviewer] = useState('');
+  const [reviewDate, setReviewDate] = useState('');
+  const [frequency, setFrequency] = useState('');
+  const [lastOperator, setLastOperator] = useState('');
+  const [nextOperation, setNextOperation] = useState('');
+  const [keyControl, setKeyControl] = useState(false);
+  const [activeControl, setActiveControl] = useState(true);
+
+  // Fonction pour gérer la soumission du formulaire
+  const handleFormSubmit = () => {
+
+    const payload = {
+      controlRef,
+      controlCategory,
+      description,
+      nominee,
+      reviewer,
+      reviewDate,
+      frequency,
+      lastOperator,
+      nextOperation,
+      keyControl,
+      activeControl
+    };
+
+    console.log('Payload:', payload);
+    // handleSubmit(payload); // Appeler handleSubmit avec le payload
+  };
+
   return (
-    <Box className="form-container" p={4} borderWidth={1} borderRadius="lg" as="form" onSubmit={handleSubmit}>
+    <Box className="form-container" as="form">
       <SimpleGrid columns={2} spacing={10}>
         {/* Left section */}
-        <Box bg="white" p={6} rounded="md" shadow="md">
-          
-          {/* Checkbox section moved here */}
+        <Box bg="white" >
           <Flex justifyContent="space-between" mb={4}>
-            <Checkbox fontWeight="bold" mb={2}
-              name="keyControl" 
-              isChecked={formData.keyControl} 
-              onChange={handleChange} 
+            <Checkbox
+              fontWeight="bold"
+              mb={4}
+              name="keyControl"
+              isChecked={keyControl}
+              onChange={(e) => setKeyControl(e.target.checked)}
             >
-              Key Control
+              <span style={{ fontSize: 12 }}>Key Control</span>
             </Checkbox>
-            <Checkbox fontWeight="bold" mb={2}
-              name="activeControl" 
-              isChecked={formData.activeControl} 
-              onChange={handleChange} 
+            <Checkbox
+              fontWeight="bold"
+              mb={4}
+              name="activeControl"
+              isChecked={activeControl}
+              onChange={(e) => setActiveControl(e.target.checked)}
             >
-              Active Control
+              <span style={{ fontSize: 12 }}>Active Control</span>
             </Checkbox>
           </Flex>
 
           <FormControl mb={4}>
-          <Text fontWeight="bold" mb={2}>Control Library Reference</Text>
-            <Input 
-              type="text" 
-              name="controlRef" 
-              value={formData.controlRef} 
-              onChange={handleChange} 
-              isDisabled
-            />
+            <HStack spacing={2} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>Control Library Reference:</Text>
+              <Input
+                fontSize={12}
+                type="text"
+                value={controlRef}
+                onChange={(e) => setControlRef(e.target.value)}
+              />
+            </HStack>
           </FormControl>
 
           <FormControl mb={4}>
-          <Text fontWeight="bold" mb={2}>Control Category</Text>
-            <Input 
-              type="text" 
-              name="controlCategory" 
-              value={formData.controlCategory} 
-              onChange={handleChange}
-              isDisabled
-            />
-          </FormControl>
-          
-          <FormControl mb={4}>
-          <Text fontWeight="bold" mb={2}>Description</Text>
-            <Textarea 
-              name="description" 
-              value={formData.description} 
-              onChange={handleChange}
-              isDisabled 
-            />
-          </FormControl>
-          
-          <Flex mb={4}>
-            <FormControl mr={4}>
-            <Text fontWeight="bold" mb={2}>Nominee</Text>
-              <Input 
-                type="text" 
-                name="nominee" 
-                value={formData.nominee} 
-                onChange={handleChange}
-                isDisabled 
+            <HStack spacing={10} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>Control Category:</Text>
+              <Input
+                fontSize={12}
+                type="text"
+                value={controlCategory}
+                onChange={(e) => setControlCategory(e.target.value)}
               />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Reviewer</FormLabel>
-              <Input 
-                type="text" 
-                name="reviewer" 
-                value={formData.reviewer} 
-                onChange={handleChange}
-                isDisabled 
-              />
-            </FormControl>
-          </Flex>
+            </HStack>
+          </FormControl>
 
           <FormControl mb={4}>
-          <Text fontWeight="bold" mb={2}>Review Date</Text>
-            <Input 
-              type="date" 
-              name="reviewDate" 
-              value={formData.reviewDate} 
-              onChange={handleChange} 
-              isDisabled
-            />
+            <HStack spacing={14} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>Description:</Text>
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </HStack>
+          </FormControl>
+
+          <FormControl mb={4}>
+            <HStack spacing={16} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>Nominee:</Text>
+              <Input
+                fontSize={12}
+                type="text"
+                value={nominee}
+                onChange={(e) => setNominee(e.target.value)}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl mb={4}>
+            <HStack spacing={16} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>Reviewer:</Text>
+              <Input
+                fontSize={12}
+                type="text"
+                value={reviewer}
+                onChange={(e) => setReviewer(e.target.value)}
+              />
+            </HStack>
+          </FormControl>
+
+          <FormControl mb={4}>
+            <HStack spacing={14} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>Review Date:</Text>
+              <Input
+                fontSize={12}
+                type="date"
+                value={reviewDate}
+                onChange={(e) => setReviewDate(e.target.value)}
+              />
+            </HStack>
           </FormControl>
         </Box>
 
         {/* Right section */}
-        <Box flex="1" width={{ base: "100%", md: "100%" }} height={350} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
-        <Text fontWeight="bold" mb={2}>Operation:</Text>
-          <Flex direction="column">
-            <FormControl mb={2}>
-            <Text fontWeight="bold" mb={2}>Frequency</Text>
-              <Input 
-                type="text" 
-                name="frequency" 
-                value={formData.frequency} 
-                onChange={handleChange}
-                isDisabled 
-              />
-            </FormControl>
-            <FormControl mb={2}>
-            <Text fontWeight="bold" mb={2}>Last Operator</Text>
-              <Input 
-                type="text" 
-                name="lastOperator" 
-                value={formData.lastOperator} 
-                onChange={handleChange} 
-                isDisabled
-              />
-            </FormControl>
-            <FormControl mb={2}>
-            <Text fontWeight="bold" mb={2}>Next Operation</Text>
-              <Input 
-                type="text" 
-                name="nextOperation" 
-                value={formData.nextOperation} 
-                onChange={handleChange} 
-                isDisabled
-              />
-            </FormControl>
-          </Flex>
+        <Box>
+          <Box flex="1" width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg" mb={8}>
+            <Text fontSize={12} fontWeight="bold" mb={4}>Operation:</Text>
+            <Flex direction="column">
+              <FormControl mb={4}>
+                <HStack spacing={6} alignItems="center">
+                  <Text fontSize={12} fontWeight="bold" mb={4}>Frequency:</Text>
+                  <Input
+                    fontSize={12}
+                    type="text"
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value)}
+                  />
+                </HStack>
+              </FormControl>
+              <FormControl mb={4}>
+                <HStack spacing={4} alignItems="center">
+                  <Text fontSize={12} fontWeight="bold" mb={4}>Last Operator:</Text>
+                  <Input
+                    fontSize={12}
+                    type="text"
+                    value={lastOperator}
+                    onChange={(e) => setLastOperator(e.target.value)}
+                  />
+                </HStack>
+              </FormControl>
+              <FormControl mb={4}>
+                <HStack spacing={2} alignItems="center">
+                  <Text fontSize={12} fontWeight="bold" mb={4}>Next Operation:</Text>
+                  <Input
+                    fontSize={12}
+                    type="text"
+                    value={nextOperation}
+                    onChange={(e) => setNextOperation(e.target.value)}
+                  />
+                </HStack>
+              </FormControl>
+            </Flex>
+          </Box>
+
+          <Box flex="1" width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
+            <Text fontSize={12} fontWeight="bold" mb={4}>Assessment:</Text>
+            <Flex direction="column">
+              <FormControl mb={4}>
+                <HStack spacing={6} alignItems="center">
+                  <Text fontSize={12} fontWeight="bold" mb={4}>Frequency:</Text>
+                  <Input
+                    fontSize={12}
+                    type="text"
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value)}
+                  />
+                </HStack>
+              </FormControl>
+              <FormControl mb={4}>
+                <HStack spacing={2} alignItems="center">
+                  <Text fontSize={12} fontWeight="bold" mb={4}>Next Assessment:</Text>
+                  <Input
+                    fontSize={12}
+                    type="text"
+                    value={lastOperator}
+                    onChange={(e) => setLastOperator(e.target.value)}
+                  />
+                </HStack>
+              </FormControl>
+              <Box>
+              <Button fontSize={12} colorScheme="blue" variant="solid" >
+                Sign Off/Add Next
+              </Button>
+              </Box>
+            </Flex>
+          </Box>
         </Box>
       </SimpleGrid>
+      <HStack spacing={4} mt={6} justify='center'>
+        <Button fontSize={12} colorScheme="blue" variant="outline" leftIcon={<AddIcon />}>
+          Add Control
+        </Button>
+        <Button fontSize={12} colorScheme="green" variant="outline" leftIcon={<EditIcon />}>
+          Amend Control
+        </Button>
+        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<DeleteIcon />}>
+          Delete Control
+        </Button>
+        <Button fontSize={12} colorScheme="blue" variant="outline" leftIcon={<CheckCircleIcon />} onClick={handleFormSubmit}>
+          Save
+        </Button>
+        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<CloseIcon />}>
+          Cancel
+        </Button>
+      </HStack>
     </Box>
   );
 };

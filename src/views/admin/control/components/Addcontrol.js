@@ -1,134 +1,113 @@
 import React, { useState } from 'react';
 import {
-  Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
-  ModalFooter, FormControl, FormLabel, Input, useDisclosure, Flex,
+  FormControl, FormLabel, Input, Flex,
   Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel, // Import Chakra UI Tabs components
-  Text
+  Button,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import RiskForm from './RiskForm'; // Import the RiskForm component
-import RiskPage from './RiskPage';
-import MyTableComponent from './MyTableComponent';
-import RiskControl from './RiskControl';
-import ActionsPanel from './ActionsPanel';
-import TreeSelect from './TreeSelect';
-import LogTable from './LogTable';
-import DataDisplay from './DataDisplay';
+import { useDisclosure } from '@chakra-ui/react';
+import RiskControlInformationView from './RiskControlInformationView';
 
 function AddControl({ riskControls }) {
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for adding a new control
-  const { isOpen: isRiskModalOpen, onOpen: onRiskModalOpen, onClose: onRiskModalClose } = useDisclosure(); // Modal for displaying the risk form
-  const [selectedRisk, setSelectedRisk] = useState(null); // State to hold the selected risk
-  const initialRef = React.useRef();
-  const finalRef = React.useRef();
+  const { isOpen, onOpen, onClose } = useDisclosure();  // useDisclosure for modal control
+  const [selectedRisk, setSelectedRisk] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);  // To differentiate between add and edit mode
+  const [currentView, setCurrentView] = useState("Risks");
 
-  // Mock table data for risks and controls
-  const risksData = riskControls[0]?.risks || [];
-  const controlsData = riskControls[0]?.controls || [];
-  console.log(risksData);
-
-  // const risksData = [
-  //   {
-  //     refId: 'R001',
-  //     description: 'Risk related to system performance',
-  //     owner: 'John Doe',
-  //     nominee: 'Jane Doe',
-  //     reviewer: 'Alice',
-  //     category: 'Performance',
-  //     exposure: 'Low'
-  //   },
-  //   {
-  //     refId: 'R002',
-  //     description: 'Security vulnerability in application',
-  //     owner: 'Mike Ross',
-  //     nominee: 'Harvey Specter',
-  //     reviewer: 'Rachel Zane',
-  //     category: 'Security',
-  //     exposure: 'High'
-  //   }
-  // ];
-
-  // const controlsData = [
-  //   {
-  //     refId: 'C001',
-  //     description: 'Control on system updates',
-  //     owner: 'Amanda Paul',
-  //     nominee: 'Chris Evert',
-  //     reviewer: 'Nick',
-  //     category: 'Update',
-  //     exposure: 'Medium'
-  //   },
-  //   {
-  //     refId: 'C002',
-  //     description: 'Control on security patches',
-  //     owner: 'Mike Tyson',
-  //     nominee: 'Bruce Wayne',
-  //     reviewer: 'Clark Kent',
-  //     category: 'Security',
-  //     exposure: 'High'
-  //   }
-  // ];
-
-  // State for toggling between risks and controls
-  const [showRisks, setShowRisks] = useState(true);
-
-  const handleRowClick = (risk) => {
-    setSelectedRisk(risk); // Set the clicked risk data
-    onRiskModalOpen(); // Open the modal to display the risk form
+  // Dynamically map the data to the selected view
+  const viewData = {
+    Risks: riskControls[0]?.risks || [],
+    Controls: riskControls[0]?.controls || [],
+    Events: [],
+    Actions: [],
+    Kits: [],
+    Obligations: [],
   };
 
-  const numberOfRisks = risksData.length;
-  const numberOfControls = controlsData.length;
+  const columnsByView = {
+    Risks: [
+      { label: "Reference Id", key: "refId" },
+      { label: "Description", key: "keyRiskSummary" },
+      { label: "Owner", key: "owner" },
+      { label: "Nominee", key: "nominee" },
+      { label: "Reviewer", key: "reviewer" },
+      { label: "Category", key: "category" },
+      { label: "Residual Exposure", key: "exposure" },
+    ],
+    Controls: [
+      { label: "Reference Id", key: "refId" },
+      { label: "Description", key: "keyRiskSummary" },
+      { label: "Library", key: "library" }, // Adjust this according to actual data structure
+      { label: "Category", key: "category" },
+      { label: "Owner", key: "owner" },
+      { label: "Nominee", key: "nominee" },
+      { label: "Reviewer", key: "reviewer" },
+    ],
+  };
+
+  const handleRowClick = (item) => {
+    setSelectedRisk(item);  // Save the clicked row's data for editing
+    setIsEditMode(true);    // Set edit mode
+    onOpen();               // Open the modal
+  };
+
+  const handleAddControlClick = () => {
+    setSelectedRisk(null);  // Reset the selected risk (no data for new control)
+    setIsEditMode(false);   // Set add mode
+    onOpen();               // Open the modal
+  };
+
+  const numberOfItems = viewData[currentView].length;
 
   return (
     <>
       <Flex direction="column" justifyContent="flex-end" align="flex-end" mb={5} w="100%">
-        {/* <Button
-          variant="outline"
-          color="blue"
-          leftIcon={<AddIcon />}
-          onClick={onOpen}
-        >
+        {/* Button for Adding a New Control */}
+        <Button  fontSize={12} onClick={handleAddControlClick} variant="outline" color="blue" leftIcon={<AddIcon />}>
           Add Control
-        </Button> */}
+        </Button>
 
-        {/* Layout container with fields */}
+        {/* Modal for Adding or Editing Controls */}
+        <RiskControlInformationView
+          isOpen={isOpen}
+          onClose={onClose}
+          selectedRisk={selectedRisk}
+          isEditMode={isEditMode}
+        />
+
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="250px">
-              <FormLabel>Entity</FormLabel>
-              <Select placeholder="Select entity">
+              <FormLabel fontSize={12}>Entity</FormLabel>
+              <Select fontSize={12} placeholder="Select entity">
                 <option value="entity1">Entity 1</option>
                 <option value="entity2">Entity 2</option>
               </Select>
             </FormControl>
-
-            <FormControl mr={4} maxW="150px">
-              <FormLabel>RAM</FormLabel>
-              <Input isDisabled placeholder="RAM Value" />
+            <FormControl fontSize={12} mr={4} maxW="150px">
+              <FormLabel  fontSize={12}>RAM</FormLabel>
+              <Input fontSize={12} isDisabled placeholder="RAM Value" />
             </FormControl>
-
             <FormControl maxW="150px">
-              <FormLabel>Owner</FormLabel>
-              <Input isDisabled placeholder="Owner Name" />
+              <FormLabel fontSize={12}>Owner</FormLabel>
+              <Input fontSize={12} isDisabled placeholder="Owner Name" />
             </FormControl>
           </Flex>
 
-          {/* Toggle between Risks and Controls */}
+          {/* Toggle between different views */}
           <Flex direction="row" align="center" mb={4}>
-            <FormLabel mr={4}>Show:</FormLabel>
-            <RadioGroup
-              defaultValue="Risks"
-              onChange={(value) => setShowRisks(value === 'Risks')}
-            >
+            <FormLabel fontSize={12} mr={4}>Show:</FormLabel>
+            <RadioGroup defaultValue="Risks" onChange={(value) => setCurrentView(value)}>
               <HStack spacing={4}>
-                <Radio value="Risks">Risks</Radio>
-                <Radio value="Controls">Controls</Radio>
-                <Radio value="Events">Events</Radio>
-                <Radio value="Actions">Actions</Radio>
-                <Radio value="Kits">Kits</Radio>
-                <Radio value="Obligations">Obligations</Radio>
+                {Object.keys(viewData).map((view) => (
+                  <Radio
+                    key={view}
+                    value={view}
+                    isDisabled={viewData[view].length === 0} // Disable if no data
+                  >
+                    <span style={{fontSize: 12}}>{view}</span>
+                  </Radio>
+                ))}
               </HStack>
             </RadioGroup>
           </Flex>
@@ -136,168 +115,56 @@ function AddControl({ riskControls }) {
           {/* Filters */}
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="200px">
-              <FormLabel>Filter on</FormLabel>
-              <Select placeholder="All Approval State">
+              <FormLabel fontSize={12}>Filter on</FormLabel>
+              <Select fontSize={12} placeholder="All Approval State">
                 <option value="approved">Approved</option>
                 <option value="pending">Pending</option>
               </Select>
             </FormControl>
-
             <FormControl mr={4} maxW="150px">
-              <FormLabel>Status</FormLabel>
-              <Select placeholder="Select Status">
+              <FormLabel fontSize={12}>Status</FormLabel>
+              <Select fontSize={12} placeholder="Select Status">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </Select>
             </FormControl>
-
             <FormControl mr={4} maxW="150px">
-              <FormLabel>Number of {showRisks ? "Risks" : "Controls"}</FormLabel>
-              <Input type="number" value={showRisks ? numberOfRisks : numberOfControls} readOnly />
+              <FormLabel fontSize={12}>Number of {currentView}</FormLabel>
+              <Input fontSize={12} type="number" value={numberOfItems} readOnly />
             </FormControl>
-
             <FormControl maxW="250px">
-              <FormLabel>Total Annual Residual Exposure</FormLabel>
-              <Input placeholder="$0.00" />
+              <FormLabel fontSize={12}>Total Annual Residual Exposure</FormLabel>
+              <Input fontSize={12} placeholder="$0.00" />
             </FormControl>
           </Flex>
         </Box>
 
-        {showRisks && (
+        {/* Table for the selected view */}
+        {numberOfItems > 0 ? (
           <Table variant="simple" mt={4}>
             <Thead>
               <Tr>
-                <Th>Reference Id</Th>
-                <Th>Description</Th>
-                <Th>Owner</Th>
-                <Th>Nominee</Th>
-                <Th>Reviewer</Th>
-                <Th>Category</Th>
-                <Th>Residual Exposure</Th>
+                {columnsByView[currentView].map((col) => (
+                  <Th  fontSize={10} key={col.key}>{col.label}</Th>
+                ))}
               </Tr>
             </Thead>
             <Tbody>
-              {risksData.map((row, index) => (
+              {viewData[currentView].map((row, index) => (
                 <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
-                  <Td>{row.refId}</Td>
-                  <Td>{row.keyRiskSummary}</Td>
-                  <Td>{row.owner}</Td>
-                  <Td>{row.nominee}</Td>
-                  <Td>{row.reviewer}</Td>
-                  <Td>{row.category}</Td>
-                  <Td>{row.exposure}</Td>
+                  {columnsByView[currentView].map((col) => (
+                    <Td fontSize={12} key={col.key}>{row[col.key]}</Td>
+                  ))}
                 </Tr>
               ))}
             </Tbody>
           </Table>
+        ) : (
+          <Box fontSize={12} mt={4} p={4} borderWidth="1px" borderRadius="lg" textAlign="center">
+            No data available for {currentView}
+          </Box>
         )}
-
-        {!showRisks && (
-          <Table variant="simple" mt={4}>
-            <Thead>
-              <Tr>
-                <Th>Reference Id</Th>
-                <Th>Description</Th>
-                <Th>Library</Th>
-                <Th>Category</Th>
-                <Th>Owner</Th>
-                <Th>Nominee</Th>
-                <Th>Reviewer</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {controlsData.map((row, index) => (
-                <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
-                  <Td>{row.refId}</Td>
-                  <Td>{row.keyRiskSummary}</Td>
-                  <Td>{row.owner}</Td>
-                  <Td>{row.nominee}</Td>
-                  <Td>{row.reviewer}</Td>
-                  <Td>{row.category}</Td>
-                  <Td>{row.exposure}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        )}
-
       </Flex>
-
-      {/* Modal for adding a new control */}
-      <Modal isOpen={isOpen} initialFocusRef={initialRef} finalFocusRef={finalRef} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add New Control</ModalHeader>
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Control Name</FormLabel>
-              <Input ref={initialRef} placeholder="Control Name" />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Input placeholder="Description of the Control" />
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>Save</Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Modal for displaying the RiskForm with Tabs */}
-      <Modal isOpen={isRiskModalOpen} onClose={onRiskModalClose} size="full">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Risk Details</ModalHeader>
-          <ModalBody p={4}>
-            <RiskPage />
-            <Tabs variant="soft-rounded" colorScheme="green" mt={6}>
-              <TabList>
-                <Tab>General</Tab>
-                <Tab>Goals</Tab>
-                <Tab>Controls</Tab>
-                <Tab>Actions</Tab>
-                <Tab>Risk focus</Tab>
-                <Tab>Risks logs</Tab>
-                <Tab>Linked items</Tab>
-              </TabList>
-
-              <TabPanels>
-                <TabPanel>
-                  <RiskForm riskData={selectedRisk} />
-                </TabPanel>
-                <TabPanel>
-                  <MyTableComponent />
-                </TabPanel>
-                <TabPanel>
-                  <RiskControl />  {/* Added RiskControl here */}
-                </TabPanel>
-                <TabPanel>
-                  <ActionsPanel />  {/* Add ActionsPanel to the Actions tab */}
-                </TabPanel>
-                <TabPanel>
-                  <Text fontWeight="bold">Risk Focus</Text>
-                  <TreeSelect />  {/* Add TreeSelect to the Risk focus tab */}
-                </TabPanel>
-                <TabPanel>
-                  <LogTable /> {/* Include LogTable here for Risks logs */}
-                </TabPanel>
-                <TabPanel>
-                  {/* Integrate the DataDisplay component here */}
-                  <DataDisplay />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onRiskModalClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
     </>
   );
 }
