@@ -95,7 +95,7 @@ export function SearchBar(props) {
         <InputGroup>
           <InputLeftElement pointerEvents="none">
             <Box fontSize={12}>{placeholder}</Box>
-          </InputLeftElement>
+          </InputLeftElement> 
           <Input
           fontSize={12}
             placeholder='ref number'
