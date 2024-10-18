@@ -8,7 +8,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { useDisclosure } from '@chakra-ui/react';
 import RiskControlInformationView from './RiskControlInformationView';
 
-function AddControl({ riskControls }) {
+function AddControl({ riskControls, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();  // useDisclosure for modal control
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);  // To differentiate between add and edit mode
@@ -73,6 +73,8 @@ function AddControl({ riskControls }) {
           onClose={onClose}
           selectedRisk={selectedRisk}
           isEditMode={isEditMode}
+          entities={entities}
+          profiles={profiles}
         />
 
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">

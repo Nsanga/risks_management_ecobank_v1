@@ -350,7 +350,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="owner"
                                     placeholder='Select owner'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.owner) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.owner)}
                                     onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                                 />
                             </Box>
@@ -362,7 +362,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="nominee"
                                     placeholder='Select nominee'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.nominee) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.nominee)}
                                     onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                                 />
                             </Box>
@@ -374,7 +374,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="reviewer"
                                     placeholder='Select reviewer'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.reviewer) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.reviewer)}
                                     onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                                 />
                             </Box>

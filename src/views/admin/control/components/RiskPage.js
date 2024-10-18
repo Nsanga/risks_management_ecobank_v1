@@ -1,91 +1,125 @@
 import React, { useState } from 'react';
 import { Box, Flex, Text, Input, Textarea, SimpleGrid, Badge, GridItem, HStack } from '@chakra-ui/react';
+import Select from 'react-select';
 
-const RiskPage = () => {
+const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEditMode }) => {
     // Initialize local state for each input field
-    const [formData, setFormData] = useState({
-        entity: "",
-        location: "CAMEROON",
-        businessLine: "Consumer",
-        cbrDescription: "[N/A]",
-        description: "",
-        riskCategory: "",
-        dismissalCategory: "",
-        riskRef: "",
-        linkedRisk: "",
-        residualSeverity: "",
-        residualScore: "0.00 USD",
-        residualAnnExp: "0.00 USD",
-        riskActions: "0",
-        riskStatus: "Unapproved"
-    });
+    // const [formData, setFormData] = useState({
+    //     entity: "",
+    //     location: "CAMEROON",
+    //     businessLine: "Consumer",
+    //     cbrDescription: "[N/A]",
+    //     description: "",
+    //     riskCategory: "",
+    //     dismissalCategory: "",
+    //     riskRef: "",
+    //     linkedRisk: "",
+    //     residualSeverity: "",
+    //     residualScore: "0.00 USD",
+    //     residualAnnExp: "0.00 USD",
+    //     riskActions: "0",
+    //     riskStatus: "Approved"
+    // });
 
-    // Handle change for inputs
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    // // Handle change for inputs
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormData((prevData) => ({ ...prevData, [name]: value }));
+    // };
+
+    // // Log the payload to the console
+    // const logPayload = () => {
+    //     console.log(formData);
+    // };
+    const entitiesOptions = entities?.map((entity, index) => ({
+        key: `${entity._id}-${index}`, // Unicité assurée
+        value: entity._id,
+        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    }));
+
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        }),
+        menu: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        }),
+        option: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        })
     };
 
-    // Log the payload to the console
-    const logPayload = () => {
-        console.log(formData);
-    };
 
     return (
         <Box>
             <Flex justifyContent='space-between'>
-                <Flex direction='column' width={{ base: "100%", md: "75%" }} gap={4}>
+                <Flex direction='column' width={{ base: "100%", md: isEditMode ? "75%" : "100%" }} gap={4}>
                     <HStack spacing={24} alignItems="center">
                         <Text fontSize={12} fontWeight="bold">
                             Entity:
                         </Text>
-                        <Input
-                            fontSize={12}
-                            name="entity"
-                            value={formData.entity}
-                            onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
-                        />
+                        <Box width="100%" >
+                            <Select
+                                options={entitiesOptions}
+                                styles={customStyles}
+                                placeholder='Select Entity'
+                                value={entitiesOptions?.find(ent => ent.value === riskData.entity)}
+                                onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                            />
+                        </Box>
                     </HStack>
-                    <HStack spacing={6} alignItems="center">
+                    <HStack spacing={isEditMode ? 6 : 16} alignItems="center">
                         <Text fontSize={12} fontWeight="bold" mr={2}>
                             Operational Models:
                         </Text>
                         <Text fontSize={12}>
                             Location:
                         </Text>
-                        <Text fontSize={12} fontWeight="bold" mr={2}>
-                            {formData.location}
-                        </Text>
-                        {/* <Input
-                            fontSize={12}
-                            name="location"
-                            value={formData.location}
-                            onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
-                        /> */}
+                        {isEditMode ? (
+                            <Text fontSize={12} fontWeight="bold" mr={2}>
+                                {riskData.location}
+                            </Text>
+                        ) : (
+                            <Input
+                                fontSize={12}
+                                name="location"
+                                value={riskData.location}
+                                onChange={handleChange}
+                            // onBlur={logPayload} // Log payload on blur
+                            />
+                        )}
                         <Text fontSize={12}>
                             Business Line:
                         </Text>
-                        <Text fontSize={12} fontWeight="bold">
-                            {formData.businessLine}
-                        </Text>
-                        {/* <Input
-                            fontSize={12}
-                            name="businessLine"
-                            value={formData.businessLine}
-                            onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
-                        /> */}
+                        {isEditMode ? (
+                            <Text fontSize={12} fontWeight="bold">
+                                {riskData.businessLine}
+                            </Text>
+                        ) : (
+                            <Input
+                                fontSize={12}
+                                name="businessLine"
+                                value={riskData.businessLine}
+                                onChange={handleChange}
+                            // onBlur={logPayload} // Log payload on blur
+                            />
+                        )}
                     </HStack>
                     <HStack spacing={14} alignItems="center">
                         <Text fontSize={12} fontWeight="bold" mb={2}>CBR Description:</Text>
                         <Input
                             fontSize={12}
                             name="cbrDescription"
-                            value={formData.cbrDescription}
+                            value={riskData.cbrDescription}
                             onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
+                        // onBlur={logPayload} // Log payload on blur
                         />
                     </HStack>
                     <HStack spacing={16} alignItems="center">
@@ -93,9 +127,9 @@ const RiskPage = () => {
                         <Textarea
                             fontSize={12}
                             name="description"
-                            value={formData.description}
+                            value={riskData.description}
                             onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
+                        // onBlur={logPayload} // Log payload on blur
                         />
                     </HStack>
                     <HStack spacing={16} alignItems="center">
@@ -103,9 +137,9 @@ const RiskPage = () => {
                         <Input
                             fontSize={12}
                             name="riskCategory"
-                            value={formData.riskCategory}
+                            value={riskData.riskCategory}
                             onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
+                        // onBlur={logPayload} // Log payload on blur
                         />
                     </HStack>
                     <HStack spacing={10} alignItems="center">
@@ -113,42 +147,44 @@ const RiskPage = () => {
                         <Input
                             fontSize={12}
                             name="dismissalCategory"
-                            value={formData.dismissalCategory}
+                            value={riskData.dismissalCategory}
                             onChange={handleChange}
-                            onBlur={logPayload} // Log payload on blur
+                        // onBlur={logPayload} // Log payload on blur
                         />
                     </HStack>
                 </Flex>
-                <Box width={{ base: "100%", md: "20%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Risk Ref:</Text>
-                        <Text fontSize={12} fontWeight="bold">{formData.riskRef}</Text>
-                    </Flex>
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Linked Risk:</Text>
-                        <Text fontSize={12} fontWeight="bold">{formData.linkedRisk}</Text>
-                    </Flex>
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Residual Severity:</Text>
-                        <Text fontSize={12} fontWeight="bold">{formData.residualSeverity}</Text>
-                    </Flex>
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Residual Score:</Text>
-                        <Text fontSize={12} fontWeight="bold">{formData.residualScore}</Text>
-                    </Flex>
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Residual Ann Exp:</Text>
-                        <Text fontSize={12} fontWeight="bold">{formData.residualAnnExp}</Text>
-                    </Flex>
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Risk Actions:</Text>
-                        <Text fontSize={12} fontWeight="bold" color='red'>{formData.riskActions}</Text>
-                    </Flex>
-                    <Flex gap={4} mb={2}>
-                        <Text fontSize={12}>Risk Status:</Text>
-                        <Badge fontSize={10} colorScheme="blue">{formData.riskStatus}</Badge>
-                    </Flex>
-                </Box>
+                {isEditMode && (
+                    <Box width={{ base: "100%", md: "20%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Risk Ref:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.riskRef}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Linked Risk:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.linkedRisk}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Residual Severity:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.residualSeverity}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Residual Score:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.residualScore}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Residual Ann Exp:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.residualAnnExp}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Risk Actions:</Text>
+                            <Text fontSize={12} fontWeight="bold" color='red'>{riskData.riskActions}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Risk Status:</Text>
+                            <Badge fontSize={10} colorScheme="blue">{riskData.riskStatus}</Badge>
+                        </Flex>
+                    </Box>
+                )}
             </Flex>
         </Box>
     );

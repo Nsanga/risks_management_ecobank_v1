@@ -13,39 +13,105 @@ import {
   Button
 } from '@chakra-ui/react';
 import { AddIcon, CheckCircleIcon, CloseIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import Select from 'react-select';
 
-const GeneralForm = ({ handleSubmit }) => {
+const GeneralForm = ({ formData, handleSelectChange, profiles, handleChange }) => {
   // Déclaration des états locaux
-  const [controlRef, setControlRef] = useState('');
-  const [controlCategory, setControlCategory] = useState('');
-  const [description, setDescription] = useState('');
-  const [nominee, setNominee] = useState('');
-  const [reviewer, setReviewer] = useState('');
-  const [reviewDate, setReviewDate] = useState('');
-  const [frequency, setFrequency] = useState('');
-  const [lastOperator, setLastOperator] = useState('');
-  const [nextOperation, setNextOperation] = useState('');
-  const [keyControl, setKeyControl] = useState(false);
-  const [activeControl, setActiveControl] = useState(true);
+  // const [controlRef, setControlRef] = useState('');
+  // const [controlCategory, setControlCategory] = useState('');
+  // const [description, setDescription] = useState('');
+  // const [nominee, setNominee] = useState('');
+  // const [reviewer, setReviewer] = useState('');
+  // const [reviewDate, setReviewDate] = useState('');
+  // const [frequency, setFrequency] = useState('');
+  // const [lastOperator, setLastOperator] = useState('');
+  // const [nextOperation, setNextOperation] = useState('');
+  // const [keyControl, setKeyControl] = useState(false);
+  // const [activeControl, setActiveControl] = useState(true);
+
+  const profilesOptions = profiles
+    ?.filter(profile => profile.activeUser)
+    ?.map((profile, index) => ({
+      key: `${profile._id}-${index}`, // Unicité assurée
+      value: profile.email,
+      label: `${profile.name} ${profile.surname}`,
+    }));
+
+  const frequencies = [
+    { "id": 1, "label": "Daily" },
+    { "id": 2, "label": "Weekly" },
+    { "id": 3, "label": "Monthly" },
+    { "id": 4, "label": "Quarterly" },
+    { "id": 5, "label": "Semi-Annually" }
+  ];
+
+  const frequenciesOptions = frequencies.map((frequency) => ({
+    value: frequency.label,
+    label: frequency.label,
+  }));
+
+  const calculateRemindOnDate = (frequency) => {
+    const today = new Date();
+    let nextDate;
+
+    if (frequency === "Daily") {
+      nextDate = new Date(today.setDate(today.getDate() + 1));  // Add 1 day
+    } else if (frequency === "Weekly") {
+      nextDate = new Date(today.setDate(today.getDate() + 7));  // Add 7 days
+    } else if (frequency === "Monthly") {
+      nextDate = new Date(today.setMonth(today.getMonth() + 1));  // Add 1 month
+    } else if (frequency === "Quarterly") {
+      nextDate = new Date(today.setMonth(today.getMonth() + 3));  // Add 3 months
+    } else if (frequency === "Semi-Annually") {
+      nextDate = new Date(today.setMonth(today.getMonth() + 6));  // Add 6 months
+    }
+
+    return nextDate.toISOString().split("T")[0];  // Format date as YYYY-MM-DD
+  };
+
+  // General handler for frequency change
+  const handleSelectChangeWithNext = (frequencyType, selectedOption) => {
+    const frequency = selectedOption.value;
+    const newNextDate = calculateRemindOnDate(frequency);
+
+    handleChange({
+      target: {
+        name: frequencyType,
+        value: frequency,
+      }
+    });
+
+    handleChange({
+      target: {
+        name: frequencyType === 'frequency' ? 'nextOperation' : 'nextAssessment',
+        value: newNextDate,
+      }
+    });
+  };
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    })
+  };
 
   // Fonction pour gérer la soumission du formulaire
   const handleFormSubmit = () => {
 
-    const payload = {
-      controlRef,
-      controlCategory,
-      description,
-      nominee,
-      reviewer,
-      reviewDate,
-      frequency,
-      lastOperator,
-      nextOperation,
-      keyControl,
-      activeControl
-    };
-
-    console.log('Payload:', payload);
+    console.log('Payload:', formData);
     // handleSubmit(payload); // Appeler handleSubmit avec le payload
   };
 
@@ -59,8 +125,8 @@ const GeneralForm = ({ handleSubmit }) => {
               fontWeight="bold"
               mb={4}
               name="keyControl"
-              isChecked={keyControl}
-              onChange={(e) => setKeyControl(e.target.checked)}
+              isChecked={formData.keyControl}
+              onChange={handleChange}
             >
               <span style={{ fontSize: 12 }}>Key Control</span>
             </Checkbox>
@@ -68,8 +134,8 @@ const GeneralForm = ({ handleSubmit }) => {
               fontWeight="bold"
               mb={4}
               name="activeControl"
-              isChecked={activeControl}
-              onChange={(e) => setActiveControl(e.target.checked)}
+              isChecked={formData.activeControl}
+              onChange={handleChange}
             >
               <span style={{ fontSize: 12 }}>Active Control</span>
             </Checkbox>
@@ -81,8 +147,9 @@ const GeneralForm = ({ handleSubmit }) => {
               <Input
                 fontSize={12}
                 type="text"
-                value={controlRef}
-                onChange={(e) => setControlRef(e.target.value)}
+                name='controlRef'
+                value={formData.controlRef}
+                onChange={handleChange}
               />
             </HStack>
           </FormControl>
@@ -93,8 +160,9 @@ const GeneralForm = ({ handleSubmit }) => {
               <Input
                 fontSize={12}
                 type="text"
-                value={controlCategory}
-                onChange={(e) => setControlCategory(e.target.value)}
+                name='controlCategory'
+                value={formData.controlCategory}
+                onChange={handleChange}
               />
             </HStack>
           </FormControl>
@@ -103,8 +171,10 @@ const GeneralForm = ({ handleSubmit }) => {
             <HStack spacing={14} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>Description:</Text>
               <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                fontSize={12}
+                name='description'
+                value={formData.description}
+                onChange={handleChange}
               />
             </HStack>
           </FormControl>
@@ -112,23 +182,31 @@ const GeneralForm = ({ handleSubmit }) => {
           <FormControl mb={4}>
             <HStack spacing={16} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>Nominee:</Text>
-              <Input
-                fontSize={12}
-                type="text"
-                value={nominee}
-                onChange={(e) => setNominee(e.target.value)}
-              />
+              <Box width="100%" >
+                <Select
+                  name="nominee"
+                  placeholder='Select nominee'
+                  styles={customStyles}
+                  options={profilesOptions}
+                  value={profilesOptions?.find(option => option.value === formData.nominee)}
+                  onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
+                />
+              </Box>
             </HStack>
           </FormControl>
           <FormControl mb={4}>
             <HStack spacing={16} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>Reviewer:</Text>
-              <Input
-                fontSize={12}
-                type="text"
-                value={reviewer}
-                onChange={(e) => setReviewer(e.target.value)}
-              />
+              <Box width="100%" >
+                <Select
+                  name="reviewer"
+                  placeholder='Select reviewer'
+                  styles={customStyles}
+                  options={profilesOptions}
+                  value={profilesOptions?.find(option => option.value === formData.reviewer)}
+                  onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
+                />
+              </Box>
             </HStack>
           </FormControl>
 
@@ -138,8 +216,9 @@ const GeneralForm = ({ handleSubmit }) => {
               <Input
                 fontSize={12}
                 type="date"
-                value={reviewDate}
-                onChange={(e) => setReviewDate(e.target.value)}
+                name='reviewDate'
+                value={formData.reviewDate}
+                onChange={handleChange}
               />
             </HStack>
           </FormControl>
@@ -153,12 +232,16 @@ const GeneralForm = ({ handleSubmit }) => {
               <FormControl mb={4}>
                 <HStack spacing={6} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>Frequency:</Text>
-                  <Input
-                    fontSize={12}
-                    type="text"
-                    value={frequency}
-                    onChange={(e) => setFrequency(e.target.value)}
-                  />
+                  <Box width="100%" >
+                    <Select
+                      name="frequency"
+                      placeholder='Select frequency'
+                      styles={customStyles}
+                      options={frequenciesOptions}
+                      value={frequenciesOptions?.find(option => option.value === formData.frequency)}
+                      onChange={(selectedOption) => handleSelectChangeWithNext('frequency', selectedOption)}
+                    />
+                  </Box>
                 </HStack>
               </FormControl>
               <FormControl mb={4}>
@@ -166,9 +249,10 @@ const GeneralForm = ({ handleSubmit }) => {
                   <Text fontSize={12} fontWeight="bold" mb={4}>Last Operator:</Text>
                   <Input
                     fontSize={12}
-                    type="text"
-                    value={lastOperator}
-                    onChange={(e) => setLastOperator(e.target.value)}
+                    type="date"
+                    name="lastOperator"
+                    value={formData.lastOperator}
+                    onChange={handleChange}
                   />
                 </HStack>
               </FormControl>
@@ -177,9 +261,11 @@ const GeneralForm = ({ handleSubmit }) => {
                   <Text fontSize={12} fontWeight="bold" mb={4}>Next Operation:</Text>
                   <Input
                     fontSize={12}
-                    type="text"
-                    value={nextOperation}
-                    onChange={(e) => setNextOperation(e.target.value)}
+                    type="date"
+                    name='nextOperation'
+                    value={formData.nextOperation}
+                    onChange={handleChange}
+                    isReadOnly
                   />
                 </HStack>
               </FormControl>
@@ -190,14 +276,18 @@ const GeneralForm = ({ handleSubmit }) => {
             <Text fontSize={12} fontWeight="bold" mb={4}>Assessment:</Text>
             <Flex direction="column">
               <FormControl mb={4}>
-                <HStack spacing={6} alignItems="center">
+                <HStack spacing={8} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>Frequency:</Text>
-                  <Input
-                    fontSize={12}
-                    type="text"
-                    value={frequency}
-                    onChange={(e) => setFrequency(e.target.value)}
-                  />
+                  <Box width="100%" >
+                    <Select
+                      name="frequencyAssessment"
+                      placeholder='Select frequency'
+                      styles={customStyles}
+                      options={frequenciesOptions}
+                      value={frequenciesOptions?.find(option => option.value === formData.frequencyAssessment)}
+                      onChange={(selectedOption) => handleSelectChangeWithNext('frequencyAssessment', selectedOption)}
+                    />
+                  </Box>
                 </HStack>
               </FormControl>
               <FormControl mb={4}>
@@ -205,16 +295,18 @@ const GeneralForm = ({ handleSubmit }) => {
                   <Text fontSize={12} fontWeight="bold" mb={4}>Next Assessment:</Text>
                   <Input
                     fontSize={12}
-                    type="text"
-                    value={lastOperator}
-                    onChange={(e) => setLastOperator(e.target.value)}
+                    type="date"
+                    name="nextAssessment"
+                    value={formData.nextAssessment}
+                    onChange={handleChange}
+                    isReadOnly
                   />
                 </HStack>
               </FormControl>
               <Box>
-              <Button fontSize={12} colorScheme="blue" variant="solid" >
-                Sign Off/Add Next
-              </Button>
+                <Button fontSize={12} colorScheme="blue" variant="solid" >
+                  Sign Off/Add Next
+                </Button>
               </Box>
             </Flex>
           </Box>

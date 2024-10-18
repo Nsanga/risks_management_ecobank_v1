@@ -19,37 +19,37 @@ import {
 import GeneralForm from './GeneralForm'; // Adjust the path as needed
 import { CheckCircleIcon } from '@chakra-ui/icons';
 
-const RiskControl = () => {
-  const [formData, setFormData] = useState({
-    controlRef: "",
-    controlCategory: "",
-    description: "",
-    nominee: "",
-    reviewer: "",
-    reviewDate: "",
-    frequency: "N/A",
-    lastOperator: "",
-    nextOperation: "",
-    keyControl: false,
-    activeControl: true,
-  });
+const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChange}) => {
+  // const [formData, setFormData] = useState({
+  //   controlRef: "",
+  //   controlCategory: "",
+  //   description: "",
+  //   nominee: "",
+  //   reviewer: "",
+  //   reviewDate: "",
+  //   frequency: "N/A",
+  //   lastOperator: "",
+  //   nextOperation: "",
+  //   keyControl: false,
+  //   activeControl: true,
+  // });
 
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     [name]: type === 'checkbox' ? checked : value,
+  //   }));
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission
 
     // Basic validation
-    if (!formData.controlRef || !formData.nominee || !formData.reviewer) {
+    if (!riskControlData.controlRef || !riskControlData.nominee || !riskControlData.reviewer) {
       toast({
         title: "Error.",
         description: "Please fill out all required fields.",
@@ -60,7 +60,7 @@ const RiskControl = () => {
       return;
     }
 
-    console.log('Form submitted:', formData);
+    console.log('Form submitted:', riskControlData);
     // Here you can add logic to send the form data to an API or handle it as needed
     toast({
       title: "Success!",
@@ -89,12 +89,12 @@ const RiskControl = () => {
         </Thead>
         <Tbody>
           <Tr>
-            <Td fontSize={12}>{formData.controlRef}</Td>
-            <Td fontSize={12}>{formData.description}</Td>
+            <Td fontSize={12}>{riskControlData.controlRef}</Td>
+            <Td fontSize={12}>{riskControlData.description}</Td>
             <Td fontSize={12}>
               <CheckCircleIcon color="green.500" />
             </Td>
-            <Td fontSize={12}>{formData.keyControl ? 'Y' : 'N'}</Td>
+            <Td fontSize={12}>{riskControlData.keyControl ? 'Y' : 'N'}</Td>
             <Td fontSize={12}>Acceptable</Td>
             <Td fontSize={12}>Not Assessed</Td>
             <Td fontSize={12}>Not Attended</Td>
@@ -119,8 +119,10 @@ const RiskControl = () => {
           <TabPanel>
             {/* Import the GeneralForm component */}
             <GeneralForm
-              formData={formData}
+              formData={riskControlData}
               handleChange={handleChange}
+              handleSelectChange={handleSelectChange} 
+              profiles={profiles}
               handleSubmit={handleSubmit}
             />
           </TabPanel>

@@ -8,7 +8,6 @@ import {
   Input,
   Checkbox,
   Textarea,
-  Select,
   Button,
   VStack
 } from '@chakra-ui/react';
@@ -19,34 +18,118 @@ import {
   EditIcon,
   DeleteIcon,
 } from '@chakra-ui/icons';
+import Select from 'react-select';
 
-function RiskForm() {
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) {
   // State for form inputs
-  const [owner, setOwner] = useState('');
-  const [ownerEmailChecked, setOwnerEmailChecked] = useState(false);
-  const [nominee, setNominee] = useState('');
-  const [reviewer, setReviewer] = useState('');
-  const [activeRisk, setActiveRisk] = useState(false);
-  const [description, setDescription] = useState('');
-  const [frequency, setFrequency] = useState('');
-  const [remindOne, setRemindOne] = useState('');
+  // const [owner, setOwner] = useState('');
+  // const [ownerEmailChecked, setOwnerEmailChecked] = useState(false);
+  // const [nominee, setNominee] = useState('');
+  // const [reviewer, setReviewer] = useState('');
+  // const [activeRisk, setActiveRisk] = useState(false);
+  // const [description, setDescription] = useState('');
+  // const [frequency, setFrequency] = useState('');
+  // const [remindOne, setRemindOne] = useState('');
 
-  // Handle form submission
-  const handleSave = () => {
-    const payload = {
-      owner,
-      ownerEmailChecked,
-      nominee,
-      reviewer,
-      activeRisk,
-      description,
-      frequency,
-      remindOne,
-    };
+  // // Handle form submission
+  // const handleSave = () => {
+  //   const payload = {
+  //     owner,
+  //     ownerEmailChecked,
+  //     nominee,
+  //     reviewer,
+  //     activeRisk,
+  //     description,
+  //     frequency,
+  //     remindOne,
+  //   };
 
-    console.log('Form Payload:', payload);
-    // Here, you can also add logic to submit the payload to an API or service
+  //   console.log('Form Payload:', payload);
+  //   // Here, you can also add logic to submit the payload to an API or service
+  // };
+  const profilesOptions = profiles
+    ?.filter(profile => profile.activeUser)
+    ?.map((profile, index) => ({
+      key: `${profile._id}-${index}`, // Unicité assurée
+      value: profile.email,
+      label: `${profile.name} ${profile.surname}`,
+    }));
+
+  const frequencies = [
+    { "id": 1, "label": "Daily" },
+    { "id": 2, "label": "Weekly" },
+    { "id": 3, "label": "Monthly" },
+    { "id": 4, "label": "Quarterly" },
+    { "id": 5, "label": "Semi-Annually" }
+  ];
+
+  const frequenciesOptions = frequencies.map((frequency) => ({
+    value: frequency.label,
+    label: frequency.label,
+  }));
+
+  const calculateRemindOnDate = (frequency) => {
+    const today = new Date();
+    let remindOnDate;
+
+    if (frequency === "Daily") {
+      remindOnDate = new Date(today.setDate(today.getDate() + 1));  // Add 1 day
+    } else if (frequency === "Weekly") {
+      remindOnDate = new Date(today.setDate(today.getDate() + 7));  // Add 7 days
+    } else if (frequency === "Monthly") {
+      remindOnDate = new Date(today.setMonth(today.getMonth() + 1));  // Add 1 month
+    } else if (frequency === "Quarterly") {
+      remindOnDate = new Date(today.setMonth(today.getMonth() + 3));  // Add 3 month
+    } else if (frequency === "Semi-Annually") {
+      remindOnDate = new Date(today.setMonth(today.getMonth() + 6));  // Add 6 month
+    }
+
+    // Format date as YYYY-MM-DD
+    return remindOnDate.toISOString().split("T")[0];
   };
+
+  // Update the handleSelectChange to also update the remindOne field
+  const handleSelectChangeWithRemind = (name, selectedOption) => {
+    const frequency = selectedOption.value;
+
+    // Calculate new remindOn date based on the frequency
+    const newRemindOnDate = calculateRemindOnDate(frequency);
+
+    // Update the frequency and remindOne fields in the form data
+    handleChange({
+      target: {
+        name: "frequency",
+        value: frequency,
+      }
+    });
+
+    handleChange({
+      target: {
+        name: "remindOne",
+        value: newRemindOnDate,
+      }
+    });
+  };
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    })
+  };
+
 
   return (
     <Box>
@@ -54,34 +137,62 @@ function RiskForm() {
         {/* Left Column */}
         <Box width={{ base: "100%", md: "40%" }}>
           <FormControl>
-            <HStack spacing={2} alignItems="center">
+            <HStack spacing={6} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>Owner: </Text>
-              <Input fontSize={12} value={owner} onChange={(e) => setOwner(e.target.value)} />
+              <Box width="100%" >
+                <Select
+                  name="owner"
+                  placeholder='Select owner'
+                  styles={customStyles}
+                  options={profilesOptions}
+                  value={profilesOptions?.find(option => option.value === riskFormData.owner)}
+                  onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
+                />
+              </Box>
             </HStack>
           </FormControl>
 
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>Nominee: </Text>
-              <Input fontSize={12} value={nominee} onChange={(e) => setNominee(e.target.value)} />
+              <Box width="100%" >
+                <Select
+                  name="nominee"
+                  placeholder='Select nominee'
+                  styles={customStyles}
+                  options={profilesOptions}
+                  value={profilesOptions?.find(option => option.value === riskFormData.nominee)}
+                  onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
+                />
+              </Box>
             </HStack>
           </FormControl>
 
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>Reviewer: </Text>
-              <Input fontSize={12} value={reviewer} onChange={(e) => setReviewer(e.target.value)} />
+              <Box width="100%" >
+                <Select
+                  name="reviewer"
+                  placeholder='Select reviewer'
+                  styles={customStyles}
+                  options={profilesOptions}
+                  value={profilesOptions?.find(option => option.value === riskFormData.reviewer)}
+                  onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
+                />
+              </Box>
             </HStack>
           </FormControl>
 
           <FormControl mt={4} display="flex" alignItems="center" >
             <Checkbox
-              isChecked={activeRisk}
-              onChange={(e) => setActiveRisk(e.target.checked)}
+              name="activeRisk"
+              isChecked={riskFormData.activeRisk}
+              onChange={handleChange}
               fontWeight="bold"
               mb={2}
             >
-              <span style={{fontSize:12}}>Active Risk</span>
+              <span style={{ fontSize: 12 }}>Active Risk</span>
             </Checkbox>
           </FormControl>
         </Box>
@@ -91,10 +202,11 @@ function RiskForm() {
             size="sm"
             fontWeight="bold"
             mb={2}
-            isChecked={ownerEmailChecked}
-            onChange={(e) => setOwnerEmailChecked(e.target.checked)}
+            name="ownerEmailChecked"
+            isChecked={riskFormData.ownerEmailChecked}
+            onChange={handleChange}
           >
-            <span style={{fontSize:12}}>Owner Email</span>
+            <span style={{ fontSize: 12 }}>Owner Email</span>
           </Checkbox>
         </Box>
 
@@ -103,19 +215,23 @@ function RiskForm() {
           <FormControl>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>Frequency: </Text>
-              <Select value={frequency} onChange={(e) => setFrequency(e.target.value)} fontSize={12}>
-                <option value="" >Select Frequency</option>
-                <option value="Daily" >Daily</option>
-                <option value="Weekly" >Weekly</option>
-                <option value="Monthly" >Monthly</option>
-              </Select>
+              <Box width="100%" >
+                <Select
+                  name="frequency"
+                  placeholder='Select frequency'
+                  styles={customStyles}
+                  options={frequenciesOptions}
+                  value={frequenciesOptions?.find(option => option.value === riskFormData.frequency)}
+                  onChange={(selectedOption) => handleSelectChangeWithRemind('frequency', selectedOption)}  // Handle frequency change and set remindOn
+                />
+              </Box>
             </HStack>
           </FormControl>
 
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
-              <Text fontWeight="bold" fontSize={12} mb={2}>Remind One: </Text>
-              <Input fontSize={12} type="date" value={remindOne} onChange={(e) => setRemindOne(e.target.value)} />
+              <Text fontWeight="bold" fontSize={12} mb={2}>Remind On: </Text>
+              <Input fontSize={12} type="date" name="remindOne" value={riskFormData.remindOne} onChange={handleChange} isReadOnly/>
             </HStack>
           </FormControl>
 
@@ -126,7 +242,7 @@ function RiskForm() {
               variant="solid"
               width="auto"
               minWidth="120px"
-              onClick={handleSave}
+
             >
               Sign Off/add next
             </Button>
@@ -136,7 +252,7 @@ function RiskForm() {
 
       <FormControl mt={4}>
         <Text fontWeight="bold" fontSize={12} mb={2}>Description: </Text>
-        <Textarea fontSize={12} value={description} onChange={(e) => setDescription(e.target.value)} />
+        <Textarea fontSize={12} name="description" value={riskFormData.description} onChange={handleChange} />
       </FormControl>
 
       {/* Buttons Section */}
@@ -144,13 +260,13 @@ function RiskForm() {
         <Button fontSize={12} colorScheme="blue" variant="outline" leftIcon={<ArrowBackIcon />}>
           Home
         </Button>
-        <Button fontSize={12} colorScheme="green" variant="outline" leftIcon={<CheckIcon />} onClick={handleSave}>
+        <Button fontSize={12} colorScheme="green" variant="outline" leftIcon={<CheckIcon />} >
           Approve
         </Button>
         <Button fontSize={12} colorScheme="yellow" variant="outline" leftIcon={<CloseIcon />}>
           Unapprove
         </Button>
-        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} onClick={handleSave}>
+        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} >
           Save
         </Button>
         <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
@@ -159,7 +275,7 @@ function RiskForm() {
         <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<DeleteIcon />}>
           Delete
         </Button>
-        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<CheckIcon />} onClick={handleSave}>
+        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<CheckIcon />} >
           Save and Approve
         </Button>
       </HStack>
