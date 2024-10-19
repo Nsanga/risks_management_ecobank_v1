@@ -57,6 +57,7 @@ const TreeSelect = () => {
         <Checkbox
           isChecked={selectedOptions.includes(option.value)}
           onChange={() => handleSelect(option.value)}
+          fontSize="12px"
         >
           {option.label}
         </Checkbox>
@@ -66,14 +67,13 @@ const TreeSelect = () => {
           <Select
             mt={2}
             placeholder={`Select option for ${option.label}`}
-            onChange={(e) =>
-              handleDropdownChange(option.value, e.target.value)
-            }
+            onChange={(e) => handleDropdownChange(option.value, e.target.value)}
             value={dropdownSelections[option.value] || ''}
             isDisabled={!selectedOptions.includes(option.value)} // Disable if not selected
+            fontSize="12px"
           >
             {dropdownData[option.value].map((item) => (
-              <option key={item} value={item}>
+              <option key={item} value={item} fontSize="12px">
                 {item}
               </option>
             ))}
@@ -85,15 +85,15 @@ const TreeSelect = () => {
 
   return (
     <Box bg="white" p={6} rounded="md" shadow="md" maxW="500px" mx="auto" mt={8}>
-      <Text fontWeight="bold" mb={4}>Select Options:</Text>
+      <Text fontWeight="bold" mb={4} fontSize="12px">Select Options:</Text>
       <Box>{renderOptions(options)}</Box>
 
       {/* Show selected options */}
       {selectedOptions.length > 0 && (
         <Box mt={3}>
-          <Text fontWeight="bold">Selected Options:</Text>
+          <Text fontWeight="bold" fontSize="12px">Selected Options:</Text>
           {selectedOptions.map((value) => (
-            <Text key={value}>
+            <Text key={value} fontSize="12px">
               {value}: {dropdownSelections[value] || 'No selection'}
             </Text>
           ))}
