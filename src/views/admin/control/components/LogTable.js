@@ -69,17 +69,17 @@ const LogTable = () => {
             <Table variant="striped" colorScheme="blue">
               <Thead>
                 <Tr>
-                  <Th>Date/Time</Th>
-                  <Th>User</Th>
-                  <Th>Type</Th>
-                  <Th>Comment</Th>
+                  <Th fontSize="12px">Date/Time</Th>
+                  <Th fontSize="12px">User</Th>
+                  <Th fontSize="12px">Type</Th>
+                  <Th fontSize="12px">Comment</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {data.length === 0 ? (
                   <Tr>
                     <Td colSpan={4} textAlign="center">
-                      <Text>No data to display</Text>
+                      <Text fontSize="12px">No data to display</Text>
                     </Td>
                   </Tr>
                 ) : (
@@ -89,10 +89,10 @@ const LogTable = () => {
                       onClick={() => handleRowClick(log)} 
                       bg={selectedLog === log ? 'blue.100' : undefined} // Highlight selected row
                     >
-                      <Td>{log.dateTime}</Td>
-                      <Td>{log.user}</Td>
-                      <Td>{log.type}</Td>
-                      <Td>{log.comment}</Td>
+                      <Td fontSize="12px">{log.dateTime}</Td>
+                      <Td fontSize="12px">{log.user}</Td>
+                      <Td fontSize="12px">{log.type}</Td>
+                      <Td fontSize="12px">{log.comment}</Td>
                     </Tr>
                   ))
                 )}
@@ -101,7 +101,7 @@ const LogTable = () => {
           </Box>
 
           <Box p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
-            <Text fontWeight="bold">Comment</Text>
+            <Text fontWeight="bold" fontSize="12px">Comment</Text>
             <Textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -111,6 +111,7 @@ const LogTable = () => {
               overflowY="auto"
               bg="gray.100"
               p={2}
+              fontSize="12px"
             />
           </Box>
         </SimpleGrid>
@@ -121,6 +122,7 @@ const LogTable = () => {
             onClick={handleAddComment} 
             leftIcon={<AddIcon />} 
             isDisabled={!comment}
+            fontSize="12px"
           >
             Add Comment
           </Button>
@@ -129,6 +131,7 @@ const LogTable = () => {
             onClick={handleAmendComment} 
             leftIcon={<EditIcon />} 
             isDisabled={!isEditing || !comment}
+            fontSize="12px"
           >
             Amend Comment
           </Button>
@@ -137,6 +140,7 @@ const LogTable = () => {
             onClick={handleAmendComment} 
             leftIcon={<CheckIcon />} 
             isDisabled={!isEditing || !comment}
+            fontSize="12px"
           >
             Save
           </Button>
@@ -144,6 +148,7 @@ const LogTable = () => {
             colorScheme="red" 
             onClick={handleCancel} 
             leftIcon={<CloseIcon />}
+            fontSize="12px"
           >
             Cancel
           </Button>
