@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import AccountReducer from 'redux/accountManagement/reducer';
 import CampaignReducer from 'redux/campagne/reducer';
 import EntityReducer from 'redux/entitiy/reducer';
+import EntityRiskControlReducer from 'redux/entityRiskControl/reducer';
 import EventReducer from 'redux/events/reducer';
 import LoginReducer from 'redux/login/reducer';
 import PlateformeReducer from 'redux/plateforme/reducer';
@@ -25,7 +26,8 @@ const rootReducer = combineReducers({
   ProfileReducer,
   EntityReducer,
   UserGroupReducer,
-  RiskControlReducer
+  RiskControlReducer,
+  EntityRiskControlReducer
 });
 
 export default rootReducer;

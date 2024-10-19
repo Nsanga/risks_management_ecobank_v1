@@ -188,7 +188,7 @@ const GeneralForm = ({ formData, handleSelectChange, profiles, handleChange }) =
                   placeholder='Select nominee'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === formData.nominee)}
+                  value={profilesOptions?.find(option => option.value === formData.nominee || null)}
                   onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                 />
               </Box>
@@ -203,7 +203,7 @@ const GeneralForm = ({ formData, handleSelectChange, profiles, handleChange }) =
                   placeholder='Select reviewer'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === formData.reviewer)}
+                  value={profilesOptions?.find(option => option.value === formData.reviewer || null)}
                   onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                 />
               </Box>
@@ -246,12 +246,12 @@ const GeneralForm = ({ formData, handleSelectChange, profiles, handleChange }) =
               </FormControl>
               <FormControl mb={4}>
                 <HStack spacing={4} alignItems="center">
-                  <Text fontSize={12} fontWeight="bold" mb={4}>Last Operator:</Text>
+                  <Text fontSize={12} fontWeight="bold" mb={4}>Last Operation:</Text>
                   <Input
                     fontSize={12}
                     type="date"
-                    name="lastOperator"
-                    value={formData.lastOperator}
+                    name="lastOperation"
+                    value={formData.lastOperation}
                     onChange={handleChange}
                   />
                 </HStack>

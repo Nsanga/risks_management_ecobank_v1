@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
   Flex,
@@ -19,34 +18,11 @@ import {
   DeleteIcon,
 } from '@chakra-ui/icons';
 import Select from 'react-select';
+import { connect, useDispatch } from 'react-redux';
+import { updateEntityRiskControl } from 'redux/entityRiskControl/action';
 
-function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) {
-  // State for form inputs
-  // const [owner, setOwner] = useState('');
-  // const [ownerEmailChecked, setOwnerEmailChecked] = useState(false);
-  // const [nominee, setNominee] = useState('');
-  // const [reviewer, setReviewer] = useState('');
-  // const [activeRisk, setActiveRisk] = useState(false);
-  // const [description, setDescription] = useState('');
-  // const [frequency, setFrequency] = useState('');
-  // const [remindOne, setRemindOne] = useState('');
-
-  // // Handle form submission
-  // const handleSave = () => {
-  //   const payload = {
-  //     owner,
-  //     ownerEmailChecked,
-  //     nominee,
-  //     reviewer,
-  //     activeRisk,
-  //     description,
-  //     frequency,
-  //     remindOne,
-  //   };
-
-  //   console.log('Form Payload:', payload);
-  //   // Here, you can also add logic to submit the payload to an API or service
-  // };
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, newRiskId, onClose }) {
+  const dispatch = useDispatch();
   const profilesOptions = profiles
     ?.filter(profile => profile.activeUser)
     ?.map((profile, index) => ({
@@ -130,6 +106,17 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
     })
   };
 
+  const handleSave = () => {
+    // Si newRiskId existe, effectue la mise à jour
+    if (newRiskId) {
+      const payload = {
+        id: newRiskId,
+        ...riskFormData, // Inclut les données mises à jour du formulaire
+      };
+      
+      dispatch(updateEntityRiskControl(newRiskId, riskFormData)) ;
+    }
+  };
 
   return (
     <Box>
@@ -145,7 +132,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
                   placeholder='Select owner'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === riskFormData.owner)}
+                  value={profilesOptions?.find(option => option.value === riskFormData.owner || null)}
                   onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                 />
               </Box>
@@ -161,7 +148,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
                   placeholder='Select nominee'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === riskFormData.nominee)}
+                  value={profilesOptions?.find(option => option.value === riskFormData.nominee || null)}
                   onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                 />
               </Box>
@@ -177,7 +164,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
                   placeholder='Select reviewer'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === riskFormData.reviewer)}
+                  value={profilesOptions?.find(option => option.value === riskFormData.reviewer || null)}
                   onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                 />
               </Box>
@@ -231,7 +218,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>Remind On: </Text>
-              <Input fontSize={12} type="date" name="remindOne" value={riskFormData.remindOne} onChange={handleChange} isReadOnly/>
+              <Input fontSize={12} type="date" name="remindOne" value={riskFormData.remindOne} onChange={handleChange} isReadOnly />
             </HStack>
           </FormControl>
 
@@ -257,7 +244,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
 
       {/* Buttons Section */}
       <HStack spacing={4} mt={6} justify='center'>
-        <Button fontSize={12} colorScheme="blue" variant="outline" leftIcon={<ArrowBackIcon />}>
+        <Button fontSize={12} colorScheme="blue" variant="outline" leftIcon={<ArrowBackIcon />} onClick={onClose}>
           Home
         </Button>
         <Button fontSize={12} colorScheme="green" variant="outline" leftIcon={<CheckIcon />} >
@@ -266,7 +253,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
         <Button fontSize={12} colorScheme="yellow" variant="outline" leftIcon={<CloseIcon />}>
           Unapprove
         </Button>
-        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} >
+        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} onClick={handleSave}>
           Save
         </Button>
         <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
@@ -283,4 +270,10 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange }) 
   );
 }
 
-export default RiskForm;
+const mapStateToProps = ({ EntityRiskControlReducer }) => ({
+  loading: EntityRiskControlReducer.loading,
+});
+
+export default connect(mapStateToProps)(RiskForm);
+
+

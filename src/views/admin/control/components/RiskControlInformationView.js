@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
     ModalFooter, useDisclosure, Tabs, TabList, TabPanels, Tab, TabPanel, // Import Chakra UI Tabs components
@@ -8,12 +8,15 @@ import TreeSelect from './TreeSelect';
 import LogTable from './LogTable';
 import DataDisplay from './DataDisplay';
 import RiskControl from './RiskControl';
-import MyTableComponent from './MyTableComponent';
 import ActionsPanel from './ActionsPanel';
 import RiskPage from './RiskPage';
 import RiskForm from './RiskForm';
+import { connect, useDispatch } from 'react-redux';
+import { AddEntityRiskControl } from 'redux/entityRiskControl/action';
 
-const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEditMode }) => {
+const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEditMode, addSuccess, newItemId, loading }) => {
+    const [showTabs, setShowTabs] = useState(false);
+    const dispatch = useDispatch();
     const [formDataRiskPage, setFormDataRiskPage] = useState({
         entity: "",
         location: "CAMEROON",
@@ -22,20 +25,19 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
         description: "",
         riskCategory: "",
         dismissalCategory: "",
-        riskRef: "",
         linkedRisk: "",
         residualSeverity: "",
-        residualScore: "0.00 USD",
-        residualAnnExp: "0.00 USD",
+        residualScore: "0.00",
+        residualAnnExp: "0.00",
         riskActions: "0",
         riskStatus: "Approved"
     });
 
     const [formDataRiskForm, setFormDataRiskForm] = useState({
-        owner: "",
-        ownerEmailChecked: "",
-        nominee: "",
-        reviewer: "",
+        owner: null,
+        ownerEmailChecked: false,
+        nominee: null,
+        reviewer: null,
         activeRisk: true,
         description: "",
         frequency: "",
@@ -46,11 +48,11 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
         controlRef: "",
         controlCategory: "",
         description: "",
-        nominee: "",
-        reviewer: "",
+        nominee: null,
+        reviewer: null,
         reviewDate: "",
         frequency: "",
-        lastOperator: "",
+        lastOperation: "",
         nextOperation: "",
         frequencyAssessment: "",
         nextAssessment: "",
@@ -64,24 +66,29 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
     };
 
     const handleSelectChange = (name, selectedOption) => {
+        const value = selectedOption ? selectedOption.value : null;
+
         setFormDataRiskPage((prevData) => ({
             ...prevData,
-            [name]: selectedOption ? selectedOption.value : null
+            [name]: value,
         }));
         setFormDataRiskForm((prevData) => ({
             ...prevData,
-            [name]: selectedOption ? selectedOption.value : null
+            [name]: value,
         }));
 
         setFormDataRiskControl((prevData) => ({
             ...prevData,
-            [name]: selectedOption ? selectedOption.value : null
+            [name]: value,
         }));
     };
 
     const handleChangeRiskForm = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormDataRiskForm((prevData) => ({ ...prevData, [name]: type === 'checkbox' ? checked : value }));
+        const { name, checked, type } = e.target;
+        setFormDataRiskForm((prevData) => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : e.target.value
+        }));
     };
 
     const handleChangeRiskControl = (e) => {
@@ -92,15 +99,49 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
         }));
     };
 
-    const handleSave = () => {
-        const payload = {
-            riskControlInformations: formDataRiskPage,
-            risks: formDataRiskForm,
-            controls: formDataRiskControl
-        }
-        console.log("payload", payload);
-        // You can add additional logic for saving the data here
+    const formatObjectItems = (item, keys) => {
+        const formattedItem = {};
+        keys.forEach(key => {
+            formattedItem[key] = item[key];
+        });
+        return formattedItem;
     };
+
+    const handleSave = () => {
+        const riskKeys = ["activeRisk", "description", "frequency", "nominee", "owner", "ownerEmailChecked", "remindOne", "reviewer"];
+        const controlKeys = ["activeControl", "controlCategory", "controlRef", "description", "frequency", "lastOperation", "nextOperation", "frequencyAssessment", "nextAssessment", "nominee", "reviewDate", "reviewer", "keyControl"];
+
+        console.log('formDataRiskPage:', formDataRiskPage);
+        console.log('formDataRiskForm:', formDataRiskForm);
+
+        const payload = {
+            ...formDataRiskPage,
+            risks: formatObjectItems(formDataRiskForm, riskKeys),
+            controls: formatObjectItems(formDataRiskControl, controlKeys)
+        };
+        console.log(payload)
+        dispatch(AddEntityRiskControl(payload));
+    };
+
+    // Utiliser useEffect pour surveiller l'état de succès
+    useEffect(() => {
+        if (addSuccess) {
+            setShowTabs(true); // Mettre à jour l'affichage si l'action est réussie
+            console.log(newItemId);
+        }
+    }, [addSuccess]);
+
+    useEffect(() => {
+        if (newItemId) {
+            // Effectuez une action ici avec newItemId, comme mettre à jour le formulaire
+            setFormDataRiskForm(prevState => ({
+                ...prevState,
+                id: newItemId // Ajoutez l'ID au formulaire si nécessaire
+            }));
+
+            // Vous pouvez aussi rediriger ou faire autre chose ici
+        }
+    }, [newItemId]);
 
     return (
         <>
@@ -111,52 +152,62 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
                     <ModalBody p={4}>
                         {/* You can pass selectedRisk data to the RiskPage or any other component as needed */}
                         <RiskPage riskData={formDataRiskPage} handleChange={handleChangeRiskPage} handleSelectChange={handleSelectChange} isEditMode={isEditMode} entities={entities} />
-                        <Tabs variant='enclosed' mt={6}>
-                            <TabList>
-                                <Tab fontSize={12} >General</Tab>
-                                {/* <Tab fontSize={12} >Goals</Tab> */}
-                                <Tab fontSize={12} >Controls</Tab>
-                                <Tab fontSize={12} >Actions</Tab>
-                                <Tab fontSize={12} >Risk focus</Tab>
-                                <Tab fontSize={12} >Risks logs</Tab>
-                                <Tab fontSize={12} >Linked items</Tab>
-                            </TabList>
+                        {showTabs && (
+                            <Tabs variant='enclosed' mt={6}>
+                                <TabList>
+                                    <Tab fontSize={12} >General</Tab>
+                                    {/* <Tab fontSize={12} >Goals</Tab> */}
+                                    <Tab fontSize={12} >Controls</Tab>
+                                    <Tab fontSize={12} >Actions</Tab>
+                                    <Tab fontSize={12} >Risk focus</Tab>
+                                    <Tab fontSize={12} >Risks logs</Tab>
+                                    <Tab fontSize={12} >Linked items</Tab>
+                                </TabList>
 
-                            <TabPanels>
-                                <TabPanel>
-                                    <RiskForm riskFormData={formDataRiskForm} handleChange={handleChangeRiskForm} handleSelectChange={handleSelectChange} profiles={profiles} />
-                                </TabPanel>
-                                {/* <TabPanel>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <RiskForm riskFormData={formDataRiskForm} handleChange={handleChangeRiskForm} handleSelectChange={handleSelectChange} profiles={profiles} newRiskId={newItemId}/>
+                                    </TabPanel>
+                                    {/* <TabPanel>
                                     <MyTableComponent />
                                 </TabPanel> */}
-                                <TabPanel>
-                                    <RiskControl riskControlData={formDataRiskControl} handleChange={handleChangeRiskControl} handleSelectChange={handleSelectChange} profiles={profiles} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <ActionsPanel />
-                                </TabPanel>
-                                <TabPanel>
-                                    <TreeSelect />
-                                </TabPanel>
-                                <TabPanel>
-                                    <LogTable />
-                                </TabPanel>
-                                <TabPanel>
-                                    <DataDisplay />
-                                </TabPanel>
-                            </TabPanels>
-                        </Tabs>
+                                    <TabPanel>
+                                        <RiskControl riskControlData={formDataRiskControl} handleChange={handleChangeRiskControl} handleSelectChange={handleSelectChange} profiles={profiles} onClose={onClose} />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <ActionsPanel />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <TreeSelect />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <LogTable />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <DataDisplay />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        )}
                     </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                        <Button variant="ghost" onClick={handleSave}>Save</Button>
-                    </ModalFooter>
+                    {!showTabs && (
+                        <ModalFooter>
+                            <Button colorScheme="blue" mr={3} onClick={onClose}>
+                                Close
+                            </Button>
+                            <Button variant="ghost" onClick={handleSave} isLoading={loading ? true : false} >Save</Button>
+                        </ModalFooter>
+                    )}
                 </ModalContent>
             </Modal>
         </>
     );
 };
 
-export default RiskControlInformationView
+const mapStateToProps = ({ EntityRiskControlReducer }) => ({
+    addSuccess: EntityRiskControlReducer.addSuccess,
+    newItemId : EntityRiskControlReducer.newItemId ,
+    loading: EntityRiskControlReducer.loading,
+});
+
+export default connect(mapStateToProps)(RiskControlInformationView);
