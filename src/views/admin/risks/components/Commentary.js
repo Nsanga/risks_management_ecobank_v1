@@ -24,7 +24,7 @@ const Commentary = ({ event, onCommentaryChange }) => {
   return (
     <Box>
       <Flex direction="column" gap={4} flex="2">
-        <Text fontWeight="bold" fontSize={14}>Commentary</Text>
+        <Text fontWeight="bold" fontSize={12}>Commentary</Text>
         <Textarea size='sm' value={comment.commentary} onChange={(e) => handleInputChange('commentary', e.target.value)} />
       </Flex>
     </Box>

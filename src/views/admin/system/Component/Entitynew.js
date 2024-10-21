@@ -11,7 +11,7 @@ import Loader from '../../../../assets/img/loader.gif';
 const Entitynew = ({ entities, loading, profiles }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
-console.log(entities)
+
   const openModal = () => {
     setSelectedEntity(null); // Clear selected entity for adding a new one
     setIsModalOpen(true);

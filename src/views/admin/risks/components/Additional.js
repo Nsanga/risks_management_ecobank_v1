@@ -88,11 +88,11 @@ const Additional = ({ onAdditionalChange, event }) => {
         <Tbody>
           {data.map((item, index) => (
             <Tr key={index}>
-              <Td fontSize={14}>{item.title} <span style={{ color: 'red' }}>*</span></Td>
+              <Td fontSize={12}>{item.title} <span style={{ color: 'red' }}>*</span></Td>
               <Td onClick={() => handleCellClick(index, item.title)}>
                 <Button variant="link" color="blue"><MdUploadFile /></Button>
               </Td>
-              <Td fontSize={14}>{selectedDescriptions[index] || preFilledDescriptions[index] || ''}</Td> {/* Afficher la description pré-remplie */}
+              <Td fontSize={12}>{selectedDescriptions[index] || preFilledDescriptions[index] || ''}</Td> {/* Afficher la description pré-remplie */}
             </Tr>
           ))}
         </Tbody>

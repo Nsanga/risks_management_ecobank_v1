@@ -193,7 +193,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                 colorScheme={isDetailsVisible ? 'blue' : 'gray'}
                 variant={isDetailsVisible ? 'solid' : 'outline'}
                 leftIcon={<AddIcon />}
-                fontSize={14}
+                fontSize={12}
                 size="sm"
               >
                 User Details
@@ -203,7 +203,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                 colorScheme={!isDetailsVisible ? 'blue' : 'gray'}
                 variant={!isDetailsVisible ? 'solid' : 'outline'}
                 leftIcon={<AddIcon />}
-                fontSize={14}
+                fontSize={12}
                 size="sm"
               >
                 User Entity Views
@@ -212,7 +212,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                 colorScheme="blue"
                 variant="outline"
                 leftIcon={<AddIcon />}
-                fontSize={14}
+                fontSize={12}
                 size="sm"
               >
                 User Entities
@@ -241,14 +241,14 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
           {
             !selectedUser?.userId ?
               (
-                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave} fontSize={14} disabled={isSaveDisabled}>
+                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave} fontSize={12} disabled={isSaveDisabled}>
                   Save
                 </Button>
               ) : null
           }
           {
             selectedUser?.userId && !isEditMode ? (
-              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit} fontSize={14}>
+              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit} fontSize={12}>
                 Save
               </Button>
             ) : null

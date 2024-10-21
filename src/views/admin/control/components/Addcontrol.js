@@ -3,26 +3,161 @@ import {
   FormControl, FormLabel, Input, Flex,
   Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
   Button,
+  Checkbox,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, CopyIcon, EditIcon } from '@chakra-ui/icons';
 import { useDisclosure } from '@chakra-ui/react';
 import RiskControlInformationView from './RiskControlInformationView';
+import AddEntityModal from 'views/admin/system/Component/AddEntityModal';
+import { IoMove } from 'react-icons/io5';
 
 function AddControl({ riskControls, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();  // useDisclosure for modal control
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);  // To differentiate between add and edit mode
   const [currentView, setCurrentView] = useState("Risks");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const { isOpen: isMoveModalOpen, onOpen: onMoveModalOpen, onClose: onMoveModalClose } = useDisclosure();
+  const { isOpen: isCopyModalOpen, onOpen: onCopyModalOpen, onClose: onCopyModalClose } = useDisclosure();
+
+  // Gestion de la sélection des cases à cocher
+  const handleCheckboxChange = (row, isChecked) => {
+    console.log(isChecked)
+    if (isChecked) {
+      setSelectedRows((prev) => [...prev, row]); // Ajoute la ligne sélectionnée
+    } else {
+      setSelectedRows((prev) => prev.filter((selectedRow) => selectedRow !== row)); // Retire la ligne si désélectionnée
+    }
+  };
+
+  const isRowSelected = (row) => selectedRows.some((selectedRow) => selectedRow === row); // Vérifie si une ligne est sélectionnée
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
+  const risksData = [
+    {
+      refId: 'RISK001',
+      keyRiskSummary: 'Risk of data breach',
+      owner: 'John Doe',
+      nominee: 'Jane Smith',
+      reviewer: 'Robert Brown',
+      category: 'Cybersecurity',
+      exposure: 'High',
+    },
+    {
+      refId: 'RISK002',
+      keyRiskSummary: 'Risk of financial loss',
+      owner: 'Alice Johnson',
+      nominee: 'Michael Green',
+      reviewer: 'Emma Wilson',
+      category: 'Finance',
+      exposure: 'Medium',
+    },
+    {
+      refId: 'RISK003',
+      keyRiskSummary: 'Risk of regulatory non-compliance',
+      owner: 'David Lee',
+      nominee: 'Laura White',
+      reviewer: 'Henry Martin',
+      category: 'Compliance',
+      exposure: 'Low',
+    },
+    {
+      refId: 'RISK004',
+      keyRiskSummary: 'Risk of equipment failure',
+      owner: 'Sarah Black',
+      nominee: 'Daniel Gray',
+      reviewer: 'Sophia Harris',
+      category: 'Operations',
+      exposure: 'High',
+    },
+    {
+      refId: 'RISK005',
+      keyRiskSummary: 'Risk of market downturn',
+      owner: 'James Scott',
+      nominee: 'Emily Clark',
+      reviewer: 'Liam Taylor',
+      category: 'Market',
+      exposure: 'Medium',
+    }
+  ];
+
+  const controlsData = [
+    {
+      refId: 'CONTROL001',
+      keyRiskSummary: 'Control for data breach',
+      library: 'Cybersecurity Library',
+      category: 'Cybersecurity',
+      owner: 'John Doe',
+      nominee: 'Jane Smith',
+      reviewer: 'Robert Brown',
+    },
+    {
+      refId: 'CONTROL002',
+      keyRiskSummary: 'Control for financial risk',
+      library: 'Finance Control Library',
+      category: 'Finance',
+      owner: 'Alice Johnson',
+      nominee: 'Michael Green',
+      reviewer: 'Emma Wilson',
+    },
+    {
+      refId: 'CONTROL003',
+      keyRiskSummary: 'Control for regulatory compliance',
+      library: 'Compliance Control Library',
+      category: 'Compliance',
+      owner: 'David Lee',
+      nominee: 'Laura White',
+      reviewer: 'Henry Martin',
+    },
+    {
+      refId: 'CONTROL004',
+      keyRiskSummary: 'Control for equipment failure',
+      library: 'Operations Control Library',
+      category: 'Operations',
+      owner: 'Sarah Black',
+      nominee: 'Daniel Gray',
+      reviewer: 'Sophia Harris',
+    },
+    {
+      refId: 'CONTROL005',
+      keyRiskSummary: 'Control for market risk',
+      library: 'Market Control Library',
+      category: 'Market',
+      owner: 'James Scott',
+      nominee: 'Emily Clark',
+      reviewer: 'Liam Taylor',
+    }
+  ];
 
   // Dynamically map the data to the selected view
   const viewData = {
-    Risks: riskControls[0]?.risks || [],
-    Controls: riskControls[0]?.controls || [],
+    Risks: risksData || [],
+    Controls: controlsData || [],
     Events: [],
     Actions: [],
     Kits: [],
     Obligations: [],
   };
+  // const viewData = {
+  //   Risks: riskControls[0]?.risks || [],
+  //   Controls: riskControls[0]?.controls || [],
+  //   Events: [],
+  //   Actions: [],
+  //   Kits: [],
+  //   Obligations: [],
+  // };
 
   const columnsByView = {
     Risks: [
@@ -62,10 +197,17 @@ function AddControl({ riskControls, entities, profiles }) {
   return (
     <>
       <Flex direction="column" justifyContent="flex-end" align="flex-end" mb={5} w="100%">
-        {/* Button for Adding a New Control */}
-        <Button  fontSize={12} onClick={handleAddControlClick} variant="outline" color="blue" leftIcon={<AddIcon />}>
+        <Flex gap={4}>
+          <Button fontSize={12} onClick={openModal} variant="solid" colorScheme="blue" leftIcon={<AddIcon />}>
+            Add
+          </Button>
+          <Button fontSize={12} variant="solid" colorScheme="green" leftIcon={<EditIcon />}>
+            Amend
+          </Button>
+          {/* <Button  fontSize={12} onClick={handleAddControlClick} variant="outline" color="blue" leftIcon={<AddIcon />}>
           Add Control
-        </Button>
+        </Button> */}
+        </Flex>
 
         {/* Modal for Adding or Editing Controls */}
         <RiskControlInformationView
@@ -87,7 +229,7 @@ function AddControl({ riskControls, entities, profiles }) {
               </Select>
             </FormControl>
             <FormControl fontSize={12} mr={4} maxW="150px">
-              <FormLabel  fontSize={12}>RAM</FormLabel>
+              <FormLabel fontSize={12}>RAM</FormLabel>
               <Input fontSize={12} isDisabled placeholder="RAM Value" />
             </FormControl>
             <FormControl maxW="150px">
@@ -107,7 +249,7 @@ function AddControl({ riskControls, entities, profiles }) {
                     value={view}
                     isDisabled={viewData[view].length === 0} // Disable if no data
                   >
-                    <span style={{fontSize: 12}}>{view}</span>
+                    <span style={{ fontSize: 12 }}>{view}</span>
                   </Radio>
                 ))}
               </HStack>
@@ -143,30 +285,87 @@ function AddControl({ riskControls, entities, profiles }) {
 
         {/* Table for the selected view */}
         {numberOfItems > 0 ? (
-          <Table variant="simple" mt={4}>
-            <Thead>
-              <Tr>
-                {columnsByView[currentView].map((col) => (
-                  <Th  fontSize={10} key={col.key}>{col.label}</Th>
-                ))}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {viewData[currentView].map((row, index) => (
-                <Tr key={index} onClick={() => handleRowClick(row)} cursor="pointer">
+          <>
+            <Table variant="simple" mt={4}>
+              <Thead>
+                <Tr>
+                  <Th fontSize={10}></Th> {/* Colonne pour les cases à cocher */}
                   {columnsByView[currentView].map((col) => (
-                    <Td fontSize={12} key={col.key}>{row[col.key]}</Td>
+                    <Th fontSize={10} key={col.key}>
+                      {col.label}
+                    </Th>
                   ))}
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {viewData[currentView].map((row, index) => (
+                  <Tr key={index} cursor="pointer">
+                    {/* Case à cocher */}
+                    <Td>
+                      <Checkbox
+                        onChange={(e) => handleCheckboxChange(row, e.target.checked)}
+                        isChecked={isRowSelected(row)}
+                      />
+                    </Td>
+                    {/* Données des colonnes */}
+                    {columnsByView[currentView].map((col) => (
+                      <Td fontSize={12} key={col.key} onClick={() => handleRowClick(row)}>
+                        {row[col.key]}
+                      </Td>
+                    ))}
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </>
         ) : (
           <Box fontSize={12} mt={4} p={4} borderWidth="1px" borderRadius="lg" textAlign="center">
             No data available for {currentView}
           </Box>
         )}
       </Flex>
+      {selectedRows.length > 0 && (
+        <HStack mt={4} spacing={4} justifyContent='start'>
+          <Button colorScheme="teal" fontSize={12} leftIcon={<IoMove />} onClick={onMoveModalOpen}>
+            Move
+          </Button>
+          <Button colorScheme="blue" fontSize={12} leftIcon={<CopyIcon />} onClick={onCopyModalOpen}>
+            Copy
+          </Button>
+        </HStack>
+      )}
+
+      {/* Modal for Move */}
+      <Modal isCentered isOpen={isMoveModalOpen} onClose={onMoveModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize={12}>Move Selected Items</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p style={{fontSize: 12}}>You are about to move the selected items.</p>
+            {/* Add any additional form elements or details here */}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal for Copy */}
+      <Modal isCentered isOpen={isCopyModalOpen} onClose={onCopyModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize={12}>Copy Selected Items</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p style={{fontSize: 12}}>You are about to copy the selected items.</p>
+            {/* Add any additional form elements or details here */}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <AddEntityModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        profiles={profiles}
+      />
     </>
   );
 }

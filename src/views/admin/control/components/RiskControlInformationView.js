@@ -152,7 +152,6 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
                     <ModalBody p={4}>
                         {/* You can pass selectedRisk data to the RiskPage or any other component as needed */}
                         <RiskPage riskData={formDataRiskPage} handleChange={handleChangeRiskPage} handleSelectChange={handleSelectChange} isEditMode={isEditMode} entities={entities} />
-                        {showTabs && (
                             <Tabs variant='enclosed' mt={6}>
                                 <TabList>
                                     <Tab fontSize={12} >General</Tab>
@@ -188,16 +187,13 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
                                     </TabPanel>
                                 </TabPanels>
                             </Tabs>
-                        )}
                     </ModalBody>
-                    {!showTabs && (
-                        <ModalFooter>
+                        {/* <ModalFooter>
                             <Button colorScheme="blue" mr={3} onClick={onClose}>
                                 Close
                             </Button>
                             <Button variant="ghost" onClick={handleSave} isLoading={loading ? true : false} >Save</Button>
-                        </ModalFooter>
-                    )}
+                        </ModalFooter> */}
                 </ModalContent>
             </Modal>
         </>

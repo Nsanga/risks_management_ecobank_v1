@@ -33,7 +33,7 @@ const MultiLevelList = ({ data, onItemClick }) => {
               mr={2}
             />
           )}
-          <Text ml={level * 4} fontSize={14} onClick={!hasSubCategories ? () => onItemClick(category) : undefined} cursor='pointer'>
+          <Text ml={level * 4} fontSize={12} onClick={!hasSubCategories ? () => onItemClick(category) : undefined} cursor='pointer'>
             {category}
           </Text>
         </Box>
@@ -42,7 +42,7 @@ const MultiLevelList = ({ data, onItemClick }) => {
             <List pl={6} mt={1}>
               {Array.isArray(subCategories)
                 ? subCategories.map((item, index) => (
-                  <ListItem key={`${item}-${index}`} onClick={() => onItemClick(item)} cursor='pointer' _hover={{ backgroundColor: 'gray.200' }} pl={8} fontSize={14}>
+                  <ListItem key={`${item}-${index}`} onClick={() => onItemClick(item)} cursor='pointer' _hover={{ backgroundColor: 'gray.200' }} pl={8} fontSize={12}>
                     {item}
                   </ListItem>
                 ))
@@ -59,12 +59,12 @@ const MultiLevelList = ({ data, onItemClick }) => {
       <List spacing={3}>
         {data.data.categories && renderCategories(data.data.categories)}
         {data.data.types && data.data.types.map((type, index) => (
-          <ListItem key={index} onClick={() => onItemClick(type)} cursor='pointer' _hover={{ backgroundColor: 'gray.200' }} fontSize={14}>
+          <ListItem key={index} onClick={() => onItemClick(type)} cursor='pointer' _hover={{ backgroundColor: 'gray.200' }} fontSize={12}>
             {type}
           </ListItem>
         ))}
         {data.data.classifications && data.data.classifications.map((classification, index) => (
-          <ListItem key={index} onClick={() => onItemClick(classification)} cursor='pointer' _hover={{ backgroundColor: 'gray.200' }} fontSize={14}>
+          <ListItem key={index} onClick={() => onItemClick(classification)} cursor='pointer' _hover={{ backgroundColor: 'gray.200' }} fontSize={12}>
             {classification}
           </ListItem>
         ))}

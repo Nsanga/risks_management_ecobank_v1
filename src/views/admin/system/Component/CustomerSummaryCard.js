@@ -22,7 +22,7 @@ const CustomerSummaryCard = ({ selectedUserGroup, onCardClick }) => {
   return (
     <CustomCard onClick={onCardClick}>
       <Box flex="1">
-        <Text fontSize={14}>{selectedUserGroup.groupName}</Text>
+        <Text fontSize={12}>{selectedUserGroup.groupName}</Text>
       </Box>
     </CustomCard>
   );
