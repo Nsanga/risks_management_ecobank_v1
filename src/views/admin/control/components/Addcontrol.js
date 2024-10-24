@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   FormControl, FormLabel, Input, Flex,
-  Box, Select, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
+  Box, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
   Button,
   Checkbox,
   Modal,
@@ -10,12 +10,15 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  Text,
+  ModalFooter,
 } from '@chakra-ui/react';
-import { AddIcon, CopyIcon, EditIcon } from '@chakra-ui/icons';
+import { AddIcon, CheckIcon, CloseIcon, CopyIcon, EditIcon } from '@chakra-ui/icons';
 import { useDisclosure } from '@chakra-ui/react';
 import RiskControlInformationView from './RiskControlInformationView';
 import AddEntityModal from 'views/admin/system/Component/AddEntityModal';
 import { IoMove } from 'react-icons/io5';
+import Select from 'react-select';
 
 function AddControl({ riskControls, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();  // useDisclosure for modal control
@@ -24,6 +27,7 @@ function AddControl({ riskControls, entities, profiles }) {
   const [currentView, setCurrentView] = useState("Risks");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [formData, setFormData] = useState({ entity: null });
   const { isOpen: isMoveModalOpen, onOpen: onMoveModalOpen, onClose: onMoveModalClose } = useDisclosure();
   const { isOpen: isCopyModalOpen, onOpen: onCopyModalOpen, onClose: onCopyModalClose } = useDisclosure();
 
@@ -184,7 +188,42 @@ function AddControl({ riskControls, entities, profiles }) {
     onOpen();               // Open the modal
   };
 
+  const entitiesOptions = entities?.map((entity, index) => ({
+    key: `${entity._id}-${index}`, // Unicité assurée
+    value: entity._id,
+    label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+  }));
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: '12px'
+    })
+  };
+
   const numberOfItems = viewData[currentView].length;
+
+  const handleSelectChange = (name, selectedOption) => {
+    setFormData(prevState => {
+      const updatedFormData = {
+        ...prevState,
+        [name]: selectedOption ? selectedOption.value : null,
+      };
+      return updatedFormData;
+    });
+  };
 
   return (
     <>
@@ -212,28 +251,28 @@ function AddControl({ riskControls, entities, profiles }) {
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="250px">
               <FormLabel fontSize={12}>Entity</FormLabel>
-              <Select fontSize={12} placeholder="Select entity">
-                <option value="entity1">Entity 1</option>
-                <option value="entity2">Entity 2</option>
-              </Select>
+              <Select styles={customStyles} placeholder="Select entity" />
+                {/* <option value="entity1">Entity 1</option>
+                <option value="entity2">Entity 2</option> */}
             </FormControl>
             <FormControl fontSize={12} mr={4} maxW="150px">
               <FormLabel fontSize={12}>RAM</FormLabel>
-              <Input fontSize={12} isDisabled placeholder="RAM Value" />
+              <Input fontSize={12} placeholder="RAM Value" />
             </FormControl>
             <FormControl maxW="150px">
               <FormLabel fontSize={12}>Owner</FormLabel>
-              <Input fontSize={12} isDisabled placeholder="Owner Name" />
+              <Input fontSize={12} placeholder="Owner Name" />
             </FormControl>
           </Flex>
 
           {/* Toggle between different views */}
-          <Flex direction="row" align="center" mb={4}>
-            <FormLabel fontSize={12} mr={4}>Show:</FormLabel>
+          <Flex direction="row" alignItems="center" mb={4}>
+            <Box fontSize={12} mr={4}>Show:</Box>
             <RadioGroup defaultValue="Risks" onChange={(value) => setCurrentView(value)}>
               <HStack spacing={4}>
                 {Object.keys(viewData).map((view) => (
                   <Radio
+                    size='sm'
                     key={view}
                     value={view}
                     isDisabled={viewData[view].length === 0} // Disable if no data
@@ -249,17 +288,16 @@ function AddControl({ riskControls, entities, profiles }) {
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="200px">
               <FormLabel fontSize={12}>Filter on</FormLabel>
-              <Select fontSize={12} placeholder="All Approval State">
-                <option value="approved">Approved</option>
-                <option value="pending">Pending</option>
-              </Select>
+              <Select styles={customStyles} placeholder="Filter by"/>
+                {/* <option value="approved">Approved</option>
+                <option value="pending">Pending</option> */}
             </FormControl>
             <FormControl mr={4} maxW="150px">
               <FormLabel fontSize={12}>Status</FormLabel>
-              <Select fontSize={12} placeholder="Select Status">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </Select>
+              <Select styles={customStyles} placeholder="Select status" />
+                {/* <option value="active">Active</option>
+                <option value="inactive">Inactive</option> */}
+              
             </FormControl>
             <FormControl mr={4} maxW="150px">
               <FormLabel fontSize={12}>Number of {currentView}</FormLabel>
@@ -315,11 +353,14 @@ function AddControl({ riskControls, entities, profiles }) {
       </Flex>
       {selectedRows.length > 0 && (
         <HStack mt={4} spacing={4} justifyContent='start'>
-          <Button colorScheme="teal" fontSize={12} leftIcon={<IoMove />} onClick={onMoveModalOpen}>
-            Move
+          <Button colorScheme="blue" fontSize={12} leftIcon={<EditIcon />} >
+            Bulk Amend
           </Button>
-          <Button colorScheme="blue" fontSize={12} leftIcon={<CopyIcon />} onClick={onCopyModalOpen}>
-            Copy
+          <Button colorScheme="teal" fontSize={12} leftIcon={<IoMove />} onClick={onMoveModalOpen}>
+            Move Risk
+          </Button>
+          <Button colorScheme="green" fontSize={12} leftIcon={<CopyIcon />} onClick={onCopyModalOpen}>
+            Copy Risk
           </Button>
         </HStack>
       )}
@@ -328,12 +369,40 @@ function AddControl({ riskControls, entities, profiles }) {
       <Modal isCentered isOpen={isMoveModalOpen} onClose={onMoveModalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize={12}>Move Selected Items</ModalHeader>
+          <ModalHeader fontSize={12}>Move Risk</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <p style={{ fontSize: 12 }}>You are about to move the selected items.</p>
-            {/* Add any additional form elements or details here */}
+            <Flex direction='column' gap={4}>
+              <Flex justifyContent='space-between' alignItems="center">
+                <Text fontSize={12}>From Entity :</Text>
+              </Flex>
+              <Flex justifyContent='space-between' alignItems="center">
+                <Text fontSize={12}>To Entity :</Text>
+                <Box width={280}>
+                  <Select
+                    options={entitiesOptions}
+                    styles={customStyles}
+                    placeholder='Select Entity'
+                    value={entitiesOptions?.find(ent => ent.value === formData.entity)}
+                    onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                  />
+                </Box>
+              </Flex>
+              <Radio size='sm' name='1' colorScheme='blue'>
+                <span style={{ fontSize: 12 }}>Copy risk</span>
+              </Radio>
+            </Flex>
           </ModalBody>
+          <ModalFooter>
+            <HStack spacing={4} justifyContent='start'>
+              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} >
+                Copy
+              </Button>
+              <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onMoveModalClose}>
+                Cancel
+              </Button>
+            </HStack>
+          </ModalFooter>
         </ModalContent>
       </Modal>
 
@@ -341,12 +410,40 @@ function AddControl({ riskControls, entities, profiles }) {
       <Modal isCentered isOpen={isCopyModalOpen} onClose={onCopyModalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize={12}>Copy Selected Items</ModalHeader>
+          <ModalHeader fontSize={12}>Copy Risk</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <p style={{ fontSize: 12 }}>You are about to copy the selected items.</p>
-            {/* Add any additional form elements or details here */}
+            <Flex direction='column' gap={4}>
+              <Flex justifyContent='space-between' alignItems="center">
+                <Text fontSize={12}>From Entity :</Text>
+              </Flex>
+              <Flex justifyContent='space-between' alignItems="center">
+                <Text fontSize={12}>To Entity :</Text>
+                <Box width={280}>
+                  <Select
+                    options={entitiesOptions}
+                    styles={customStyles}
+                    placeholder='Select Entity'
+                    value={entitiesOptions?.find(ent => ent.value === formData.entity)}
+                    onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                  />
+                </Box>
+              </Flex>
+              <Radio size='sm' name='1' colorScheme='blue'>
+                <span style={{ fontSize: 12 }}>Copy risk</span>
+              </Radio>
+            </Flex>
           </ModalBody>
+          <ModalFooter>
+            <HStack spacing={4} justifyContent='start'>
+              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} >
+                Copy
+              </Button>
+              <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onCopyModalClose}>
+                Cancel
+              </Button>
+            </HStack>
+          </ModalFooter>
         </ModalContent>
       </Modal>
 
