@@ -99,7 +99,7 @@ const BoardContentProfile = ({ profiles, loading, userGroups }) => {
                                             <Td fontSize={12}>{user?.userId}</Td>
                                             <Td fontSize={12}>{user?.name}</Td>
                                             <Td fontSize={12}>{user?.location}</Td>
-                                            <Td color={user?.activeUser === true ? 'green.500' : 'red.500'}>{user?.activeUser === true ? 'Logged' : user?.lockedUser === true ? 'Blocked' : 'Pending'}</Td>
+                                            <Td  fontSize={12} color={user?.activeUser === true ? 'green.500' : 'red.500'}>{user?.activeUser === true ? 'Logged' : user?.lockedUser === true ? 'Blocked' : 'Pending'}</Td>
                                             <Td fontSize={12}>
                                                 <Box
                                                     w="12px"

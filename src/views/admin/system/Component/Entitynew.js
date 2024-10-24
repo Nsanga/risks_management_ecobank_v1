@@ -70,11 +70,17 @@ const Entitynew = ({ entities, loading, profiles }) => {
                     _hover={{ backgroundColor: "gray.100" }}
                     cursor="pointer"
                   >
-                    <Td>ENT{entity?.referenceId}</Td>
-                    <Td>CAM - {entity?.description}</Td>
-                    <Td>{entity?.owner ? `${entity?.owner?.surname + " " + entity?.owner?.name}` : null}</Td>
-                    <Td>{entity?.nominee ? `${entity?.nominee?.surname + " " + entity?.nominee?.name}` : null}</Td>
-                    <Td>{entity?.reviewer ? `${entity?.reviewer?.surname + " " + entity?.reviewer?.name}` : null}</Td>
+                    <Td fontSize="12px">ENT{entity?.referenceId}</Td>
+                    <Td fontSize="12px">CAM - {entity?.description}</Td>
+                    <Td fontSize="12px">
+                      {entity?.owner ? `${entity?.owner?.surname + " " + entity?.owner?.name}` : null}
+                    </Td>
+                    <Td fontSize="12px">
+                      {entity?.nominee ? `${entity?.nominee?.surname + " " + entity?.nominee?.name}` : null}
+                    </Td>
+                    <Td fontSize="12px">
+                      {entity?.reviewer ? `${entity?.reviewer?.surname + " " + entity?.reviewer?.name}` : null}
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>

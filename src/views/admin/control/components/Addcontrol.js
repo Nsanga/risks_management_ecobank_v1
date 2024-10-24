@@ -29,15 +29,15 @@ function AddControl({ riskControls, entities, profiles }) {
 
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
-    console.log(isChecked)
+    const { refId } = row;
     if (isChecked) {
-      setSelectedRows((prev) => [...prev, row]); // Ajoute la ligne sélectionnée
+      setSelectedRows((prev) => [...prev, refId]); // Add the row's refId
     } else {
-      setSelectedRows((prev) => prev.filter((selectedRow) => selectedRow !== row)); // Retire la ligne si désélectionnée
+      setSelectedRows((prev) => prev.filter((selectedId) => selectedId !== refId)); // Remove the row's refId if unchecked
     }
   };
 
-  const isRowSelected = (row) => selectedRows.some((selectedRow) => selectedRow === row); // Vérifie si une ligne est sélectionnée
+  const isRowSelected = (row) => selectedRows.includes(row.refId); // Check if the row's refId is in selectedRows
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -150,14 +150,6 @@ function AddControl({ riskControls, entities, profiles }) {
     Kits: [],
     Obligations: [],
   };
-  // const viewData = {
-  //   Risks: riskControls[0]?.risks || [],
-  //   Controls: riskControls[0]?.controls || [],
-  //   Events: [],
-  //   Actions: [],
-  //   Kits: [],
-  //   Obligations: [],
-  // };
 
   const columnsByView = {
     Risks: [
@@ -204,9 +196,6 @@ function AddControl({ riskControls, entities, profiles }) {
           <Button fontSize={12} variant="solid" colorScheme="green" leftIcon={<EditIcon />}>
             Amend
           </Button>
-          {/* <Button  fontSize={12} onClick={handleAddControlClick} variant="outline" color="blue" leftIcon={<AddIcon />}>
-          Add Control
-        </Button> */}
         </Flex>
 
         {/* Modal for Adding or Editing Controls */}
@@ -342,7 +331,7 @@ function AddControl({ riskControls, entities, profiles }) {
           <ModalHeader fontSize={12}>Move Selected Items</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <p style={{fontSize: 12}}>You are about to move the selected items.</p>
+            <p style={{ fontSize: 12 }}>You are about to move the selected items.</p>
             {/* Add any additional form elements or details here */}
           </ModalBody>
         </ModalContent>
@@ -355,7 +344,7 @@ function AddControl({ riskControls, entities, profiles }) {
           <ModalHeader fontSize={12}>Copy Selected Items</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <p style={{fontSize: 12}}>You are about to copy the selected items.</p>
+            <p style={{ fontSize: 12 }}>You are about to copy the selected items.</p>
             {/* Add any additional form elements or details here */}
           </ModalBody>
         </ModalContent>
