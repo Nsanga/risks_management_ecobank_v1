@@ -389,7 +389,7 @@ function AddControl({ riskControls, entities, profiles }) {
                 </Box>
               </Flex>
               <Radio size='sm' name='1' colorScheme='blue'>
-                <span style={{ fontSize: 12 }}>Copy risk</span>
+                <span style={{ fontSize: 12 }}>Copy Control</span>
               </Radio>
             </Flex>
           </ModalBody>
@@ -430,7 +430,7 @@ function AddControl({ riskControls, entities, profiles }) {
                 </Box>
               </Flex>
               <Radio size='sm' name='1' colorScheme='blue'>
-                <span style={{ fontSize: 12 }}>Copy risk</span>
+                <span style={{ fontSize: 12 }}>Copy Control</span>
               </Radio>
             </Flex>
           </ModalBody>
