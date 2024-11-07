@@ -16,12 +16,12 @@ function EntityRiskControlReducer(state = INITIAL_STATE, action) {
         loading: true,
         error: null,
       };
-    case types.GET_ENTITYRISKCONTROLS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        entityRiskControls: action.payload.data.entityRiskControls,
-      };
+      case types.GET_ENTITYRISKCONTROLS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          entityRiskControls: action.payload.data,
+        };
     case types.GET_ENTITYRISKCONTROLS_FAILED:
       return {
         ...state,

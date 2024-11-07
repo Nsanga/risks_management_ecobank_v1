@@ -165,7 +165,7 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
 
                                 <TabPanels>
                                     <TabPanel>
-                                        <RiskForm riskFormData={formDataRiskForm} handleChange={handleChangeRiskForm} handleSelectChange={handleSelectChange} profiles={profiles} newRiskId={newItemId}/>
+                                        <RiskForm riskFormData={formDataRiskForm} handleChange={handleChangeRiskForm} handleSelectChange={handleSelectChange} profiles={profiles} newRiskId={newItemId} onClose={onClose}/>
                                     </TabPanel>
                                     {/* <TabPanel>
                                     <MyTableComponent />

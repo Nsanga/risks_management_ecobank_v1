@@ -50,7 +50,8 @@ const ExcelReader = () => {
       "\r\nProbabilité d'Occurrence du risque": "riskProbability",
       "Impact du risque": "riskImpact",
       "Total": "total",
-      "Niveau du Risque": "riskLevel"
+      "Niveau du Risque": "riskLevel",
+      "Utilisateurs": "user"
     };
 
     // Mapping des clés pour `controls` (ajoutez ou modifiez selon vos besoins)
@@ -63,7 +64,8 @@ const ExcelReader = () => {
       "Control Preventife/Detectif": "preventiveDetective",
       "Cycle du suivi": "monitoringCycle",
       "Source de documents  consultés": "documentSource",
-      "Existing/New/Obsolete": "controlStatus"
+      "Existing/New/Obsolete": "controlStatus",
+      "Utilisateurs": "user"
     };
 
     // Initialiser les tableaux `risks` et `controls`

@@ -262,7 +262,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, ne
         <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<DeleteIcon />}>
           Delete
         </Button>
-        <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<CheckIcon />} >
+        <Button fontSize={12} colorScheme="green" variant="outline" leftIcon={<CheckIcon />} >
           Save and Approve
         </Button>
       </HStack>

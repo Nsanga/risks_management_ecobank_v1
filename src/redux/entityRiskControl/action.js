@@ -1,7 +1,8 @@
 import * as types from './types';
 
-export const listEntityRiskControls = () => ({
+export const listEntityRiskControls = (entityName) => ({
   type: types.GET_ENTITYRISKCONTROLS_REQUEST,
+  payload: {entityName}
 });
 
 export const updateEntityRiskControl = (id, entityRiskControlData) => ({

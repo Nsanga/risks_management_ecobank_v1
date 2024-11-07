@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FormControl, FormLabel, Input, Flex,
   Box, RadioGroup, Radio, HStack, Table, Thead, Tbody, Tr, Th, Td,
@@ -12,6 +12,7 @@ import {
   ModalBody,
   Text,
   ModalFooter,
+  Image,
 } from '@chakra-ui/react';
 import { AddIcon, CheckIcon, CloseIcon, CopyIcon, EditIcon } from '@chakra-ui/icons';
 import { useDisclosure } from '@chakra-ui/react';
@@ -19,8 +20,11 @@ import RiskControlInformationView from './RiskControlInformationView';
 import AddEntityModal from 'views/admin/system/Component/AddEntityModal';
 import { IoMove } from 'react-icons/io5';
 import Select from 'react-select';
+import { connect, useDispatch } from 'react-redux';
+import { listEntityRiskControls } from 'redux/entityRiskControl/action';
+import Loader from '../../../../assets/img/loader.gif'
 
-function AddControl({ riskControls, entities, profiles }) {
+function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();  // useDisclosure for modal control
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);  // To differentiate between add and edit mode
@@ -30,6 +34,7 @@ function AddControl({ riskControls, entities, profiles }) {
   const [formData, setFormData] = useState({ entity: null });
   const { isOpen: isMoveModalOpen, onOpen: onMoveModalOpen, onClose: onMoveModalClose } = useDisclosure();
   const { isOpen: isCopyModalOpen, onOpen: onCopyModalOpen, onClose: onCopyModalClose } = useDisclosure();
+  const dispatch = useDispatch();
 
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
@@ -49,106 +54,10 @@ function AddControl({ riskControls, entities, profiles }) {
 
   const closeModal = () => setIsModalOpen(false);
 
-  const risksData = [
-    {
-      refId: 'RISK001',
-      keyRiskSummary: 'Risk of data breach',
-      owner: 'John Doe',
-      nominee: 'Jane Smith',
-      reviewer: 'Robert Brown',
-      category: 'Cybersecurity',
-      exposure: 'High',
-    },
-    {
-      refId: 'RISK002',
-      keyRiskSummary: 'Risk of financial loss',
-      owner: 'Alice Johnson',
-      nominee: 'Michael Green',
-      reviewer: 'Emma Wilson',
-      category: 'Finance',
-      exposure: 'Medium',
-    },
-    {
-      refId: 'RISK003',
-      keyRiskSummary: 'Risk of regulatory non-compliance',
-      owner: 'David Lee',
-      nominee: 'Laura White',
-      reviewer: 'Henry Martin',
-      category: 'Compliance',
-      exposure: 'Low',
-    },
-    {
-      refId: 'RISK004',
-      keyRiskSummary: 'Risk of equipment failure',
-      owner: 'Sarah Black',
-      nominee: 'Daniel Gray',
-      reviewer: 'Sophia Harris',
-      category: 'Operations',
-      exposure: 'High',
-    },
-    {
-      refId: 'RISK005',
-      keyRiskSummary: 'Risk of market downturn',
-      owner: 'James Scott',
-      nominee: 'Emily Clark',
-      reviewer: 'Liam Taylor',
-      category: 'Market',
-      exposure: 'Medium',
-    }
-  ];
-
-  const controlsData = [
-    {
-      refId: 'CONTROL001',
-      keyRiskSummary: 'Control for data breach',
-      library: 'Cybersecurity Library',
-      category: 'Cybersecurity',
-      owner: 'John Doe',
-      nominee: 'Jane Smith',
-      reviewer: 'Robert Brown',
-    },
-    {
-      refId: 'CONTROL002',
-      keyRiskSummary: 'Control for financial risk',
-      library: 'Finance Control Library',
-      category: 'Finance',
-      owner: 'Alice Johnson',
-      nominee: 'Michael Green',
-      reviewer: 'Emma Wilson',
-    },
-    {
-      refId: 'CONTROL003',
-      keyRiskSummary: 'Control for regulatory compliance',
-      library: 'Compliance Control Library',
-      category: 'Compliance',
-      owner: 'David Lee',
-      nominee: 'Laura White',
-      reviewer: 'Henry Martin',
-    },
-    {
-      refId: 'CONTROL004',
-      keyRiskSummary: 'Control for equipment failure',
-      library: 'Operations Control Library',
-      category: 'Operations',
-      owner: 'Sarah Black',
-      nominee: 'Daniel Gray',
-      reviewer: 'Sophia Harris',
-    },
-    {
-      refId: 'CONTROL005',
-      keyRiskSummary: 'Control for market risk',
-      library: 'Market Control Library',
-      category: 'Market',
-      owner: 'James Scott',
-      nominee: 'Emily Clark',
-      reviewer: 'Liam Taylor',
-    }
-  ];
-
   // Dynamically map the data to the selected view
   const viewData = {
-    Risks: risksData || [],
-    Controls: controlsData || [],
+    Risks: entityRiskControls[0]?.risks || [],
+    Controls: entityRiskControls[0]?.controls || [],
     Events: [],
     Actions: [],
     Kits: [],
@@ -157,22 +66,22 @@ function AddControl({ riskControls, entities, profiles }) {
 
   const columnsByView = {
     Risks: [
-      { label: "Reference Id", key: "refId" },
-      { label: "Description", key: "keyRiskSummary" },
-      { label: "Owner", key: "owner" },
-      { label: "Nominee", key: "nominee" },
-      { label: "Reviewer", key: "reviewer" },
-      { label: "Category", key: "category" },
-      { label: "Residual Exposure", key: "exposure" },
+      { label: "Reference Id", key: "reference" },
+      { label: "Description", key: "riskSummary" },
+      { label: "Owner", key: "ownerRisk" },
+      { label: "Nominee", key: "nomineeRisk" },
+      { label: "Reviewer", key: "reviewerRisk" },
+      { label: "Category", key: "riskCategory" },
+      // { label: "Residual Exposure", key: "exposure" },
     ],
     Controls: [
-      { label: "Reference Id", key: "refId" },
-      { label: "Description", key: "keyRiskSummary" },
+      { label: "Reference Id", key: "reference" },
+      { label: "Description", key: "controlSummary" },
       { label: "Library", key: "library" }, // Adjust this according to actual data structure
-      { label: "Category", key: "category" },
-      { label: "Owner", key: "owner" },
-      { label: "Nominee", key: "nominee" },
-      { label: "Reviewer", key: "reviewer" },
+      { label: "Category", key: "preventiveDetectiveControl" },
+      { label: "Owner", key: "ownerControl" },
+      { label: "Nominee", key: "nomineeControl" },
+      { label: "Reviewer", key: "reviewerControl" },
     ],
   };
 
@@ -192,6 +101,7 @@ function AddControl({ riskControls, entities, profiles }) {
     key: `${entity._id}-${index}`, // Unicité assurée
     value: entity._id,
     label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    description: entity.description
   }));
 
   const customStyles = {
@@ -216,13 +126,15 @@ function AddControl({ riskControls, entities, profiles }) {
   const numberOfItems = viewData[currentView].length;
 
   const handleSelectChange = (name, selectedOption) => {
-    setFormData(prevState => {
-      const updatedFormData = {
-        ...prevState,
-        [name]: selectedOption ? selectedOption.value : null,
-      };
-      return updatedFormData;
-    });
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: selectedOption ? selectedOption.value : null,
+    }));
+
+    if (selectedOption) {
+      // On dispatch l'action pour récupérer les données spécifiques à l'entité
+      dispatch(listEntityRiskControls(selectedOption.description));
+    }
   };
 
   return (
@@ -236,7 +148,8 @@ function AddControl({ riskControls, entities, profiles }) {
             Amend
           </Button>
         </Flex>
-
+      </Flex>
+      <Flex direction="column" justifyContent="center" align="center" mb={5} w="100%">
         {/* Modal for Adding or Editing Controls */}
         <RiskControlInformationView
           isOpen={isOpen}
@@ -251,9 +164,13 @@ function AddControl({ riskControls, entities, profiles }) {
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="250px">
               <FormLabel fontSize={12}>Entity</FormLabel>
-              <Select styles={customStyles} placeholder="Select entity" />
-                {/* <option value="entity1">Entity 1</option>
-                <option value="entity2">Entity 2</option> */}
+              <Select
+                options={entitiesOptions}
+                styles={customStyles}
+                placeholder='Select Entity'
+                value={entitiesOptions?.find(ent => ent.value === formData.entity)}
+                onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+              />
             </FormControl>
             <FormControl fontSize={12} mr={4} maxW="150px">
               <FormLabel fontSize={12}>RAM</FormLabel>
@@ -288,16 +205,16 @@ function AddControl({ riskControls, entities, profiles }) {
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="200px">
               <FormLabel fontSize={12}>Filter on</FormLabel>
-              <Select styles={customStyles} placeholder="Filter by"/>
-                {/* <option value="approved">Approved</option>
+              <Select styles={customStyles} placeholder="Filter by" />
+              {/* <option value="approved">Approved</option>
                 <option value="pending">Pending</option> */}
             </FormControl>
             <FormControl mr={4} maxW="150px">
               <FormLabel fontSize={12}>Status</FormLabel>
               <Select styles={customStyles} placeholder="Select status" />
-                {/* <option value="active">Active</option>
+              {/* <option value="active">Active</option>
                 <option value="inactive">Inactive</option> */}
-              
+
             </FormControl>
             <FormControl mr={4} maxW="150px">
               <FormLabel fontSize={12}>Number of {currentView}</FormLabel>
@@ -324,6 +241,11 @@ function AddControl({ riskControls, entities, profiles }) {
                   ))}
                 </Tr>
               </Thead>
+              {loading ? (
+                    <Flex alignItems='center' justifyContent='center'>
+                        <Image src={Loader} alt="Loading..." height={50} width={50} />
+                    </Flex>
+                ) :
               <Tbody>
                 {viewData[currentView].map((row, index) => (
                   <Tr key={index} cursor="pointer">
@@ -342,13 +264,13 @@ function AddControl({ riskControls, entities, profiles }) {
                     ))}
                   </Tr>
                 ))}
-              </Tbody>
+              </Tbody>}
             </Table>
           </>
         ) : (
-          <Box fontSize={12} mt={4} p={4} borderWidth="1px" borderRadius="lg" textAlign="center">
+          <Flex fontSize={12} mt={4} p={4} justifyContent='end' alignItems='center'>
             No data available for {currentView}
-          </Box>
+          </Flex>
         )}
       </Flex>
       {selectedRows.length > 0 && (
@@ -396,7 +318,7 @@ function AddControl({ riskControls, entities, profiles }) {
           <ModalFooter>
             <HStack spacing={4} justifyContent='start'>
               <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} >
-                Copy
+                Move
               </Button>
               <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onMoveModalClose}>
                 Cancel
@@ -456,4 +378,9 @@ function AddControl({ riskControls, entities, profiles }) {
   );
 }
 
-export default AddControl;
+const mapStateToProps = ({ EntityRiskControlReducer }) => ({
+  entityRiskControls: EntityRiskControlReducer.entityRiskControls,
+  loading: EntityRiskControlReducer.loading,
+});
+
+export default connect(mapStateToProps)(AddControl);
