@@ -31,9 +31,18 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [currentView, setCurrentView] = useState("Risks");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({ entity: null });
   const { isOpen: isMoveModalOpen, onOpen: onMoveModalOpen, onClose: onMoveModalClose } = useDisclosure();
   const { isOpen: isCopyModalOpen, onOpen: onCopyModalOpen, onClose: onCopyModalClose } = useDisclosure();
+  const [viewData, setViewData] = useState({
+    Risks: [],
+    Controls: [],
+    Events: [],
+    Actions: [],
+    Kits: [],
+    Obligations: [],
+  });
   const dispatch = useDispatch();
 
   // Gestion de la sélection des cases à cocher
@@ -49,20 +58,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const isRowSelected = (row) => selectedRows.includes(row.refId); // Check if the row's refId is in selectedRows
 
   const openModal = () => {
+    setSelectedEntity(null);
     setIsModalOpen(true);
   };
 
   const closeModal = () => setIsModalOpen(false);
-
-  // Dynamically map the data to the selected view
-  const viewData = {
-    Risks: entityRiskControls[0]?.risks || [],
-    Controls: entityRiskControls[0]?.controls || [],
-    Events: [],
-    Actions: [],
-    Kits: [],
-    Obligations: [],
-  };
 
   const columnsByView = {
     Risks: [
@@ -84,6 +84,41 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       { label: "Reviewer", key: "reviewerControl" },
     ],
   };
+  
+  useEffect(() => {
+    setViewData({
+      Risks: [],
+      Controls: [],
+      Events: [],
+      Actions: [],
+      Kits: [],
+      Obligations: [],
+    });
+  }, []); // Le tableau de dépendances vide signifie que cela ne s'exécute qu'une seule fois lors du montage
+
+  useEffect(() => {
+    // Mettre à jour viewData lorsque entityRiskControls change
+    if (entityRiskControls.length > 0) {
+      setViewData({
+        Risks: entityRiskControls[0]?.risks || [],
+        Controls: entityRiskControls[0]?.controls || [],
+        Events: [],
+        Actions: [],
+        Kits: [],
+        Obligations: [],
+      });
+    } else {
+      // Réinitialiser viewData si entityRiskControls est vide
+      setViewData({
+        Risks: [],
+        Controls: [],
+        Events: [],
+        Actions: [],
+        Kits: [],
+        Obligations: [],
+      });
+    }
+  }, [entityRiskControls]);
 
   const handleRowClick = (item) => {
     setSelectedRisk(item);  // Save the clicked row's data for editing
@@ -91,17 +126,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     onOpen();               // Open the modal
   };
 
-  const handleAddControlClick = () => {
-    setSelectedRisk(null);  // Reset the selected risk (no data for new control)
-    setIsEditMode(false);   // Set add mode
-    onOpen();               // Open the modal
-  };
-
   const entitiesOptions = entities?.map((entity, index) => ({
     key: `${entity._id}-${index}`, // Unicité assurée
     value: entity._id,
     label: `ENT${entity.referenceId} CAM - ${entity.description}`,
-    description: entity.description
+    description: entity.description,
+    fullEntity: entity
   }));
 
   const customStyles = {
@@ -123,8 +153,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     })
   };
 
-  const numberOfItems = viewData[currentView].length;
-
   const handleSelectChange = (name, selectedOption) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -132,10 +160,22 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     }));
 
     if (selectedOption) {
+      setSelectedEntity(selectedOption.fullEntity);
+
+      setViewData({
+        Risks: [],
+        Controls: [],
+        Events: [],
+        Actions: [],
+        Kits: [],
+        Obligations: [],
+      });
       // On dispatch l'action pour récupérer les données spécifiques à l'entité
       dispatch(listEntityRiskControls(selectedOption.description));
     }
   };
+
+  const numberOfItems = viewData[currentView].length;
 
   return (
     <>
@@ -144,7 +184,10 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           <Button fontSize={12} onClick={openModal} variant="solid" colorScheme="blue" leftIcon={<AddIcon />}>
             Add
           </Button>
-          <Button fontSize={12} variant="solid" colorScheme="green" leftIcon={<EditIcon />}>
+          <Button fontSize={12} variant="solid" colorScheme="green" leftIcon={<EditIcon />} disabled={!selectedEntity}
+          onClick={() => {
+            setIsModalOpen(true);
+          }}>
             Amend
           </Button>
         </Flex>
@@ -242,29 +285,29 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 </Tr>
               </Thead>
               {loading ? (
-                    <Flex alignItems='center' justifyContent='center'>
-                        <Image src={Loader} alt="Loading..." height={50} width={50} />
-                    </Flex>
-                ) :
-              <Tbody>
-                {viewData[currentView].map((row, index) => (
-                  <Tr key={index} cursor="pointer">
-                    {/* Case à cocher */}
-                    <Td>
-                      <Checkbox
-                        onChange={(e) => handleCheckboxChange(row, e.target.checked)}
-                        isChecked={isRowSelected(row)}
-                      />
-                    </Td>
-                    {/* Données des colonnes */}
-                    {columnsByView[currentView].map((col) => (
-                      <Td fontSize={12} key={col.key} onClick={() => handleRowClick(row)}>
-                        {row[col.key]}
+                <Flex alignItems='center' justifyContent='center'>
+                  <Image src={Loader} alt="Loading..." height={50} width={50} />
+                </Flex>
+              ) :
+                <Tbody>
+                  {viewData[currentView].map((row, index) => (
+                    <Tr key={index} cursor="pointer">
+                      {/* Case à cocher */}
+                      <Td>
+                        <Checkbox
+                          onChange={(e) => handleCheckboxChange(row, e.target.checked)}
+                          isChecked={isRowSelected(row)}
+                        />
                       </Td>
-                    ))}
-                  </Tr>
-                ))}
-              </Tbody>}
+                      {/* Données des colonnes */}
+                      {columnsByView[currentView].map((col) => (
+                        <Td fontSize={12} key={col.key} onClick={() => handleRowClick(row)}>
+                          {row[col.key]}
+                        </Td>
+                      ))}
+                    </Tr>
+                  ))}
+                </Tbody>}
             </Table>
           </>
         ) : (
@@ -369,11 +412,22 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         </ModalContent>
       </Modal>
 
+      {/* Modal always rendered, only the selectedEntity is conditionally passed */}
       <AddEntityModal
+       isOpen={isModalOpen}
+       onClose={closeModal}
+       profiles={profiles}
+      />
+
+      {selectedEntity && (
+        <AddEntityModal
         isOpen={isModalOpen}
         onClose={closeModal}
+        loading={loading}
+        selectedEntity={selectedEntity}
         profiles={profiles}
       />
+      )}
     </>
   );
 }

@@ -15,7 +15,7 @@ const Entitynew = ({ entities, loading, profiles }) => {
   const openModal = () => {
     setSelectedEntity(null); // Clear selected entity for adding a new one
     setIsModalOpen(true);
-  };
+  }; 
 
   const closeModal = () => setIsModalOpen(false);
   const dispatch = useDispatch();
