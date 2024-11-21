@@ -23,6 +23,8 @@ import Select from 'react-select';
 import { connect, useDispatch } from 'react-redux';
 import { listEntityRiskControls } from 'redux/entityRiskControl/action';
 import Loader from '../../../../assets/img/loader.gif'
+import { copyEntityRiskControl } from 'redux/entityRiskControl/action';
+import { moveEntityRiskControl } from 'redux/entityRiskControl/action';
 
 function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();  // useDisclosure for modal control
@@ -32,7 +34,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedEntity, setSelectedEntity] = useState(null);
-  const [formData, setFormData] = useState({ entity: null });
+  const [formData, setFormData] = useState({ entity: null, entityMove: null, entityCopy: null });
   const { isOpen: isMoveModalOpen, onOpen: onMoveModalOpen, onClose: onMoveModalClose } = useDisclosure();
   const { isOpen: isCopyModalOpen, onOpen: onCopyModalOpen, onClose: onCopyModalClose } = useDisclosure();
   const [viewData, setViewData] = useState({
@@ -47,15 +49,17 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
-    const { refId } = row;
+    const { _id } = row; // Identifiant unique de la ligne
     if (isChecked) {
-      setSelectedRows((prev) => [...prev, refId]); // Add the row's refId
+      // Ajouter l'ID si la ligne est sélectionnée
+      setSelectedRows((prev) => [...prev, _id]);
     } else {
-      setSelectedRows((prev) => prev.filter((selectedId) => selectedId !== refId)); // Remove the row's refId if unchecked
+      // Supprimer l'ID si la ligne est désélectionnée
+      setSelectedRows((prev) => prev.filter((selectedId) => selectedId !== _id));
     }
   };
 
-  const isRowSelected = (row) => selectedRows.includes(row.refId); // Check if the row's refId is in selectedRows
+  const isRowSelected = (row) => selectedRows.includes(row._id);
 
   const openModal = () => {
     setSelectedEntity(null);
@@ -84,7 +88,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       { label: "Reviewer", key: "reviewerControl" },
     ],
   };
-  
+
   useEffect(() => {
     setViewData({
       Risks: [],
@@ -153,6 +157,20 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     })
   };
 
+  const handleCopyEntitySelectedChange = (name, selectedOption) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: selectedOption ? selectedOption.value : null,
+    }));
+  };
+
+  const handleMoveEntitySelectedChange = (name, selectedOption) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: selectedOption ? selectedOption.value : null,
+    }));
+  };
+
   const handleSelectChange = (name, selectedOption) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -177,6 +195,24 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
   const numberOfItems = viewData[currentView].length;
 
+  const handleCopy = () => {
+    const itemType = currentView === 'Risks' ? 'risk' : 'control';
+    const selectedIds = selectedRows.length === 1 ? selectedRows[0] : selectedRows;
+    const targetEntityId = formData.entityCopy; // ID de l'entité cible
+    // console.log("Copying the following items:", selectedIds, "to entity:", targetEntityId, "as type:", itemType);
+
+    dispatch(copyEntityRiskControl(selectedIds, targetEntityId, itemType));
+
+  };
+
+  const handleMove = () => {
+    const itemType = currentView === 'Risks' ? 'risk' : 'control';
+    const selectedIds = selectedRows.length === 1 ? selectedRows[0] : selectedRows;
+    const targetEntityId = formData.entityCopy; // ID de l'entité cible
+    // console.log("Moving the following items:", selectedIds, "to entity:", targetEntityId, "as type:", itemType);
+    dispatch(moveEntityRiskControl(selectedIds, targetEntityId, itemType));
+  };
+
   return (
     <>
       <Flex direction="column" justifyContent="flex-end" align="flex-end" mb={5} w="100%">
@@ -185,9 +221,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             Add
           </Button>
           <Button fontSize={12} variant="solid" colorScheme="green" leftIcon={<EditIcon />} disabled={!selectedEntity}
-          onClick={() => {
-            setIsModalOpen(true);
-          }}>
+            onClick={() => {
+              setIsModalOpen(true);
+            }}>
             Amend
           </Button>
         </Flex>
@@ -348,8 +384,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                     options={entitiesOptions}
                     styles={customStyles}
                     placeholder='Select Entity'
-                    value={entitiesOptions?.find(ent => ent.value === formData.entity)}
-                    onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                    value={entitiesOptions?.find(ent => ent.value === formData.entityMove)}
+                    onChange={(selectedOption) => handleMoveEntitySelectedChange('entityMove', selectedOption)}
                   />
                 </Box>
               </Flex>
@@ -360,7 +396,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent='start'>
-              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} >
+              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} onClick={handleMove}>
                 Move
               </Button>
               <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onMoveModalClose}>
@@ -389,8 +425,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                     options={entitiesOptions}
                     styles={customStyles}
                     placeholder='Select Entity'
-                    value={entitiesOptions?.find(ent => ent.value === formData.entity)}
-                    onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                    value={entitiesOptions?.find(ent => ent.value === formData.entityCopy)}
+                    onChange={(selectedOption) => handleCopyEntitySelectedChange('entityCopy', selectedOption)}
                   />
                 </Box>
               </Flex>
@@ -401,7 +437,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent='start'>
-              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} >
+              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} onClick={handleCopy}>
                 Copy
               </Button>
               <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onCopyModalClose}>
@@ -414,19 +450,19 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}
       <AddEntityModal
-       isOpen={isModalOpen}
-       onClose={closeModal}
-       profiles={profiles}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        profiles={profiles}
       />
 
       {selectedEntity && (
         <AddEntityModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        loading={loading}
-        selectedEntity={selectedEntity}
-        profiles={profiles}
-      />
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          loading={loading}
+          selectedEntity={selectedEntity}
+          profiles={profiles}
+        />
       )}
     </>
   );

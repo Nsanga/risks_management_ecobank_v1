@@ -19,3 +19,13 @@ export const updateEntityRiskControl = (id, entityRiskControlData) => ({
     type: types.DELETE_ENTITYRISKCONTROL_REQUEST,
     payload: {id}
   });
+
+  export const copyEntityRiskControl = (itemId, targetEntityId, itemType) => ({
+    type: types.COPY_ENTITYRISKCONTROL_REQUEST,
+    payload: {itemId, targetEntityId, itemType}
+  });
+
+  export const moveEntityRiskControl = (itemId, targetEntityId, itemType) => ({
+    type: types.MOVE_ENTITYRISKCONTROL_REQUEST,
+    payload: {itemId, targetEntityId, itemType}
+  });
