@@ -87,6 +87,42 @@ function EntityRiskControlReducer(state = INITIAL_STATE, action) {
         loading: false,
         error: action.payload,
       };
+      case types.COPY_ENTITYRISKCONTROL_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.COPY_ENTITYRISKCONTROL_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+      };
+    case types.COPY_ENTITYRISKCONTROL_FAILED:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+      case types.MOVE_ENTITYRISKCONTROL_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.MOVE_ENTITYRISKCONTROL_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+      };
+    case types.MOVE_ENTITYRISKCONTROL_FAILED:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }

@@ -32,11 +32,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [isEditMode, setIsEditMode] = useState(false);  // To differentiate between add and edit mode
   const [currentView, setCurrentView] = useState("Risks");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalCopyOpen, setIsModalCopyOpen] = useState(false);
+  const [isModalMoveOpen, setIsModalMoveOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({ entity: null, entityMove: null, entityCopy: null });
-  const { isOpen: isMoveModalOpen, onOpen: onMoveModalOpen, onClose: onMoveModalClose } = useDisclosure();
-  const { isOpen: isCopyModalOpen, onOpen: onCopyModalOpen, onClose: onCopyModalClose } = useDisclosure();
+  const [isRadioCopyChecked, setIsRadioCopyChecked] = useState(false);
+  const [isRadioMoveChecked, setIsRadioMoveChecked] = useState(false);
+  const [selectedEntityDescription, setSelectedEntityDescription] = useState(null);
   const [viewData, setViewData] = useState({
     Risks: [],
     Controls: [],
@@ -66,7 +69,25 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setIsModalOpen(true);
   };
 
+  const copyModalOpen = () => {
+    setIsModalCopyOpen(true)
+  }
+
+  const moveModalOpen = () => {
+    setIsModalMoveOpen(true)
+  }
+
   const closeModal = () => setIsModalOpen(false);
+  const closeCopyModal = () => setIsModalCopyOpen(false);
+  const closeMoveModal = () => setIsModalMoveOpen(false);
+
+  const handleRadioCopyChange = (event) => {
+    setIsRadioCopyChecked(event.target.checked);
+  };
+
+  const handleRadioMoveChange = (event) => {
+    setIsRadioMoveChecked(event.target.checked);
+  };
 
   const columnsByView = {
     Risks: [
@@ -179,38 +200,43 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
     if (selectedOption) {
       setSelectedEntity(selectedOption.fullEntity);
-
-      setViewData({
-        Risks: [],
-        Controls: [],
-        Events: [],
-        Actions: [],
-        Kits: [],
-        Obligations: [],
-      });
+      setSelectedEntityDescription(selectedOption.description); // Stocke la description
       // On dispatch l'action pour récupérer les données spécifiques à l'entité
       dispatch(listEntityRiskControls(selectedOption.description));
     }
-  };
+    setSelectedRows([]);
+};
 
   const numberOfItems = viewData[currentView].length;
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const itemType = currentView === 'Risks' ? 'risk' : 'control';
-    const selectedIds = selectedRows.length === 1 ? selectedRows[0] : selectedRows;
-    const targetEntityId = formData.entityCopy; // ID de l'entité cible
-    // console.log("Copying the following items:", selectedIds, "to entity:", targetEntityId, "as type:", itemType);
+    const selectedIds = selectedRows;
+    const targetEntityId = formData.entityCopy;
 
-    dispatch(copyEntityRiskControl(selectedIds, targetEntityId, itemType));
+    // Dispatch l'action de copie et attendez qu'elle soit terminée
+    await dispatch(copyEntityRiskControl(selectedIds, targetEntityId, itemType));
 
+    // Fermez la modal et rafraîchissez la liste
+    closeCopyModal();
+    dispatch(listEntityRiskControls(selectedEntityDescription)); // Rafraîchit la liste avec la description
+    setIsRadioCopyChecked(false);
+    setSelectedRows([]);
   };
 
-  const handleMove = () => {
+  const handleMove = async () => {
     const itemType = currentView === 'Risks' ? 'risk' : 'control';
-    const selectedIds = selectedRows.length === 1 ? selectedRows[0] : selectedRows;
-    const targetEntityId = formData.entityCopy; // ID de l'entité cible
-    // console.log("Moving the following items:", selectedIds, "to entity:", targetEntityId, "as type:", itemType);
-    dispatch(moveEntityRiskControl(selectedIds, targetEntityId, itemType));
+    const selectedIds = selectedRows;
+    const targetEntityId = formData.entityMove;
+
+    // Dispatch l'action de déplacement et attendez qu'elle soit terminée
+    await dispatch(moveEntityRiskControl(selectedIds, targetEntityId, itemType));
+
+    // Fermez la modal et rafraîchissez la liste
+    closeMoveModal();
+    dispatch(listEntityRiskControls(selectedEntityDescription)); // Rafraîchit la liste avec la description
+    setIsRadioMoveChecked(false);
+    setSelectedRows([]);
   };
 
   return (
@@ -322,7 +348,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
               </Thead>
               {loading ? (
                 <Flex alignItems='center' justifyContent='center'>
-                  <Image src={Loader} alt="Loading..." height={50} width={50} />
+                  <Image src={Loader} alt="Loading..." height={25} width={25} />
                 </Flex>
               ) :
                 <Tbody>
@@ -357,17 +383,17 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           <Button colorScheme="blue" fontSize={12} leftIcon={<EditIcon />} >
             Bulk Amend
           </Button>
-          <Button colorScheme="teal" fontSize={12} leftIcon={<IoMove />} onClick={onMoveModalOpen}>
-            Move Risk
+          <Button colorScheme="teal" fontSize={12} leftIcon={<IoMove />} onClick={moveModalOpen}>
+            Move {currentView === 'Risks' ? 'Risk' : 'Control'}
           </Button>
-          <Button colorScheme="green" fontSize={12} leftIcon={<CopyIcon />} onClick={onCopyModalOpen}>
-            Copy Risk
+          <Button colorScheme="green" fontSize={12} leftIcon={<CopyIcon />} onClick={copyModalOpen}>
+            Copy {currentView === 'Risks' ? 'Risk' : 'Control'}
           </Button>
         </HStack>
       )}
 
       {/* Modal for Move */}
-      <Modal isCentered isOpen={isMoveModalOpen} onClose={onMoveModalClose}>
+      <Modal isCentered isOpen={isModalMoveOpen} onClose={closeMoveModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize={12}>Move Risk</ModalHeader>
@@ -389,17 +415,17 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                   />
                 </Box>
               </Flex>
-              <Radio size='sm' name='1' colorScheme='blue'>
-                <span style={{ fontSize: 12 }}>Copy Control</span>
+              <Radio size='sm' name='1' colorScheme='blue' onChange={handleRadioMoveChange}>
+                <span style={{ fontSize: 12 }}>Move {currentView === 'Risks' ? 'Risk' : 'Control'}</span>
               </Radio>
             </Flex>
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent='start'>
-              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} onClick={handleMove}>
+              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} onClick={handleMove} isLoading={loading} isDisabled={!isRadioMoveChecked || !formData.entityMove} >
                 Move
               </Button>
-              <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onMoveModalClose}>
+              <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={closeMoveModal}>
                 Cancel
               </Button>
             </HStack>
@@ -408,10 +434,10 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       </Modal>
 
       {/* Modal for Copy */}
-      <Modal isCentered isOpen={isCopyModalOpen} onClose={onCopyModalClose}>
+      <Modal isCentered isOpen={isModalCopyOpen} onClose={closeCopyModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize={12}>Copy Risk</ModalHeader>
+          <ModalHeader fontSize={12}>Copy {currentView === 'Risks' ? 'Risk' : 'Control'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex direction='column' gap={4}>
@@ -430,17 +456,17 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                   />
                 </Box>
               </Flex>
-              <Radio size='sm' name='1' colorScheme='blue'>
-                <span style={{ fontSize: 12 }}>Copy Control</span>
+              <Radio size='sm' name='1' colorScheme='blue' onChange={handleRadioCopyChange}>
+                <span style={{ fontSize: 12 }}>Copy {currentView === 'Risks' ? 'Risk' : 'Control'}</span>
               </Radio>
             </Flex>
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent='start'>
-              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} onClick={handleCopy}>
+              <Button colorScheme="blue" fontSize={12} leftIcon={<CheckIcon />} onClick={handleCopy} isLoading={loading} isDisabled={!isRadioCopyChecked || !formData.entityCopy}>
                 Copy
               </Button>
-              <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={onCopyModalClose}>
+              <Button colorScheme="red" fontSize={12} leftIcon={<CloseIcon />} onClick={closeCopyModal}>
                 Cancel
               </Button>
             </HStack>

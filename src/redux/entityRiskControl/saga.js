@@ -53,10 +53,10 @@ function* deleteEntityRiskControl(action) {
         const data = yield deleteRequest(link);
         if (data) {
             yield put({ type: types.DELETE_ENTITYRISKCONTROL_SUCCESS, payload: data });
-            toast.success('Control deleted successfully');
+            toast.success(data.message);
             yield put({ type: types.GET_ENTITYRISKCONTROLS_REQUEST });
         } else {
-            toast.error("Aucune donnée n'a été supprimé.");
+            toast.error(data.message);
             yield put({ type: types.DELETE_ENTITYRISKCONTROL_FAILED, payload: "Échec lors de la suppression des données" });
         }
 
@@ -75,8 +75,9 @@ function* copy(action) {
 
         if (data.success === true) {
             // Rafraîchir la liste après une copie réussie
-            yield put({ type: types.GET_ENTITYRISKCONTROLS_REQUEST, payload: {} });
+            toast.success(data.message);
         } else {
+            toast.error(data.message);
             yield put({ type: types.COPY_ENTITYRISKCONTROL_FAILED, payload: "Échec de la copie de l'entité" });
         }
     } catch (error) {
@@ -92,9 +93,9 @@ function* move(action) {
         console.log('dataMOVE::', data);
 
         if (data.success === true) {
-            // Rafraîchir la liste après un déplacement réussi
-            yield put({ type: types.GET_ENTITYRISKCONTROLS_REQUEST, payload: {} });
+            toast.success(data.message);
         } else {
+            toast.error(data.message);
             yield put({ type: types.MOVE_ENTITYRISKCONTROL_FAILED, payload: "Échec du déplacement de l'entité" });
         }
     } catch (error) {
