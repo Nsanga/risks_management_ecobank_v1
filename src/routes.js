@@ -2,6 +2,7 @@ import React from "react";
 
 import { Icon } from "@chakra-ui/react";
 import {
+  MdControlPoint,
   MdEvent,
   MdHome,
   MdLogout,
@@ -46,7 +47,7 @@ const routes = [
     name: "RCSA",
     layout: "/admin",
     path: "/control",
-    icon: <Icon as={RiSkull2Fill} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdControlPoint} width='20px' height='20px' color='inherit' />,
     component: Control,
   },
   {
@@ -67,7 +68,7 @@ const routes = [
     component: Reports,
   },
   {
-    name: "Sytem",
+    name: "System",
     layout: "/admin",
     path: "/system",
     icon: <Icon as={MdSettingsSystemDaydream} width='20px' height='20px' color='inherit' />,

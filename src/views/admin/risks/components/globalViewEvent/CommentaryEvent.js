@@ -5,8 +5,8 @@ const CommentaryEvent = ({commentaryData}) => {
   return (
     <Box>
       <Flex direction="column" gap={4} flex="2">
-        <Text fontWeight="bold" fontSize={14}>Commentary</Text>
-        <Text color='blue' fontSize={14}>{commentaryData.commentary}</Text>
+        <Text fontWeight="bold" fontSize={12}>Commentary</Text>
+        <Text color='blue' fontSize={12}>{commentaryData.commentary}</Text>
       </Flex>
     </Box>
   );

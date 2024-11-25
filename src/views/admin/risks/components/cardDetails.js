@@ -27,8 +27,8 @@ const CardDetails = ({ events, loading }) => {
               <Flex direction="column" p={5} shadow="md" borderRadius={15} borderWidth="1px" mt={4} key={index}>
                 <Flex direction="row" justifyContent="space-between">
                   <Flex direction="row" alignItems="center">
-                    <Text fontWeight="bold" mr={10} style={{ color: 'blue' }} fontSize={14}>EVT{event.num_ref}</Text>
-                    <Text fontWeight="bold" mr={10} fontSize={14}>{truncateText(event?.details.description, 90)}</Text>
+                    <Text fontWeight="bold" mr={10} style={{ color: 'blue' }} fontSize={12}>EVT{event.num_ref}</Text>
+                    <Text fontWeight="bold" mr={10} fontSize={12}>{truncateText(event?.details.description, 90)}</Text>
                   </Flex>
                   <Badge variant='solid' colorScheme={event?.approved === true ? 'blue' : 'red'}>
                     {event?.approved === true ? "Approved" : "Unapproved"}

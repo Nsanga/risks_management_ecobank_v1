@@ -63,7 +63,7 @@ const BoardContentProfile = ({ profiles, loading, userGroups }) => {
                                     children={<SearchIcon color="blue.500" />}
                                 />
                                 <Input
-                                    fontSize={14}
+                                    fontSize={12}
                                     placeholder="Search by name, location, userId or status"
                                     value={searchTerm}
                                     onChange={handleSearchChange}
@@ -75,11 +75,11 @@ const BoardContentProfile = ({ profiles, loading, userGroups }) => {
                             <Table variant="simple">
                                 <Thead>
                                     <Tr>
-                                        <Th fontSize={14}>User ID</Th>
-                                        <Th fontSize={14}>Name</Th>
-                                        <Th fontSize={14}>Location</Th>
-                                        <Th fontSize={14}>Status</Th>
-                                        <Th fontSize={14}>Active</Th>
+                                        <Th fontSize={12}>User ID</Th>
+                                        <Th fontSize={12}>Name</Th>
+                                        <Th fontSize={12}>Location</Th>
+                                        <Th fontSize={12}>Status</Th>
+                                        <Th fontSize={12}>Active</Th>
                                         <Th></Th>
 
                                     </Tr>
@@ -95,11 +95,11 @@ const BoardContentProfile = ({ profiles, loading, userGroups }) => {
                                             _hover={{ backgroundColor: "gray.100" }}
                                             cursor="pointer"
                                         >
-                                            <Td fontSize={14}>{user?.userId}</Td>
-                                            <Td fontSize={14}>{user?.name}</Td>
-                                            <Td fontSize={14}>{user?.location}</Td>
-                                            <Td color={user?.activeUser === true ? 'green.500' : 'red.500'}>{user?.activeUser === true ? 'Logged' : user?.lockedUser === true ? 'Blocked' : 'Pending'}</Td>
-                                            <Td fontSize={14}>
+                                            <Td fontSize={12}>{user?.userId}</Td>
+                                            <Td fontSize={12}>{user?.name}</Td>
+                                            <Td fontSize={12}>{user?.location}</Td>
+                                            <Td  fontSize={12} color={user?.activeUser === true ? 'green.500' : 'red.500'}>{user?.activeUser === true ? 'Logged' : user?.lockedUser === true ? 'Blocked' : 'Pending'}</Td>
+                                            <Td fontSize={12}>
                                                 <Box
                                                     w="12px"
                                                     h="12px"
@@ -109,7 +109,7 @@ const BoardContentProfile = ({ profiles, loading, userGroups }) => {
                                             </Td>
                                             {user?.lockedUser === true ?
                                                 (
-                                                    <Td fontSize={14}>
+                                                    <Td fontSize={12}>
                                                         <LockIcon color='red' />
                                                     </Td>
                                                 ) : null

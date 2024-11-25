@@ -66,15 +66,15 @@ const DetailsEvent = (
             <Flex flexDirection='column' gap={4}>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={6} alignItems="center">
-                        <Text fontSize={14}>Event Date:</Text>
+                        <Text fontSize={12}>Event Date:</Text>
                         <Box width={200}>
-                            <Text color='blue' fontSize={14}>{detailsData.event_date}</Text>
+                            <Text color='blue' fontSize={12}>{detailsData.event_date}</Text>
                         </Box>
                     </Flex>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>RAG:</Text>
+                        <Text fontSize={12}>RAG:</Text>
                         <Box width={200}>
-                            <Text color='blue' fontSize={14}>{detailsData.RAG}</Text>
+                            <Text color='blue' fontSize={12}>{detailsData.RAG}</Text>
                         </Box>
                     </Flex>
                     <Flex width={155}>
@@ -83,20 +83,20 @@ const DetailsEvent = (
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>Event Time:</Text>
+                        <Text fontSize={12}>Event Time:</Text>
                         <Box width={200}>
-                            <Text color='blue' fontSize={14}>{detailsData.event_time}</Text>
+                            <Text color='blue' fontSize={12}>{detailsData.event_time}</Text>
                         </Box>
                     </Flex>
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>Recorded by:</Text>
-                        <Text color='blue' fontSize={14}>{recordedName}</Text>
+                        <Text fontSize={12}>Recorded by:</Text>
+                        <Text color='blue' fontSize={12}>{recordedName}</Text>
                     </Flex>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>On:</Text>
-                        <Text color='blue' fontSize={14}>{currentDate}</Text>
+                        <Text fontSize={12}>On:</Text>
+                        <Text color='blue' fontSize={12}>{currentDate}</Text>
                     </Flex>
                     <Flex width={155}>
                         <Checkbox size='sm' isChecked={detailsData.excludeFundLosses} readOnly>Exclude Fund Losses</Checkbox>
@@ -105,9 +105,9 @@ const DetailsEvent = (
                 <Flex justifyContent='space-between' alignItems="center">
                     <Checkbox size='sm' isChecked={detailsData.externalEvent} readOnly>External Event</Checkbox>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>External Ref:</Text>
+                        <Text fontSize={12}>External Ref:</Text>
                         <Box >
-                            <Text color='blue' fontSize={14}>{detailsData.externalRef}</Text>
+                            <Text color='blue' fontSize={12}>{detailsData.externalRef}</Text>
                         </Box>
                     </Flex>
                     <Flex width={155}>
@@ -121,21 +121,21 @@ const DetailsEvent = (
                         </Box>
                         <Flex flexDirection='column' gap={4}>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Entity:</Text>
+                                <Text fontSize={12}>Entity:</Text>
                                 <Box width={200}>
-                                    <Text color='blue' fontSize={14}>{detailsData.entityOfDetection}</Text>
+                                    <Text color='blue' fontSize={12}>{detailsData.entityOfDetection}</Text>
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Sub Entity:</Text>
+                                <Text fontSize={12}>Sub Entity:</Text>
                                 <Box width={200}>
-                                    <Text color='blue' fontSize={14}>{detailsData.subentityOfDetection}</Text>
+                                    <Text color='blue' fontSize={12}>{detailsData.subentityOfDetection}</Text>
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Detection Date:</Text>
+                                <Text fontSize={12}>Detection Date:</Text>
                                 <Box width={200}>
-                                    <Text color='blue' fontSize={14}>{detailsData.detection_date}</Text>
+                                    <Text color='blue' fontSize={12}>{detailsData.detection_date}</Text>
                                 </Box>
                             </Flex>
                         </Flex>
@@ -146,15 +146,15 @@ const DetailsEvent = (
                         </Box>
                         <Flex flexDirection='column' gap={4}>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Entity:</Text>
+                                <Text fontSize={12}>Entity:</Text>
                                 <Box width={200}>
-                                    <Text color='blue' fontSize={14}>{detailsData.entityOfOrigin}</Text>
+                                    <Text color='blue' fontSize={12}>{detailsData.entityOfOrigin}</Text>
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Sub Entity:</Text>
+                                <Text fontSize={12}>Sub Entity:</Text>
                                 <Box width={200}>
-                                    <Text color='blue' fontSize={14}>{detailsData.subentityOfOrigin}</Text>
+                                    <Text color='blue' fontSize={12}>{detailsData.subentityOfOrigin}</Text>
                                 </Box>
                             </Flex>
                         </Flex>
@@ -164,58 +164,58 @@ const DetailsEvent = (
                     <Box bg='blue.400' color='#FFF' mb={6} padding={2}>
                         Description
                     </Box>
-                    <Text color='blue' fontSize={14}>{detailsData.description}</Text>
+                    <Text color='blue' fontSize={12}>{detailsData.description}</Text>
                 </Box>
                 <Box p={5} shadow='md' borderWidth='1px'>
                     <Box bg='blue.400' color='#FFF' mb={6} padding={2}>
                         Detailed Description
                     </Box>
-                    <Text color='blue' fontSize={14}>{detailsData.descriptionDetailled}</Text>
+                    <Text color='blue' fontSize={12}>{detailsData.descriptionDetailled}</Text>
                 </Box>
                 <Flex justifyContent='space-between' pt={5}>
                     <Flex flexDirection='column' gap={2}>
                         <Flex gap={12} alignItems="center">
-                            <Text fontSize={14}>Approved Date:</Text>
+                            <Text fontSize={12}>Approved Date:</Text>
                             <Box width={200} marginLeft={1}>
-                                <Text color='blue' fontSize={14}>{detailsData.approved_date}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.approved_date}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={14} alignItems="center">
-                            <Text fontSize={14}>Closed Date:</Text>
+                            <Text fontSize={12}>Closed Date:</Text>
                             <Box width={200} marginLeft={3}>
-                                <Text color='blue' fontSize={14}>{detailsData.closed_date}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.closed_date}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
-                            <Text fontSize={14}>Target Closure Date:</Text>
+                            <Text fontSize={12}>Target Closure Date:</Text>
                             <Box width={200}>
-                                <Text color='blue' fontSize={14}>{detailsData.targetClosureDate}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.targetClosureDate}</Text>
                             </Box>
                         </Flex>
                     </Flex>
                     <Flex flexDirection='column' gap={2}>
                         <Flex gap={14} alignItems="center">
-                            <Text fontSize={14}>Owner:</Text>
+                            <Text fontSize={12}>Owner:</Text>
                             <Box width={200} marginLeft={1}>
-                                <Text color='blue' fontSize={14}>{detailsData.owner}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.owner}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={10} alignItems="center">
-                            <Text fontSize={14}>Nominee:</Text>
+                            <Text fontSize={12}>Nominee:</Text>
                             <Box width={200} marginLeft={1}>
-                                <Text color='blue' fontSize={14}>{detailsData.nominee}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.nominee}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={10} alignItems="center">
-                            <Text fontSize={14}>Reviewer:</Text>
+                            <Text fontSize={12}>Reviewer:</Text>
                             <Box width={200} marginLeft={1}>
-                                <Text color='blue' fontSize={14}>{detailsData.reviewer}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.reviewer}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
-                            <Text fontSize={14}>Review Date:</Text>
+                            <Text fontSize={12}>Review Date:</Text>
                             <Box width={200}>
-                                <Text color='blue' fontSize={14}>{detailsData.reviewer_date}</Text>
+                                <Text color='blue' fontSize={12}>{detailsData.reviewer_date}</Text>
                             </Box>
                         </Flex>
                     </Flex>
@@ -224,7 +224,7 @@ const DetailsEvent = (
 
             <Box mt={8}>
                 <GridItem colSpan={1}>
-                    <Text fontWeight="bold" fontSize={14}>Document(s) importée(s) :</Text>
+                    <Text fontWeight="bold" fontSize={12}>Document(s) importée(s) :</Text>
                 </GridItem>
                 <Box mt={4}>
                     <Flex justifyContent='center' gap={2}>

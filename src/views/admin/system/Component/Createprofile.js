@@ -27,10 +27,10 @@ const CreateProfile = ({ userGroups, profiles }) => {
     return (
         <>
             <Flex justifyContent='space-between' mb={4}>
-                <Button variant="solid" color='green' leftIcon={<IoRefresh />} onClick={handleRefresh} fontSize={14}>
+                <Button variant="solid" color='green' leftIcon={<IoRefresh />} onClick={handleRefresh} fontSize={12}>
                     Refresh List
                 </Button>
-                <Button variant="outline" color='blue' leftIcon={<AddIcon />} onClick={openModal} fontSize={14}>
+                <Button variant="outline" color='blue' leftIcon={<AddIcon />} onClick={openModal} fontSize={12}>
                     Add New Profile
                 </Button>
             </Flex>

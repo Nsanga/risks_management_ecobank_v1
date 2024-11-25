@@ -7,13 +7,13 @@ const Review = ({ details }) => {
             <Flex flexDirection='column' gap={4}>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={6} alignItems="center">
-                        <Text fontSize={14}>Event Date:</Text>
+                        <Text fontSize={12}>Event Date:</Text>
                         <Box width={200}>
                             <Input value={details.eventDate} size='md' type='date' readOnly />
                         </Box>
                     </Flex>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>RAG:</Text>
+                        <Text fontSize={12}>RAG:</Text>
                         <Box width={200}>
                             <Select value={details.rag} size='md' readOnly>
                             </Select>
@@ -25,7 +25,7 @@ const Review = ({ details }) => {
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>Event Time:</Text>
+                        <Text fontSize={12}>Event Time:</Text>
                         <Box width={200}>
                             <Input value={details.eventTime} size='md' type='time' readOnly />
                         </Box>

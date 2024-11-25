@@ -17,47 +17,47 @@ const Finances = ({
       <Flex justifyContent='space-between' pt={5}>
         <Flex flexDirection='column' gap={2}>
           <Flex gap={20} alignItems="center">
-            <Text fontSize={14}>Approved  :</Text>
+            <Text fontSize={12}>Approved  :</Text>
             <Box width={200} >
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{approved === null ? "" : moment(approved).format('DD/MM/YYYY')}</Text>
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{approved === null ? "" : moment(approved).format('DD/MM/YYYY')}</Text>
             </Box>
           </Flex>
           <Flex gap={14} alignItems="center">
-            <Text fontSize={14}>Closed Date :</Text>
+            <Text fontSize={12}>Closed Date :</Text>
             <Box width={200} marginLeft={3}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{closed === null ? "" : moment(closed).format('DD/MM/YYYY')}</Text>
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{closed === null ? "" : moment(closed).format('DD/MM/YYYY')}</Text>
             </Box>
           </Flex>
           <Flex gap={6} alignItems="center">
-            <Text fontSize={14}>Target Closure Date :</Text>
+            <Text fontSize={12}>Target Closure Date :</Text>
             <Box width={200}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{targetClosure}</Text>
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{targetClosure}</Text>
             </Box>
           </Flex>
         </Flex>
         <Flex flexDirection='column' gap={2}>
           <Flex gap={10} alignItems="center">
-            <Text fontSize={14}>Owner : </Text>
+            <Text fontSize={12}>Owner : </Text>
             <Box width={200} marginLeft={1}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{owner}</Text>
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{owner}</Text>
             </Box>
           </Flex>
           <Flex gap={8} alignItems="center">
-            <Text fontSize={14}>Nominee : </Text>
+            <Text fontSize={12}>Nominee : </Text>
             <Box width={200} >
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{nominee}</Text>
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{nominee}</Text>
             </Box>
           </Flex>
           <Flex gap={10} alignItems="center">
-            <Text fontSize={14}>Reviewer :</Text>
+            <Text fontSize={12}>Reviewer :</Text>
             <Box width={200} marginLeft={1}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{reviewer}</Text>
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{reviewer}</Text>
             </Box>
           </Flex>
           <Flex gap={6} alignItems="center">
-            <Text fontSize={14}>Reviewer Date :</Text>
+            <Text fontSize={12}>Reviewer Date :</Text>
             <Box width={200}>
-              <Text fontSize={14} style={{ color: 'blue', fontWeight: 'bold' }}>{reviewerDate === null ? "" : moment(reviewerDate).format('DD/MM/YYYY')}</Text> 
+              <Text fontSize={12} style={{ color: 'blue', fontWeight: 'bold' }}>{reviewerDate === null ? "" : moment(reviewerDate).format('DD/MM/YYYY')}</Text> 
             </Box>
           </Flex>
         </Flex>

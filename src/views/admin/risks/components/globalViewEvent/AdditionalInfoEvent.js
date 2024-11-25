@@ -15,8 +15,8 @@ const AdditionalInfoEvent = ({ additionalData, categories }) => {
         <Tbody>
           {Object.keys(additionalData).map((index) => (
             <Tr key={index}>
-              <Td fontSize={14}>{categories[index]}</Td>
-              <Td fontSize={14}>{additionalData[index]}</Td>
+              <Td fontSize={12}>{categories[index]}</Td>
+              <Td fontSize={12}>{additionalData[index]}</Td>
             </Tr>
           ))}
         </Tbody>

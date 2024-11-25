@@ -1,89 +1,191 @@
-import {
-    Box,
-    Text,
-    Flex,
-    SimpleGrid,
-    GridItem,
-    Input,
-    Textarea,
-    Badge,
-    Button
-} from "@chakra-ui/react";
+import React, { useState } from 'react';
+import { Box, Flex, Text, Input, Textarea, SimpleGrid, Badge, GridItem, HStack } from '@chakra-ui/react';
+import Select from 'react-select';
 
-const RiskPage = () => {
+const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEditMode }) => {
+    // Initialize local state for each input field
+    // const [formData, setFormData] = useState({
+    //     entity: "",
+    //     location: "CAMEROON",
+    //     businessLine: "Consumer",
+    //     cbrDescription: "[N/A]",
+    //     description: "",
+    //     riskCategory: "",
+    //     dismissalCategory: "",
+    //     riskRef: "",
+    //     linkedRisk: "",
+    //     residualSeverity: "",
+    //     residualScore: "0.00 USD",
+    //     residualAnnExp: "0.00 USD",
+    //     riskActions: "0",
+    //     riskStatus: "Approved"
+    // });
+
+    // // Handle change for inputs
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormData((prevData) => ({ ...prevData, [name]: value }));
+    // };
+
+    // // Log the payload to the console
+    // const logPayload = () => {
+    //     console.log(formData);
+    // };
+    const entitiesOptions = entities?.map((entity, index) => ({
+        key: `${entity._id}-${index}`, // Unicité assurée
+        value: entity._id,
+        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    }));
+
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        }),
+        menu: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        }),
+        option: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            fontSize: '12px'
+        })
+    };
+
+
     return (
         <Box>
-            {/* Header section */}
-            <Box bg="white" p={6} rounded="md" shadow="md" mb={6}>
-                <Flex alignItems='center' gap={4} mb={4}>
-                    <Text fontWeight="bold">
-                        Entity:
-                    </Text>
-                    <Input value="ENT0041 | ECM: AKWA BRANCH" isDisabled />
+            <Flex justifyContent='space-between'>
+                <Flex direction='column' width={{ base: "100%", md: isEditMode ? "75%" : "100%" }} gap={4}>
+                    <HStack spacing={24} alignItems="center">
+                        <Text fontSize={12} fontWeight="bold">
+                            Entity:
+                        </Text>
+                        <Box width="100%" >
+                            <Select
+                                options={entitiesOptions}
+                                styles={customStyles}
+                                placeholder='Select Entity'
+                                value={entitiesOptions?.find(ent => ent.value === riskData.entity)}
+                                onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                            />
+                        </Box>
+                    </HStack>
+                    <HStack spacing={isEditMode ? 6 : 16} alignItems="center">
+                        <Text fontSize={12} fontWeight="bold" mr={2}>
+                            Operational Models:
+                        </Text>
+                        <Text fontSize={12}>
+                            Location:
+                        </Text>
+                        {isEditMode ? (
+                            <Text fontSize={12} fontWeight="bold" mr={2}>
+                                {riskData.location}
+                            </Text>
+                        ) : (
+                            <Input
+                                fontSize={12}
+                                name="location"
+                                value={riskData.location}
+                                onChange={handleChange}
+                            // onBlur={logPayload} // Log payload on blur
+                            />
+                        )}
+                        <Text fontSize={12}>
+                            Business Line:
+                        </Text>
+                        {isEditMode ? (
+                            <Text fontSize={12} fontWeight="bold">
+                                {riskData.businessLine}
+                            </Text>
+                        ) : (
+                            <Input
+                                fontSize={12}
+                                name="businessLine"
+                                value={riskData.businessLine}
+                                onChange={handleChange}
+                            // onBlur={logPayload} // Log payload on blur
+                            />
+                        )}
+                    </HStack>
+                    <HStack spacing={14} alignItems="center">
+                        <Text fontSize={12} fontWeight="bold" mb={2}>CBR Description:</Text>
+                        <Input
+                            fontSize={12}
+                            name="cbrDescription"
+                            value={riskData.cbrDescription}
+                            onChange={handleChange}
+                        // onBlur={logPayload} // Log payload on blur
+                        />
+                    </HStack>
+                    <HStack spacing={16} alignItems="center">
+                        <Text fontSize={12} ml={1} mt={6} fontWeight="bold" mb={2}>Description:</Text>
+                        <Textarea
+                            fontSize={12}
+                            name="description"
+                            value={riskData.description}
+                            onChange={handleChange}
+                        // onBlur={logPayload} // Log payload on blur
+                        />
+                    </HStack>
+                    <HStack spacing={16} alignItems="center">
+                        <Text fontSize={12} mt={6} fontWeight="bold" mb={2}>Risk Category:</Text>
+                        <Input
+                            fontSize={12}
+                            name="riskCategory"
+                            value={riskData.riskCategory}
+                            onChange={handleChange}
+                        // onBlur={logPayload} // Log payload on blur
+                        />
+                    </HStack>
+                    <HStack spacing={10} alignItems="center">
+                        <Text fontSize={12} mt={6} fontWeight="bold" mb={2}>Dismissal Category:</Text>
+                        <Input
+                            fontSize={12}
+                            name="dismissalCategory"
+                            value={riskData.dismissalCategory}
+                            onChange={handleChange}
+                        // onBlur={logPayload} // Log payload on blur
+                        />
+                    </HStack>
                 </Flex>
-                <Flex alignItems='center'>
-                    <Text fontWeight="bold" mr={2}>
-                        Location:
-                    </Text>
-                    <Input value="CAMEROON" isDisabled />
-                    <Text ml={4} fontWeight="bold" mr={2}>
-                        Business Line:
-                    </Text>
-                    <Input value="Consumer" isDisabled />
-                </Flex>
-            </Box>
-
-            {/* Main grid section */}
-            <SimpleGrid columns={2} spacing={10}>
-                {/* Left section */}
-                <Box bg="white" p={6} rounded="md" shadow="md">
-                    <Text fontWeight="bold" mb={2}>CBR Description:</Text>
-                    <Input value="[N/A]" isDisabled />
-
-                    <Text mt={6} fontWeight="bold" mb={2}>Description:</Text>
-                    <Textarea value="La difficulté à localiser le client reste une véritable..." isDisabled />
-
-                    <Text mt={6} fontWeight="bold" mb={2}>Risk Category:</Text>
-                    <Input value="PRO.1 Inadequate Policies & Procedures" isDisabled />
-
-                    <Text mt={6} fontWeight="bold" mb={2}>Dismissal Category:</Text>
-                    <Input value="EXE.2.1 Failed mandatory reporting obligation" isDisabled />
-                </Box>
-
-                {/* Right section */}
-                <Box bg="white" p={6} rounded="md" shadow="md">
-                    <SimpleGrid columns={1} spacing={4}>
-                        <GridItem>
-                            <Text fontWeight="bold">Risk Ref:</Text>
-                            <Input value="RSK67139" isDisabled />
-                        </GridItem>
-                        <GridItem>
-                            <Text fontWeight="bold">Linked Risk:</Text>
-                            <Input value="[Not available]" isDisabled />
-                        </GridItem>
-                        <GridItem>
-                            <Text fontWeight="bold">Residual Severity:</Text>
-                            <Input value="[Not available]" isDisabled />
-                        </GridItem>
-                        <GridItem>
-                            <Text fontWeight="bold">Residual Score:</Text>
-                            <Input value="0.00 USD" isDisabled />
-                        </GridItem>
-                        <GridItem>
-                            <Text fontWeight="bold">Residual Ann Exp:</Text>
-                            <Input value="0.00 USD" isDisabled />
-                        </GridItem>
-                        <GridItem>
-                            <Text fontWeight="bold">Risk Actions:</Text>
-                            <Input value="0" isDisabled />
-                        </GridItem>
-                        <GridItem>
-                            <Text fontWeight="bold">Risk Status:</Text>
-                            <Badge colorScheme="green">Approved</Badge>
-                        </GridItem>
-                    </SimpleGrid>
-                </Box>
-            </SimpleGrid>
+                {isEditMode && (
+                    <Box width={{ base: "100%", md: "20%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Risk Ref:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.riskRef}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Linked Risk:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.linkedRisk}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Residual Severity:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.residualSeverity}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Residual Score:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.residualScore}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Residual Ann Exp:</Text>
+                            <Text fontSize={12} fontWeight="bold">{riskData.residualAnnExp}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Risk Actions:</Text>
+                            <Text fontSize={12} fontWeight="bold" color='red'>{riskData.riskActions}</Text>
+                        </Flex>
+                        <Flex gap={4} mb={2}>
+                            <Text fontSize={12}>Risk Status:</Text>
+                            <Badge fontSize={10} colorScheme="blue">{riskData.riskStatus}</Badge>
+                        </Flex>
+                    </Box>
+                )}
+            </Flex>
         </Box>
     );
 };

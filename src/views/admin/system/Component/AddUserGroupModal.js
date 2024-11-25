@@ -124,9 +124,9 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                         </Flex>
                         <VStack spacing={4} align="stretch">
                             <FormControl id="group-name" isRequired>
-                                <FormLabel fontSize={14}>Group Name</FormLabel>
+                                <FormLabel fontSize={12}>Group Name</FormLabel>
                                 <Input
-                                    fontSize={14}
+                                    fontSize={12}
                                     name="group_name"
                                     type="text"
                                     value={groupName}
@@ -136,9 +136,9 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                             </FormControl>
 
                             <FormControl id="role">
-                                <FormLabel fontSize={14}>Role</FormLabel>
+                                <FormLabel fontSize={12}>Role</FormLabel>
                                 <Select
-                                    fontSize={14}
+                                    fontSize={12}
                                     isMulti
                                     options={roleOptions}
                                     value={roles}

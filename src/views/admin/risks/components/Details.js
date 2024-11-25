@@ -188,7 +188,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
             <Flex flexDirection='column' gap={4}>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={6} alignItems="center">
-                        <Text fontSize={14}>Event Date :</Text>
+                        <Text fontSize={12}>Event Date :</Text>
                         <Box width={200}>
                             <Input
                                 placeholder='Select Date'
@@ -199,7 +199,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                         </Box>
                     </Flex>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>RAG :</Text>
+                        <Text fontSize={12}>RAG :</Text>
                         <Box width={200}>
                             <Select
                                 options={rag}
@@ -216,7 +216,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>Event Time :</Text>
+                        <Text fontSize={12}>Event Time :</Text>
                         <Box width={200}>
                             <Input placeholder='Select Date and Time' size='sm' type='text' value={formData.event_time} readOnly />
                         </Box>
@@ -224,12 +224,12 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>Recorded by :</Text>
-                        <Text color='blue' fontSize={14}>{recordedName}</Text>
+                        <Text fontSize={12}>Recorded by :</Text>
+                        <Text color='blue' fontSize={12}>{recordedName}</Text>
                     </Flex>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>On :</Text>
-                        <Text color='blue' fontSize={14}>{moment(formData.recorded_date).format('DD/MM/YYYY')}</Text>
+                        <Text fontSize={12}>On :</Text>
+                        <Text color='blue' fontSize={12}>{moment(formData.recorded_date).format('DD/MM/YYYY')}</Text>
                     </Flex>
                     <Flex width={155}>
                         <Checkbox size='sm' isChecked={formData.excludeFundLosses} onChange={(e) => handleInputChange('excludeFundLosses', e.target.checked)}>Exclude Fund Losses</Checkbox>
@@ -238,7 +238,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 <Flex justifyContent='space-between' alignItems="center">
                     <Checkbox size='sm' isChecked={formData.externalEvent} onChange={(e) => handleInputChange('externalEvent', e.target.checked)}>External Event</Checkbox>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={14}>External Ref :</Text>
+                        <Text fontSize={12}>External Ref :</Text>
                         <Box >
                             <Input placeholder='External Ref' size='sm' type='text' value={formData.externalRef} onChange={(e) => handleInputChange('externalRef', e.target.value)} />
                         </Box>
@@ -254,7 +254,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                         </Box>
                         <Flex flexDirection='column' gap={4}>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Entity : <span style={{ color: 'red' }}>*</span></Text>
+                                <Text fontSize={12}>Entity : <span style={{ color: 'red' }}>*</span></Text>
                                 <Box width={200}>
                                     <Select
                                         options={entitiesOptions}
@@ -266,13 +266,13 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Sub Entity :</Text>
+                                <Text fontSize={12}>Sub Entity :</Text>
                                 <Box width={200}>
                                     <Input placeholder='' size='sm' type='text' value={formData.subentityOfDetection} onChange={(e) => handleInputChange('subentityOfDetection', e.target.value)} />
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Detection Date :</Text>
+                                <Text fontSize={12}>Detection Date :</Text>
                                 <Box width={200}>
                                     <Input
                                         placeholder='Select Date'
@@ -289,7 +289,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                         </Box>
                         <Flex flexDirection='column' gap={4}>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Entity : <span style={{ color: 'red' }}>*</span></Text>
+                                <Text fontSize={12}>Entity : <span style={{ color: 'red' }}>*</span></Text>
                                 <Box width={200}>
                                     <Select
                                         options={entitiesOptions}
@@ -301,7 +301,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={14}>Sub Entity :</Text>
+                                <Text fontSize={12}>Sub Entity :</Text>
                                 <Box width={200}>
                                     <Input placeholder='' size='sm' type='text' value={formData.subentityOfOrigin} onChange={(e) => handleInputChange('subentityOfOrigin', e.target.value)} />
                                 </Box>
@@ -312,7 +312,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 <Flex justifyContent='space-between' pt={5}>
                     <Flex flexDirection='column' gap={2}>
                         <Flex gap={20} alignItems="center">
-                            <Text fontSize={14}>Approved  :</Text>
+                            <Text fontSize={12}>Approved  :</Text>
                             <Box width={200} >
                                 <Input
                                     placeholder='Select Date'
@@ -322,7 +322,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                             </Box>
                         </Flex>
                         <Flex gap={14} alignItems="center">
-                            <Text fontSize={14}>Closed Date :</Text>
+                            <Text fontSize={12}>Closed Date :</Text>
                             <Box width={200} marginLeft={3}>
                                 <Input
                                     placeholder='Select Date'
@@ -332,7 +332,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
-                            <Text fontSize={14}>Target Closure Date :</Text>
+                            <Text fontSize={12}>Target Closure Date :</Text>
                             <Box width={200}>
                                 <Input
                                     placeholder='Select Date'
@@ -344,43 +344,43 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                     </Flex>
                     <Flex flexDirection='column' gap={2}>
                         <Flex gap={10} alignItems="center">
-                            <Text fontSize={14}>Owner : <span style={{ color: 'red' }}>*</span></Text>
+                            <Text fontSize={12}>Owner : <span style={{ color: 'red' }}>*</span></Text>
                             <Box width={200} marginLeft={1}>
                                 <Select
                                     name="owner"
                                     placeholder='Select owner'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.owner) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.owner)}
                                     onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                                 />
                             </Box>
                         </Flex>
                         <Flex gap={8} alignItems="center">
-                            <Text fontSize={14}>Nominee : <span style={{ color: 'red' }}>*</span></Text>
+                            <Text fontSize={12}>Nominee : <span style={{ color: 'red' }}>*</span></Text>
                             <Box width={200} >
                                 <Select
                                     name="nominee"
                                     placeholder='Select nominee'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.nominee) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.nominee)}
                                     onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                                 />
                             </Box>
                         </Flex>
                         <Flex gap={10} alignItems="center">
-                            <Text fontSize={14}>Reviewer :</Text>
+                            <Text fontSize={12}>Reviewer :</Text>
                             <Box width={200} marginLeft={1}>
                                 <Select
                                     name="reviewer"
                                     placeholder='Select reviewer'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.reviewer) || null}
+                                    value={profilesOptions?.find(option => option.value === formData.reviewer)}
                                     onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                                 />
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
-                            <Text fontSize={14}>Reviewer Date :</Text>
+                            <Text fontSize={12}>Reviewer Date :</Text>
                             <Box width={200}>
                                 <Input
                                     placeholder='Select Date'
@@ -395,7 +395,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
             <Box mt={8}>
                 <GridItem colSpan={1}>
-                    <Text fontWeight="bold" fontSize={14}>Documents<span style={{ fontStyle: 'italic' }}> (Importer vos documents dans l'espace ci-dessous)</span></Text>
+                    <Text fontWeight="bold" fontSize={12}>Documents<span style={{ fontStyle: 'italic' }}> (Importer vos documents dans l'espace ci-dessous)</span></Text>
                 </GridItem>
                 <Box mt={4}>
                     <DocumentUploader onMediaUpload={handleUploadLinks} />

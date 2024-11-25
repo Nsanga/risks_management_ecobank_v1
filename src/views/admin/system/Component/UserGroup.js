@@ -42,7 +42,7 @@ const UserGroup = ({ userGroups, loading }) => {
                         variant="outline" color='blue'
                         leftIcon={<AddIcon />}
                         onClick={() => openModal()}
-                        fontSize={14}
+                        fontSize={12}
                     >
                         Add New User Group
                     </Button>

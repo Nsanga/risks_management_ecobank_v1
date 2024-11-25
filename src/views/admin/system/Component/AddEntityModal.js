@@ -155,7 +155,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                   onChange={handleChange}
                   isReadOnly={isEditMode}
                 />
-                <Text fontSize={14}>Entity Active</Text>
+                <Text fontSize={12}>Entity Active</Text>
               </Flex>
               <DeleteModal selectedEntity={formValues} disabled={!isEditMode} onCloseAddEntityModal={onClose}/>
               <Button leftIcon={<EditIcon color="white" />} colorScheme='blue' style={{ fontSize: 14 }} onClick={handleAmendClick}
@@ -168,7 +168,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
           <Flex gap={8}>
             <Box width='50%' mr={4}>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Description <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize={12}>Description <span style={{ color: 'red' }}>*</span></FormLabel>
                 <InputGroup >
                   <InputLeftElement width={70}>
                     <Box >CAM - </Box>
@@ -184,7 +184,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 </InputGroup>
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>RAM <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize={12}>RAM <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   name="ram"
                   value={formValues.ram}
@@ -193,7 +193,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Created On</FormLabel>
+                <FormLabel fontSize={12}>Created On</FormLabel>
                 <Input
                   name="createdOn"
                   type="date"
@@ -203,7 +203,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Owner <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize={12}>Owner <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Select
                   name="owner"
                   options={profilesOptions}
@@ -213,7 +213,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Nominee</FormLabel>
+                <FormLabel fontSize={12}>Nominee</FormLabel>
                 <Select
                   name="nominee"
                   options={profilesOptions}
@@ -223,7 +223,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Reviewer</FormLabel>
+                <FormLabel fontSize={12}>Reviewer</FormLabel>
                 <Select
                   name="reviewer"
                   options={profilesOptions}
@@ -233,7 +233,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Review Date <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize={12}>Review Date <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   name="reviewDate"
                   type="date"
@@ -248,7 +248,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 Operational Models (Based on user views)
               </Heading>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Location <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize={12}>Location <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   name="location"
                   type="text"
@@ -258,7 +258,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
               </FormControl>
               <FormControl mb="4">
-                <FormLabel fontSize={14}>Business Line <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize={12}>Business Line <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Select
                   name="businessLine"
                   value={formValues.businessLine}

@@ -83,20 +83,21 @@ export function SearchBar(props) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 15, marginRight: 15 }}>
       <RadioGroup onChange={handleRadioChange} value={value}>
         <Stack direction='row'>
-          <Radio value='1'>Risk</Radio>
-          <Radio value='2'>Control</Radio>
-          <Radio value='3'>Event</Radio>
-          <Radio value='4'>Entity</Radio>
-          <Radio value='5'>Action</Radio>
-          <Radio value='6'>Key Indicator</Radio>
+          <Radio value='1'><span style={{ fontSize:12}}>Risk</span></Radio>
+          <Radio value='2'><span style={{ fontSize:12}}>Control</span></Radio>
+          <Radio value='3'><span style={{ fontSize:12}}>Event</span></Radio>
+          <Radio value='4'><span style={{ fontSize:12}}>Entity</span></Radio>
+          <Radio value='5'><span style={{ fontSize:12}}>Action</span></Radio>
+          <Radio value='6'><span style={{ fontSize:12}}>Key Indicator</span></Radio>
         </Stack>
       </RadioGroup>
       <Box style={{ width: 180 }}>
         <InputGroup>
           <InputLeftElement pointerEvents="none">
-            <Box>{placeholder}</Box>
-          </InputLeftElement>
+            <Box fontSize={12}>{placeholder}</Box>
+          </InputLeftElement> 
           <Input
+          fontSize={12}
             placeholder='ref number'
             value={inputValue}
             onChange={handleInputChange}

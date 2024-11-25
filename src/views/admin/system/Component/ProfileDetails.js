@@ -38,16 +38,25 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                             onChange={(e) => handleInputChange({ target: { name: 'activeUser', value: e.target.checked } })}
                             isReadOnly={isReadOnly || formData.lockedUser}
                         />
-                        <FormLabel mb="0" mr={2} fontSize={14}>Active user</FormLabel>
+                        <FormLabel mb="0" mr={2} fontSize={12}>Active user</FormLabel>
                     </Box>
                     {username !== localStorage.getItem('username') ?
                         (
                             <>
+                                <Button
+                                    leftIcon={<EditIcon color="white" />}
+                                    colorScheme='blue'
+                                    style={{ fontSize: 14 }}
+                                    onClick={handleAmendClick}
+                                    disabled={!isReadOnly || formData.lockedUser}
+                                >
+                                    Amend
+                                </Button>
                                 <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
                                     <Button
                                         leftIcon={formData.lockedUser ? <LockIcon /> : <UnlockIcon />}
                                         colorScheme={formData.lockedUser ? "yellow" : "green"}
-                                        fontSize={14}
+                                        fontSize={12}
                                         onClick={toggleLockStatus}
                                         disabled={!isReadOnly}
                                         ml={4}
@@ -58,23 +67,14 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                                 <Box display="flex" alignItems="center" mr={4} cursor="pointer">
                                     <DeleteModal selectedUser={formData} disabled={!isReadOnly} onCloseAddProfileModal={onClose} />
                                 </Box>
-                                <Button
-                                    leftIcon={<EditIcon color="white" />}
-                                    colorScheme='blue'
-                                    style={{ fontSize: 14 }}
-                                    onClick={handleAmendClick}
-                                    disabled={!isReadOnly || formData.lockedUser}
-                                >
-                                    Amend
-                                </Button>
                             </>
                         ) : null}
 
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>User ID <span style={{ color: 'red' }}>*</span></FormLabel>
+                    <FormLabel fontSize={12}>User ID <span style={{ color: 'red' }}>*</span></FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="userId"
                         value={formData.userId}
@@ -83,9 +83,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Name <span style={{ color: 'red' }}>*</span></FormLabel>
+                    <FormLabel fontSize={12}>Name <span style={{ color: 'red' }}>*</span></FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="name"
                         value={formData.name}
@@ -94,9 +94,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Surname <span style={{ color: 'red' }}>*</span></FormLabel>
+                    <FormLabel fontSize={12}>Surname <span style={{ color: 'red' }}>*</span></FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="surname"
                         value={formData.surname}
@@ -105,9 +105,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Job Title</FormLabel>
+                    <FormLabel fontSize={12}>Job Title</FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="jobTitle"
                         value={formData.jobTitle}
@@ -116,9 +116,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Location</FormLabel>
+                    <FormLabel fontSize={12}>Location</FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="location"
                         value={formData.location}
@@ -127,9 +127,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Telephone <span style={{ color: 'red' }}>*</span></FormLabel>
+                    <FormLabel fontSize={12}>Telephone <span style={{ color: 'red' }}>*</span></FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="number"
                         name="telephone"
                         value={formData.telephone}
@@ -138,9 +138,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Email <span style={{ color: 'red' }}>*</span></FormLabel>
+                    <FormLabel fontSize={12}>Email <span style={{ color: 'red' }}>*</span></FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="email"
                         name="email"
                         value={formData.email}
@@ -149,7 +149,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>User Group</FormLabel>
+                    <FormLabel fontSize={12}>User Group</FormLabel>
                     <Select
                         name="userGroup"
                         options={userGroupOptions}
@@ -159,9 +159,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Language</FormLabel>
+                    <FormLabel fontSize={12}>Language</FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="language"
                         value={formData.language}
@@ -170,7 +170,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>CC Email To</FormLabel>
+                    <FormLabel fontSize={12}>CC Email To</FormLabel>
                     <Select
                         name="ccEmailTo"
                         options={profilesOptions}
@@ -180,7 +180,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Nominee</FormLabel>
+                    <FormLabel fontSize={12}>Nominee</FormLabel>
                     <Select
                         name="nominee"
                         options={profilesOptions}
@@ -190,9 +190,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Password Expiry Date</FormLabel>
+                    <FormLabel fontSize={12}>Password Expiry Date</FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="date"
                         name="passwordExpiryDate"
                         value={formData.passwordExpiryDate}
@@ -201,9 +201,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={14}>Locked Out Reason</FormLabel>
+                    <FormLabel fontSize={12}>Locked Out Reason</FormLabel>
                     <Input
-                        fontSize={14}
+                        fontSize={12}
                         type="text"
                         name="lockedOutReason"
                         value={formData.lockedOutReason}
@@ -212,7 +212,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </FormControl>
                 <Box display="flex" alignItems="center">
-                    <FormLabel fontSize={14} mb="0" mr={2}>Administrator</FormLabel>
+                    <FormLabel fontSize={12} mb="0" mr={2}>Administrator</FormLabel>
                     <Checkbox
                         name="administrator"
                         isChecked={formData.administrator}
@@ -221,7 +221,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     />
                 </Box>
                 <Box display="flex" alignItems="center" ml={4}>
-                    <FormLabel fontSize={14} mb="0" mr={2}>Can Authorise</FormLabel>
+                    <FormLabel fontSize={12} mb="0" mr={2}>Can Authorise</FormLabel>
                     <Checkbox
                         name="canAuthorize"
                         isChecked={formData.canAuthorize}
@@ -235,9 +235,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                         <Heading as="h3" size="sm" mb={4} textAlign="left">Regulatory</Heading>
                         <SimpleGrid columns={2} spacing={4}>
                             <FormControl>
-                                <FormLabel fontSize={14}>Reference</FormLabel>
+                                <FormLabel fontSize={12}>Reference</FormLabel>
                                 <Input
-                                    fontSize={14}
+                                    fontSize={12}
                                     type="text"
                                     name="reference"
                                     value={formData.reference}
@@ -246,9 +246,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                                 />
                             </FormControl>
                             <FormControl>
-                                <FormLabel fontSize={14}>Status Date</FormLabel>
+                                <FormLabel fontSize={12}>Status Date</FormLabel>
                                 <Input
-                                    fontSize={14}
+                                    fontSize={12}
                                     type="date"
                                     name="statusDate"
                                     value={formData.statusDate}
@@ -257,7 +257,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                                 />
                             </FormControl>
                             <FormControl>
-                                <FormLabel fontSize={14}>Status</FormLabel>
+                                <FormLabel fontSize={12}>Status</FormLabel>
                                 <Select
                                     name="status"
                                     options={[]}
@@ -267,9 +267,9 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                                 />
                             </FormControl>
                             <FormControl>
-                                <FormLabel fontSize={14}>Review Date</FormLabel>
+                                <FormLabel fontSize={12}>Review Date</FormLabel>
                                 <Input
-                                    fontSize={14}
+                                    fontSize={12}
                                     type="date"
                                     name="reviewDate"
                                     value={formData.reviewDate}
@@ -279,7 +279,7 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                             </FormControl>
                         </SimpleGrid>
                         <FormControl mt={4}>
-                            <FormLabel fontSize={14}>Notes</FormLabel>
+                            <FormLabel fontSize={12}>Notes</FormLabel>
                             <Textarea
                                 name="notes"
                                 value={formData.notes}
