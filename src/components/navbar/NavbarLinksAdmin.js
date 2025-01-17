@@ -49,10 +49,12 @@ export default function HeaderLinks(props) {
 		} else if (words.length >= 2) {
 			const firstWord = words[0]?.slice(0, 1).toUpperCase();
 			const secondWord = words[2]?.slice(0, 1).toUpperCase();
-			if (firstWord) {
-				return `${firstWord}${secondWord}`;
-			} else {
+			if (firstWord === 'undefined') {
 				return `${secondWord}`;
+			} else if (secondWord === 'undefined') {
+				return `${firstWord}`;
+			} else {
+				return `${firstWord}${secondWord}`;
 			}
 		} else {
 			return '';

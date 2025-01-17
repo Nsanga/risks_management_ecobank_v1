@@ -78,8 +78,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   }
 
   const closeModal = () => setIsModalOpen(false);
-  const closeCopyModal = () => setIsModalCopyOpen(false);
-  const closeMoveModal = () => setIsModalMoveOpen(false);
+  const closeCopyModal = () => {
+    setFormData({ entity: null, entityMove: null, entityCopy: null });
+    setIsModalCopyOpen(false);
+  };
+  const closeMoveModal = () => {
+    setFormData({ entity: null, entityMove: null, entityCopy: null });
+    setIsModalMoveOpen(false);
+  }
 
   const handleRadioCopyChange = (event) => {
     setIsRadioCopyChecked(event.target.checked);
@@ -222,6 +228,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     dispatch(listEntityRiskControls(selectedEntityDescription)); // Rafraîchit la liste avec la description
     setIsRadioCopyChecked(false);
     setSelectedRows([]);
+    setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
 
   const handleMove = async () => {
@@ -237,6 +244,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     dispatch(listEntityRiskControls(selectedEntityDescription)); // Rafraîchit la liste avec la description
     setIsRadioMoveChecked(false);
     setSelectedRows([]);
+    setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
 
   return (
@@ -349,7 +357,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 </Tr>
               </Thead>
               {loading ? (
-                <Flex alignItems='center' justifyContent='center'>
+                <Flex alignItems='center' justifyContent='center' width='100%'>
                   <Image src={Loader} alt="Loading..." height={25} width={25} />
                 </Flex>
               ) :
@@ -398,7 +406,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       <Modal isCentered isOpen={isModalMoveOpen} onClose={closeMoveModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize={12}>Move Risk</ModalHeader>
+          <ModalHeader fontSize={12}>Move {currentView === 'Risks' ? 'Risk' : 'Control'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex direction='column' gap={4}>
@@ -418,7 +426,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 </Box>
               </Flex>
               <Radio size='sm' name='1' colorScheme='blue' onChange={handleRadioMoveChange}>
-                <span style={{ fontSize: 12 }}>Move {currentView === 'Risks' ? 'Risk' : 'Control'}</span>
+                <span style={{ fontSize: 12 }}>Move {currentView === 'Risks' ? 'Control' : 'Risk'}</span>
               </Radio>
             </Flex>
           </ModalBody>
@@ -459,7 +467,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 </Box>
               </Flex>
               <Radio size='sm' name='1' colorScheme='blue' onChange={handleRadioCopyChange}>
-                <span style={{ fontSize: 12 }}>Copy {currentView === 'Risks' ? 'Risk' : 'Control'}</span>
+                <span style={{ fontSize: 12 }}>Copy {currentView === 'Risks' ? 'Control' : 'Risk'}</span>
               </Radio>
             </Flex>
           </ModalBody>
