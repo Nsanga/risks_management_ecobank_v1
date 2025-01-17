@@ -21,7 +21,7 @@ import Select from 'react-select';
 import { connect, useDispatch } from 'react-redux';
 import { updateEntityRiskControl } from 'redux/entityRiskControl/action';
 
-function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, newRiskId, onClose }) {
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, newRiskId, onClose, selectedRisk }) {
   const dispatch = useDispatch();
   const profilesOptions = profiles
     ?.filter(profile => profile.activeUser)
@@ -117,7 +117,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, ne
       dispatch(updateEntityRiskControl(newRiskId, riskFormData)) ;
     }
   };
-
+console.log(selectedRisk.reviewerRisk)
   return (
     <Box>
       <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" alignItems="flex-start" p={4}>

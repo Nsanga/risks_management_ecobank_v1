@@ -205,7 +205,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       dispatch(listEntityRiskControls(selectedOption.description));
     }
     setSelectedRows([]);
-};
+  };
 
   const numberOfItems = viewData[currentView].length;
 
@@ -256,14 +256,16 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       </Flex>
       <Flex direction="column" justifyContent="center" align="center" mb={5} w="100%">
         {/* Modal for Adding or Editing Controls */}
-        <RiskControlInformationView
-          isOpen={isOpen}
-          onClose={onClose}
-          selectedRisk={selectedRisk}
-          isEditMode={isEditMode}
-          entities={entities}
-          profiles={profiles}
-        />
+        {selectedRisk && (
+          <RiskControlInformationView
+            isOpen={isOpen}
+            onClose={onClose}
+            selectedRisk={selectedRisk}
+            isEditMode={isEditMode}
+            entities={entities}
+            profiles={profiles}
+          />
+        )}
 
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
           <Flex direction="row" align="center" justify="space-between" mb={4}>
@@ -475,12 +477,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       </Modal>
 
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}
-      <AddEntityModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        profiles={profiles}
-      />
-
       {selectedEntity && (
         <AddEntityModal
           isOpen={isModalOpen}

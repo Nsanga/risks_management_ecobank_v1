@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Flex, Text, Input, Textarea, SimpleGrid, Badge, GridItem, HStack } from '@chakra-ui/react';
 import Select from 'react-select';
 
-const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEditMode }) => {
+const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEditMode, selectedRisk }) => {
     // Initialize local state for each input field
     // const [formData, setFormData] = useState({
     //     entity: "",
@@ -56,7 +56,7 @@ const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEdit
         })
     };
 
-
+console.log(selectedRisk)
     return (
         <Box>
             <Flex justifyContent='space-between'>
@@ -66,12 +66,11 @@ const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEdit
                             Entity:
                         </Text>
                         <Box width="100%" >
-                            <Select
-                                options={entitiesOptions}
-                                styles={customStyles}
-                                placeholder='Select Entity'
-                                value={entitiesOptions?.find(ent => ent.value === riskData.entity)}
-                                onChange={(selectedOption) => handleSelectChange('entity', selectedOption)}
+                            <Input 
+                            fontSize={12}
+                            name="entity"
+                            value={selectedRisk.businessFunction}
+                            readOnly
                             />
                         </Box>
                     </HStack>
@@ -90,7 +89,7 @@ const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEdit
                             <Input
                                 fontSize={12}
                                 name="location"
-                                value={riskData.location}
+                                value={selectedRisk.location}
                                 onChange={handleChange}
                             // onBlur={logPayload} // Log payload on blur
                             />
@@ -127,8 +126,9 @@ const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEdit
                         <Textarea
                             fontSize={12}
                             name="description"
-                            value={riskData.description}
-                            onChange={handleChange}
+                            value={selectedRisk.description}
+                            // onChange={handleChange}
+                            readOnly
                         // onBlur={logPayload} // Log payload on blur
                         />
                     </HStack>
@@ -137,8 +137,9 @@ const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEdit
                         <Input
                             fontSize={12}
                             name="riskCategory"
-                            value={riskData.riskCategory}
+                            value={selectedRisk.riskCategory}
                             onChange={handleChange}
+                            readOnly
                         // onBlur={logPayload} // Log payload on blur
                         />
                     </HStack>
@@ -157,7 +158,7 @@ const RiskPage = ({ riskData, entities, handleChange, handleSelectChange, isEdit
                     <Box width={{ base: "100%", md: "20%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg">
                         <Flex gap={4} mb={2}>
                             <Text fontSize={12}>Risk Ref:</Text>
-                            <Text fontSize={12} fontWeight="bold">{riskData.riskRef}</Text>
+                            <Text fontSize={12} fontWeight="bold">{selectedRisk.reference}</Text>
                         </Flex>
                         <Flex gap={4} mb={2}>
                             <Text fontSize={12}>Linked Risk:</Text>

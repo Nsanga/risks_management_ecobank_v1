@@ -14,7 +14,7 @@ import RiskForm from './RiskForm';
 import { connect, useDispatch } from 'react-redux';
 import { AddEntityRiskControl } from 'redux/entityRiskControl/action';
 
-const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEditMode, addSuccess, newItemId, loading }) => {
+const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEditMode, addSuccess, newItemId, loading, selectedRisk }) => {
     const [showTabs, setShowTabs] = useState(false);
     const dispatch = useDispatch();
     const [formDataRiskPage, setFormDataRiskPage] = useState({
@@ -151,7 +151,7 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
                     <ModalHeader>{isEditMode ? "Edit Risk Control" : "Add New Risk Control"}</ModalHeader>
                     <ModalBody p={4}>
                         {/* You can pass selectedRisk data to the RiskPage or any other component as needed */}
-                        <RiskPage riskData={formDataRiskPage} handleChange={handleChangeRiskPage} handleSelectChange={handleSelectChange} isEditMode={isEditMode} entities={entities} />
+                        <RiskPage riskData={formDataRiskPage} handleChange={handleChangeRiskPage} handleSelectChange={handleSelectChange} isEditMode={isEditMode} entities={entities} selectedRisk={selectedRisk}/>
                             <Tabs variant='enclosed' mt={6}>
                                 <TabList>
                                     <Tab fontSize={12} >General</Tab>
@@ -165,7 +165,7 @@ const RiskControlInformationView = ({ isOpen, onClose, entities, profiles, isEdi
 
                                 <TabPanels>
                                     <TabPanel>
-                                        <RiskForm riskFormData={formDataRiskForm} handleChange={handleChangeRiskForm} handleSelectChange={handleSelectChange} profiles={profiles} newRiskId={newItemId} onClose={onClose}/>
+                                        <RiskForm riskFormData={formDataRiskForm} handleChange={handleChangeRiskForm} handleSelectChange={handleSelectChange} profiles={profiles} newRiskId={newItemId} onClose={onClose} selectedRisk={selectedRisk}/>
                                     </TabPanel>
                                     {/* <TabPanel>
                                     <MyTableComponent />
