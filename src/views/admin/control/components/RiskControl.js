@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Heading,
@@ -15,11 +15,17 @@ import {
   TabPanel,
   useToast,
   Checkbox,
-} from '@chakra-ui/react';
-import GeneralForm from './GeneralForm'; // Adjust the path as needed
-import { CheckCircleIcon } from '@chakra-ui/icons';
+} from "@chakra-ui/react";
+import GeneralForm from "./GeneralForm"; // Adjust the path as needed
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
-const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChange}) => {
+const RiskControl = ({
+  riskControlData,
+  profiles,
+  handleSelectChange,
+  handleChange,
+  currentAssoCiate,
+}) => {
   // const [formData, setFormData] = useState({
   //   controlRef: "",
   //   controlCategory: "",
@@ -49,7 +55,11 @@ const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChang
     e.preventDefault(); // Prevent default form submission
 
     // Basic validation
-    if (!riskControlData.controlRef || !riskControlData.nominee || !riskControlData.reviewer) {
+    if (
+      !riskControlData.controlRef ||
+      !riskControlData.nominee ||
+      !riskControlData.reviewer
+    ) {
       toast({
         title: "Error.",
         description: "Please fill out all required fields.",
@@ -60,7 +70,7 @@ const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChang
       return;
     }
 
-    console.log('Form submitted:', riskControlData);
+    console.log("Form submitted:", riskControlData);
     // Here you can add logic to send the form data to an API or handle it as needed
     toast({
       title: "Success!",
@@ -76,15 +86,15 @@ const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChang
       <Table variant="simple" mb={6}>
         <Thead bg="blue.100">
           <Tr>
-            <Th style={{ fontSize: '10px' }}>Ref</Th>
-            <Th style={{ fontSize: '10px' }}>Description</Th>
-            <Th style={{ fontSize: '10px' }}>Active</Th>
-            <Th style={{ fontSize: '10px' }}>Key Ctrl</Th>
-            <Th style={{ fontSize: '10px' }}>Last Assess. Date</Th>
-            <Th style={{ fontSize: '10px' }}>Last Assess. Design</Th>
-            <Th style={{ fontSize: '10px' }}>Last Assess. Performance</Th>
-            <Th style={{ fontSize: '10px' }}>Last Assess. Creator</Th>
-            <Th style={{ fontSize: '10px' }}>Last Assess. Status</Th>
+            <Th style={{ fontSize: "10px" }}>Ref</Th>
+            <Th style={{ fontSize: "10px" }}>Description</Th>
+            <Th style={{ fontSize: "10px" }}>Active</Th>
+            <Th style={{ fontSize: "10px" }}>Key Ctrl</Th>
+            <Th style={{ fontSize: "10px" }}>Last Assess. Date</Th>
+            <Th style={{ fontSize: "10px" }}>Last Assess. Design</Th>
+            <Th style={{ fontSize: "10px" }}>Last Assess. Performance</Th>
+            <Th style={{ fontSize: "10px" }}>Last Assess. Creator</Th>
+            <Th style={{ fontSize: "10px" }}>Last Assess. Status</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -94,7 +104,7 @@ const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChang
             <Td fontSize={12}>
               <CheckCircleIcon color="green.500" />
             </Td>
-            <Td fontSize={12}>{riskControlData.keyControl ? 'Y' : 'N'}</Td>
+            <Td fontSize={12}>{riskControlData.keyControl ? "Y" : "N"}</Td>
             <Td fontSize={12}>Acceptable</Td>
             <Td fontSize={12}>Not Assessed</Td>
             <Td fontSize={12}>Not Attended</Td>
@@ -104,7 +114,13 @@ const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChang
         </Tbody>
       </Table>
 
-      <Tabs variant="soft-rounded" colorScheme="green" mt={6} index={tabIndex} onChange={(index) => setTabIndex(index)}>
+      <Tabs
+        variant="soft-rounded"
+        colorScheme="green"
+        mt={6}
+        index={tabIndex}
+        onChange={(index) => setTabIndex(index)}
+      >
         <TabList>
           <Tab fontSize={12}>Details</Tab>
           <Tab fontSize={12}>History</Tab>
@@ -121,9 +137,10 @@ const RiskControl = ({riskControlData, profiles, handleSelectChange, handleChang
             <GeneralForm
               formData={riskControlData}
               handleChange={handleChange}
-              handleSelectChange={handleSelectChange} 
+              handleSelectChange={handleSelectChange}
               profiles={profiles}
               handleSubmit={handleSubmit}
+              currentAssoCiate={currentAssoCiate}
             />
           </TabPanel>
           {/* Additional TabPanels for other tabs can go here */}
