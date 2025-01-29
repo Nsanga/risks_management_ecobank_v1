@@ -20,9 +20,14 @@ import {
 import Select from 'react-select';
 import { connect, useDispatch } from 'react-redux';
 import { updateEntityRiskControl } from 'redux/entityRiskControl/action';
+import { useEffect, useState } from 'react';
 
-function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, newRiskId, onClose, selectedRisk }) {
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk }) {
   const dispatch = useDispatch();
+  const [ownerValue, setOwnerValue] = useState(null);
+  const [nomineeValue, setNomineeValue] = useState(null);
+  const [reviewerValue, setReviewerValue] = useState(null);
+
   const profilesOptions = profiles
     ?.filter(profile => profile.activeUser)
     ?.map((profile, index) => ({
@@ -106,18 +111,42 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, ne
     })
   };
 
-  const handleSave = () => {
-    // Si newRiskId existe, effectue la mise à jour
-    if (newRiskId) {
-      const payload = {
-        id: newRiskId,
-        ...riskFormData, // Inclut les données mises à jour du formulaire
-      };
-      
-      dispatch(updateEntityRiskControl(newRiskId, riskFormData)) ;
-    }
+  const handleAmend = () => {
+    const payload = {
+      itemIds: selectedRisk._id,
+      itemType: "risk",
+      updates: {
+        ...riskFormData,
+      },
+    };
+    console.log(payload);
+    dispatch(updateEntityRiskControl(payload)) ;
   };
-console.log(selectedRisk.reviewerRisk)
+  console.log(selectedRisk)
+  useEffect(() => {
+    if (selectedRisk) {
+      handleChange({ target: { name: 'description', value: selectedRisk.description } });
+      const ownerOption = profilesOptions.find(option => option.value === selectedRisk.ownerRisk);
+      if (ownerOption) {
+        setOwnerValue(ownerOption);
+      } else {
+        // Si la valeur n'est pas dans les options, définir une valeur personnalisée
+        setOwnerValue({ value: selectedRisk.ownerRisk, label: selectedRisk.ownerRisk });
+      }
+      const nomineeOption = profilesOptions.find(option => option.value === selectedRisk.nomineeRisk);
+      if (nomineeOption) {
+        setNomineeValue(nomineeOption);
+      } else {
+        setNomineeValue({ value: selectedRisk.nomineeRisk, label: selectedRisk.nomineeRisk });
+      }
+      const reviewerOption = profilesOptions.find(option => option.value === selectedRisk.reviewerRisk);
+      if (reviewerOption) {
+        setReviewerValue(reviewerOption);
+      } else {
+        setReviewerValue({ value: selectedRisk.reviewerRisk, label: selectedRisk.reviewerRisk });
+      }
+    }
+  }, [selectedRisk]);
   return (
     <Box>
       <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" alignItems="flex-start" p={4}>
@@ -132,8 +161,11 @@ console.log(selectedRisk.reviewerRisk)
                   placeholder='Select owner'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === riskFormData.owner || null)}
-                  onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
+                  value={ownerValue} // Utiliser l'état pour la valeur
+                  onChange={(selectedOption) => {
+                    setOwnerValue(selectedOption);
+                    handleSelectChange('ownerRisk', selectedOption);
+                  }}
                 />
               </Box>
             </HStack>
@@ -148,8 +180,11 @@ console.log(selectedRisk.reviewerRisk)
                   placeholder='Select nominee'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === riskFormData.nominee || null)}
-                  onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
+                  value={nomineeValue}
+                  onChange={(selectedOption) => {
+                    setNomineeValue(selectedOption);
+                    handleSelectChange('nomineeRisk', selectedOption);
+                  }}
                 />
               </Box>
             </HStack>
@@ -164,8 +199,11 @@ console.log(selectedRisk.reviewerRisk)
                   placeholder='Select reviewer'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(option => option.value === riskFormData.reviewer || null)}
-                  onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
+                  value={reviewerValue}
+                  onChange={(selectedOption) => {
+                    setReviewerValue(selectedOption);
+                    handleSelectChange('reviewerRisk', selectedOption);
+                  }}
                 />
               </Box>
             </HStack>
@@ -253,10 +291,10 @@ console.log(selectedRisk.reviewerRisk)
         <Button fontSize={12} colorScheme="yellow" variant="outline" leftIcon={<CloseIcon />}>
           Unapprove
         </Button>
-        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} onClick={handleSave}>
+        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
           Save
         </Button>
-        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />}>
+        <Button fontSize={12} colorScheme="teal" variant="outline" leftIcon={<EditIcon />} onClick={handleAmend}>
           Amend
         </Button>
         <Button fontSize={12} colorScheme="red" variant="outline" leftIcon={<DeleteIcon />}>

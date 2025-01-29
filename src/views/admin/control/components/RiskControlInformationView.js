@@ -63,10 +63,10 @@ const RiskControlInformationView = ({
   });
 
   const [formDataRiskForm, setFormDataRiskForm] = useState({
-    owner: null,
+    ownerRisk: null,
     ownerEmailChecked: false,
-    nominee: null,
-    reviewer: null,
+    nomineeRisk: null,
+    reviewerRisk: null,
     activeRisk: true,
     description: "",
     frequency: "",
@@ -77,8 +77,8 @@ const RiskControlInformationView = ({
     controlRef: "",
     controlCategory: "",
     description: "",
-    nominee: null,
-    reviewer: null,
+    nomineeRisk: null,
+    reviewerRisk: null,
     reviewDate: "",
     frequency: "",
     lastOperation: "",

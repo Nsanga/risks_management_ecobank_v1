@@ -5,9 +5,9 @@ export const listEntityRiskControls = (entityName) => ({
   payload: {entityName}
 });
 
-export const updateEntityRiskControl = (id, entityRiskControlData) => ({
+export const updateEntityRiskControl = (entityRiskControlData) => ({
     type: types.UPDATE_ENTITYRISKCONTROL_REQUEST,
-    payload: {id, entityRiskControlData}
+    payload: {entityRiskControlData}
   });
 
   export const AddEntityRiskControl = (entityRiskControlData) => ({

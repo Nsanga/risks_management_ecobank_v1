@@ -462,7 +462,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                           key={col.key}
                           onClick={() => handleRowClick(row, index)}
                         >
-                          {row[col.key]}
+                          {row[col.key]?.length > 20 ? `${row[col.key].substring(0, 16)}...` : row[col.key]}
                         </Td>
                       ))}
                     </Tr>
