@@ -43,11 +43,12 @@ import { listEntityRiskControls } from "redux/entityRiskControl/action";
 import Loader from "../../../../assets/img/loader.gif";
 import { copyEntityRiskControl } from "redux/entityRiskControl/action";
 import { moveEntityRiskControl } from "redux/entityRiskControl/action";
+import BulkAmendModal from "./BulkAmendModal"; // Importez la nouvelle modal
 
 function AddControl({ entityRiskControls, loading, entities, profiles }) {
-  const { isOpen, onOpen, onClose } = useDisclosure(); // useDisclosure for modal control
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false); // To differentiate between add and edit mode
+  const [isEditMode, setIsEditMode] = useState(false);
   const [currentView, setCurrentView] = useState("Risks");
   const [currenChoice, setCurrentChoice] = useState(null);
   const [indexChoice, setIndexChoice] = useState(null);
@@ -73,20 +74,25 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     Kits: [],
     Obligations: [],
   });
+  const [isBulkAmendModalOpen, setIsBulkAmendModalOpen] = useState(false); // État pour la modal Bulk Amend
   const dispatch = useDispatch();
 
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
-    const { _id } = row; // Identifiant unique de la ligne
+    const { _id } = row;
     if (isChecked) {
-      // Ajouter l'ID si la ligne est sélectionnée
       setSelectedRows((prev) => [...prev, _id]);
     } else {
-      // Supprimer l'ID si la ligne est désélectionnée
-      setSelectedRows((prev) =>
-        prev.filter((selectedId) => selectedId !== _id)
-      );
+      setSelectedRows((prev) => prev.filter((selectedId) => selectedId !== _id));
     }
+  };
+
+  // Gestion de la sauvegarde des modifications dans BulkAmendModal
+  const handleBulkAmendSave = ({ owner, nominee, reviewer }) => {
+    console.log("Selected Owner:", owner);
+    console.log("Selected Nominee:", nominee);
+    console.log("Selected Reviewer:", reviewer);
+    // Ajoutez ici la logique pour appliquer les modifications en masse
   };
 
   useEffect(() => {
@@ -138,12 +144,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       { label: "Nominee", key: "nomineeRisk" },
       { label: "Reviewer", key: "reviewerRisk" },
       { label: "Category", key: "riskCategory" },
-      // { label: "Residual Exposure", key: "exposure" },
     ],
     Controls: [
       { label: "Reference Id", key: "reference" },
       { label: "Description", key: "controlSummary" },
-      { label: "Library", key: "library" }, // Adjust this according to actual data structure
+      { label: "Library", key: "library" },
       { label: "Category", key: "preventiveDetectiveControl" },
       { label: "Owner", key: "ownerControl" },
       { label: "Nominee", key: "nomineeControl" },
@@ -160,10 +165,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       Kits: [],
       Obligations: [],
     });
-  }, []); // Le tableau de dépendances vide signifie que cela ne s'exécute qu'une seule fois lors du montage
+  }, []);
 
   useEffect(() => {
-    // Mettre à jour viewData lorsque entityRiskControls change
     if (entityRiskControls.length > 0) {
       setViewData({
         Risks: entityRiskControls[0]?.risks || [],
@@ -174,7 +178,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         Obligations: [],
       });
     } else {
-      // Réinitialiser viewData si entityRiskControls est vide
       setViewData({
         Risks: [],
         Controls: [],
@@ -194,7 +197,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   };
 
   const entitiesOptions = entities?.map((entity, index) => ({
-    key: `${entity._id}-${index}`, // Unicité assurée
+    key: `${entity._id}-${index}`,
     value: entity._id,
     label: `ENT${entity.referenceId} CAM - ${entity.description}`,
     description: entity.description,
@@ -242,8 +245,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
     if (selectedOption) {
       setSelectedEntity(selectedOption.fullEntity);
-      setSelectedEntityDescription(selectedOption.description); // Stocke la description
-      // On dispatch l'action pour récupérer les données spécifiques à l'entité
+      setSelectedEntityDescription(selectedOption.description);
       dispatch(listEntityRiskControls(selectedOption.description));
     }
     setSelectedRows([]);
@@ -256,14 +258,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     const selectedIds = selectedRows;
     const targetEntityId = formData.entityCopy;
 
-    // Dispatch l'action de copie et attendez qu'elle soit terminée
     await dispatch(
       copyEntityRiskControl(selectedIds, targetEntityId, itemType)
     );
 
-    // Fermez la modal et rafraîchissez la liste
     closeCopyModal();
-    dispatch(listEntityRiskControls(selectedEntityDescription)); // Rafraîchit la liste avec la description
+    dispatch(listEntityRiskControls(selectedEntityDescription));
     setIsRadioCopyChecked(false);
     setSelectedRows([]);
     setFormData({ entity: null, entityMove: null, entityCopy: null });
@@ -274,14 +274,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     const selectedIds = selectedRows;
     const targetEntityId = formData.entityMove;
 
-    // Dispatch l'action de déplacement et attendez qu'elle soit terminée
     await dispatch(
       moveEntityRiskControl(selectedIds, targetEntityId, itemType)
     );
 
-    // Fermez la modal et rafraîchissez la liste
     closeMoveModal();
-    dispatch(listEntityRiskControls(selectedEntityDescription)); // Rafraîchit la liste avec la description
+    dispatch(listEntityRiskControls(selectedEntityDescription));
     setIsRadioMoveChecked(false);
     setSelectedRows([]);
     setFormData({ entity: null, entityMove: null, entityCopy: null });
@@ -343,7 +341,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         mb={5}
         w="100%"
       >
-        {/* Modal for Adding or Editing Controls */}
         {selectedRisk && (
           <RiskControlInformationView
             isOpen={isOpen}
@@ -369,7 +366,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             </FormControl> */}
           </Flex>
 
-          {/* Toggle between different views */}
           <Flex direction="row" alignItems="center" mb={4}>
             <Box fontSize={12} mr={4}>
               Show:
@@ -384,7 +380,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                     size="sm"
                     key={view}
                     value={view}
-                    isDisabled={viewData[view].length === 0} // Disable if no data
+                    isDisabled={viewData[view].length === 0}
                   >
                     <span style={{ fontSize: 12 }}>{view}</span>
                   </Radio>
@@ -393,19 +389,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             </RadioGroup>
           </Flex>
 
-          {/* Filters */}
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="200px">
               <FormLabel fontSize={12}>Filter on</FormLabel>
               <Select styles={customStyles} placeholder="Filter by" />
-              {/* <option value="approved">Approved</option>
-                <option value="pending">Pending</option> */}
             </FormControl>
             <FormControl mr={4} maxW="150px">
               <FormLabel fontSize={12}>Status</FormLabel>
               <Select styles={customStyles} placeholder="Select status" />
-              {/* <option value="active">Active</option>
-                <option value="inactive">Inactive</option> */}
             </FormControl>
             <FormControl mr={4} maxW="150px">
               <FormLabel fontSize={12}>Number of {currentView}</FormLabel>
@@ -425,14 +416,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </Flex>
         </Box>
 
-        {/* Table for the selected view */}
         {numberOfItems > 0 ? (
           <>
             <Table variant="simple" mt={4}>
               <Thead>
                 <Tr>
-                  <Th fontSize={10}></Th>{" "}
-                  {/* Colonne pour les cases à cocher */}
+                  <Th fontSize={10}></Th>
                   {columnsByView[currentView].map((col) => (
                     <Th fontSize={10} key={col.key}>
                       {col.label}
@@ -448,7 +437,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 <Tbody>
                   {viewData[currentView].map((row, index) => (
                     <Tr key={index} cursor="pointer">
-                      {/* Case à cocher */}
                       <Td>
                         <Checkbox
                           onChange={(e) =>
@@ -457,14 +445,15 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                           isChecked={isRowSelected(row)}
                         />
                       </Td>
-                      {/* Données des colonnes */}
                       {columnsByView[currentView].map((col) => (
                         <Td
                           fontSize={12}
                           key={col.key}
                           onClick={() => handleRowClick(row, index)}
                         >
-                          {row[col.key]?.length > 20 ? `${row[col.key].substring(0, 16)}...` : row[col.key]}
+                          {row[col.key]?.length > 20
+                            ? `${row[col.key].substring(0, 16)}...`
+                            : row[col.key]}
                         </Td>
                       ))}
                     </Tr>
@@ -487,7 +476,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       </Flex>
       {selectedRows.length > 0 && (
         <HStack mt={4} spacing={4} justifyContent="start">
-          <Button colorScheme="blue" fontSize={12} leftIcon={<EditIcon />}>
+          <Button
+            colorScheme="blue"
+            fontSize={12}
+            leftIcon={<EditIcon />}
+            onClick={() => setIsBulkAmendModalOpen(true)}
+          >
             Bulk Amend
           </Button>
           <Button
@@ -646,6 +640,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Modal Bulk Amend */}
+      <BulkAmendModal
+        isOpen={isBulkAmendModalOpen}
+        onClose={() => setIsBulkAmendModalOpen(false)}
+        profiles={profiles}
+        onSave={handleBulkAmendSave}
+      />
 
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}
       {selectedEntity && (
