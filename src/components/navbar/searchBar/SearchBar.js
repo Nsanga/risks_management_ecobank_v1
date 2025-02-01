@@ -76,44 +76,45 @@ export function SearchBar(props) {
 
   const handleInputChange = (event) => {
     const input = event.target.value;
-      setInputValue(input);
+    setInputValue(input);
   };
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 15, marginRight: 15 }}>
       <RadioGroup onChange={handleRadioChange} value={value}>
         <Stack direction='row'>
-          <Radio value='1'><span style={{ fontSize:12}}>Risk</span></Radio>
-          <Radio value='2'><span style={{ fontSize:12}}>Control</span></Radio>
-          <Radio value='3'><span style={{ fontSize:12}}>Event</span></Radio>
-          <Radio value='4'><span style={{ fontSize:12}}>Entity</span></Radio>
-          <Radio value='5'><span style={{ fontSize:12}}>Action</span></Radio>
-          <Radio value='6'><span style={{ fontSize:12}}>Key Indicator</span></Radio>
+          <Radio value='1'><span style={{ fontSize: 12 }}>Event</span></Radio>
+          <Radio value='2'><span style={{ fontSize: 12 }}>Entity</span></Radio>
+          <Radio value='3'><span style={{ fontSize: 12 }}>Risk</span></Radio>
+          <Radio value='4'><span style={{ fontSize: 12 }}>Control</span></Radio>
+          <Radio value='5'><span style={{ fontSize: 12 }}>Key Indicator</span></Radio>
+          <Radio value='6'><span style={{ fontSize: 12 }}>Action</span></Radio>
+
         </Stack>
       </RadioGroup>
       <Box style={{ width: 180 }}>
         <InputGroup>
           <InputLeftElement pointerEvents="none">
             <Box fontSize={12}>{placeholder}</Box>
-          </InputLeftElement> 
+          </InputLeftElement>
           <Input
-          fontSize={12}
+            fontSize={12}
             placeholder='ref number'
             value={inputValue}
             onChange={handleInputChange}
-            // pl={placeholder.length * 8} // Adjust the padding to fit the prefix length
+          // pl={placeholder.length * 8} // Adjust the padding to fit the prefix length
           />
           <IconButton
-          ml={4}
+            ml={4}
             aria-label='Search database'
             icon={<SearchIcon />}
             variant='solid'
             size="md"
             onClick={handleSearch}
           />
-        </InputGroup> 
+        </InputGroup>
       </Box>
     </div>
-    
+
   );
 }
