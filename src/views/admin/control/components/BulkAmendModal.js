@@ -12,25 +12,41 @@ import {
   FormControl,
   FormLabel,
   Select,
-  Textarea,
+  useToast,
 } from "@chakra-ui/react";
 
 const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => {
   const [owner, setOwner] = React.useState("");
   const [nominee, setNominee] = React.useState("");
   const [reviewer, setReviewer] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [isEditing, setIsEditing] = React.useState(false);
+  const toast = useToast();
 
   const handleSave = () => {
+    // Vérifier que owner et nominee sont remplis
+    if (!owner || !nominee) {
+      toast({
+        title: "Erreur",
+        description: "Owner et Nominee sont obligatoires.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     // Passer les valeurs sélectionnées à la fonction onSave
     onSave({
       owner,
       nominee,
       reviewer,
-      description,
       selectedRows, // Passer les lignes sélectionnées
     });
     onClose(); // Fermer la modal
+  };
+
+  const handleAmend = () => {
+    setIsEditing(true); // Activer l'édition
   };
 
   return (
@@ -40,13 +56,14 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
         <ModalHeader fontSize={14}>Bulk Amend</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl mb={4}>
+          <FormControl mb={4} isRequired>
             <FormLabel fontSize={12}>Owner</FormLabel>
             <Select
               placeholder="Select Owner"
               fontSize={12}
               value={owner}
               onChange={(e) => setOwner(e.target.value)}
+              isDisabled={!isEditing}
             >
               {profiles.map((profile) => (
                 <option key={profile._id} value={profile._id}>
@@ -56,13 +73,14 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
             </Select>
           </FormControl>
 
-          <FormControl mb={4}>
+          <FormControl mb={4} isRequired>
             <FormLabel fontSize={12}>Nominee</FormLabel>
             <Select
               placeholder="Select Nominee"
               fontSize={12}
               value={nominee}
               onChange={(e) => setNominee(e.target.value)}
+              isDisabled={!isEditing}
             >
               {profiles.map((profile) => (
                 <option key={profile._id} value={profile._id}>
@@ -79,6 +97,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
               fontSize={12}
               value={reviewer}
               onChange={(e) => setReviewer(e.target.value)}
+              isDisabled={!isEditing}
             >
               {profiles.map((profile) => (
                 <option key={profile._id} value={profile._id}>
@@ -87,24 +106,27 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
               ))}
             </Select>
           </FormControl>
-
-          <FormControl mb={4}>
-            <FormLabel fontSize={12}>Description</FormLabel>
-            <Textarea
-              placeholder="Enter description"
-              fontSize={12}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" fontSize={12} mr={3} onClick={handleSave}>
-            Save
-          </Button>
-          <Button colorScheme="red" fontSize={12} onClick={onClose}>
-            Cancel
-          </Button>
+          {isEditing ? (
+            <>
+              <Button
+                colorScheme="blue"
+                fontSize={12}
+                mr={3}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+              <Button colorScheme="red" fontSize={12} onClick={onClose}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button colorScheme="blue" fontSize={12} onClick={handleAmend}>
+              Amend
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
