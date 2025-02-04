@@ -11,16 +11,22 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Select,
   useToast,
 } from "@chakra-ui/react";
+import Select from "react-select"; // Import de react-select
 
 const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => {
-  const [owner, setOwner] = React.useState("");
-  const [nominee, setNominee] = React.useState("");
-  const [reviewer, setReviewer] = React.useState("");
+  const [owner, setOwner] = React.useState(null);
+  const [nominee, setNominee] = React.useState(null);
+  const [reviewer, setReviewer] = React.useState(null);
   const [isEditing, setIsEditing] = React.useState(false);
   const toast = useToast();
+
+  // Convertir les profils en format compatible avec react-select
+  const profileOptions = profiles.map((profile) => ({
+    value: profile._id,
+    label: profile.name,
+  }));
 
   const handleSave = () => {
     // Vérifier que owner et nominee sont remplis
@@ -37,9 +43,9 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
 
     // Passer les valeurs sélectionnées à la fonction onSave
     onSave({
-      owner,
-      nominee,
-      reviewer,
+      owner: owner.value,
+      nominee: nominee.value,
+      reviewer: reviewer ? reviewer.value : null,
       selectedRows, // Passer les lignes sélectionnées
     });
     onClose(); // Fermer la modal
@@ -60,51 +66,33 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
             <FormLabel fontSize={12}>Owner</FormLabel>
             <Select
               placeholder="Select Owner"
-              fontSize={12}
+              options={profileOptions}
               value={owner}
-              onChange={(e) => setOwner(e.target.value)}
+              onChange={(selectedOption) => setOwner(selectedOption)}
               isDisabled={!isEditing}
-            >
-              {profiles.map((profile) => (
-                <option key={profile._id} value={profile._id}>
-                  {profile.name}
-                </option>
-              ))}
-            </Select>
+            />
           </FormControl>
 
           <FormControl mb={4} isRequired>
             <FormLabel fontSize={12}>Nominee</FormLabel>
             <Select
               placeholder="Select Nominee"
-              fontSize={12}
+              options={profileOptions}
               value={nominee}
-              onChange={(e) => setNominee(e.target.value)}
+              onChange={(selectedOption) => setNominee(selectedOption)}
               isDisabled={!isEditing}
-            >
-              {profiles.map((profile) => (
-                <option key={profile._id} value={profile._id}>
-                  {profile.name}
-                </option>
-              ))}
-            </Select>
+            />
           </FormControl>
 
           <FormControl mb={4}>
             <FormLabel fontSize={12}>Reviewer</FormLabel>
             <Select
               placeholder="Select Reviewer"
-              fontSize={12}
+              options={profileOptions}
               value={reviewer}
-              onChange={(e) => setReviewer(e.target.value)}
+              onChange={(selectedOption) => setReviewer(selectedOption)}
               isDisabled={!isEditing}
-            >
-              {profiles.map((profile) => (
-                <option key={profile._id} value={profile._id}>
-                  {profile.name}
-                </option>
-              ))}
-            </Select>
+            />
           </FormControl>
         </ModalBody>
         <ModalFooter>
