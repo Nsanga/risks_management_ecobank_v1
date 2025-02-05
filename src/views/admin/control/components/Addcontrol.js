@@ -575,7 +575,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 <Text fontSize={12}>To Entity :</Text>
                 <Box width={280}>
                   <Select
-                    options={entitiesOptions}
+                    options={entitiesOptions.filter(
+                      (item) => item.description !== "Corbeille "
+                    )}
                     styles={customStyles}
                     placeholder="Select Entity"
                     value={entitiesOptions?.find(
