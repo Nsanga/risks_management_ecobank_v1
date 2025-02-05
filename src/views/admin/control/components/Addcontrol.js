@@ -157,17 +157,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   };
 
   useEffect(() => {
-    setViewData({
-      Risks: [],
-      Controls: [],
-      Events: [],
-      Actions: [],
-      Kits: [],
-      Obligations: [],
-    });
-  }, []);
-
-  useEffect(() => {
+    console.log(entityRiskControls)
     if (entityRiskControls.length > 0) {
       setViewData({
         Risks: entityRiskControls[0]?.risks || [],
@@ -177,16 +167,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         Kits: [],
         Obligations: [],
       });
-    } else {
-      setViewData({
-        Risks: [],
-        Controls: [],
-        Events: [],
-        Actions: [],
-        Kits: [],
-        Obligations: [],
+      setFormData({
+        entity: null,
+        entityMove: null,
+        entityCopy: null,
       });
-    }
+    } 
   }, [entityRiskControls]);
 
   const handleRowClick = (item, index) => {
