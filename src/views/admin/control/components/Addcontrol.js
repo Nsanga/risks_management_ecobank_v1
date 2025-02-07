@@ -172,7 +172,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         entityMove: null,
         entityCopy: null,
       });
-    } 
+    }
   }, [entityRiskControls]);
 
   const handleRowClick = (item, index) => {
@@ -270,7 +270,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setSelectedRows([]);
     setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
-
+  
   return (
     <>
       {/* <Flex
@@ -280,45 +280,45 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         mb={5}
         w="100%"
       > */}
-        <Flex alignItems="center" justifyContent="space-between">
-          <FormControl mr={4} maxW="250px">
-            <FormLabel fontSize={18}>Entity</FormLabel>
-            <Select
-              options={entitiesOptions}
-              styles={customStyles}
-              placeholder="Select Entity"
-              value={entitiesOptions?.find(
-                (ent) => ent.value === formData.entity
-              )}
-              onChange={(selectedOption) =>
-                handleSelectChange("entity", selectedOption)
-              }
-            />
-          </FormControl>
-          <Flex gap={4}>
-            <Button
-              fontSize={12}
-              onClick={openModal}
-              variant="solid"
-              colorScheme="blue"
-              leftIcon={<AddIcon />}
-            >
-              Add
-            </Button>
-            <Button
-              fontSize={12}
-              variant="solid"
-              colorScheme="green"
-              leftIcon={<EditIcon />}
-              disabled={!selectedEntity}
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
-            >
-              Amend
-            </Button>
-          </Flex>
+      <Flex alignItems="center" justifyContent="space-between">
+        <FormControl mr={4} maxW="250px">
+          <FormLabel fontSize={18}>Entity</FormLabel>
+          <Select
+            options={entitiesOptions}
+            styles={customStyles}
+            placeholder="Select Entity"
+            value={entitiesOptions?.find(
+              (ent) => ent.value === formData.entity
+            )}
+            onChange={(selectedOption) =>
+              handleSelectChange("entity", selectedOption)
+            }
+          />
+        </FormControl>
+        <Flex gap={4}>
+          {/* <Button
+            fontSize={12}
+            onClick={openModal}
+            variant="solid"
+            colorScheme="blue"
+            leftIcon={<AddIcon />}
+          >
+            Add
+          </Button> */}
+          <Button
+            fontSize={12}
+            variant="solid"
+            colorScheme="green"
+            leftIcon={<EditIcon />}
+            disabled={!selectedEntity}
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Amend
+          </Button>
         </Flex>
+      </Flex>
       {/* </Flex> */}
       <Flex
         direction="column"
@@ -501,6 +501,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             <Flex direction="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>From Entity :</Text>
+                <Input
+                  name="entitySelecter"
+                  value={selectedEntity ? "ENT" + selectedEntity?.referenceId + " CAM - " + selectedEntity?.description : 'None'}
+                  width={280}
+                  fontSize="12px"
+                  readOnly
+                />
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>To Entity :</Text>
@@ -570,6 +577,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             <Flex direction="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>From Entity :</Text>
+                <Input
+                  name="entitySelecter"
+                  value={selectedEntity ? "ENT" + selectedEntity?.referenceId + " CAM - " + selectedEntity?.description : 'None'}
+                  width={280}
+                  fontSize="12px"
+                  readOnly
+                />
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>To Entity :</Text>

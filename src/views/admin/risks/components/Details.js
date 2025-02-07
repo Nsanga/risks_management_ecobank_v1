@@ -19,7 +19,6 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
         return formattedTime;
     }
-    console.log('>>>>>>>>>>>>>>', event)
 
     const [formData, setFormData] = useState({
         event_date: '',
@@ -51,11 +50,17 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
     const profilesOptions = profiles
         ?.filter(profile => profile.activeUser)
-        ?.map((profile, index) => ({
-            key: `${profile._id}-${index}`, // Unicité assurée
-            value: profile.email,
-            label: `${profile.name} ${profile.surname}`,
-        }));
+        ?.map((profile, index) => {
+            // Vérification de la présence de name et surname
+            const name = profile.name ? profile.name : "";
+            const surname = profile.surname ? profile.surname : "";
+
+            return {
+                key: `${profile._id}-${index}`, // Unicité assurée
+                value: profile.email,
+                label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+            };
+        });
 
     const entitiesOptions = entities?.map((entity, index) => ({
         key: `${entity._id}-${index}`, // Unicité assurée
@@ -98,9 +103,9 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 recorded_date: event.details.recorded_date || '',
                 description: event.details.description || '',
                 descriptionDetailled: event.details.descriptionDetailled || '',
-                owner: event.details.owner ? event.details.owner._id : null,
-                nominee: event.details.nominee ? event.details.nominee._id : null,
-                reviewer: event.details.reviewer ? event.details.reviewer._id : null,
+                owner: event.details.owner ? `${event.details.owner?.name} ${event.details.owner?.surname}` : null,
+                nominee: event.details.nominee ? `${event.details.nominee?.name} ${event.details.nominee?.surname}` : null,
+                reviewer: event.details.reviewer ? `${event.details.reviewer?.name} ${event.details.reviewer?.surname}` : null,
                 reviewer_date: event.details.reviewer_date ? new Date(event.details.reviewer_date).toISOString().split('T')[0] : '',
                 activeEvent: event.details.activeEvent || false,
                 excludeFundLosses: event.details.excludeFundLosses || false,
@@ -132,20 +137,22 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     const customStyles = {
         control: (provided) => ({
             ...provided,
-            fontSize: '14px'
+            fontSize: '14px',
         }),
         menu: (provided) => ({
             ...provided,
-            fontSize: '14px'
+            fontSize: '14px',
+            maxHeight: '200px', // Définir la hauteur maximale du menu
+            overflowY: 'auto', // Activer le défilement si le contenu dépasse la hauteur
         }),
         option: (provided) => ({
             ...provided,
-            fontSize: '14px'
+            fontSize: '14px',
         }),
         singleValue: (provided) => ({
             ...provided,
-            fontSize: '14px'
-        })
+            fontSize: '14px',
+        }),
     };
 
     const handleInputChange = (field, value) => {
@@ -167,23 +174,19 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
     const recordedName = localStorage.getItem('username');
 
-    const handleSubmit = () => {
-        console.log('Payload:', formData);
-    };
-
     return (
         <Box>
             <Box pt={5} pb={5}>
                 <Box bg='green.400' color='#FFF' mb={6} padding={2}>
                     Description <span style={{ color: 'red' }}>*</span>
                 </Box>
-                <Input placeholder='Event description' size='sm' value={formData.description} onChange={(e) => handleInputChange('description', e.target.value)} />
+                <Input name='description' placeholder='Event description' size='sm' value={formData.description} onChange={(e) => handleInputChange('description', e.target.value)} />
             </Box>
             <Box pt={5} pb={5}>
                 <Box bg='green.400' color='#FFF' mb={6} padding={2}>
                     Detailed Description
                 </Box>
-                <Textarea placeholder='Description détaillée' size='sm' value={formData.descriptionDetailled} onChange={(e) => handleInputChange('descriptionDetailled', e.target.value)} />
+                <Textarea name='descriptionDetailled' placeholder='Description détaillée' size='sm' value={formData.descriptionDetailled} onChange={(e) => handleInputChange('descriptionDetailled', e.target.value)} />
             </Box>
             <Flex flexDirection='column' gap={4}>
                 <Flex justifyContent='space-between' alignItems="center">
@@ -350,7 +353,8 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="owner"
                                     placeholder='Select owner'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.owner)}
+                                    styles={customStyles}
+                                    value={profilesOptions?.find(option => event ? option.label === formData.owner : option.value === formData.owner) || null} // Assurez-vous que la valeur est null si non trouvée
                                     onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                                 />
                             </Box>
@@ -362,7 +366,8 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="nominee"
                                     placeholder='Select nominee'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.nominee)}
+                                    styles={customStyles}
+                                    value={profilesOptions?.find(option => event ? option.label === formData.nominee : option.value === formData.nominee)}
                                     onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                                 />
                             </Box>
@@ -374,7 +379,8 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     name="reviewer"
                                     placeholder='Select reviewer'
                                     options={profilesOptions}
-                                    value={profilesOptions?.find(option => option.value === formData.reviewer)}
+                                    styles={customStyles}
+                                    value={profilesOptions?.find(option => event ? option.label === formData.reviewer : option.value === formData.reviewer)}
                                     onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                                 />
                             </Box>

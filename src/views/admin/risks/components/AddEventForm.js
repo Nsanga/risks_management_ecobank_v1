@@ -13,7 +13,8 @@ import {
   TabPanel,
   Box,
   Flex,
-  Button
+  Button,
+  Image
 } from "@chakra-ui/react";
 import { useDisclosure } from '@chakra-ui/react';
 import Details from "./Details";
@@ -28,6 +29,8 @@ import { FaFilePen } from "react-icons/fa6";
 import { connect, useDispatch } from "react-redux";
 import { AddEvent } from "redux/events/action";
 import { updateEvent } from "redux/events/action";
+import toast from 'react-hot-toast';
+import Loader from "../../../../assets/img/loader.gif";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -43,6 +46,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const [financesData, setFinancesData] = useState([]);
   const [additionalData, setAdditionalData] = useState({});
   const [currency, setCurrency] = useState(null);
+  const [isLoading, setIsLoading] = useState(null);
 
   const categories = data.map(item => item.title);
 
@@ -73,31 +77,38 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const approved = true
 
   const handleSubmit = async () => {
-    const payload = {
-      details: {
-        ...detailsData,
-        rate: currency,
-      },
-      commentary: {
-        ...commentaryData
-      },
-      financials: [
-        ...financesData
-      ],
-      additionnalInfo: [
-        ...additionalInfoData
-      ],
-      approved: approved
-    };
+    if (!detailsData.description || !detailsData.entityOfDetection || !detailsData.entityOfOrigin || !detailsData.owner || !detailsData.nominee) {
+      toast.error('Please enter all required fields');
+    } else {
+      const payload = {
+        details: {
+          ...detailsData,
+          rate: currency,
+        },
+        commentary: {
+          ...commentaryData
+        },
+        financials: [
+          ...financesData
+        ],
+        additionnalInfo: [
+          ...additionalInfoData
+        ],
+        approved: approved
+      };
 
-    console.log(payload);
+      console.log(payload);
 
-    try {
-      await dispatch(AddEvent(payload));
-      onClose(); // Ferme la modal après la soumission réussie
-    } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
-      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+      setIsLoading(true);
+      try {
+        await dispatch(AddEvent(payload));
+        onClose(); // Ferme la modal après la soumission réussie
+      } catch (error) {
+        console.error('Erreur lors de la soumission:', error);
+        // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+      } finally {
+        setIsLoading(false)
+      }
     }
   };
 
@@ -143,7 +154,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         </Box>
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size='full'>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{event ? `EVT${event.num_ref} ${truncateText(event?.details.description, 50)}` : 'New event'}</ModalHeader>
@@ -175,8 +186,18 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={ event ? handleUpdate : handleSubmit} colorScheme="blue" mr={2}>
-              {event ? "Amend and Approuve" : "Save and Approuve"}
+            <Button onClick={event ? handleUpdate : handleSubmit} colorScheme="blue" mr={2}>
+              {
+                isLoading ? (
+                  <Flex alignItems="center" justifyContent="center" width="100%">
+                    <Image src={Loader} alt="Loading..." height={25} width={25} />
+                  </Flex>
+                ) : (
+                  <>
+                    {event ? "Amend and Approuve" : "Save and Approuve"}
+                  </>
+                )
+              }
             </Button>
             {/* <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} /> */}
             <Button colorScheme="red" mr={2} onClick={onClose}>Cancel</Button>

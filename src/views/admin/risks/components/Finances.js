@@ -267,8 +267,8 @@ const Finances = ({ onFinancesChange, financesData, isEdit, event }) => {
               </Tr>
             </Thead>
             <Tbody>
-              {tableData.map(row => (
-                <Tr key={row.id} height="10px">
+              {tableData.map((row, index) => (
+                <Tr key={index} height="10px">
                   <Td fontSize={12} width='20%' height="10px">{row.name}</Td>
                   <Td height="10px">
                     <Text fontSize={12}>{row.name === 'Total' ? row.total : calculateRowTotal(row)}</Text>
@@ -317,8 +317,8 @@ const Finances = ({ onFinancesChange, financesData, isEdit, event }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {tableData.map(row => (
-              <Tr key={row.id} height="10px">
+            {tableData.map((row, index) => (
+              <Tr key={index} height="10px">
                 <Td fontSize={12} width='20%' height="10px">{row.name}</Td>
                 <Td height="10px">
                   <Input

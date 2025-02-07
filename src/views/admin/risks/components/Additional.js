@@ -76,7 +76,7 @@ const Additional = ({ onAdditionalChange, event }) => {
   };
 
   return (
-    <>
+    <Box>
       <Table variant="simple">
         <Thead>
           <Tr>
@@ -119,7 +119,7 @@ const Additional = ({ onAdditionalChange, event }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 

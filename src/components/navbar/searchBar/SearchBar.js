@@ -26,7 +26,7 @@ export function SearchBar(props) {
   const inputText = useColorModeValue("gray.700", "gray.100");
   const [value, setValue] = React.useState('1');
   const [inputValue, setInputValue] = React.useState('');
-  const [placeholder, setPlaceholder] = React.useState('RSK');
+  const [placeholder, setPlaceholder] = React.useState('ENT');
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -38,7 +38,7 @@ export function SearchBar(props) {
   }, [dispatch]);
 
   const handleSearch = async () => {
-    if (value === '3') {
+    if (value === '4') {
       // Si l'option sélectionnée est "Event"
       try {
         // Filtrer l'événement correspondant au numéro de référence saisi
@@ -64,12 +64,12 @@ export function SearchBar(props) {
   const handleRadioChange = (nextValue) => {
     setValue(nextValue);
     const placeholders = {
-      '1': 'RSK',
-      '2': 'CTL',
-      '3': 'EVT',
-      '4': 'ENT',
-      '5': 'ACT',
-      '6': 'KRI',
+      '1': 'ENT',
+      '2': 'RSK',
+      '3': 'CTL',
+      '4': 'EVT',
+      '5': 'KRI',
+      '6': 'ACT',
     };
     setPlaceholder(placeholders[nextValue]);
   };
@@ -83,12 +83,12 @@ export function SearchBar(props) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 15, marginRight: 15 }}>
       <RadioGroup onChange={handleRadioChange} value={value}>
         <Stack direction='row'>
-          <Radio value='1'><span style={{ fontSize:12}}>Risk</span></Radio>
-          <Radio value='2'><span style={{ fontSize:12}}>Control</span></Radio>
-          <Radio value='3'><span style={{ fontSize:12}}>Event</span></Radio>
-          <Radio value='4'><span style={{ fontSize:12}}>Entity</span></Radio>
-          <Radio value='5'><span style={{ fontSize:12}}>Action</span></Radio>
-          <Radio value='6'><span style={{ fontSize:12}}>Key Indicator</span></Radio>
+          <Radio value='1'><span style={{ fontSize:12}}>Entity</span></Radio>
+          <Radio value='2'><span style={{ fontSize:12}}>Risk</span></Radio>
+          <Radio value='3'><span style={{ fontSize:12}}>Control</span></Radio>
+          <Radio value='4'><span style={{ fontSize:12}}>Event</span></Radio>
+          <Radio value='5'><span style={{ fontSize:12}}>Key Indicator</span></Radio>
+          <Radio value='6'><span style={{ fontSize:12}}>Action</span></Radio>
         </Stack>
       </RadioGroup>
       <Box style={{ width: 180 }}>
