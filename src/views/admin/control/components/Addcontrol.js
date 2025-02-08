@@ -287,37 +287,53 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
   return (
     <>
-      <Flex
+      {/* <Flex
         direction="column"
         justifyContent="flex-end"
         align="flex-end"
         mb={5}
         w="100%"
-      >
-        <Flex gap={4}>
-          <Button
-            fontSize={12}
-            onClick={openModal}
-            variant="solid"
-            colorScheme="blue"
-            leftIcon={<AddIcon />}
-          >
-            Add
-          </Button>
-          <Button
-            fontSize={12}
-            variant="solid"
-            colorScheme="green"
-            leftIcon={<EditIcon />}
-            disabled={!selectedEntity}
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-          >
-            Amend
-          </Button>
+      > */}
+        <Flex alignItems="center" justifyContent="space-between">
+          <FormControl mr={4} maxW="250px">
+            <FormLabel fontSize={18}>Entity</FormLabel>
+            <Select
+              options={entitiesOptions}
+              styles={customStyles}
+              placeholder="Select Entity"
+              value={entitiesOptions?.find(
+                (ent) => ent.value === formData.entity
+              )}
+              onChange={(selectedOption) =>
+                handleSelectChange("entity", selectedOption)
+              }
+            />
+          </FormControl>
+          <Flex gap={4}>
+            <Button
+              fontSize={12}
+              onClick={openModal}
+              variant="solid"
+              colorScheme="blue"
+              leftIcon={<AddIcon />}
+            >
+              Add
+            </Button>
+            <Button
+              fontSize={12}
+              variant="solid"
+              colorScheme="green"
+              leftIcon={<EditIcon />}
+              disabled={!selectedEntity}
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+            >
+              Amend
+            </Button>
+          </Flex>
         </Flex>
-      </Flex>
+      {/* </Flex> */}
       <Flex
         direction="column"
         justifyContent="center"
@@ -340,28 +356,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
           <Flex direction="row" align="center" justify="space-between" mb={4}>
-            <FormControl mr={4} maxW="250px">
-              <FormLabel fontSize={12}>Entity</FormLabel>
-              <Select
-                options={entitiesOptions}
-                styles={customStyles}
-                placeholder="Select Entity"
-                value={entitiesOptions?.find(
-                  (ent) => ent.value === formData.entity
-                )}
-                onChange={(selectedOption) =>
-                  handleSelectChange("entity", selectedOption)
-                }
-              />
-            </FormControl>
-            <FormControl fontSize={12} mr={4} maxW="150px">
+            {/* <FormControl fontSize={12} mr={4} maxW="150px">
               <FormLabel fontSize={12}>RAM</FormLabel>
               <Input fontSize={12} placeholder="RAM Value" />
             </FormControl>
             <FormControl maxW="150px">
               <FormLabel fontSize={12}>Owner</FormLabel>
               <Input fontSize={12} placeholder="Owner Name" />
-            </FormControl>
+            </FormControl> */}
           </Flex>
 
           <Flex direction="row" alignItems="center" mb={4}>
