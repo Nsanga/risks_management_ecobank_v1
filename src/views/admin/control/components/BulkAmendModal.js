@@ -11,26 +11,48 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Select,
-  Textarea,
+  useToast,
 } from "@chakra-ui/react";
+import Select from "react-select"; // Import de react-select
 
 const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => {
-  const [owner, setOwner] = React.useState("");
-  const [nominee, setNominee] = React.useState("");
-  const [reviewer, setReviewer] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [owner, setOwner] = React.useState(null);
+  const [nominee, setNominee] = React.useState(null);
+  const [reviewer, setReviewer] = React.useState(null);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const toast = useToast();
+
+  // Convertir les profils en format compatible avec react-select
+  const profileOptions = profiles.map((profile) => ({
+    value: profile._id,
+    label: profile.name,
+  }));
 
   const handleSave = () => {
+    // Vérifier que owner et nominee sont remplis
+    if (!owner || !nominee) {
+      toast({
+        title: "Erreur",
+        description: "Owner et Nominee sont obligatoires.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     // Passer les valeurs sélectionnées à la fonction onSave
     onSave({
-      owner,
-      nominee,
-      reviewer,
-      description,
+      owner: owner.value,
+      nominee: nominee.value,
+      reviewer: reviewer ? reviewer.value : null,
       selectedRows, // Passer les lignes sélectionnées
     });
     onClose(); // Fermer la modal
+  };
+
+  const handleAmend = () => {
+    setIsEditing(true); // Activer l'édition
   };
 
   return (
@@ -40,71 +62,59 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
         <ModalHeader fontSize={14}>Bulk Amend</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl mb={4}>
+          <FormControl mb={4} isRequired>
             <FormLabel fontSize={12}>Owner</FormLabel>
             <Select
               placeholder="Select Owner"
-              fontSize={12}
+              options={profileOptions}
               value={owner}
-              onChange={(e) => setOwner(e.target.value)}
-            >
-              {profiles.map((profile) => (
-                <option key={profile._id} value={profile._id}>
-                  {profile.name}
-                </option>
-              ))}
-            </Select>
+              onChange={(selectedOption) => setOwner(selectedOption)}
+              isDisabled={!isEditing}
+            />
           </FormControl>
 
-          <FormControl mb={4}>
+          <FormControl mb={4} isRequired>
             <FormLabel fontSize={12}>Nominee</FormLabel>
             <Select
               placeholder="Select Nominee"
-              fontSize={12}
+              options={profileOptions}
               value={nominee}
-              onChange={(e) => setNominee(e.target.value)}
-            >
-              {profiles.map((profile) => (
-                <option key={profile._id} value={profile._id}>
-                  {profile.name}
-                </option>
-              ))}
-            </Select>
+              onChange={(selectedOption) => setNominee(selectedOption)}
+              isDisabled={!isEditing}
+            />
           </FormControl>
 
           <FormControl mb={4}>
             <FormLabel fontSize={12}>Reviewer</FormLabel>
             <Select
               placeholder="Select Reviewer"
-              fontSize={12}
+              options={profileOptions}
               value={reviewer}
-              onChange={(e) => setReviewer(e.target.value)}
-            >
-              {profiles.map((profile) => (
-                <option key={profile._id} value={profile._id}>
-                  {profile.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl mb={4}>
-            <FormLabel fontSize={12}>Description</FormLabel>
-            <Textarea
-              placeholder="Enter description"
-              fontSize={12}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(selectedOption) => setReviewer(selectedOption)}
+              isDisabled={!isEditing}
             />
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" fontSize={12} mr={3} onClick={handleSave}>
-            Save
-          </Button>
-          <Button colorScheme="red" fontSize={12} onClick={onClose}>
-            Cancel
-          </Button>
+          {isEditing ? (
+            <>
+              <Button
+                colorScheme="blue"
+                fontSize={12}
+                mr={3}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+              <Button colorScheme="red" fontSize={12} onClick={onClose}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button colorScheme="blue" fontSize={12} onClick={handleAmend}>
+              Amend
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
