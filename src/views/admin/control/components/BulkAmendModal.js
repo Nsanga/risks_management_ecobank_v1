@@ -107,6 +107,9 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
         </ModalBody>
 
         <ModalFooter>
+        <Button colorScheme="red" fontSize={12} onClick={onClose}>
+            Cancel
+          </Button>
           <Button
             colorScheme="blue"
             fontSize={12}
@@ -114,9 +117,6 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
             onClick={handleSave}
           >
             Save
-          </Button>
-          <Button colorScheme="red" fontSize={12} onClick={onClose}>
-            Cancel
           </Button>
         </ModalFooter>
       </ModalContent>

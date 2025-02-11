@@ -621,7 +621,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent="start">
-            <Button
+              <Button
                 colorScheme="red"
                 fontSize={12}
                 leftIcon={<CloseIcon />}
