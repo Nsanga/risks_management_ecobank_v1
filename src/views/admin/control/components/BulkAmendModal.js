@@ -103,7 +103,6 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
             // isDisabled={!isEditing}
             />
           </FormControl>
-
         </ModalBody>
 
         <ModalFooter>
