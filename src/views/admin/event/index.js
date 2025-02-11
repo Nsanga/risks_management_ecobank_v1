@@ -211,7 +211,7 @@ const Event = ({ profiles, entities }) => {
                                         <Finances
                                             approved={event.details.approved_date}
                                             closed={event.details.closed_date}
-                                            targetClosure={moment(event.details.targetClosureDate).format('DD/MM/YYYY')}
+                                            targetClosure={event.details.targetClosureDate ? moment(event.details.targetClosureDate).format('DD/MM/YYYY') : ""}
                                             owner={event.details.owner?.name ? event.details.owner?.name + ' ' + event.details.owner?.surname : ""}
                                             nominee={event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
                                             reviewer={name + " " + surname}

@@ -1,4 +1,3 @@
-// BulkAmendModal.js
 import React from "react";
 import {
   Modal,
@@ -13,24 +12,25 @@ import {
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
-import Select from "react-select"; // Import de react-select
+import Select from "react-select";
+import { updateEntityRiskControl } from "redux/entityRiskControl/action";
+import { useDispatch } from "react-redux";
 
-const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [] }) => {
+const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [], itemType }) => {
   const [owner, setOwner] = React.useState(null);
   const [nominee, setNominee] = React.useState(null);
   const [reviewer, setReviewer] = React.useState(null);
   const [isEditing, setIsEditing] = React.useState(false);
   const toast = useToast();
+  const dispatch = useDispatch();
 
-  // Convertir les profils en format compatible avec react-select
   const profileOptions = profiles.map((profile) => ({
     value: profile._id,
     label: profile.name,
   }));
 
   const handleSave = () => {
-    console.log(selectedRows)
-    // Vérifier que owner et nominee sont remplis
+    console.log(selectedRows);
     if (!owner || !nominee) {
       toast({
         title: "Erreur",
@@ -42,18 +42,26 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
       return;
     }
 
-    // Passer les valeurs sélectionnées à la fonction onSave
-    onSave({
-      owner: owner.value,
-      nominee: nominee.value,
-      reviewer: reviewer ? reviewer.value : null,
-      selectedRows, // Passer les IDs des risques sélectionnés
-    });
-    onClose(); // Fermer la modal
-  };
+    const payload = {
+      itemIds: selectedRows,
+      itemType: itemType,
+      updates: itemType === "risk" ? {
+        ownerRisk: owner.label,
+        nomineeRisk: nominee.label,
+        reviewerRisk: reviewer ? reviewer.label : null,
+      } : {
+        ownerControl: owner.label,
+        nomineeControl: nominee.label,
+        reviewerControl: reviewer ? reviewer.label : null,
+      },
+    };
+    console.log(payload);
+    dispatch(updateEntityRiskControl(payload));
 
-  const handleAmend = () => {
-    setIsEditing(true); // Activer l'édition
+    onClose(); // Fermer la modal après sauvegarde
+    setOwner(null);
+    setNominee(null);
+    setReviewer(null);
   };
 
   return (
@@ -70,7 +78,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               options={profileOptions}
               value={owner}
               onChange={(selectedOption) => setOwner(selectedOption)}
-              // isDisabled={!isEditing}
+            // isDisabled={!isEditing}
             />
           </FormControl>
 
@@ -81,7 +89,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               options={profileOptions}
               value={nominee}
               onChange={(selectedOption) => setNominee(selectedOption)}
-              // isDisabled={!isEditing}
+            // isDisabled={!isEditing}
             />
           </FormControl>
 
@@ -92,34 +100,24 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               options={profileOptions}
               value={reviewer}
               onChange={(selectedOption) => setReviewer(selectedOption)}
-              // isDisabled={!isEditing}
+            // isDisabled={!isEditing}
             />
           </FormControl>
 
-          {/* Afficher les IDs des risques sélectionnés (pour débogage) */}
-          <FormControl mb={4}>
-            <FormLabel fontSize={12}>Risques sélectionnés</FormLabel>
-            <div>
-              {selectedRows.map((rowId) => (
-                <span key={rowId} style={{ marginRight: "8px" }}>
-                  {rowId}
-                </span>
-              ))}
-            </div>
-          </FormControl>
         </ModalBody>
+
         <ModalFooter>
-              <Button
-                colorScheme="blue"
-                fontSize={12}
-                mr={3}
-                onClick={handleSave}
-              >
-                Save
-              </Button>
-              <Button colorScheme="red" fontSize={12} onClick={onClose}>
-                Cancel
-              </Button>
+          <Button
+            colorScheme="blue"
+            fontSize={12}
+            mr={3}
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+          <Button colorScheme="red" fontSize={12} onClick={onClose}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

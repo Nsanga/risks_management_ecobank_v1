@@ -88,10 +88,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   };
 
   // Gestion de la sauvegarde des modifications dans BulkAmendModal
-  const handleBulkAmendSave = ({ owner, nominee, reviewer }) => {
-    console.log("Selected Owner:", owner);
-    console.log("Selected Nominee:", nominee);
-    console.log("Selected Reviewer:", reviewer);
+  const handleBulkAmendSave = ({ owner, nominee, reviewer, selectedRows }) => {
+    console.log("✅ IDs des risques sélectionnés :", selectedRows); // Vérifie ici
+    console.log("👤 Owner:", owner);
+    console.log("🤝 Nominee:", nominee);
+    console.log("🔍 Reviewer:", reviewer);
     // Ajoutez ici la logique pour appliquer les modifications en masse
   };
 
@@ -270,7 +271,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setSelectedRows([]);
     setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
-  
+
   return (
     <>
       {/* <Flex
@@ -649,6 +650,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         onClose={() => setIsBulkAmendModalOpen(false)}
         profiles={profiles}
         onSave={handleBulkAmendSave}
+        selectedRows={selectedRows} // ✅ Passer les IDs des risques sélectionnés
+        itemType={currentView === "Risks" ? "risk" : "control"}
       />
 
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}

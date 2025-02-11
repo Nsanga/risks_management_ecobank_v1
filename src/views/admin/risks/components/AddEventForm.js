@@ -77,7 +77,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const approved = true
 
   const handleSubmit = async () => {
-    if (!detailsData.description || !detailsData.entityOfDetection || !detailsData.entityOfOrigin || !detailsData.owner || !detailsData.nominee) {
+    if (!detailsData.description || !detailsData.entityOfDetection || !detailsData.entityOfOrigin || !detailsData.owner || !detailsData.nominee || !detailsData.detection_date) {
       toast.error('Please enter all required fields');
     } else {
       const payload = {

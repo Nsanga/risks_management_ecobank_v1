@@ -275,7 +275,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={12}>Detection Date :</Text>
+                                <Text fontSize={12}>Detection Date : <span style={{ color: 'red' }}>*</span></Text>
                                 <Box width={200}>
                                     <Input
                                         placeholder='Select Date'
