@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select"; // Import de react-select
 
-const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => {
+const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [] }) => {
   const [owner, setOwner] = React.useState(null);
   const [nominee, setNominee] = React.useState(null);
   const [reviewer, setReviewer] = React.useState(null);
@@ -46,7 +46,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
       owner: owner.value,
       nominee: nominee.value,
       reviewer: reviewer ? reviewer.value : null,
-      selectedRows, // Passer les lignes sélectionnées
+      selectedRows, // Passer les IDs des risques sélectionnés
     });
     onClose(); // Fermer la modal
   };
@@ -93,6 +93,18 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
               onChange={(selectedOption) => setReviewer(selectedOption)}
               isDisabled={!isEditing}
             />
+          </FormControl>
+
+          {/* Afficher les IDs des risques sélectionnés (pour débogage) */}
+          <FormControl mb={4}>
+            <FormLabel fontSize={12}>Risques sélectionnés</FormLabel>
+            <div>
+              {selectedRows.map((rowId) => (
+                <span key={rowId} style={{ marginRight: "8px" }}>
+                  {rowId}
+                </span>
+              ))}
+            </div>
           </FormControl>
         </ModalBody>
         <ModalFooter>
