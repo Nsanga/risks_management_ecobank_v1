@@ -13,13 +13,16 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Select from "react-select";
+import { updateEntityRiskControl } from "redux/entityRiskControl/action";
+import { useDispatch } from "react-redux";
 
-const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [] }) => {
+const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [], itemType }) => {
   const [owner, setOwner] = React.useState(null);
   const [nominee, setNominee] = React.useState(null);
   const [reviewer, setReviewer] = React.useState(null);
   const [isEditing, setIsEditing] = React.useState(false);
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const profileOptions = profiles.map((profile) => ({
     value: profile._id,
@@ -27,6 +30,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
   }));
 
   const handleSave = () => {
+    console.log(selectedRows);
     if (!owner || !nominee) {
       toast({
         title: "Erreur",
@@ -38,20 +42,26 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
       return;
     }
 
-    // ✅ Envoi des données sélectionnées
-    onSave({
-      owner: owner.value,
-      nominee: nominee.value,
-      reviewer: reviewer ? reviewer.value : null,
-      selectedRows, // IDs des risques sélectionnés
-    });
+    const payload = {
+      itemIds: selectedRows,
+      itemType: itemType,
+      updates: itemType === "risk" ? {
+        ownerRisk: owner.label,
+        nomineeRisk: nominee.label,
+        reviewerRisk: reviewer ? reviewer.label : null,
+      } : {
+        ownerControl: owner.label,
+        nomineeControl: nominee.label,
+        reviewerControl: reviewer ? reviewer.label : null,
+      },
+    };
+    console.log(payload);
+    dispatch(updateEntityRiskControl(payload));
 
-    // ✅ Fermeture automatique de la modal après la sauvegarde
-    onClose();
-  };
-
-  const handleAmend = () => {
-    setIsEditing(true);
+    onClose(); // Fermer la modal après sauvegarde
+    setOwner(null);
+    setNominee(null);
+    setReviewer(null);
   };
 
   return (
@@ -68,7 +78,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               options={profileOptions}
               value={owner}
               onChange={(selectedOption) => setOwner(selectedOption)}
-              isDisabled={!isEditing}
+            // isDisabled={!isEditing}
             />
           </FormControl>
 
@@ -79,7 +89,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               options={profileOptions}
               value={nominee}
               onChange={(selectedOption) => setNominee(selectedOption)}
-              isDisabled={!isEditing}
+            // isDisabled={!isEditing}
             />
           </FormControl>
 
@@ -90,26 +100,23 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               options={profileOptions}
               value={reviewer}
               onChange={(selectedOption) => setReviewer(selectedOption)}
-              isDisabled={!isEditing}
+            // isDisabled={!isEditing}
             />
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
-          {isEditing ? (
-            <>
-              <Button colorScheme="blue" fontSize={12} mr={3} onClick={handleSave}>
-                Save
-              </Button>
-              <Button colorScheme="red" fontSize={12} onClick={onClose}>
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <Button colorScheme="blue" fontSize={12} onClick={handleAmend}>
-              Amend
-            </Button>
-          )}
+          <Button
+            colorScheme="blue"
+            fontSize={12}
+            mr={3}
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+          <Button colorScheme="red" fontSize={12} onClick={onClose}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

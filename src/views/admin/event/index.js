@@ -37,6 +37,7 @@ import { connect, useDispatch } from 'react-redux'
 import { listEntities } from 'redux/entitiy/action'
 import { listProfiles } from 'redux/profile/action'
 import { url } from 'urlLoader'
+import moment from 'moment'
 
 const generatePDF = async () => {
     const headElement = document.getElementById('head-component'); // Assume the Head component has an ID
@@ -152,6 +153,8 @@ const Event = ({ profiles, entities }) => {
     };
 
     const totalRow = event?.financials.find(f => f.name === 'Total');
+    const name = event.details.reviewer?.name ? event.details.reviewer?.name : "";
+    const surname = event.details.reviewer?.surname ? event.details.reviewer?.surname : "";
 
     return (
         <Card mt="100px">
@@ -208,10 +211,10 @@ const Event = ({ profiles, entities }) => {
                                         <Finances
                                             approved={event.details.approved_date}
                                             closed={event.details.closed_date}
-                                            targetClosure={event.details.targetClosureDate}
+                                            targetClosure={event.details.targetClosureDate ? moment(event.details.targetClosureDate).format('DD/MM/YYYY') : ""}
                                             owner={event.details.owner?.name ? event.details.owner?.name + ' ' + event.details.owner?.surname : ""}
                                             nominee={event.details.nominee?.name ? event.details.nominee?.name + ' ' + event.details.nominee?.surname : ""}
-                                            reviewer={event.details.reviewer?.name ? event.details.reviewer?.name + ' ' + event.details.reviewer?.surname : ""}
+                                            reviewer={name + " " + surname}
                                             reviewerDate={event.details.reviewer_date}
                                         />
                                     </div>

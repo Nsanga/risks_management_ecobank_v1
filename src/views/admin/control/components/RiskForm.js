@@ -32,7 +32,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
     ?.filter(profile => profile.activeUser)
     ?.map((profile, index) => ({
       key: `${profile._id}-${index}`, // Unicité assurée
-      value: profile.email,
+      value: `${profile.name} ${profile.surname}`,
       label: `${profile.name} ${profile.surname}`,
     }));
 
@@ -120,7 +120,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
       },
     };
     console.log(payload);
-    dispatch(updateEntityRiskControl(payload)) ;
+    dispatch(updateEntityRiskControl(payload)) ; 
   };
   console.log(selectedRisk)
   useEffect(() => {
@@ -269,7 +269,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
               minWidth="120px"
 
             >
-              Sign Off/add next
+              Test du Controle
             </Button>
           </Flex>
         </Box>

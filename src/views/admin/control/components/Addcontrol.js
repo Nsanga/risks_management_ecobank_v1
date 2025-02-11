@@ -158,17 +158,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   };
 
   useEffect(() => {
-    setViewData({
-      Risks: [],
-      Controls: [],
-      Events: [],
-      Actions: [],
-      Kits: [],
-      Obligations: [],
-    });
-  }, []);
-
-  useEffect(() => {
+    console.log(entityRiskControls)
     if (entityRiskControls.length > 0) {
       setViewData({
         Risks: entityRiskControls[0]?.risks || [],
@@ -178,14 +168,10 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         Kits: [],
         Obligations: [],
       });
-    } else {
-      setViewData({
-        Risks: [],
-        Controls: [],
-        Events: [],
-        Actions: [],
-        Kits: [],
-        Obligations: [],
+      setFormData({
+        entity: null,
+        entityMove: null,
+        entityCopy: null,
       });
     }
   }, [entityRiskControls]);
@@ -295,45 +281,45 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         mb={5}
         w="100%"
       > */}
-        <Flex alignItems="center" justifyContent="space-between">
-          <FormControl mr={4} maxW="250px">
-            <FormLabel fontSize={18}>Entity</FormLabel>
-            <Select
-              options={entitiesOptions}
-              styles={customStyles}
-              placeholder="Select Entity"
-              value={entitiesOptions?.find(
-                (ent) => ent.value === formData.entity
-              )}
-              onChange={(selectedOption) =>
-                handleSelectChange("entity", selectedOption)
-              }
-            />
-          </FormControl>
-          <Flex gap={4}>
-            <Button
-              fontSize={12}
-              onClick={openModal}
-              variant="solid"
-              colorScheme="blue"
-              leftIcon={<AddIcon />}
-            >
-              Add
-            </Button>
-            <Button
-              fontSize={12}
-              variant="solid"
-              colorScheme="green"
-              leftIcon={<EditIcon />}
-              disabled={!selectedEntity}
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
-            >
-              Amend
-            </Button>
-          </Flex>
+      <Flex alignItems="center" justifyContent="space-between">
+        <FormControl mr={4} maxW="250px">
+          <FormLabel fontSize={18}>Entity</FormLabel>
+          <Select
+            options={entitiesOptions}
+            styles={customStyles}
+            placeholder="Select Entity"
+            value={entitiesOptions?.find(
+              (ent) => ent.value === formData.entity
+            )}
+            onChange={(selectedOption) =>
+              handleSelectChange("entity", selectedOption)
+            }
+          />
+        </FormControl>
+        <Flex gap={4}>
+          {/* <Button
+            fontSize={12}
+            onClick={openModal}
+            variant="solid"
+            colorScheme="blue"
+            leftIcon={<AddIcon />}
+          >
+            Add
+          </Button> */}
+          <Button
+            fontSize={12}
+            variant="solid"
+            colorScheme="green"
+            leftIcon={<EditIcon />}
+            disabled={!selectedEntity}
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Amend
+          </Button>
         </Flex>
+      </Flex>
       {/* </Flex> */}
       <Flex
         direction="column"
@@ -516,6 +502,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             <Flex direction="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>From Entity :</Text>
+                <Input
+                  name="entitySelecter"
+                  value={selectedEntity ? "ENT" + selectedEntity?.referenceId + " CAM - " + selectedEntity?.description : 'None'}
+                  width={280}
+                  fontSize="12px"
+                  readOnly
+                />
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>To Entity :</Text>
@@ -585,12 +578,21 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             <Flex direction="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>From Entity :</Text>
+                <Input
+                  name="entitySelecter"
+                  value={selectedEntity ? "ENT" + selectedEntity?.referenceId + " CAM - " + selectedEntity?.description : 'None'}
+                  width={280}
+                  fontSize="12px"
+                  readOnly
+                />
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>To Entity :</Text>
                 <Box width={280}>
                   <Select
-                    options={entitiesOptions}
+                    options={entitiesOptions.filter(
+                      (item) => item.description !== "Corbeille "
+                    )}
                     styles={customStyles}
                     placeholder="Select Entity"
                     value={entitiesOptions?.find(
@@ -619,6 +621,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent="start">
+            <Button
+                colorScheme="red"
+                fontSize={12}
+                leftIcon={<CloseIcon />}
+                onClick={closeCopyModal}
+              >
+                Cancel
+              </Button>
               <Button
                 colorScheme="blue"
                 fontSize={12}
@@ -629,14 +639,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
               >
                 Copy
               </Button>
-              <Button
-                colorScheme="red"
-                fontSize={12}
-                leftIcon={<CloseIcon />}
-                onClick={closeCopyModal}
-              >
-                Cancel
-              </Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
@@ -644,11 +646,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
       {/* Modal Bulk Amend */}
       <BulkAmendModal
-  isOpen={isBulkAmendModalOpen}
-  onClose={() => setIsBulkAmendModalOpen(false)}
-  profiles={profiles}
-  onSave={handleBulkAmendSave}
-  selectedRows={selectedRows} // ✅ Passer les IDs des risques sélectionnés
+        isOpen={isBulkAmendModalOpen}
+        onClose={() => setIsBulkAmendModalOpen(false)}
+        profiles={profiles}
+        onSave={handleBulkAmendSave}
+        selectedRows={selectedRows} // ✅ Passer les IDs des risques sélectionnés
+        itemType={currentView === "Risks" ? "risk" : "control"}
       />
 
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}
