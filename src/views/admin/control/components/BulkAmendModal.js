@@ -1,4 +1,3 @@
-// BulkAmendModal.js
 import React from "react";
 import {
   Modal,
@@ -13,7 +12,7 @@ import {
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
-import Select from "react-select"; // Import de react-select
+import Select from "react-select";
 
 const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [] }) => {
   const [owner, setOwner] = React.useState(null);
