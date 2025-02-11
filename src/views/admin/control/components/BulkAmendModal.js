@@ -21,14 +21,12 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
   const [isEditing, setIsEditing] = React.useState(false);
   const toast = useToast();
 
-  // Convertir les profils en format compatible avec react-select
   const profileOptions = profiles.map((profile) => ({
     value: profile._id,
     label: profile.name,
   }));
 
   const handleSave = () => {
-    // Vérifier que owner et nominee sont remplis
     if (!owner || !nominee) {
       toast({
         title: "Erreur",
@@ -40,18 +38,19 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
       return;
     }
 
-    // Passer les valeurs sélectionnées à la fonction onSave
+    // ✅ On récupère les IDs sélectionnés ici (même s'ils ne sont pas affichés)
     onSave({
       owner: owner.value,
       nominee: nominee.value,
       reviewer: reviewer ? reviewer.value : null,
-      selectedRows, // Passer les IDs des risques sélectionnés
+      selectedRows, // ✅ IDs des risques sélectionnés
     });
-    onClose(); // Fermer la modal
+
+    onClose(); // Fermer la modal après sauvegarde
   };
 
   const handleAmend = () => {
-    setIsEditing(true); // Activer l'édition
+    setIsEditing(true);
   };
 
   return (
@@ -94,27 +93,13 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
             />
           </FormControl>
 
-          {/* Afficher les IDs des risques sélectionnés (pour débogage) */}
-          <FormControl mb={4}>
-            <FormLabel fontSize={12}>Risques sélectionnés</FormLabel>
-            <div>
-              {selectedRows.map((rowId) => (
-                <span key={rowId} style={{ marginRight: "8px" }}>
-                  {rowId}
-                </span>
-              ))}
-            </div>
-          </FormControl>
+          {/* 🚫 Plus besoin d'afficher les IDs ici */}
         </ModalBody>
+
         <ModalFooter>
           {isEditing ? (
             <>
-              <Button
-                colorScheme="blue"
-                fontSize={12}
-                mr={3}
-                onClick={handleSave}
-              >
+              <Button colorScheme="blue" fontSize={12} mr={3} onClick={handleSave}>
                 Save
               </Button>
               <Button colorScheme="red" fontSize={12} onClick={onClose}>
