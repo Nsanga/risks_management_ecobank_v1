@@ -38,15 +38,16 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
       return;
     }
 
-    // ✅ On récupère les IDs sélectionnés ici (même s'ils ne sont pas affichés)
+    // ✅ Envoi des données sélectionnées
     onSave({
       owner: owner.value,
       nominee: nominee.value,
       reviewer: reviewer ? reviewer.value : null,
-      selectedRows, // ✅ IDs des risques sélectionnés
+      selectedRows, // IDs des risques sélectionnés
     });
 
-    onClose(); // Fermer la modal après sauvegarde
+    // ✅ Fermeture automatique de la modal après la sauvegarde
+    onClose();
   };
 
   const handleAmend = () => {
@@ -92,8 +93,6 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               isDisabled={!isEditing}
             />
           </FormControl>
-
-          {/* 🚫 Plus besoin d'afficher les IDs ici */}
         </ModalBody>
 
         <ModalFooter>
