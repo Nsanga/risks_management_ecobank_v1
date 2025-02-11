@@ -621,6 +621,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
           </ModalBody>
           <ModalFooter>
             <HStack spacing={4} justifyContent="start">
+            <Button
+                colorScheme="red"
+                fontSize={12}
+                leftIcon={<CloseIcon />}
+                onClick={closeCopyModal}
+              >
+                Cancel
+              </Button>
               <Button
                 colorScheme="blue"
                 fontSize={12}
@@ -630,14 +638,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 isDisabled={!isRadioCopyChecked || !formData.entityCopy}
               >
                 Copy
-              </Button>
-              <Button
-                colorScheme="red"
-                fontSize={12}
-                leftIcon={<CloseIcon />}
-                onClick={closeCopyModal}
-              >
-                Cancel
               </Button>
             </HStack>
           </ModalFooter>
