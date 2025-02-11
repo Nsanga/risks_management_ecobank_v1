@@ -69,7 +69,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
               options={profileOptions}
               value={owner}
               onChange={(selectedOption) => setOwner(selectedOption)}
-              isDisabled={!isEditing}
+              // isDisabled={!isEditing}
             />
           </FormControl>
 
@@ -80,7 +80,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
               options={profileOptions}
               value={nominee}
               onChange={(selectedOption) => setNominee(selectedOption)}
-              isDisabled={!isEditing}
+              // isDisabled={!isEditing}
             />
           </FormControl>
 
@@ -91,7 +91,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles, onSave, selectedRows }) => 
               options={profileOptions}
               value={reviewer}
               onChange={(selectedOption) => setReviewer(selectedOption)}
-              isDisabled={!isEditing}
+              // isDisabled={!isEditing}
             />
           </FormControl>
         </ModalBody>
