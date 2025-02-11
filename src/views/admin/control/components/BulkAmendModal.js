@@ -29,6 +29,7 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
   }));
 
   const handleSave = () => {
+    console.log(selectedRows)
     // Vérifier que owner et nominee sont remplis
     if (!owner || !nominee) {
       toast({
@@ -108,8 +109,6 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          {isEditing ? (
-            <>
               <Button
                 colorScheme="blue"
                 fontSize={12}
@@ -121,12 +120,6 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
               <Button colorScheme="red" fontSize={12} onClick={onClose}>
                 Cancel
               </Button>
-            </>
-          ) : (
-            <Button colorScheme="blue" fontSize={12} onClick={handleAmend}>
-              Amend
-            </Button>
-          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
