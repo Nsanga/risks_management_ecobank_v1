@@ -105,23 +105,25 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                     <ModalHeader>{selectedUserGroup?._id ? "Amend User Group" : "Add User Group"}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Flex mb={4} align="center" gap={4}>
-                            <DeleteModal
-                                selectedUserGroup={selectedUserGroup}
-                                disabled={!selectedUserGroup || isEditMode}
-                                onClick={handleOpenDeleteModal}
-                                onCloseAddUserGroupModal={onClose}
-                            />
-                            <Button
-                                leftIcon={<EditIcon color="white" />}
-                                colorScheme='blue'
-                                style={{ fontSize: 14 }}
-                                onClick={handleAmendClick}
-                                disabled={!selectedUserGroup || isEditMode}
-                            >
-                                Amend
-                            </Button>
-                        </Flex>
+                        {selectedUserGroup && (
+                            <Flex mb={4} align="center" gap={4}>
+                                <DeleteModal
+                                    selectedUserGroup={selectedUserGroup}
+                                    disabled={!selectedUserGroup || isEditMode}
+                                    onClick={handleOpenDeleteModal}
+                                    onCloseAddUserGroupModal={onClose}
+                                />
+                                <Button
+                                    leftIcon={<EditIcon color="white" />}
+                                    colorScheme='blue'
+                                    style={{ fontSize: 14 }}
+                                    onClick={handleAmendClick}
+                                    disabled={!selectedUserGroup || isEditMode}
+                                >
+                                    Amend
+                                </Button>
+                            </Flex>
+                        )}
                         <VStack spacing={4} align="stretch">
                             <FormControl id="group-name" isRequired>
                                 <FormLabel fontSize={12}>Group Name</FormLabel>
@@ -151,19 +153,19 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
+                        <Button colorScheme="red" mr={3} onClick={handleClose}>
+                            Cancel
+                        </Button>
                         {!selectedUserGroup?._id && (
-                            <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave}>
+                            <Button colorScheme="blue" isLoading={loading} onClick={handleSave}>
                                 Save
                             </Button>
                         )}
                         {selectedUserGroup?._id && isEditMode && (
-                            <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
+                            <Button colorScheme="blue" isLoading={loading} onClick={handleEdit}>
                                 Save
                             </Button>
                         )}
-                        <Button colorScheme="red" mr={3} onClick={handleClose}>
-                            Cancel
-                        </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

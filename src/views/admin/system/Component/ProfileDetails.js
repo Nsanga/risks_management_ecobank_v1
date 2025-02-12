@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { EditIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import DeleteModal from 'views/admin/event/components/DeleteModal';
 
-const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, username, onClose }) => {
+const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, username, onClose }) => {
 
     const userGroupOptions = userGroups.map(group => ({
         value: group._id,
@@ -43,30 +43,34 @@ const ProfileDetails = ({ formData, handleInputChange, isReadOnly, handleAmendCl
                     {username !== localStorage.getItem('username') ?
                         (
                             <>
-                                <Button
-                                    leftIcon={<EditIcon color="white" />}
-                                    colorScheme='blue'
-                                    style={{ fontSize: 14 }}
-                                    onClick={handleAmendClick}
-                                    disabled={!isReadOnly || formData.lockedUser}
-                                >
-                                    Amend
-                                </Button>
-                                <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
-                                    <Button
-                                        leftIcon={formData.lockedUser ? <LockIcon /> : <UnlockIcon />}
-                                        colorScheme={formData.lockedUser ? "yellow" : "green"}
-                                        fontSize={12}
-                                        onClick={toggleLockStatus}
-                                        disabled={!isReadOnly}
-                                        ml={4}
-                                    >
-                                        {formData.lockedUser ? "Unlocked User" : "Locked User"}
-                                    </Button>
-                                </Box>
-                                <Box display="flex" alignItems="center" mr={4} cursor="pointer">
-                                    <DeleteModal selectedUser={formData} disabled={!isReadOnly} onCloseAddProfileModal={onClose} />
-                                </Box>
+                                {selectedUser && (
+                                    <>
+                                        <Button
+                                            leftIcon={<EditIcon color="white" />}
+                                            colorScheme='blue'
+                                            style={{ fontSize: 14 }}
+                                            onClick={handleAmendClick}
+                                            disabled={!isReadOnly || formData.lockedUser}
+                                        >
+                                            Amend
+                                        </Button>
+                                        <Box display="flex" alignItems="center" mr={4} onClick={toggleLockStatus} cursor="pointer">
+                                            <Button
+                                                leftIcon={formData.lockedUser ? <LockIcon /> : <UnlockIcon />}
+                                                colorScheme={formData.lockedUser ? "yellow" : "green"}
+                                                fontSize={12}
+                                                onClick={toggleLockStatus}
+                                                disabled={!isReadOnly}
+                                                ml={4}
+                                            >
+                                                {formData.lockedUser ? "Unlocked User" : "Locked User"}
+                                            </Button>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" mr={4} cursor="pointer">
+                                            <DeleteModal selectedUser={formData} disabled={!isReadOnly} onCloseAddProfileModal={onClose} />
+                                        </Box>
+                                    </>
+                                )}
                             </>
                         ) : null}
 

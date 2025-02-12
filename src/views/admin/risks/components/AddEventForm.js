@@ -84,6 +84,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         details: {
           ...detailsData,
           rate: currency,
+          recorded_by: localStorage.getItem('username'),
         },
         commentary: {
           ...commentaryData
@@ -117,6 +118,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       details: {
         ...detailsData,
         rate: currency,
+        recorded_by: localStorage.getItem('username'),
       },
       commentary: {
         ...commentaryData

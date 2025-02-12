@@ -188,7 +188,7 @@ const RiskControlInformationView = ({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} size="full">
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>

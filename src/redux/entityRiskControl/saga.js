@@ -32,11 +32,11 @@ function* update(action) {
         console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_SUCCESS, payload: data.data.entityRiskControl });
-            toast.success(data.message);
+            toast.success("Entity updated successfully");
             yield put({ type: types.GET_ENTITYRISKCONTROLS_REQUEST });
         } else {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_FAILED, payload: "Échec lors de la modification des données" });
-            toast.error(data.data.message);
+            toast.error(data.message);
         }
     } catch (error) {
         console.log(error);

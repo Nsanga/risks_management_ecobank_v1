@@ -115,7 +115,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
       }));
     }
   }, [selectedEntity]);
-  
+
 
 
   const handleEdit = () => {
@@ -157,9 +157,14 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
                 />
                 <Text fontSize={12}>Entity Active</Text>
               </Flex>
-              <DeleteModal selectedEntity={formValues} disabled={!isEditMode} onCloseAddEntityModal={onClose}/>
-              <Button leftIcon={<EditIcon color="white" />} colorScheme='blue' style={{ fontSize: 14 }} onClick={handleAmendClick}
-                disabled={!isEditMode}>Amend</Button>
+              {selectedEntity && (
+                <>
+                  <DeleteModal selectedEntity={formValues} disabled={!isEditMode} onCloseAddEntityModal={onClose} />
+                  <Button leftIcon={<EditIcon color="white" />} colorScheme='blue' style={{ fontSize: 14 }} onClick={handleAmendClick} disabled={!isEditMode}>
+                    Amend
+                  </Button>
+                </>
+              )}
             </Flex>
           </Flex>
         </ModalHeader>
@@ -272,22 +277,22 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
           </Flex>
         </ModalBody>
         <ModalFooter>
+        <Button colorScheme="red" mr={3} onClick={onClose}>Cancel</Button>
           {
             !selectedEntity?.referenceId ?
               (
-                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave} disabled={isSaveDisabled}>
+                <Button colorScheme="blue" isLoading={loading} onClick={handleSave} disabled={isSaveDisabled}>
                   Save
                 </Button>
               ) : null
           }
           {
             selectedEntity?.referenceId && !isEditMode ? (
-              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit}>
+              <Button colorScheme="blue" isLoading={loading} onClick={handleEdit}>
                 Save
               </Button>
             ) : null
           }
-          <Button colorScheme="red" onClick={onClose}>Cancel</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

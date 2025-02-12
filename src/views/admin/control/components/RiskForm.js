@@ -30,11 +30,17 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
 
   const profilesOptions = profiles
     ?.filter(profile => profile.activeUser)
-    ?.map((profile, index) => ({
-      key: `${profile._id}-${index}`, // Unicité assurée
-      value: `${profile.name} ${profile.surname}`,
-      label: `${profile.name} ${profile.surname}`,
-    }));
+    ?.map((profile, index) => {
+      // Vérification de la présence de name et surname
+      const name = profile.name ? profile.name : "";
+      const surname = profile.surname ? profile.surname : "";
+
+      return {
+          key: `${profile._id}-${index}`, // Unicité assurée
+          value: `${name} ${surname}`.trim(),
+          label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+      };
+  });
 
   const frequencies = [
     { "id": 1, "label": "Daily" },
@@ -97,9 +103,18 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
       ...provided,
       fontSize: '12px'
     }),
-    menu: (provided) => ({
-      ...provided,
-      fontSize: '12px'
+    menu: (base) => ({
+      ...base,
+      borderRadius: '8px',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+      zIndex: 9999,
+      maxHeight: '300px',
+    }),
+    menuList: (base) => ({
+      ...base,
+      maxHeight: '150px',
+      overflowY: 'auto',
+      borderRadius: '8px',
     }),
     option: (provided) => ({
       ...provided,

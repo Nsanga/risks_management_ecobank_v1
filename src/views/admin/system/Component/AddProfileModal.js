@@ -229,7 +229,9 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                   profiles={profiles}
                   userGroups={userGroups}
                   onClose={onClose} 
-                  username={username}/>
+                  username={username}
+                  selectedUser={selectedUser}
+                />
               </Collapse>
               <Collapse in={!isDetailsVisible}>
                 <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />
@@ -238,22 +240,22 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
           </Box>
         </ModalBody>
         <ModalFooter>
+        <Button colorScheme="red"  mr={3} onClick={handleClose}>Cancel</Button>
           {
             !selectedUser?.userId ?
               (
-                <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleSave} fontSize={12} disabled={isSaveDisabled}>
+                <Button colorScheme="blue" isLoading={loading} onClick={handleSave} fontSize={12} disabled={isSaveDisabled}>
                   Save
                 </Button>
               ) : null
           }
           {
             selectedUser?.userId && !isEditMode ? (
-              <Button colorScheme="blue" mr={3} isLoading={loading} onClick={handleEdit} fontSize={12}>
+              <Button colorScheme="blue" isLoading={loading} onClick={handleEdit} fontSize={12}>
                 Save
               </Button>
             ) : null
           }
-          <Button colorScheme="red" onClick={handleClose}>Cancel</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

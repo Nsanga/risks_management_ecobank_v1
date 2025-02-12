@@ -3,16 +3,7 @@ import { Button, Flex, Box, Text, Image } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import CustomerSummaryCard from './CustomerSummaryCard';
 import AddUserGroupModal from './AddUserGroupModal';
-import { connect, useDispatch } from 'react-redux';
-import { listUserGroups } from 'redux/userGroup/action';
 import Loader from '../../../../assets/img/loader.gif';
-
-const fakeData = [
-    { _id: '1', name: 'Group 1' },
-    { _id: '2', name: 'Group 2' },
-    { _id: '3', name: 'Group 3' },
-    { _id: '4', name: 'Group 4' }
-];
 
 const UserGroup = ({ userGroups, loading }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
