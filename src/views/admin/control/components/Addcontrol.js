@@ -77,6 +77,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [isBulkAmendModalOpen, setIsBulkAmendModalOpen] = useState(false); // État pour la modal Bulk Amend
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    console.log("Contenu de viewData:", viewData);
+  }, []);
+  
+
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
     const { _id } = row;
@@ -105,11 +110,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   }, [currentView, viewData]);
 
   const isRowSelected = (row) => selectedRows.includes(row._id);
-
-  const openModal = () => {
-    setSelectedEntity(null);
-    setIsModalOpen(true);
-  };
 
   const copyModalOpen = () => {
     setIsModalCopyOpen(true);
@@ -157,24 +157,44 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     ],
   };
 
-  useEffect(() => {
-    console.log(entityRiskControls)
-    if (entityRiskControls.length > 0) {
+  useEffect(() => { 
+    if (formData.entity) {
+      if (entityRiskControls && entityRiskControls.length > 0) {
+        setViewData({
+          Risks: entityRiskControls[0]?.risks || [],
+          Controls: entityRiskControls[0]?.controls || [],
+          Events: [],
+          Actions: [],
+          Kits: [],
+          Obligations: [],
+        });
+      } else {
+        setViewData({
+          Risks: [],
+          Controls: [],
+          Events: [],
+          Actions: [],
+          Kits: [],
+          Obligations: [],
+        });
+      }
+    } else {
+      // Si aucune entité n'est sélectionnée, on vide le tableau
       setViewData({
-        Risks: entityRiskControls[0]?.risks || [],
-        Controls: entityRiskControls[0]?.controls || [],
+        Risks: [],
+        Controls: [],
         Events: [],
         Actions: [],
         Kits: [],
         Obligations: [],
       });
-      setFormData({
-        entity: null,
-        entityMove: null,
-        entityCopy: null,
-      });
     }
-  }, [entityRiskControls]);
+  }, [entityRiskControls, formData.entity]);
+  
+  // Debugging: voir quand viewData est mis à jour
+  useEffect(() => {
+    console.log("Contenu mis à jour de viewData:", viewData);
+  }, [viewData]);  
 
   const handleRowClick = (item, index) => {
     setIndexChoice(index);
