@@ -30,7 +30,6 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
   }));
 
   const handleSave = () => {
-    console.log(selectedRows);
     if (!owner || !nominee) {
       toast({
         title: "Erreur",
@@ -48,11 +47,11 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
       updates: itemType === "risk" ? {
         ownerRisk: owner.label,
         nomineeRisk: nominee.label,
-        reviewerRisk: reviewer ? reviewer.label : null,
+        ...(reviewer ? { reviewerRisk: reviewer.label } : {}), // Ajoute reviewerRisk seulement s'il est défini
       } : {
         ownerControl: owner.label,
         nomineeControl: nominee.label,
-        reviewerControl: reviewer ? reviewer.label : null,
+        ...(reviewer ? { reviewerControl: reviewer.label } : {}), // Ajoute reviewerControl seulement s'il est défini
       },
     };
     console.log(payload);

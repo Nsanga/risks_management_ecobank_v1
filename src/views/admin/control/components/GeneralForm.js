@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   SimpleGrid,
@@ -28,26 +28,22 @@ const GeneralForm = ({
   handleChange,
   currentAssoCiate,
 }) => {
-  // Déclaration des états locaux
-  // const [controlRef, setControlRef] = useState('');
-  // const [controlCategory, setControlCategory] = useState('');
-  // const [description, setDescription] = useState('');
-  // const [nominee, setNominee] = useState('');
-  // const [reviewer, setReviewer] = useState('');
-  // const [reviewDate, setReviewDate] = useState('');
-  // const [frequency, setFrequency] = useState('');
-  // const [lastOperator, setLastOperator] = useState('');
-  // const [nextOperation, setNextOperation] = useState('');
-  // const [keyControl, setKeyControl] = useState(false);
-  // const [activeControl, setActiveControl] = useState(true);
+  const [nomineeValue, setNomineeValue] = useState(null);
+  const [reviewerValue, setReviewerValue] = useState(null);
 
   const profilesOptions = profiles
-    ?.filter((profile) => profile.activeUser)
-    ?.map((profile, index) => ({
-      key: `${profile._id}-${index}`, // Unicité assurée
-      value: profile.email,
-      label: `${profile.name} ${profile.surname}`,
-    }));
+    ?.filter(profile => profile.activeUser)
+    ?.map((profile, index) => {
+      // Vérification de la présence de name et surname
+      const name = profile.name ? profile.name : "";
+      const surname = profile.surname ? profile.surname : "";
+
+      return {
+          key: `${profile._id}-${index}`, // Unicité assurée
+          value: `${name} ${surname}`.trim(),
+          label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+      };
+  });
 
   const frequencies = [
     { id: 1, label: "Daily" },
@@ -125,6 +121,24 @@ const GeneralForm = ({
   const handleFormSubmit = () => {
     // handleSubmit(payload); // Appeler handleSubmit avec le payload
   };
+
+  useEffect(() => {
+    if (currentAssoCiate) {
+      handleChange({ target: { name: 'description', value: currentAssoCiate.description } });
+      const nomineeOption = profilesOptions.find(option => option.value === currentAssoCiate.nomineeControl);
+      if (nomineeOption) {
+        setNomineeValue(nomineeOption);
+      } else {
+        setNomineeValue({ value: currentAssoCiate.nomineeControl, label: currentAssoCiate.nomineeControl });
+      }
+      const reviewerOption = profilesOptions.find(option => option.value === currentAssoCiate.reviewerControl);
+      if (reviewerOption) {
+        setReviewerValue(reviewerOption);
+      } else {
+        setReviewerValue({ value: currentAssoCiate.reviewerControl, label: currentAssoCiate.reviewerControl });
+      }
+    }
+  }, [currentAssoCiate]);
 
   return (
     <Box className="form-container" as="form">
@@ -208,17 +222,16 @@ const GeneralForm = ({
                 Nominee:
               </Text>
               <Box width="100%">
-                <Select
+              <Select
                   name="nominee"
-                  placeholder="Select nominee"
+                  placeholder='Select nominee'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(
-                    (option) => option.value === formData.nominee || null
-                  )}
-                  onChange={(selectedOption) =>
-                    handleSelectChange("nominee", selectedOption)
-                  }
+                  value={nomineeValue}
+                  onChange={(selectedOption) => {
+                    setNomineeValue(selectedOption);
+                    handleSelectChange('nominee', selectedOption);
+                  }}
                 />
               </Box>
             </HStack>
@@ -229,17 +242,16 @@ const GeneralForm = ({
                 Reviewer:
               </Text>
               <Box width="100%">
-                <Select
+              <Select
                   name="reviewer"
-                  placeholder="Select reviewer"
+                  placeholder='Select reviewer'
                   styles={customStyles}
                   options={profilesOptions}
-                  value={profilesOptions?.find(
-                    (option) => option.value === formData.reviewer || null
-                  )}
-                  onChange={(selectedOption) =>
-                    handleSelectChange("reviewer", selectedOption)
-                  }
+                  value={reviewerValue}
+                  onChange={(selectedOption) => {
+                    setReviewerValue(selectedOption);
+                    handleSelectChange('reviewer', selectedOption);
+                  }}
                 />
               </Box>
             </HStack>
@@ -383,7 +395,7 @@ const GeneralForm = ({
               </FormControl>
               <Box>
                 <Button fontSize={12} colorScheme="blue" variant="solid">
-                  Sign Off/Add Next
+                  Test du controle
                 </Button>
               </Box>
             </Flex>

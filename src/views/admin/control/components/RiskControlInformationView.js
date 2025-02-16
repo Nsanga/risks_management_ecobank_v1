@@ -14,6 +14,7 @@ import {
   Tab,
   TabPanel, // Import Chakra UI Tabs components
   Text,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import TreeSelect from "./TreeSelect";
 import LogTable from "./LogTable";
@@ -194,6 +195,7 @@ const RiskControlInformationView = ({
           <ModalHeader>
             {isEditMode ? "Edit Risk Control" : "Add New Risk Control"}
           </ModalHeader>
+          <ModalCloseButton />
           <ModalBody p={4}>
             {/* You can pass selectedRisk data to the RiskPage or any other component as needed */}
             <RiskPage

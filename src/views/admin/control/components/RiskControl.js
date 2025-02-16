@@ -39,7 +39,7 @@ const RiskControl = ({
   //   keyControl: false,
   //   activeControl: true,
   // });
-
+console.log("currentAssoCiate:", currentAssoCiate);
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
 
@@ -99,8 +99,8 @@ const RiskControl = ({
         </Thead>
         <Tbody>
           <Tr>
-            <Td fontSize={12}>{riskControlData.controlRef}</Td>
-            <Td fontSize={12}>{riskControlData.description}</Td>
+            <Td fontSize={12}>{currentAssoCiate.reference}</Td>
+            <Td fontSize={12}>{currentAssoCiate.controlDescription?.length > 20 ? `${currentAssoCiate.controlDescription.substring(0, 35)}...` : currentAssoCiate.controlDescription}</Td>
             <Td fontSize={12}>
               <CheckCircleIcon color="green.500" />
             </Td>
