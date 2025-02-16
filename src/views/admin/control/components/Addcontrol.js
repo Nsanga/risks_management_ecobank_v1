@@ -57,7 +57,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [isModalMoveOpen, setIsModalMoveOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedEntity, setSelectedEntity] = useState(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ 
     entity: null,
     entityMove: null,
     entityCopy: null,
