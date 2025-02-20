@@ -57,7 +57,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
             return {
                 key: `${profile._id}-${index}`, // Unicité assurée
-                value: profile.email,
+                value: profile._id,
                 label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
             };
         });
@@ -103,9 +103,9 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 recorded_date: event.details.recorded_date || '',
                 description: event.details.description || '',
                 descriptionDetailled: event.details.descriptionDetailled || '',
-                owner: event.details.owner ? `${event.details.owner?.name} ${event.details.owner?.surname}` : null,
-                nominee: event.details.nominee ? `${event.details.nominee?.name} ${event.details.nominee?.surname}` : null,
-                reviewer: event.details.reviewer ? `${event.details.reviewer?.name} ${event.details.reviewer?.surname}` : null,
+                owner: event.details.owner?._id || null,
+                nominee: event.details.nominee?._id || null,
+                reviewer: event.details.reviewer?._id || null,
                 reviewer_date: event.details.reviewer_date ? new Date(event.details.reviewer_date).toISOString().split('T')[0] : '',
                 activeEvent: event.details.activeEvent || false,
                 excludeFundLosses: event.details.excludeFundLosses || false,
@@ -118,7 +118,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 subentityOfOrigin: event.details.subentityOfOrigin || '',
                 RAG: event.details.RAG || '',
                 targetClosureDate: event.details.targetClosureDate || '',
-                document: event.details.document || [],
+                document: Array.isArray(event.details.document) ? event.details.document : [],
             }));
         }
     }, [event]);
@@ -354,7 +354,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     placeholder='Select owner'
                                     options={profilesOptions}
                                     styles={customStyles}
-                                    value={profilesOptions?.find(option => event ? option.label === formData.owner : option.value === formData.owner) || null} // Assurez-vous que la valeur est null si non trouvée
+                                    value={profilesOptions?.find(option => option.value === formData.owner)} // Assurez-vous que la valeur est null si non trouvée
                                     onChange={(selectedOption) => handleSelectChange('owner', selectedOption)}
                                 />
                             </Box>
@@ -367,7 +367,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     placeholder='Select nominee'
                                     options={profilesOptions}
                                     styles={customStyles}
-                                    value={profilesOptions?.find(option => event ? option.label === formData.nominee : option.value === formData.nominee)}
+                                    value={profilesOptions?.find(option => option.value === formData.nominee)}
                                     onChange={(selectedOption) => handleSelectChange('nominee', selectedOption)}
                                 />
                             </Box>
@@ -380,7 +380,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                                     placeholder='Select reviewer'
                                     options={profilesOptions}
                                     styles={customStyles}
-                                    value={profilesOptions?.find(option => event ? option.label === formData.reviewer : option.value === formData.reviewer)}
+                                    value={profilesOptions?.find(option => option.value === formData.reviewer)}
                                     onChange={(selectedOption) => handleSelectChange('reviewer', selectedOption)}
                                 />
                             </Box>
@@ -404,7 +404,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                     <Text fontWeight="bold" fontSize={12}>Documents<span style={{ fontStyle: 'italic' }}> (Importer vos documents dans l'espace ci-dessous)</span></Text>
                 </GridItem>
                 <Box mt={4}>
-                    <DocumentUploader onMediaUpload={handleUploadLinks} />
+                    <DocumentUploader onMediaUpload={handleUploadLinks} initialDocuments={formData.document}/>
                 </Box>
             </Box>
         </Box>

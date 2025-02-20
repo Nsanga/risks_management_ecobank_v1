@@ -6,8 +6,9 @@ import { useDropzone } from 'react-dropzone';
 import { url } from 'urlLoader';
 import { FaFile, FaFileVideo, FaUpload } from 'react-icons/fa';
 
-const DocumentUploader = ({ onMediaUpload }) => {
-    const [mediaData, setMediaData] = useState([]);
+const DocumentUploader = ({ onMediaUpload, initialDocuments }) => {
+    console.log('initialDocuments', initialDocuments)
+    const [mediaData, setMediaData] = useState(initialDocuments || []);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -85,7 +86,9 @@ const DocumentUploader = ({ onMediaUpload }) => {
                 <Box mt={4} display="flex" justifyContent='center' alignItems="center" mr={2}>
                     {mediaData.map((media, index) => (
                         <Box key={index} display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                            {media.file.type.startsWith('image') ? (
+                            {typeof media === 'string' ? (
+                                <img src="{media}" alt="Aperçu du document" style={{ maxWidth: '50%', maxHeight: '100px' }} />
+                            ) : media.file.type.startsWith('image') ? (
                                 <img src={media.dataURL} alt="Aperçu du média" style={{ maxWidth: '50%', maxHeight: '100px' }} />
                             ) : media.file.type.startsWith('video') ? (
                                 <Box display="flex" flexDirection='column' justifyContent='center' alignItems="center">
