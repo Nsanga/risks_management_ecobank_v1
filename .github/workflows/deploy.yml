@@ -9,6 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
+      CI: false
       REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
 
     steps:
