@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: false
-      REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}  # Avec 'vars' pour les variables non-secrètes
+      REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }} 
 
     steps:
       - name: Checkout code
@@ -29,8 +29,8 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
+          host: 145.223.103.90
+          username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           cipher: aes128-ctr
