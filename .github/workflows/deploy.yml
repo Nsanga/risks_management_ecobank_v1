@@ -1,4 +1,4 @@
-name: Test Connexion et Vérification des Secrets
+name: Deploy React App
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test-connexion:
+  build-and-deploy:
     runs-on: ubuntu-latest
     env:
       CI: false
@@ -27,14 +27,7 @@ jobs:
       - name: Build de l'application
         run: npm run build
 
-      - name: Echo des secrets pour vérification
-        run: |
-          echo "Vérification des secrets récupérés :"
-          echo "SERVER_IP: ${{ secrets.SERVER_IP }}"
-          echo "SERVER_USER: ${{ secrets.SERVER_USER }}"
-          echo "SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}"
-
-      - name: Tester la connexion au serveur via SSH
+      - name: Déploiement sur le serveur
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -42,51 +35,10 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
-            echo "Connexion réussie sur le serveur !"
-            uname -a
+            echo "Déploiement de l'application..."
+            # Nettoyer l'ancien build (optionnel)
+            rm -rf /var/www/frontend/risks_management_ecobank_v1/build/*
 
-
-# name: Deploy React App
-
-# on:
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     env:
-#       CI: false
-#       REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-
-#     steps:
-#       - name: Checkout du code
-#         uses: actions/checkout@v3
-
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: '20'
-
-#       - name: Installation des dépendances
-#         run: npm install
-
-#       - name: Build de l'application
-#         run: npm run build
-
-#       - name: Déploiement sur le serveur
-#         uses: appleboy/ssh-action@v0.1.5
-#         with:
-#           host: ${{ secrets.SERVER_IP }}
-#           username: ${{ secrets.SERVER_USER }}
-#           key: ${{ secrets.SERVER_SSH_KEY }}
-#           port: 22
-#           script: |
-#             echo "Déploiement de l'application..."
-#             # Nettoyer l'ancien build (optionnel)
-#             rm -rf /var/www/frontend/risks_management_ecobank_v1/build/*
-
-#             # Copier le nouveau build sur le serveur
-#             cp -R ${{ github.workspace }}/build/* /var/www/frontend/risks_management_ecobank_v1/build/
+            # Copier le nouveau build sur le serveur
+            cp -R ${{ github.workspace }}/build/* /var/www/frontend/risks_management_ecobank_v1/build/
 
