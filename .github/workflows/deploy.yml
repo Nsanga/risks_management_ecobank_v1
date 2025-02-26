@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: false
-      REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+      REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}  # Avec 'vars' pour les variables non-secrètes
 
     steps:
       - name: Checkout code
@@ -35,7 +35,6 @@ jobs:
           port: 22
           cipher: aes128-ctr
           use_insecure_cipher: true
-          script_timeout: 2m
           script: |
             echo "=== Démarrage du déploiement ==="
             sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
