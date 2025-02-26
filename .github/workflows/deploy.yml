@@ -2,8 +2,7 @@ name: Deploy React App
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -13,7 +12,7 @@ jobs:
       REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
 
     steps:
-      - name: Checkout du code
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Setup Node.js
@@ -21,24 +20,26 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Installation des dépendances
+      - name: Install dependencies
         run: npm install
 
-      - name: Build de l'application
+      - name: Build app
         run: npm run build
 
-      - name: Déploiement sur le serveur
-        uses: appleboy/ssh-action@v0.1.5
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
+          cipher: aes128-ctr
+          use_insecure_cipher: true
+          script_timeout: 2m
           script: |
-            echo "Déploiement de l'application..."
-            # Nettoyer l'ancien build (optionnel)
-            rm -rf /var/www/frontend/risks_management_ecobank_v1/build/*
-
-            # Copier le nouveau build sur le serveur
-            cp -R ${{ github.workspace }}/build/* /var/www/frontend/risks_management_ecobank_v1/build/
-
+            echo "=== Démarrage du déploiement ==="
+            sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
+            sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
+            sudo cp -R /github/workspace/build/* /var/www/frontend/risks_management_ecobank_v1/build/
+            sudo systemctl restart nginx
+            echo "✓ Déploiement réussi !"
