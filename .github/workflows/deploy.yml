@@ -98,12 +98,12 @@ jobs:
       - name: Construire la liste des destinataires
         id: recipients
         run: |
-          recipients="${{ vars.EMAIL_TO }}"
-          if [ -n "${{ vars.EMAIL_TO_2 }}" ]; then
-            recipients="$recipients, ${{ vars.EMAIL_TO_2 }}"
+          recipients="${{ vars.SMTP_TO }}"
+          if [ -n "${{ vars.SMTP_TO_2 }}" ]; then
+            recipients="$recipients, ${{ vars.SMTP_TO_2 }}"
           fi
-          if [ -n "${{ vars.EMAIL_TO_3 }}" ]; then
-            recipients="$recipients, ${{ vars.EMAIL_TO_3 }}"
+          if [ -n "${{ vars.SMTP_TO_3 }}" ]; then
+            recipients="$recipients, ${{ vars.SMTP_TO_3 }}"
           fi
           echo "allEmails=$recipients" >> $GITHUB_OUTPUT
           echo "Liste des destinataires : $recipients"
@@ -118,7 +118,7 @@ jobs:
           body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          from: ${{ secrets.EMAIL_FROM }}
+          from: ${{ secrets.SMTP_FROM }}
           to: ${{ steps.recipients.outputs.allEmails }}
 
       - name: Envoyer email d'échec
@@ -131,6 +131,6 @@ jobs:
           body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          from: ${{ secrets.EMAIL_FROM }}
+          from: ${{ secrets.SMTP_FROM }}
           to: ${{ steps.recipients.outputs.allEmails }}
 
