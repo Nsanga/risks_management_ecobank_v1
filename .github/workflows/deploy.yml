@@ -1,3 +1,98 @@
+# name: Déploiement de l'application React
+
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   build-et-deploiement:
+#     runs-on: ubuntu-latest
+#     environment: production
+#     env:
+#       CI: false
+#       REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+
+#     steps:
+#       - name: Récupérer le code depuis le dépôt
+#         uses: actions/checkout@v3
+
+#       - name: Configurer Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '20'
+
+#       - name: Installer les dépendances
+#         run: npm install
+
+#       - name: Construire l'application
+#         run: npm run build
+
+#       - name: Vérifier le contenu du dossier build local -> github
+#         run: ls -la build
+
+#       - name: Vérifier et créer la structure des dossiers sur le serveur
+#         uses: appleboy/ssh-action@v1.0.3
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_SSH_KEY }}
+#           port: 22
+#           cipher: aes128-ctr
+#           use_insecure_cipher: true
+#           script: |
+#             echo "=== Vérification de la structure des dossiers ==="
+#             if [ ! -d "/var/www" ]; then
+#               sudo mkdir -p /var/www
+#               echo "Répertoire /var/www créé"
+#             else
+#               echo "Répertoire /var/www existe déjà"
+#             fi
+
+#             if [ ! -d "/var/www/frontend" ]; then
+#               sudo mkdir -p /var/www/frontend
+#               echo "Répertoire /var/www/frontend créé"
+#             else
+#               echo "Répertoire /var/www/frontend existe déjà"
+#             fi
+
+#             if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
+#               sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
+#               echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
+#             else
+#               echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
+#             fi
+
+#             echo "=== Préparation du dossier build ==="
+#             sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
+#             sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
+#             echo "Structure des dossiers vérifiée et dossier build préparé"
+
+#       - name: Transférer le dossier build sur le serveur
+#         uses: appleboy/scp-action@master
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_SSH_KEY }}
+#           port: 22
+#           source: "build/"
+#           target: "/var/www/frontend/risks_management_ecobank_v1/build/"
+#           strip_components: 1
+
+#       - name: Redémarrer nginx
+#         uses: appleboy/ssh-action@v1.0.3
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_SSH_KEY }}
+#           port: 22
+#           cipher: aes128-ctr
+#           use_insecure_cipher: true
+#           script: |
+#             echo "=== Redémarrage de nginx ==="
+#             sudo systemctl restart nginx
+#             echo "✓ Déploiement réussi !"
+
+
 name: Déploiement de l'application React
 
 on:
@@ -7,11 +102,10 @@ on:
 jobs:
   build-et-deploiement:
     runs-on: ubuntu-latest
-    environment: production
+    environment: production  # Les secrets et variables définis dans l'environnement "production" seront injectés.
     env:
       CI: false
       REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
-
     steps:
       - name: Récupérer le code depuis le dépôt
         uses: actions/checkout@v3
@@ -27,7 +121,7 @@ jobs:
       - name: Construire l'application
         run: npm run build
 
-      - name: Vérifier le contenu du dossier build local -> github
+      - name: Vérifier le contenu du dossier build local (GitHub)
         run: ls -la build
 
       - name: Vérifier et créer la structure des dossiers sur le serveur
@@ -47,21 +141,18 @@ jobs:
             else
               echo "Répertoire /var/www existe déjà"
             fi
-
             if [ ! -d "/var/www/frontend" ]; then
               sudo mkdir -p /var/www/frontend
               echo "Répertoire /var/www/frontend créé"
             else
               echo "Répertoire /var/www/frontend existe déjà"
             fi
-
             if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
               sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
               echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
             else
               echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
             fi
-
             echo "=== Préparation du dossier build ==="
             sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
             sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
@@ -91,3 +182,35 @@ jobs:
             echo "=== Redémarrage de nginx ==="
             sudo systemctl restart nginx
             echo "✓ Déploiement réussi !"
+
+  notification:
+    needs: build-et-deploiement
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Envoyer email de succès
+        if: ${{ needs.build-et-deploiement.result == 'success' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: suport.resetpass@gmail.com
+          password: nyxsjvahaavoilbg
+          subject: "Déploiement réussi"
+          body: "Le déploiement de l'application React a été réalisé avec succès."
+          to: mbaidrissjordane@gmail.com
+          from: suport.resetpass@gmail.com
+
+
+      - name: Envoyer email d'échec
+        if: ${{ needs.build-et-deploiement.result == 'failure' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: suport.resetpass@gmail.com
+          password: nyxsjvahaavoilbg
+          subject: "Déploiement échoué"
+          body: "Le déploiement de l'application React a échoué. Veuillez vérifier les logs pour plus de détails."
+          to: mbaidrissjordane@gmail.com
+          from: suport.resetpass@gmail.com
