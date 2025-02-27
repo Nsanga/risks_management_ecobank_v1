@@ -92,7 +92,27 @@ jobs:
     needs: build-et-deploiement
     runs-on: ubuntu-latest
     if: always()
+    env:
+      SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      EMAIL_FROM: ${{ vars.EMAIL_FROM }}
     steps:
+      - name: Construire la liste des destinataires
+        id: recipients
+        run: |
+          # On part de l'adresse principale
+          recipients="${{ vars.EMAIL_TO }}"
+          # Si EMAIL_TO_2 est défini et non vide, on l'ajoute
+          if [ -n "${{ vars.EMAIL_TO_2 }}" ]; then
+            recipients="$recipients, ${{ vars.EMAIL_TO_2 }}"
+          fi
+          # Si EMAIL_TO_3 est défini et non vide, on l'ajoute
+          if [ -n "${{ vars.EMAIL_TO_3 }}" ]; then
+            recipients="$recipients, ${{ vars.EMAIL_TO_3 }}"
+          fi
+          echo "allEmails=$recipients" >> $GITHUB_OUTPUT
+          echo "Liste des destinataires : $recipients"
+
       - name: Envoyer email de succès
         if: ${{ needs.build-et-deploiement.result == 'success' }}
         uses: dawidd6/action-send-mail@v3
@@ -101,11 +121,10 @@ jobs:
           server_port: 465
           subject: "🎉 Déploiement Futuriskmanagement réussi !"
           body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          # Concatène EMAIL_TO, et ajoute EMAIL_TO_2 et EMAIL_TO_3 s'ils sont définis
-          to: ${{ vars.EMAIL_TO }}${{ vars.EMAIL_TO_2 != '' ? ', ' + vars.EMAIL_TO_2 : '' }}${{ vars.EMAIL_TO_3 != '' ? ', ' + vars.EMAIL_TO_3 : '' }}
-          from: ${{ vars.EMAIL_FROM }}
+          username: ${{ env.SMTP_USERNAME }}
+          password: ${{ env.SMTP_PASSWORD }}
+          to: ${{ steps.recipients.outputs.allEmails }}
+          from: ${{ env.EMAIL_FROM }}
 
       - name: Envoyer email d'échec
         if: ${{ needs.build-et-deploiement.result == 'failure' }}
@@ -115,7 +134,7 @@ jobs:
           server_port: 465
           subject: "❌ Déploiement Futuriskmanagement échoué ❌"
           body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          to: ${{ vars.EMAIL_TO }}${{ vars.EMAIL_TO_2 != '' ? ', ' + vars.EMAIL_TO_2 : '' }}${{ vars.EMAIL_TO_3 != '' ? ', ' + vars.EMAIL_TO_3 : '' }}
-          from: ${{ vars.EMAIL_FROM }}
+          username: ${{ env.SMTP_USERNAME }}
+          password: ${{ env.SMTP_PASSWORD }}
+          to: ${{ steps.recipients.outputs.allEmails }}
+          from: ${{ env.EMAIL_FROM }}
