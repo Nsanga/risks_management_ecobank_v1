@@ -7,7 +7,7 @@ on:
 jobs:
   build-et-deploiement:
     runs-on: ubuntu-latest
-    environment: production  # Assurez-vous que l'environnement "production" contient bien vos secrets et variables
+    environment: production
     env:
       CI: false
       REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
@@ -27,10 +27,10 @@ jobs:
       - name: Construire l'application
         run: npm run build
 
-      - name: Vérifier le contenu du dossier build
+      - name: Vérifier le contenu du dossier build local -> github
         run: ls -la build
 
-      - name: Préparer le serveur (supprimer l'ancien dossier build)
+      - name: Vérifier et créer la structure des dossiers sur le serveur
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -40,11 +40,32 @@ jobs:
           cipher: aes128-ctr
           use_insecure_cipher: true
           script: |
-            echo "=== Préparation du serveur ==="
-            sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
+            echo "=== Vérification de la structure des dossiers ==="
+            if [ ! -d "/var/www" ]; then
+              sudo mkdir -p /var/www
+              echo "Répertoire /var/www créé"
+            else
+              echo "Répertoire /var/www existe déjà"
+            fi
+
+            if [ ! -d "/var/www/frontend" ]; then
+              sudo mkdir -p /var/www/frontend
+              echo "Répertoire /var/www/frontend créé"
+            else
+              echo "Répertoire /var/www/frontend existe déjà"
+            fi
+
+            if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
+              sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
+              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
+            else
+              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
+            fi
+
+            echo "=== Préparation du dossier build ==="
             sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
             sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
-            echo "=== Préparation terminée ==="
+            echo "Structure des dossiers vérifiée et dossier build préparé"
 
       - name: Transférer le dossier build sur le serveur
         uses: appleboy/scp-action@master
@@ -55,6 +76,7 @@ jobs:
           port: 22
           source: "build/"
           target: "/var/www/frontend/risks_management_ecobank_v1/build/"
+          strip_components: 1
 
       - name: Redémarrer nginx
         uses: appleboy/ssh-action@v1.0.3
