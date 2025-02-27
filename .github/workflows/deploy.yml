@@ -1,41 +1,64 @@
-name: Deploy React App
+name: Déploiement de l'application React
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build-and-deploy:
+  build-et-deploiement:
     runs-on: ubuntu-latest
+    environment: production  # Assurez-vous que l'environnement "production" contient bien vos secrets et variables
     env:
       CI: false
-      REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }} 
+      REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}  # Variable non-sécrète définie dans l'environnement
 
     steps:
-      - name: Checkout code
+      - name: Récupérer le code depuis le dépôt
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Configurer Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Installer les dépendances
         run: npm install
 
-      - name: Build app
+      - name: Construire l'application
         run: npm run build
 
-      - name: Deploy to server
+      - name: Déployer sur le serveur
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 145.223.103.90
-          username: root
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           cipher: aes128-ctr
           use_insecure_cipher: true
           script: |
+            echo "=== Vérification de la structure des répertoires ==="
+            if [ ! -d "/var/www" ]; then
+              sudo mkdir -p /var/www
+              echo "Répertoire /var/www créé"
+            else
+              echo "Répertoire /var/www existe déjà"
+            fi
+
+            if [ ! -d "/var/www/frontend" ]; then
+              sudo mkdir -p /var/www/frontend
+              echo "Répertoire /var/www/frontend créé"
+            else
+              echo "Répertoire /var/www/frontend existe déjà"
+            fi
+
+            if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
+              sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
+              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
+            else
+              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
+            fi
+
             echo "=== Démarrage du déploiement ==="
             sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
             sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
