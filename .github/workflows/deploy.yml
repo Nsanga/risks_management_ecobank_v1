@@ -101,10 +101,10 @@ jobs:
           server_port: 465
           subject: "🎉 Déploiement Futuriskmanagement réussi !"
           body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
-          username: suport.resetpass@gmail.com
-          password: nyxsjvahaavoilbg
-          to: mbaidrissjordane@gmail.com
-          from: suport.resetpass@gmail.com
+          username: ${{ vars.SMTP_USERNAME }}
+          password: ${{ vars.SMTP_PASSWORD }}
+          to: ${{ vars.SMTP_TO }}
+          from: ${{ vars.SMTP_FROM }}
 
       # - name: Envoyer email d'échec
       #   if: ${{ needs.build-et-deploiement.result == 'failure' }}
