@@ -20,101 +20,117 @@ jobs:
         with:
           node-version: '20'
 
-    #   - name: Installer les dépendances
-    #     run: npm install
+      - name: Installer les dépendances
+        run: npm install
 
-    #   - name: Construire l'application
-    #     run: npm run build
+      - name: Construire l'application
+        run: npm run build
 
-    #   - name: Vérifier le contenu du dossier build local (GitHub)
-    #     run: ls -la build
+      - name: Vérifier le contenu du dossier build local (GitHub)
+        run: ls -la build
 
-    #   - name: Vérifier et créer la structure des dossiers sur le serveur
-    #     uses: appleboy/ssh-action@v1.0.3
-    #     with:
-    #       host: ${{ secrets.SERVER_IP }}
-    #       username: ${{ secrets.SERVER_USER }}
-    #       key: ${{ secrets.SERVER_SSH_KEY }}
-    #       port: 22
-    #       cipher: aes128-ctr
-    #       use_insecure_cipher: true
-    #       script: |
-    #         echo "=== Vérification de la structure des dossiers ==="
-    #         if [ ! -d "/var/www" ]; then
-    #           sudo mkdir -p /var/www
-    #           echo "Répertoire /var/www créé"
-    #         else
-    #           echo "Répertoire /var/www existe déjà"
-    #         fi
-    #         if [ ! -d "/var/www/frontend" ]; then
-    #           sudo mkdir -p /var/www/frontend
-    #           echo "Répertoire /var/www/frontend créé"
-    #         else
-    #           echo "Répertoire /var/www/frontend existe déjà"
-    #         fi
-    #         if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
-    #           sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
-    #           echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
-    #         else
-    #           echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
-    #         fi
-    #         echo "=== Préparation du dossier build ==="
-    #         sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
-    #         sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
-    #         echo "Structure des dossiers vérifiée et dossier build préparé"
+      - name: Vérifier et créer la structure des dossiers sur le serveur
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          cipher: aes128-ctr
+          use_insecure_cipher: true
+          script: |
+            echo "=== Vérification de la structure des dossiers ==="
+            if [ ! -d "/var/www" ]; then
+              sudo mkdir -p /var/www
+              echo "Répertoire /var/www créé"
+            else
+              echo "Répertoire /var/www existe déjà"
+            fi
+            if [ ! -d "/var/www/frontend" ]; then
+              sudo mkdir -p /var/www/frontend
+              echo "Répertoire /var/www/frontend créé"
+            else
+              echo "Répertoire /var/www/frontend existe déjà"
+            fi
+            if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
+              sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
+              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
+            else
+              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
+            fi
+            echo "=== Préparation du dossier build ==="
+            sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
+            sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
+            echo "Structure des dossiers vérifiée et dossier build préparé"
 
-    #   - name: Transférer le dossier build sur le serveur
-    #     uses: appleboy/scp-action@master
-    #     with:
-    #       host: ${{ secrets.SERVER_IP }}
-    #       username: ${{ secrets.SERVER_USER }}
-    #       key: ${{ secrets.SERVER_SSH_KEY }}
-    #       port: 22
-    #       source: "build/"
-    #       target: "/var/www/frontend/risks_management_ecobank_v1/build/"
-    #       strip_components: 1
+      - name: Transférer le dossier build sur le serveur
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          source: "build/"
+          target: "/var/www/frontend/risks_management_ecobank_v1/build/"
+          strip_components: 1
 
-    #   - name: Redémarrer nginx
-    #     uses: appleboy/ssh-action@v1.0.3
-    #     with:
-    #       host: ${{ secrets.SERVER_IP }}
-    #       username: ${{ secrets.SERVER_USER }}
-    #       key: ${{ secrets.SERVER_SSH_KEY }}
-    #       port: 22
-    #       cipher: aes128-ctr
-    #       use_insecure_cipher: true
-    #       script: |
-    #         echo "=== Redémarrage de nginx ==="
-    #         sudo systemctl restart nginx
-    #         echo "✓ Déploiement réussi !"
+      - name: Redémarrer nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          cipher: aes128-ctr
+          use_insecure_cipher: true
+          script: |
+            echo "=== Redémarrage de nginx ==="
+            sudo systemctl restart nginx
+            echo "✓ Déploiement réussi !"
+
 
   notification:
     needs: build-et-deploiement
     runs-on: ubuntu-latest
+    environment: production
     if: always()
     steps:
+      - name: Construire la liste des destinataires
+        id: recipients
+        run: |
+          recipients="${{ vars.EMAIL_TO }}"
+          if [ -n "${{ vars.EMAIL_TO_2 }}" ]; then
+            recipients="$recipients, ${{ vars.EMAIL_TO_2 }}"
+          fi
+          if [ -n "${{ vars.EMAIL_TO_3 }}" ]; then
+            recipients="$recipients, ${{ vars.EMAIL_TO_3 }}"
+          fi
+          echo "allEmails=$recipients" >> $GITHUB_OUTPUT
+          echo "Liste des destinataires : $recipients"
+
       - name: Envoyer email de succès
-        # if: ${{ needs.build-et-deploiement.result == 'success' }}
+        if: ${{ needs.build-et-deploiement.result == 'success' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           subject: "🎉 Déploiement Futuriskmanagement réussi !"
           body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
-          username: ${{ vars.DUMMY_SMTP_USERNAME }}  # Variable non sensible
-          password: ${{ vars.SMTP_PASSWORD }}
-          to: ${{ vars.SMTP_TO }}
-          from: ${{ vars.SMTP_FROM }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          from: ${{ secrets.EMAIL_FROM }}
+          to: ${{ steps.recipients.outputs.allEmails }}
 
-      # - name: Envoyer email d'échec
-      #   if: ${{ needs.build-et-deploiement.result == 'failure' }}
-      #   uses: dawidd6/action-send-mail@v3
-      #   with:
-      #     server_address: smtp.gmail.com
-      #     server_port: 465
-      #     subject: "❌ Déploiement Futuriskmanagement échoué ❌"
-      #     body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
-      #     username: ${{ secrets.SMTP_USERNAME }}
-      #     password: ${{ secrets.SMTP_PASSWORD }}
-      #     to: ${{ vars.EMAIL_TO }}
-      #     from: ${{ vars.EMAIL_FROM }}
+      - name: Envoyer email d'échec
+        if: ${{ needs.build-et-deploiement.result == 'failure' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          subject: "❌ Déploiement Futuriskmanagement échoué ❌"
+          body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          from: ${{ secrets.EMAIL_FROM }}
+          to: ${{ steps.recipients.outputs.allEmails }}
+
