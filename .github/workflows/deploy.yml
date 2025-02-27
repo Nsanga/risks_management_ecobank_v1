@@ -93,28 +93,47 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     env:
-      SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      # Ces variables doivent être définies dans vos environnements ou Repository Vars/secrets
+      # SMTP_USERNAME et SMTP_PASSWORD sont ici récupérés depuis les secrets,
+      # EMAIL_FROM, EMAIL_TO, EMAIL_TO_2 et EMAIL_TO_3 depuis les vars.
       EMAIL_FROM: ${{ vars.EMAIL_FROM }}
     steps:
-      - name: Construire la liste des destinataires
-        id: recipients
+      - name: Construire la configuration de notification
+        id: notification_config
         run: |
-          # On part de l'adresse principale
+          missing=""
+          # Vérification des champs obligatoires
+          if [ -z "${{ vars.EMAIL_FROM }}" ]; then
+            missing="${missing} EMAIL_FROM"
+          fi
+          if [ -z "${{ vars.EMAIL_TO }}" ]; then
+            missing="${missing} EMAIL_TO"
+          fi
+          if [ -z "${{ secrets.SMTP_USERNAME }}" ]; then
+            missing="${missing} SMTP_USERNAME"
+          fi
+          if [ -z "${{ secrets.SMTP_PASSWORD }}" ]; then
+            missing="${missing} SMTP_PASSWORD"
+          fi
+          # Construction de la liste des destinataires
           recipients="${{ vars.EMAIL_TO }}"
-          # Si EMAIL_TO_2 est défini et non vide, on l'ajoute
           if [ -n "${{ vars.EMAIL_TO_2 }}" ]; then
             recipients="$recipients, ${{ vars.EMAIL_TO_2 }}"
           fi
-          # Si EMAIL_TO_3 est défini et non vide, on l'ajoute
           if [ -n "${{ vars.EMAIL_TO_3 }}" ]; then
             recipients="$recipients, ${{ vars.EMAIL_TO_3 }}"
+          fi
+          if [ -z "$missing" ]; then
+            echo "sendEmail=true" >> $GITHUB_OUTPUT
+          else
+            echo "sendEmail=false" >> $GITHUB_OUTPUT
+            echo "missing=$missing" >> $GITHUB_OUTPUT
           fi
           echo "allEmails=$recipients" >> $GITHUB_OUTPUT
           echo "Liste des destinataires : $recipients"
 
       - name: Envoyer email de succès
-        if: ${{ needs.build-et-deploiement.result == 'success' }}
+        if: ${{ steps.notification_config.outputs.sendEmail == 'true' && needs.build-et-deploiement.result == 'success' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -123,11 +142,11 @@ jobs:
           body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          to: ${{ steps.recipients.outputs.allEmails }}
+          to: ${{ steps.notification_config.outputs.allEmails }}
           from: ${{ vars.EMAIL_FROM }}
 
       - name: Envoyer email d'échec
-        if: ${{ needs.build-et-deploiement.result == 'failure' }}
+        if: ${{ steps.notification_config.outputs.sendEmail == 'true' && needs.build-et-deploiement.result == 'failure' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -136,5 +155,9 @@ jobs:
           body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          to: ${{ steps.recipients.outputs.allEmails }}
+          to: ${{ steps.notification_config.outputs.allEmails }}
           from: ${{ vars.EMAIL_FROM }}
+
+      - name: Afficher message d'erreur de configuration SMTP manquante
+        if: ${{ steps.notification_config.outputs.sendEmail == 'false' }}
+        run: echo "Notification par email non envoyée. Champs manquants: ${{ steps.notification_config.outputs.missing }}"
