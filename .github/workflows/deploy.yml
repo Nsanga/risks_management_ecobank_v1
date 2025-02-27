@@ -27,6 +27,9 @@ jobs:
       - name: Construire l'application
         run: npm run build
 
+      - name: Vérifier le contenu du dossier build
+        run: ls -la build
+
       - name: Préparer le serveur (supprimer l'ancien dossier build)
         uses: appleboy/ssh-action@v1.0.3
         with:
