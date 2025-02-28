@@ -157,7 +157,7 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
                     <Select
                         name="userGroup"
                         options={userGroupOptions}
-                        value={userGroupOptions.find(option => option.value === formData.userGroup) || null}
+                        value={userGroupOptions.find(option => option.value === formData.userGroup)}
                         onChange={(selectedOption) => handleSelectChange('userGroup', selectedOption)}
                         isDisabled={isReadOnly}
                     />

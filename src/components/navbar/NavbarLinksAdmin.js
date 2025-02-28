@@ -44,11 +44,22 @@ export default function HeaderLinks(props) {
 	const getInitials = (name) => {
 		console.log(name)
 		const words = name.split(' ');
+		console.log(words.length)
 		if (words.length === 1) {
-			return name.slice(0, 2).toUpperCase();
-		} else if (words.length >= 2) {
 			const firstWord = words[0]?.slice(0, 1).toUpperCase();
 			const secondWord = words[2]?.slice(0, 1).toUpperCase();
+			console.log(firstWord + " " + secondWord)
+			if (firstWord === 'undefined') {
+				return `${secondWord}`;
+			} else if (secondWord === 'undefined') {
+				return `${firstWord}`;
+			} else {
+				return `${firstWord}${secondWord}`;
+			}
+		} else if (words.length >= 2) {
+			const firstWord = words[0]?.slice(0, 1).toUpperCase();
+			const secondWord = words[1]?.slice(0, 1).toUpperCase();
+			console.log(firstWord + " " + secondWord)
 			if (firstWord === 'undefined') {
 				return `${secondWord}`;
 			} else if (secondWord === 'undefined') {
@@ -88,7 +99,7 @@ export default function HeaderLinks(props) {
 			<SidebarResponsive routes={routes} />
 
 			<Menu>
-			<MenuButton p="0px">
+				<MenuButton p="0px">
 					<Box
 						_hover={{ cursor: 'pointer' }}
 						bg="blue.500"
@@ -102,7 +113,7 @@ export default function HeaderLinks(props) {
 						color="white"
 					>
 						<Text fontSize="md" fontWeight="bold">
-						{adminName && getInitials(adminName)}
+							{adminName && getInitials(adminName)}
 						</Text>
 					</Box>
 				</MenuButton>

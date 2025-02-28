@@ -47,7 +47,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
     .filter(profile => profile.activeUser)  // Filtrer les profils actifs
     .map(profile => ({
       value: profile._id,
-      label: `${profile.name} ${profile.surname}`
+      label: profile.surname ? `${profile.name} ${profile.surname}` : profile.name
     }));
 
   const dispatch = useDispatch();

@@ -73,13 +73,13 @@ const Entitynew = ({ entities, loading, profiles }) => {
                     <Td fontSize="12px">ENT{entity?.referenceId}</Td>
                     <Td fontSize="12px">CAM - {entity?.description}</Td>
                     <Td fontSize="12px">
-                      {entity?.owner ? `${entity?.owner?.surname + " " + entity?.owner?.name}` : null}
+                      {entity?.owner ? `${entity?.owner?.surname? entity?.owner?.surname + " " + entity?.owner?.name : entity?.owner?.name}` : null}
                     </Td>
                     <Td fontSize="12px">
-                      {entity?.nominee ? `${entity?.nominee?.surname + " " + entity?.nominee?.name}` : null}
+                      {entity?.nominee ? `${entity?.nominee?.surname? entity?.nominee?.surname + " " + entity?.nominee?.name : entity?.nominee?.name}` : null}
                     </Td>
                     <Td fontSize="12px">
-                      {entity?.reviewer ? `${entity?.reviewer?.surname + " " + entity?.reviewer?.name}` : null}
+                      {entity?.reviewer ? `${entity?.reviewer?.surname? entity?.reviewer?.surname + " " + entity?.reviewer?.name : entity?.reviewer?.name}` : null}
                     </Td>
                   </Tr>
                 ))}
