@@ -88,7 +88,6 @@ jobs:
             sudo systemctl restart nginx
             echo "✓ Déploiement réussi !"
 
-
   notification:
     needs: build-et-deploiement
     runs-on: ubuntu-latest
