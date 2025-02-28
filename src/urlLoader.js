@@ -1,5 +1,4 @@
- module.exports = { 
-    // url: "http://localhost:4500"
-    url: "https://api.futuriskmanagement.com"
-}; 
- 
+module.exports = {
+    url: process.env.REACT_APP_API_URL
+  };
+  
