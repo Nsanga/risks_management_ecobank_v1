@@ -10,7 +10,7 @@ jobs:
     environment: production
     env:
       CI: false
-      REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+      # REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
     steps:
       - name: Récupérer le code depuis le dépôt
         uses: actions/checkout@v3
