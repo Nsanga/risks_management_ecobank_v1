@@ -86,3 +86,50 @@ jobs:
             echo "=== Redémarrage de nginx ==="
             sudo systemctl restart nginx
             echo "✓ Déploiement réussi !"
+
+
+  notification:
+    needs: build-et-deploiement
+    runs-on: ubuntu-latest
+    environment: production
+    if: always()
+    steps:
+      - name: Construire la liste des destinataires
+        id: recipients
+        run: |
+          recipients="${{ vars.SMTP_TO }}"
+          if [ -n "${{ vars.SMTP_TO_2 }}" ]; then
+            recipients="$recipients, ${{ vars.SMTP_TO_2 }}"
+          fi
+          if [ -n "${{ vars.SMTP_TO_3 }}" ]; then
+            recipients="$recipients, ${{ vars.SMTP_TO_3 }}"
+          fi
+          echo "allEmails=$recipients" >> $GITHUB_OUTPUT
+          echo "Liste des destinataires : $recipients"
+
+      - name: Envoyer email de succès
+        if: ${{ needs.build-et-deploiement.result == 'success' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          subject: "🎉 Déploiement Futuriskmanagement réussi !"
+          body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          from: ${{ secrets.SMTP_FROM }}
+          to: ${{ steps.recipients.outputs.allEmails }}
+
+      - name: Envoyer email d'échec
+        if: ${{ needs.build-et-deploiement.result == 'failure' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          subject: "❌ Déploiement Futuriskmanagement échoué ❌"
+          body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          from: ${{ secrets.SMTP_FROM }}
+          to: ${{ steps.recipients.outputs.allEmails }}
+
