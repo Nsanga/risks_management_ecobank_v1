@@ -22,7 +22,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     location: '',
     telephone: '',
     email: '',
-    userGroup: '',
+    userGroup: null,
     language: '',
     ccEmailTo: '',
     nominee: '',
@@ -52,7 +52,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
         location: '',
         telephone: '',
         email: '',
-        userGroup: '',
+        userGroup: null,
         language: '',
         ccEmailTo: '',
         nominee: '',
@@ -83,7 +83,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
       location: '',
       telephone: '',
       email: '',
-      userGroup: '',
+      userGroup: null,
       language: '',
       ccEmailTo: '',
       nominee: '',
@@ -104,7 +104,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
         passwordExpiryDate: selectedUser.passwordExpiryDate
           ? new Date(selectedUser.passwordExpiryDate).toISOString().split('T')[0]
           : '2030-12-31',
-        userGroup: selectedUser.userGroup || '',
+        userGroup: selectedUser.userGroup || null,
       });
     }
   }, [selectedUser, userGroups]);
@@ -120,7 +120,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
       location: '',
       telephone: '',
       email: '',
-      userGroup: '',
+      userGroup: null,
       language: '',
       ccEmailTo: '',
       nominee: '',

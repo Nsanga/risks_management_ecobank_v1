@@ -1,4 +1,4 @@
 module.exports = {
-    url: "https://api.futuriskmanagement.com"
+    url: process.env.REACT_APP_API_URL
   };
   
