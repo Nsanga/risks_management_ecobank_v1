@@ -30,14 +30,14 @@ function* update(action) {
         let link = `${url}/api/v1/risks-controls/update`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityRiskControlData));
         console.log("data:::/", data)
-        if (data.message === "Success") {
+        // if (data.data.length > 0) {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_SUCCESS, payload: data.data.entityRiskControl });
             toast.success("Entity updated successfully");
             yield put({ type: types.GET_ENTITYRISKCONTROLS_REQUEST });
-        } else {
-            yield put({ type: types.UPDATE_ENTITYRISKCONTROL_FAILED, payload: "Échec lors de la modification des données" });
-            toast.error(data.message);
-        }
+        // } else {
+        //     yield put({ type: types.UPDATE_ENTITYRISKCONTROL_FAILED, payload: "Échec lors de la modification des données" });
+        //     toast.error(data.message);
+        // }
     } catch (error) {
         console.log(error);
         yield put({ type: types.UPDATE_ENTITYRISKCONTROL_FAILED, payload: error });
