@@ -2,9 +2,9 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getUnauthRequest } from 'helper/api';
-import { url } from 'urlLoader';
 import { putUnauthRequest } from 'helper/api';
 import { postUnauthRequest } from 'helper/api';
+import { url } from 'urlLoader';
 
 function* loginRequest(action) {
   const { userId, password } = action.payload;

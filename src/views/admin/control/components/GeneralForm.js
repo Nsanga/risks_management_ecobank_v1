@@ -51,6 +51,7 @@ const GeneralForm = ({
     { id: 3, label: "Monthly" },
     { id: 4, label: "Quarterly" },
     { id: 5, label: "Semi-Annually" },
+    { id: 6, label: "Annually"}
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({

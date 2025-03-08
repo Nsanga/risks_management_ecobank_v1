@@ -64,8 +64,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   });
   const [isRadioCopyChecked, setIsRadioCopyChecked] = useState(false);
   const [isRadioMoveChecked, setIsRadioMoveChecked] = useState(false);
-  const [selectedEntityDescription, setSelectedEntityDescription] =
-    useState(null);
+  const [selectedEntityDescription, setSelectedEntityDescription] =useState(null);
   const [viewData, setViewData] = useState({
     Risks: [],
     Controls: [],
@@ -291,6 +290,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setSelectedRows([]);
     setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
+
+  useEffect(() => {
+    if (selectedEntityDescription) {
+      dispatch(listEntityRiskControls(selectedEntityDescription));
+    }
+  }, [dispatch, selectedEntityDescription]);
 
   return (
     <>
@@ -670,6 +675,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         onClose={() => setIsBulkAmendModalOpen(false)}
         profiles={profiles}
         onSave={handleBulkAmendSave}
+        selectedEntityDescription={selectedEntityDescription}
         selectedRows={selectedRows} // ✅ Passer les IDs des risques sélectionnés
         itemType={currentView === "Risks" ? "risk" : "control"}
       />

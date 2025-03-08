@@ -43,11 +43,12 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
   });
 
   const frequencies = [
-    { "id": 1, "label": "Daily" },
-    { "id": 2, "label": "Weekly" },
-    { "id": 3, "label": "Monthly" },
-    { "id": 4, "label": "Quarterly" },
-    { "id": 5, "label": "Semi-Annually" }
+    { id: 1, label: "Daily" },
+    { id: 2, label: "Weekly" },
+    { id: 3, label: "Monthly" },
+    { id: 4, label: "Quarterly" },
+    { id: 5, label: "Semi-Annually" },
+    { id: 6, label: "Annually"},
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({
@@ -69,6 +70,8 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
       remindOnDate = new Date(today.setMonth(today.getMonth() + 3));  // Add 3 month
     } else if (frequency === "Semi-Annually") {
       remindOnDate = new Date(today.setMonth(today.getMonth() + 6));  // Add 6 month
+    } else if (frequency === "Annually") {
+      remindOnDate = new Date(today.setMonth(today.getMonth() + 12));  // Add 12 month
     }
 
     // Format date as YYYY-MM-DD
