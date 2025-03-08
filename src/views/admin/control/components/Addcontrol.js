@@ -291,11 +291,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
 
-  useEffect(() => {
-    if (selectedEntityDescription) {
-      dispatch(listEntityRiskControls(selectedEntityDescription));
-    }
-  }, [dispatch, selectedEntityDescription]);
+  // useEffect(() => {
+  //   if (selectedEntityDescription) {
+  //     dispatch(listEntityRiskControls(selectedEntityDescription));
+  //   }
+  // }, [dispatch, selectedEntityDescription]);
 
   return (
     <>
