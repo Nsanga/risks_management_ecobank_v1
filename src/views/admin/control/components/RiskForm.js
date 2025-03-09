@@ -140,10 +140,10 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
     console.log(payload);
     dispatch(updateEntityRiskControl(payload)) ; 
   };
-  console.log(selectedRisk)
+  console.log(riskFormData)
   useEffect(() => {
     if (selectedRisk) {
-      handleChange({ target: { name: 'description', value: selectedRisk.description } });
+      handleChange({ target: { name: 'description', value: selectedRisk.riskDescription } });
       const ownerOption = profilesOptions.find(option => option.value === selectedRisk.ownerRisk);
       if (ownerOption) {
         setOwnerValue(ownerOption);
@@ -165,6 +165,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
       }
     }
   }, [selectedRisk]);
+  
   return (
     <Box>
       <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" alignItems="flex-start" p={4}>

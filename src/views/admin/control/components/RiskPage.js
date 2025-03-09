@@ -89,7 +89,7 @@ const RiskPage = ({
               <Input
                 fontSize={12}
                 name="entity"
-                value={selectedRisk.businessFunction}
+                value={selectedRisk.departmentFunction}
                 readOnly
               />
             </Box>

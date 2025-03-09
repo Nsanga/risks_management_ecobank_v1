@@ -139,7 +139,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const columnsByView = {
     Risks: [
       { label: "Reference Id", key: "reference" },
-      { label: "Description", key: "riskSummary" },
+      { label: "Description", key: "description" },
       { label: "Owner", key: "ownerRisk" },
       { label: "Nominee", key: "nomineeRisk" },
       { label: "Reviewer", key: "reviewerRisk" },

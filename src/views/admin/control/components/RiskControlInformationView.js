@@ -72,6 +72,7 @@ const RiskControlInformationView = ({
     description: "",
     frequency: "",
     remindOne: "",
+    riskDescription: ""
   });
 
   const [formDataRiskControl, setFormDataRiskControl] = useState({
