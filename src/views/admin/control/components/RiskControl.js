@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Heading,
   Table,
   Thead,
   Tbody,
@@ -15,9 +14,16 @@ import {
   TabPanel,
   useToast,
   Checkbox,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
 } from "@chakra-ui/react";
-import GeneralForm from "./GeneralForm"; // Adjust the path as needed
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import RiskControlAssessment from "./RiskControlAssessment"; // Importation du composant pour l'historique
+import GeneralForm from "./GeneralForm"; // Importation du composant GeneralForm (à ajuster selon l'emplacement du fichier)
 
 const RiskControl = ({
   riskControlData,
@@ -26,40 +32,12 @@ const RiskControl = ({
   handleChange,
   currentAssoCiate,
 }) => {
-  // const [formData, setFormData] = useState({
-  //   controlRef: "",
-  //   controlCategory: "",
-  //   description: "",
-  //   nominee: "",
-  //   reviewer: "",
-  //   reviewDate: "",
-  //   frequency: "N/A",
-  //   lastOperator: "",
-  //   nextOperation: "",
-  //   keyControl: false,
-  //   activeControl: true,
-  // });
-console.log("currentAssoCiate:", currentAssoCiate);
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
 
-  // const handleChange = (e) => {
-  //   const { name, value, type, checked } = e.target;
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     [name]: type === 'checkbox' ? checked : value,
-  //   }));
-  // };
-
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission
-
-    // Basic validation
-    if (
-      !riskControlData.controlRef ||
-      !riskControlData.nominee ||
-      !riskControlData.reviewer
-    ) {
+    e.preventDefault();
+    if (!riskControlData.controlRef || !riskControlData.nominee || !riskControlData.reviewer) {
       toast({
         title: "Error.",
         description: "Please fill out all required fields.",
@@ -71,7 +49,6 @@ console.log("currentAssoCiate:", currentAssoCiate);
     }
 
     console.log("Form submitted:", riskControlData);
-    // Here you can add logic to send the form data to an API or handle it as needed
     toast({
       title: "Success!",
       description: "Form submitted successfully.",
@@ -86,30 +63,28 @@ console.log("currentAssoCiate:", currentAssoCiate);
       <Table variant="simple" mb={6}>
         <Thead bg="blue.100">
           <Tr>
-            <Th style={{ fontSize: "10px" }}>Ref</Th>
-            <Th style={{ fontSize: "10px" }}>Description</Th>
-            <Th style={{ fontSize: "10px" }}>Active</Th>
-            <Th style={{ fontSize: "10px" }}>Key Ctrl</Th>
-            <Th style={{ fontSize: "10px" }}>Last Assess. Date</Th>
-            <Th style={{ fontSize: "10px" }}>Last Assess. Design</Th>
-            <Th style={{ fontSize: "10px" }}>Last Assess. Performance</Th>
-            <Th style={{ fontSize: "10px" }}>Last Assess. Creator</Th>
-            <Th style={{ fontSize: "10px" }}>Last Assess. Status</Th>
+            <Th>Ref</Th>
+            <Th>Description</Th>
+            <Th>Active</Th>
+            <Th>Key Ctrl</Th>
+            <Th>Last Assess. Date</Th>
+            <Th>Last Assess. Design</Th>
+            <Th>Last Assess. Performance</Th>
+            <Th>Last Assess. Creator</Th>
+            <Th>Last Assess. Status</Th>
           </Tr>
         </Thead>
         <Tbody>
           <Tr>
-            <Td fontSize={12}>{currentAssoCiate.reference}</Td>
-            <Td fontSize={12}>{currentAssoCiate.controlDescription?.length > 20 ? `${currentAssoCiate.controlDescription.substring(0, 35)}...` : currentAssoCiate.controlDescription}</Td>
-            <Td fontSize={12}>
-              <CheckCircleIcon color="green.500" />
-            </Td>
-            <Td fontSize={12}>{riskControlData.keyControl ? "Y" : "N"}</Td>
-            <Td fontSize={12}>Acceptable</Td>
-            <Td fontSize={12}>Not Assessed</Td>
-            <Td fontSize={12}>Not Attended</Td>
-            <Td fontSize={12}>---</Td>
-            <Td fontSize={12}>---</Td>
+            <Td>{currentAssoCiate.reference}</Td>
+            <Td>{currentAssoCiate.controlDescription?.length > 20 ? `${currentAssoCiate.controlDescription.substring(0, 35)}...` : currentAssoCiate.controlDescription}</Td>
+            <Td><CheckCircleIcon color="green.500" /></Td>
+            <Td>{riskControlData.keyControl ? "Y" : "N"}</Td>
+            <Td>Acceptable</Td>
+            <Td>Not Assessed</Td>
+            <Td>Not Attended</Td>
+            <Td>---</Td>
+            <Td>---</Td>
           </Tr>
         </Tbody>
       </Table>
@@ -119,16 +94,16 @@ console.log("currentAssoCiate:", currentAssoCiate);
         colorScheme="green"
         mt={6}
         index={tabIndex}
-        onChange={(index) => setTabIndex(index)}
+        onChange={(index) => setTabIndex(index)} // Update tab index on tab change
       >
         <TabList>
-          <Tab fontSize={12}>Details</Tab>
-          <Tab fontSize={12}>History</Tab>
-          <Tab fontSize={12}>Documents</Tab>
-          <Tab fontSize={12}>Actions</Tab>
-          <Tab fontSize={12}>Risk focus</Tab>
-          <Tab fontSize={12}>Risks logs</Tab>
-          <Tab fontSize={12}>Linked items</Tab>
+          <Tab>Details</Tab>
+          <Tab>History</Tab>
+          <Tab>Documents</Tab>
+          <Tab>Actions</Tab>
+          <Tab>Risk focus</Tab>
+          <Tab>Risks logs</Tab>
+          <Tab>Linked items</Tab>
         </TabList>
 
         <TabPanels>
@@ -143,7 +118,11 @@ console.log("currentAssoCiate:", currentAssoCiate);
               currentAssoCiate={currentAssoCiate}
             />
           </TabPanel>
-          {/* Additional TabPanels for other tabs can go here */}
+
+          {/* History Tab Content */}
+          <TabPanel>
+            <RiskControlAssessment />
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </Box>
