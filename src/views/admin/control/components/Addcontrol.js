@@ -44,7 +44,6 @@ import { listEntityRiskControls } from "redux/entityRiskControl/action";
 import Loader from "../../../../assets/img/loader.gif";
 import { copyEntityRiskControl } from "redux/entityRiskControl/action";
 import { moveEntityRiskControl } from "redux/entityRiskControl/action";
-import BulkAmendModal from "./BulkAmendModal"; // Importez la nouvelle modal
 import { updateEntityRiskControl } from "redux/entityRiskControl/action";
 
 function AddControl({ entityRiskControls, loading, entities, profiles }) {
@@ -319,11 +318,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       updates: currentView === "Risks" ? {
         ownerRisk: owner.label,
         nomineeRisk: nominee.label,
-        ...(reviewer ? { reviewerRisk: reviewer.label } : {}), // Ajoute reviewerRisk seulement s'il est défini
+        reviewerRisk: reviewer?.label ? reviewer?.label : "" , // Ajoute reviewerRisk seulement s'il est défini
       } : {
         ownerControl: owner.label,
         nomineeControl: nominee.label,
-        ...(reviewer ? { reviewerControl: reviewer.label } : {}), // Ajoute reviewerControl seulement s'il est défini
+        reviewerControl: reviewer.label, // Ajoute reviewerControl seulement s'il est défini
       },
     };
     // console.log(payload);
