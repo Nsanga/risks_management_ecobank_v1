@@ -91,15 +91,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     }
   };
 
-  // Gestion de la sauvegarde des modifications dans BulkAmendModal
-  const handleBulkAmendSave = ({ owner, nominee, reviewer, selectedRows }) => {
-    console.log("✅ IDs des risques sélectionnés :", selectedRows); // Vérifie ici
-    console.log("👤 Owner:", owner);
-    console.log("🤝 Nominee:", nominee);
-    console.log("🔍 Reviewer:", reviewer);
-    // Ajoutez ici la logique pour appliquer les modifications en masse
-  };
-
   useEffect(() => {
     if (currentView === "Risks") {
       setCurrentChoice(viewData["Controls"]);
@@ -291,11 +282,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setFormData({ entity: null, entityMove: null, entityCopy: null });
   };
 
-  // useEffect(() => {
-  //   if (selectedEntityDescription) {
-  //     dispatch(listEntityRiskControls(selectedEntityDescription));
-  //   }
-  // }, [dispatch, selectedEntityDescription]);
+  useEffect(() => {
+    if (selectedEntityDescription) {
+      dispatch(listEntityRiskControls(selectedEntityDescription));
+    }
+  }, [selectedEntityDescription, dispatch]);
+  
 
   return (
     <>
@@ -674,7 +666,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         isOpen={isBulkAmendModalOpen}
         onClose={() => setIsBulkAmendModalOpen(false)}
         profiles={profiles}
-        onSave={handleBulkAmendSave}
         selectedEntityDescription={selectedEntityDescription}
         selectedRows={selectedRows} // ✅ Passer les IDs des risques sélectionnés
         itemType={currentView === "Risks" ? "risk" : "control"}

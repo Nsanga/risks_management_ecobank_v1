@@ -17,7 +17,7 @@ import { updateEntityRiskControl } from "redux/entityRiskControl/action";
 import { useDispatch } from "react-redux";
 import { listEntityRiskControls } from "redux/entityRiskControl/action";
 
-const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows = [], itemType, selectedEntityDescription }) => {
+const BulkAmendModal = ({ isOpen, onClose, profiles = [], selectedRows = [], itemType, selectedEntityDescription }) => {
   const [owner, setOwner] = React.useState(null);
   const [nominee, setNominee] = React.useState(null);
   const [reviewer, setReviewer] = React.useState(null);
@@ -55,9 +55,9 @@ const BulkAmendModal = ({ isOpen, onClose, profiles = [], onSave, selectedRows =
         ...(reviewer ? { reviewerControl: reviewer.label } : {}), // Ajoute reviewerControl seulement s'il est défini
       },
     };
-    console.log(payload);
+    // console.log(payload);
     dispatch(updateEntityRiskControl(payload));
-    window.location.reload();
+    dispatch(listEntityRiskControls(selectedEntityDescription));
 
     onClose(); // Fermer la modal après sauvegarde
     setOwner(null);

@@ -26,6 +26,7 @@ function* list(action) {
 }
 
 function* update(action) {
+    console.log("action =>", action)
     try {
         let link = `${url}/api/v1/risks-controls/update`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityRiskControlData));
@@ -33,7 +34,7 @@ function* update(action) {
         console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_SUCCESS, payload: { data: data.data } });
-            // yield put({ type: types.GET_ENTITYRISKCONTROLS_SUCCESS, payload: { data: data.data } });
+            list();
             toast.success("Entity updated successfully");
         } else {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_FAILED, payload: "Échec lors de la modification des données" });
