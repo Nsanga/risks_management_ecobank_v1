@@ -38,7 +38,7 @@ function EntityRiskControlReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        entityRiskControls: action.payload.data,
+        entityRiskControls: action.payload.data.data,
         error: null,
       };
     case types.UPDATE_ENTITYRISKCONTROL_FAILED:

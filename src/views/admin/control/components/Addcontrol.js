@@ -25,6 +25,7 @@ import {
   Text,
   ModalFooter,
   Image,
+  useToast,
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -44,6 +45,7 @@ import Loader from "../../../../assets/img/loader.gif";
 import { copyEntityRiskControl } from "redux/entityRiskControl/action";
 import { moveEntityRiskControl } from "redux/entityRiskControl/action";
 import BulkAmendModal from "./BulkAmendModal"; // Importez la nouvelle modal
+import { updateEntityRiskControl } from "redux/entityRiskControl/action";
 
 function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -55,16 +57,17 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalCopyOpen, setIsModalCopyOpen] = useState(false);
   const [isModalMoveOpen, setIsModalMoveOpen] = useState(false);
+  const [isModalBulkAmendOpen, setIsModalBulkAmendOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedEntity, setSelectedEntity] = useState(null);
-  const [formData, setFormData] = useState({ 
+  const [isRadioCopyChecked, setIsRadioCopyChecked] = useState(false);
+  const [isRadioMoveChecked, setIsRadioMoveChecked] = useState(false);
+  const [selectedEntityDescription, setSelectedEntityDescription] = useState(null);
+  const [formData, setFormData] = useState({
     entity: null,
     entityMove: null,
     entityCopy: null,
   });
-  const [isRadioCopyChecked, setIsRadioCopyChecked] = useState(false);
-  const [isRadioMoveChecked, setIsRadioMoveChecked] = useState(false);
-  const [selectedEntityDescription, setSelectedEntityDescription] =useState(null);
   const [viewData, setViewData] = useState({
     Risks: [],
     Controls: [],
@@ -73,13 +76,21 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     Kits: [],
     Obligations: [],
   });
-  const [isBulkAmendModalOpen, setIsBulkAmendModalOpen] = useState(false); // État pour la modal Bulk Amend
+  const [owner, setOwner] = React.useState(null);
+  const [nominee, setNominee] = React.useState(null);
+  const [reviewer, setReviewer] = React.useState(null);
+  const toast = useToast();
+
+  const profileOptions = profiles.map((profile) => ({
+    value: profile._id,
+    label: profile.name,
+  }));
   const dispatch = useDispatch();
 
   useEffect(() => {
     console.log("Contenu de viewData:", viewData);
   }, []);
-  
+
 
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
@@ -109,14 +120,27 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setIsModalMoveOpen(true);
   };
 
+  const bulkAmendModalOpen = () => {
+    setIsModalBulkAmendOpen(true);
+  };
+
   const closeModal = () => setIsModalOpen(false);
   const closeCopyModal = () => {
-    setFormData({ entity: null, entityMove: null, entityCopy: null });
+    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
     setIsModalCopyOpen(false);
   };
+
   const closeMoveModal = () => {
     setFormData({ entity: null, entityMove: null, entityCopy: null });
     setIsModalMoveOpen(false);
+  };
+
+  const closeBulkAmendModal = () => {
+    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    setIsModalBulkAmendOpen(false);
+    setOwner(null);
+    setNominee(null);
+    setReviewer(null);
   };
 
   const handleRadioCopyChange = (event) => {
@@ -147,7 +171,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     ],
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     if (formData.entity) {
       if (entityRiskControls && entityRiskControls.length > 0) {
         setViewData({
@@ -180,11 +204,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       });
     }
   }, [entityRiskControls, formData.entity]);
-  
+
   // Debugging: voir quand viewData est mis à jour
   useEffect(() => {
     console.log("Contenu mis à jour de viewData:", viewData);
-  }, [viewData]);  
+  }, [viewData]);
 
   const handleRowClick = (item, index) => {
     setIndexChoice(index);
@@ -243,7 +267,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     if (selectedOption) {
       setSelectedEntity(selectedOption.fullEntity);
       setSelectedEntityDescription(selectedOption.description);
-      dispatch(listEntityRiskControls(selectedOption.description));
     }
     setSelectedRows([]);
   };
@@ -255,15 +278,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     const selectedIds = selectedRows;
     const targetEntityId = formData.entityCopy;
 
-    await dispatch(
-      copyEntityRiskControl(selectedIds, targetEntityId, itemType)
-    );
+    await dispatch(copyEntityRiskControl(selectedIds, targetEntityId, itemType));
 
     closeCopyModal();
-    dispatch(listEntityRiskControls(selectedEntityDescription));
     setIsRadioCopyChecked(false);
-    setSelectedRows([]);
-    setFormData({ entity: null, entityMove: null, entityCopy: null });
+    // setSelectedRows([]);
+    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
   };
 
   const handleMove = async () => {
@@ -276,18 +296,54 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     );
 
     closeMoveModal();
-    dispatch(listEntityRiskControls(selectedEntityDescription));
     setIsRadioMoveChecked(false);
     setSelectedRows([]);
-    setFormData({ entity: null, entityMove: null, entityCopy: null });
+    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+  };
+
+  const handleBulkAmend = () => {
+    if (!owner || !nominee) {
+      toast({
+        title: "Erreur",
+        description: "Owner and Nominee fields are required.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const payload = {
+      itemIds: selectedRows,
+      itemType: currentView === "Risks" ? "risk" : "control",
+      updates: currentView === "Risks" ? {
+        ownerRisk: owner.label,
+        nomineeRisk: nominee.label,
+        ...(reviewer ? { reviewerRisk: reviewer.label } : {}), // Ajoute reviewerRisk seulement s'il est défini
+      } : {
+        ownerControl: owner.label,
+        nomineeControl: nominee.label,
+        ...(reviewer ? { reviewerControl: reviewer.label } : {}), // Ajoute reviewerControl seulement s'il est défini
+      },
+    };
+    // console.log(payload);
+    dispatch(updateEntityRiskControl(payload));
+    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    closeBulkAmendModal(); // Fermer la modal après sauvegarde
+    dispatch(listEntityRiskControls(selectedEntityDescription));
+    setOwner(null);
+    setNominee(null);
+    setReviewer(null);
+    
   };
 
   useEffect(() => {
     if (selectedEntityDescription) {
       dispatch(listEntityRiskControls(selectedEntityDescription));
+      setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
     }
   }, [selectedEntityDescription, dispatch]);
-  
+
 
   return (
     <>
@@ -484,7 +540,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             colorScheme="blue"
             fontSize={12}
             leftIcon={<EditIcon />}
-            onClick={() => setIsBulkAmendModalOpen(true)}
+            onClick={bulkAmendModalOpen}
           >
             Bulk Amend
           </Button>
@@ -662,14 +718,68 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       </Modal>
 
       {/* Modal Bulk Amend */}
-      <BulkAmendModal
-        isOpen={isBulkAmendModalOpen}
-        onClose={() => setIsBulkAmendModalOpen(false)}
-        profiles={profiles}
-        selectedEntityDescription={selectedEntityDescription}
-        selectedRows={selectedRows} // ✅ Passer les IDs des risques sélectionnés
-        itemType={currentView === "Risks" ? "risk" : "control"}
-      />
+      <Modal isCentered isOpen={isModalBulkAmendOpen} onClose={closeBulkAmendModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize={14}>Bulk Amend</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl mb={4} isRequired>
+              <FormLabel fontSize={12}>Owner</FormLabel>
+              <Select
+                placeholder="Select Owner"
+                options={profileOptions}
+                value={owner}
+                onChange={(selectedOption) => setOwner(selectedOption)}
+              // isDisabled={!isEditing}
+              />
+            </FormControl>
+
+            <FormControl mb={4} isRequired>
+              <FormLabel fontSize={12}>Nominee</FormLabel>
+              <Select
+                placeholder="Select Nominee"
+                options={profileOptions}
+                value={nominee}
+                onChange={(selectedOption) => setNominee(selectedOption)}
+              // isDisabled={!isEditing}
+              />
+            </FormControl>
+
+            <FormControl mb={4}>
+              <FormLabel fontSize={12}>Reviewer</FormLabel>
+              <Select
+                placeholder="Select Reviewer"
+                options={profileOptions}
+                value={reviewer}
+                onChange={(selectedOption) => setReviewer(selectedOption)}
+              // isDisabled={!isEditing}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <HStack spacing={4} justifyContent="start">
+              <Button
+                colorScheme="red"
+                fontSize={12}
+                leftIcon={<CloseIcon />}
+                onClick={closeBulkAmendModal}
+              >
+                Cancel
+              </Button>
+              <Button
+                colorScheme="blue"
+                fontSize={12}
+                leftIcon={<CheckIcon />}
+                onClick={handleBulkAmend}
+                isLoading={loading}
+              >
+                Save
+              </Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       {/* Modal always rendered, only the selectedEntity is conditionally passed */}
       {selectedEntity && (
