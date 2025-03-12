@@ -20,18 +20,25 @@ import { useDispatch } from 'react-redux'
 import { deleteEvent } from 'redux/events/action'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom'
 
-const DeleteModal = ({ event, isDeleteDisabled }) => {
+const DeleteModal = ({ selectedEntity, isDeleteDisabled }) => {
     const { onOpen, isOpen, onClose } = useDisclosure()
     const [reason, setReason] = useState('')
     const dispatch = useDispatch()
     const history = useHistory();
 
     const handleDelete = () => {
-        dispatch(deleteEvent(event._id));
+        console.log(selectedEntity)
+        dispatch(deleteEvent(selectedEntity._id));
         onClose();
+        setReason("")
         history.push(
             '/admin/risks',
         );
+    }
+
+    const handleClose = () => {
+        onClose();
+        setReason("")
     }
 
     return (
@@ -64,6 +71,9 @@ const DeleteModal = ({ event, isDeleteDisabled }) => {
                     </ModalBody>
 
                     <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={handleClose}>
+                            Close
+                        </Button>
                         <Button
                             variant="ghost"
                             colorScheme="red"
@@ -71,9 +81,6 @@ const DeleteModal = ({ event, isDeleteDisabled }) => {
                             isDisabled={!reason.trim()} // Disable button if reason is empty or whitespace
                         >
                             Delete
-                        </Button>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
-                            Close
                         </Button>
                     </ModalFooter>
                 </ModalContent>
