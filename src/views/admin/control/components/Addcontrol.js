@@ -333,7 +333,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     setOwner(null);
     setNominee(null);
     setReviewer(null);
-    
   };
 
   useEffect(() => {
