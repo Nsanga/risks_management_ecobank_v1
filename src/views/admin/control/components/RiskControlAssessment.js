@@ -1,6 +1,6 @@
 // src/components/RiskControlAssessment.js
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,19 +20,33 @@ import {
   Grid,
   GridItem,
 } from "@chakra-ui/react";
+import { connect, useDispatch } from "react-redux";
+import { listControlHistories } from "redux/controlHistory/action";
+import { AddControlHistory } from "redux/controlHistory/action";
 
-const RiskControlAssessment = () => {
+const RiskControlAssessment = ({ controlHistories, loading }) => {
   const [formData, setFormData] = useState({
     performance: "Not Assessed",
     efficiency: "Not Assessed",
     design: "Acceptable",
-    assessedBy: "Georges MOUMPOU",
-    assessedOn: "12/02/2025",
-    dueOn: "13/01/2025",
+    assessedBy: "",
+    assessedOb: "",
+    dueOn: "",
     cost: "",
     currency: "USD",
     notes: "",
   });
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(listControlHistories());
+  }, [dispatch]);
+
+  const handleSave = () => {
+    console.log(formData)
+    dispatch(AddControlHistory(formData));
+  }
 
   return (
     <Box fontSize='12px'>
@@ -54,17 +68,19 @@ const RiskControlAssessment = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>null</Td>
-                  <Td>28/09/2024</Td>
-                  <Td>28/08/2024</Td>
-                  <Td>0%</Td>
-                  <Td>Acceptable</Td>
-                  <Td>Unsatisfactory</Td>
-                  <Td>
-                    <Checkbox isChecked={true} isReadOnly />
-                  </Td>
-                </Tr>
+                {controlHistories.map((index, controlHistory) => (
+                  <Tr key={index}>
+                    <Td>controlHistory</Td>
+                    <Td>{controlHistory.assessedOb}</Td>
+                    <Td>{controlHistory.dueOn}</Td>
+                    <Td>{controlHistory.cost} %</Td>
+                    <Td>{controlHistory.performance}</Td>
+                    <Td>{controlHistory.attested}</Td>
+                    <Td>
+                      <Checkbox isChecked={true} isReadOnly />
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </Box>
@@ -124,6 +140,7 @@ const RiskControlAssessment = () => {
                   <Input
                     fontSize="sm"
                     type="text"
+                    placeholder="Enter assessed name"
                     value={formData.assessedBy}
                     onChange={(e) => setFormData({ ...formData, assessedBy: e.target.value })}
                   />
@@ -136,8 +153,9 @@ const RiskControlAssessment = () => {
                   <Input
                     fontSize="sm"
                     type="date"
-                    value={formData.assessedOn}
-                    onChange={(e) => setFormData({ ...formData, assessedOn: e.target.value })}
+                    placeholder="Enter assessed date"
+                    value={formData.assessedOb}
+                    onChange={(e) => setFormData({ ...formData, assessedOb: e.target.value })}
                   />
                 </FormControl>
               </GridItem>
@@ -204,7 +222,7 @@ const RiskControlAssessment = () => {
         <Button fontSize="sm" colorScheme="red" variant="outline">
           UnAttest Assess
         </Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline">
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave}>
           Save
         </Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">
@@ -215,4 +233,9 @@ const RiskControlAssessment = () => {
   );
 };
 
-export default RiskControlAssessment;
+const mapStateToProps = ({ ControlHistoryReducer }) => ({
+  controlHistories: ControlHistoryReducer.controlHistories,
+  loading: ControlHistoryReducer.loading,
+});
+
+export default connect(mapStateToProps)(RiskControlAssessment);
