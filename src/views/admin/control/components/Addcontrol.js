@@ -61,7 +61,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [isRadioCopyChecked, setIsRadioCopyChecked] = useState(false);
   const [isRadioMoveChecked, setIsRadioMoveChecked] = useState(false);
-  const [selectedEntityDescription, setSelectedEntityDescription] = useState(null);
+  const [selectedEntityDescription, setSelectedEntityDescription] =
+    useState(null);
   const [formData, setFormData] = useState({
     entity: null,
     entityMove: null,
@@ -90,14 +91,26 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     console.log("Contenu de viewData:", viewData);
   }, []);
 
-
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
     const { _id } = row;
     if (isChecked) {
       setSelectedRows((prev) => [...prev, _id]);
     } else {
-      setSelectedRows((prev) => prev.filter((selectedId) => selectedId !== _id));
+      setSelectedRows((prev) =>
+        prev.filter((selectedId) => selectedId !== _id)
+      );
+    }
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      // Sélectionner tous les IDs
+      const allIds = viewData[currentView].map((row) => row._id);
+      setSelectedRows(allIds);
+    } else {
+      // Désélectionner tout
+      setSelectedRows([]);
     }
   };
 
@@ -125,7 +138,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
   const closeModal = () => setIsModalOpen(false);
   const closeCopyModal = () => {
-    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    setFormData({
+      entity: selectedEntityDescription,
+      entityMove: null,
+      entityCopy: null,
+    });
     setIsModalCopyOpen(false);
   };
 
@@ -135,7 +152,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   };
 
   const closeBulkAmendModal = () => {
-    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    setFormData({
+      entity: selectedEntityDescription,
+      entityMove: null,
+      entityCopy: null,
+    });
     setIsModalBulkAmendOpen(false);
     setOwner(null);
     setNominee(null);
@@ -277,12 +298,18 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     const selectedIds = selectedRows;
     const targetEntityId = formData.entityCopy;
 
-    await dispatch(copyEntityRiskControl(selectedIds, targetEntityId, itemType));
+    await dispatch(
+      copyEntityRiskControl(selectedIds, targetEntityId, itemType)
+    );
 
     closeCopyModal();
     setIsRadioCopyChecked(false);
     // setSelectedRows([]);
-    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    setFormData({
+      entity: selectedEntityDescription,
+      entityMove: null,
+      entityCopy: null,
+    });
   };
 
   const handleMove = async () => {
@@ -297,7 +324,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     closeMoveModal();
     setIsRadioMoveChecked(false);
     setSelectedRows([]);
-    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    setFormData({
+      entity: selectedEntityDescription,
+      entityMove: null,
+      entityCopy: null,
+    });
   };
 
   const handleBulkAmend = () => {
@@ -315,34 +346,43 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     const payload = {
       itemIds: selectedRows,
       itemType: currentView === "Risks" ? "risk" : "control",
-      updates: currentView === "Risks" ? {
-        ownerRisk: owner.label,
-        nomineeRisk: nominee.label,
-        reviewerRisk: reviewer?.label ? reviewer?.label : "" , // Ajoute reviewerRisk seulement s'il est défini
-      } : {
-        ownerControl: owner.label,
-        nomineeControl: nominee.label,
-        reviewerControl: reviewer.label, // Ajoute reviewerControl seulement s'il est défini
-      },
+      updates:
+        currentView === "Risks"
+          ? {
+              ownerRisk: owner.label,
+              nomineeRisk: nominee.label,
+              reviewerRisk: reviewer?.label ? reviewer?.label : "", // Ajoute reviewerRisk seulement s'il est défini
+            }
+          : {
+              ownerControl: owner.label,
+              nomineeControl: nominee.label,
+              reviewerControl: reviewer.label, // Ajoute reviewerControl seulement s'il est défini
+            },
     };
     // console.log(payload);
     dispatch(updateEntityRiskControl(payload));
-    setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+    setFormData({
+      entity: selectedEntityDescription,
+      entityMove: null,
+      entityCopy: null,
+    });
     closeBulkAmendModal(); // Fermer la modal après sauvegarde
     dispatch(listEntityRiskControls(selectedEntityDescription));
     setOwner(null);
     setNominee(null);
     setReviewer(null);
-    
   };
 
   useEffect(() => {
     if (selectedEntityDescription) {
       dispatch(listEntityRiskControls(selectedEntityDescription));
-      setFormData({ entity: selectedEntityDescription, entityMove: null, entityCopy: null });
+      setFormData({
+        entity: selectedEntityDescription,
+        entityMove: null,
+        entityCopy: null,
+      });
     }
   }, [selectedEntityDescription, dispatch]);
-
 
   return (
     <>
@@ -480,7 +520,19 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             <Table variant="simple" mt={4}>
               <Thead>
                 <Tr>
-                  <Th fontSize={10}></Th>
+                  <div
+                    style={{ position: "relative", left: "25px", top: "15px" }}
+                  >
+                    <Checkbox
+                      onChange={handleSelectAll}
+                      isChecked={
+                        selectedRows.length === viewData[currentView].length &&
+                        viewData[currentView].length > 0
+                      }
+                    />
+                  </div>
+
+                  {/* <Th fontSize={10}></Th> */}
                   {columnsByView[currentView].map((col) => (
                     <Th fontSize={10} key={col.key}>
                       {col.label}
@@ -576,7 +628,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 <Text fontSize={12}>From Entity :</Text>
                 <Input
                   name="entitySelecter"
-                  value={selectedEntity ? "ENT" + selectedEntity?.referenceId + " CAM - " + selectedEntity?.description : 'None'}
+                  value={
+                    selectedEntity
+                      ? "ENT" +
+                        selectedEntity?.referenceId +
+                        " CAM - " +
+                        selectedEntity?.description
+                      : "None"
+                  }
                   width={280}
                   fontSize="12px"
                   readOnly
@@ -652,7 +711,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 <Text fontSize={12}>From Entity :</Text>
                 <Input
                   name="entitySelecter"
-                  value={selectedEntity ? "ENT" + selectedEntity?.referenceId + " CAM - " + selectedEntity?.description : 'None'}
+                  value={
+                    selectedEntity
+                      ? "ENT" +
+                        selectedEntity?.referenceId +
+                        " CAM - " +
+                        selectedEntity?.description
+                      : "None"
+                  }
                   width={280}
                   fontSize="12px"
                   readOnly
@@ -717,7 +783,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       </Modal>
 
       {/* Modal Bulk Amend */}
-      <Modal isCentered isOpen={isModalBulkAmendOpen} onClose={closeBulkAmendModal}>
+      <Modal
+        isCentered
+        isOpen={isModalBulkAmendOpen}
+        onClose={closeBulkAmendModal}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize={14}>Bulk Amend</ModalHeader>
@@ -730,7 +800,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 options={profileOptions}
                 value={owner}
                 onChange={(selectedOption) => setOwner(selectedOption)}
-              // isDisabled={!isEditing}
+                // isDisabled={!isEditing}
               />
             </FormControl>
 
@@ -741,7 +811,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 options={profileOptions}
                 value={nominee}
                 onChange={(selectedOption) => setNominee(selectedOption)}
-              // isDisabled={!isEditing}
+                // isDisabled={!isEditing}
               />
             </FormControl>
 
@@ -752,7 +822,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 options={profileOptions}
                 value={reviewer}
                 onChange={(selectedOption) => setReviewer(selectedOption)}
-              // isDisabled={!isEditing}
+                // isDisabled={!isEditing}
               />
             </FormControl>
           </ModalBody>
