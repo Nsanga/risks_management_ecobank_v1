@@ -13,7 +13,7 @@ function* list() {
         let link = `${url}/api/v1/history/getHistory`;
         const data = yield getRequest(link);
         console.log(data)
-        if (data.message === "Success") {
+        if (data.status === 200) {
             yield put({ type: types.GET_CONTROLHISTORIES_SUCCESS, payload: data });
         } else {
             yield put({ type: types.GET_CONTROLHISTORIES_FAILED, payload: "echec recuperation des données" });
@@ -50,14 +50,14 @@ function* add(action) {
         const data = yield postRequest(link, JSON.stringify(action.payload));
         console.log('dataADD::', data)
 
-        if (data.message === 'Created') {
+        if (data.statut === 200) { 
             yield put({ type: types.ADD_CONTROLHISTORY_SUCCESS, payload: data });
-            toast.success(data.data.message);
+            toast.success(data.message);
             yield put({ type: types.GET_CONTROLHISTORIES_REQUEST, payload: { type: action.payload.type } });
         } else {
-            toast.error("Aucune donnée n'a été ajouté.");
+            toast.error("Aucune donnée n'a été ajouté."); 
             yield put({ type: types.ADD_CONTROLHISTORY_FAILED, payload: "Échec lors de la creation de l'évenement" });
-        }
+        } 
 
     } catch (error) {
         toast.error("Aucune donnée n'a été ajouté.");

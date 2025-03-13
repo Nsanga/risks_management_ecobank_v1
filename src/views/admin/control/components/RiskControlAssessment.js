@@ -30,11 +30,12 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
     efficiency: "Not Assessed",
     design: "Acceptable",
     assessedBy: "",
-    assessedOb: "",
+    assessedOn: "",
     dueOn: "",
     cost: "",
     currency: "USD",
     notes: "",
+    attested: true
   });
 
   const dispatch = useDispatch()
@@ -47,7 +48,7 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
     console.log(formData)
     dispatch(AddControlHistory(formData));
   }
-
+console.log(controlHistories)
   return (
     <Box fontSize='12px'>
       {/* Container Grid */}
@@ -68,16 +69,16 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
                 </Tr>
               </Thead>
               <Tbody>
-                {controlHistories.map((index, controlHistory) => (
-                  <Tr key={index}>
-                    <Td>controlHistory</Td>
-                    <Td>{controlHistory.assessedOb}</Td>
+                {controlHistories.map((controlHistory) => (
+                  <Tr key={controlHistory._id}>
+                    <Td>{controlHistory.reference}</Td> 
+                    <Td>{controlHistory.assessedOn}</Td>
                     <Td>{controlHistory.dueOn}</Td>
                     <Td>{controlHistory.cost} %</Td>
+                    <Td>{controlHistory.design}</Td>
                     <Td>{controlHistory.performance}</Td>
-                    <Td>{controlHistory.attested}</Td>
                     <Td>
-                      <Checkbox isChecked={true} isReadOnly />
+                      <Checkbox isChecked={controlHistory.attested} isReadOnly />
                     </Td>
                   </Tr>
                 ))}
@@ -102,7 +103,7 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
                     <option>Good</option>
                     <option>Unsatisfactory</option>
                   </Select>
-                </FormControl>
+                </FormControl> 
               </GridItem>
 
               <GridItem>
@@ -154,8 +155,8 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
                     fontSize="sm"
                     type="date"
                     placeholder="Enter assessed date"
-                    value={formData.assessedOb}
-                    onChange={(e) => setFormData({ ...formData, assessedOb: e.target.value })}
+                    value={formData.assessedOn}
+                    onChange={(e) => setFormData({ ...formData, assessedOn: e.target.value })}
                   />
                 </FormControl>
               </GridItem>

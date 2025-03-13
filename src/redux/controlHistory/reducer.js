@@ -18,7 +18,7 @@ function ControlHistoryReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        controlHistories: action.payload.data.controlHistories,
+        controlHistories: action.payload.data,
       };
     case types.GET_CONTROLHISTORIES_FAILED:
       return {
