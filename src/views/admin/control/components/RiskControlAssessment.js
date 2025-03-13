@@ -47,8 +47,20 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
   const handleSave = () => {
     console.log(formData)
     dispatch(AddControlHistory(formData));
+    setFormData({
+      performance: "Not Assessed",
+      efficiency: "Not Assessed",
+      design: "Acceptable",
+      assessedBy: "",
+      assessedOn: "",
+      dueOn: "",
+      cost: "",
+      currency: "USD",
+      notes: "",
+      attested: true
+    });
   }
-console.log(controlHistories)
+  console.log(controlHistories)
   return (
     <Box fontSize='12px'>
       {/* Container Grid */}
@@ -71,7 +83,7 @@ console.log(controlHistories)
               <Tbody>
                 {controlHistories.map((controlHistory) => (
                   <Tr key={controlHistory._id}>
-                    <Td>{controlHistory.reference}</Td> 
+                    <Td>{controlHistory.reference}</Td>
                     <Td>{controlHistory.assessedOn}</Td>
                     <Td>{controlHistory.dueOn}</Td>
                     <Td>{controlHistory.cost} %</Td>
@@ -103,7 +115,7 @@ console.log(controlHistories)
                     <option>Good</option>
                     <option>Unsatisfactory</option>
                   </Select>
-                </FormControl> 
+                </FormControl>
               </GridItem>
 
               <GridItem>
