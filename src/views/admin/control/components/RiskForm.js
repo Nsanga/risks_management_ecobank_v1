@@ -22,7 +22,7 @@ import { connect, useDispatch } from 'react-redux';
 import { updateEntityRiskControl } from 'redux/entityRiskControl/action';
 import { useEffect, useState } from 'react';
 
-function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk }) {
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk, handleTestControlClick }) {
   const dispatch = useDispatch();
   const [ownerValue, setOwnerValue] = useState(null);
   const [nomineeValue, setNomineeValue] = useState(null);
@@ -131,7 +131,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
 
   const handleAmend = () => {
     const payload = {
-      itemIds: selectedRisk._id,
+      itemIds: [selectedRisk._id],
       itemType: "risk",
       updates: {
         ...riskFormData,
@@ -246,8 +246,8 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
             size="sm"
             fontWeight="bold"
             mb={2}
-            name="ownerEmailChecked"
-            isChecked={riskFormData.ownerEmailChecked}
+            name="ownerEmail"
+            isChecked={riskFormData.ownerEmail}
             onChange={handleChange}
           >
             <span style={{ fontSize: 12 }}>Owner Email</span>
@@ -286,6 +286,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
               variant="solid"
               width="auto"
               minWidth="120px"
+              onClick={handleTestControlClick}
 
             >
               Test du Controle

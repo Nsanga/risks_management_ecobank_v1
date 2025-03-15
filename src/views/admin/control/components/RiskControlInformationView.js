@@ -41,6 +41,8 @@ const RiskControlInformationView = ({
 }) => {
   const [showTabs, setShowTabs] = useState(false);
   const [currentAssoCiate, setCurrentAssoCiate] = useState({});
+  const [activeTab, setActiveTab] = useState(0); // 0 pour "General", 1 pour "Controls"
+  const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
 
   useEffect(() => {
     setCurrentAssoCiate(currenChoice[indexChoice]);
@@ -65,7 +67,7 @@ const RiskControlInformationView = ({
 
   const [formDataRiskForm, setFormDataRiskForm] = useState({
     ownerRisk: null,
-    ownerEmailChecked: false,
+    ownerEmail: false,
     nomineeRisk: null,
     reviewerRisk: null,
     activeRisk: true,
@@ -145,7 +147,7 @@ const RiskControlInformationView = ({
       "frequency",
       "nominee",
       "owner",
-      "ownerEmailChecked",
+      "ownerEmail",
       "remindOne",
       "reviewer",
     ];
@@ -188,6 +190,17 @@ const RiskControlInformationView = ({
     }
   }, [newItemId]);
 
+  const handleTestControlClick = () => {
+    console.log("ok")
+    setActiveTab(1); // Passer à l'onglet "Controls"
+    setActiveSubTab(1); // Passer au sous-onglet "History"
+    console.log(activeTab)
+  };
+
+  const handleTestControlBySubTabClick = () => {
+    setActiveSubTab(1); // Passer au sous-onglet "History"
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
@@ -207,7 +220,7 @@ const RiskControlInformationView = ({
               entities={entities}
               selectedRisk={selectedRisk}
             />
-            <Tabs variant="enclosed" mt={6}>
+            <Tabs variant="enclosed" mt={6} index={activeTab} onChange={setActiveTab}>
               <TabList>
                 <Tab fontSize={12}>General</Tab>
                 {/* <Tab fontSize={12} >Goals</Tab> */}
@@ -228,6 +241,7 @@ const RiskControlInformationView = ({
                     newRiskId={newItemId}
                     onClose={onClose}
                     selectedRisk={selectedRisk}
+                    handleTestControlClick={handleTestControlClick}
                   />
                 </TabPanel>
                 {/* <TabPanel>
@@ -241,6 +255,9 @@ const RiskControlInformationView = ({
                     profiles={profiles}
                     onClose={onClose}
                     currentAssoCiate={currentAssoCiate}
+                    activeSubTab={activeSubTab} // Passer l'état du sous-onglet
+                    setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
+                    handleTestControlBySubTabClick={handleTestControlBySubTabClick}
                   />
                 </TabPanel>
                 <TabPanel>

@@ -109,7 +109,7 @@ const RiskPage = ({
                 name="location"
                 value={selectedRisk.location}
                 onChange={handleChange}
-                // onBlur={logPayload} // Log payload on blur
+              // onBlur={logPayload} // Log payload on blur
               />
             )}
             <Text fontSize={12}>Business Line:</Text>
@@ -123,7 +123,7 @@ const RiskPage = ({
                 name="businessLine"
                 value={riskData.businessLine}
                 onChange={handleChange}
-                // onBlur={logPayload} // Log payload on blur
+              // onBlur={logPayload} // Log payload on blur
               />
             )}
           </HStack>
@@ -136,20 +136,22 @@ const RiskPage = ({
               name="cbrDescription"
               value={riskData.cbrDescription}
               onChange={handleChange}
-              // onBlur={logPayload} // Log payload on blur
+            // onBlur={logPayload} // Log payload on blur
             />
           </HStack>
-          <HStack spacing={16} alignItems="center">
-            <Text fontSize={12} ml={1} mt={6} fontWeight="bold" mb={2}>
-              Description:
-            </Text>
+          <HStack spacing={14} alignItems="center">
+            <Box width={20}>
+              <Text fontSize={12} ml={1} mt={6} fontWeight="bold" mb={2}>
+                Produits /<br/>Processus /<br/>Description:
+              </Text>
+            </Box>
             <Textarea
               fontSize={12}
               name="description"
               value={selectedRisk.description}
               // onChange={handleChange}
               readOnly
-              // onBlur={logPayload} // Log payload on blur
+            // onBlur={logPayload} // Log payload on blur
             />
           </HStack>
           <HStack spacing={16} alignItems="center">
@@ -162,7 +164,7 @@ const RiskPage = ({
               value={selectedRisk.riskCategory}
               onChange={handleChange}
               readOnly
-              // onBlur={logPayload} // Log payload on blur
+            // onBlur={logPayload} // Log payload on blur
             />
           </HStack>
           <HStack spacing={10} alignItems="center">
@@ -174,7 +176,7 @@ const RiskPage = ({
               name="dismissalCategory"
               value={riskData.dismissalCategory}
               onChange={handleChange}
-              // onBlur={logPayload} // Log payload on blur
+            // onBlur={logPayload} // Log payload on blur
             />
           </HStack>
         </Flex>

@@ -31,9 +31,13 @@ const RiskControl = ({
   handleSelectChange,
   handleChange,
   currentAssoCiate,
+  activeSubTab, 
+  setActiveSubTab,
+  handleTestControlBySubTabClick
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
+  const [activeControlTab, setActiveControlTab] = useState(0); // 0 pour "Control", 1 pour "Controls"
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -76,8 +80,8 @@ const RiskControl = ({
         </Thead>
         <Tbody>
           <Tr>
-            <Td>{currentAssoCiate.reference}</Td>
-            <Td>{currentAssoCiate.controlDescription?.length > 20 ? `${currentAssoCiate.controlDescription.substring(0, 35)}...` : currentAssoCiate.controlDescription}</Td>
+            <Td>{currentAssoCiate?.reference}</Td>
+            <Td>{currentAssoCiate?.controlDescription?.length > 20 ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` : currentAssoCiate?.controlDescription}</Td>
             <Td><CheckCircleIcon color="green.500" /></Td>
             <Td>{riskControlData.keyControl ? "Y" : "N"}</Td>
             <Td>Acceptable</Td>
@@ -93,8 +97,10 @@ const RiskControl = ({
         variant="soft-rounded"
         colorScheme="green"
         mt={6}
-        index={tabIndex}
-        onChange={(index) => setTabIndex(index)} // Update tab index on tab change
+        index={activeSubTab} 
+        onChange={setActiveSubTab}
+        // index={tabIndex}
+        // onChange={(index) => setTabIndex(index)} // Update tab index on tab change
       >
         <TabList>
           <Tab>Details</Tab>
@@ -116,6 +122,7 @@ const RiskControl = ({
               profiles={profiles}
               handleSubmit={handleSubmit}
               currentAssoCiate={currentAssoCiate}
+              handleTestControlBySubTabClick={handleTestControlBySubTabClick}
             />
           </TabPanel>
 

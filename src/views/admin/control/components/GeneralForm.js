@@ -27,6 +27,7 @@ const GeneralForm = ({
   profiles,
   handleChange,
   currentAssoCiate,
+  handleTestControlBySubTabClick
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
@@ -395,7 +396,7 @@ const GeneralForm = ({
                 </HStack>
               </FormControl>
               <Box>
-                <Button fontSize={12} colorScheme="blue" variant="solid">
+                <Button fontSize={12} colorScheme="blue" variant="solid" onClick={handleTestControlBySubTabClick}>
                   Test du controle
                 </Button>
               </Box>
