@@ -140,7 +140,7 @@ const GeneralForm = ({
         setReviewerValue({ value: currentAssoCiate.reviewerControl, label: currentAssoCiate.reviewerControl });
       }
     }
-  }, [currentAssoCiate, frequenciesOptions, formData.frequency]);
+  }, [currentAssoCiate]);
 
   return (
     <Box className="form-container" as="form">
@@ -368,8 +368,8 @@ const GeneralForm = ({
                       options={frequenciesOptions}
                       value={frequenciesOptions?.find(
                         (option) =>
-                          option.value === formData.frequencyAssessment || currentAssoCiate.frequence
-                      )}
+                          option.value === formData.frequencyAssessment
+                      ) || currentAssoCiate?.frequence}
                       onChange={(selectedOption) =>
                         handleSelectChangeWithNext(
                           "frequencyAssessment",
