@@ -179,6 +179,8 @@ const RiskControlInformationView = ({
     if (addSuccess) {
       setShowTabs(true); // Mettre à jour l'affichage si l'action est réussie
     }
+    setActiveTab(0);
+    setActiveSubTab(0);
   }, [addSuccess]);
 
   useEffect(() => {
@@ -191,19 +193,23 @@ const RiskControlInformationView = ({
   }, [newItemId]);
 
   const handleTestControlClick = () => {
-    console.log("ok")
     setActiveTab(1); // Passer à l'onglet "Controls"
     setActiveSubTab(1); // Passer au sous-onglet "History"
-    console.log(activeTab)
   };
 
   const handleTestControlBySubTabClick = () => {
     setActiveSubTab(1); // Passer au sous-onglet "History"
   };
 
+  const handleClose = () => {
+    onClose();
+    setActiveTab(0);
+    setActiveSubTab(0);
+  }
+
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+      <Modal isOpen={isOpen} onClose={handleClose} scrollBehavior="inside" size="6xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>

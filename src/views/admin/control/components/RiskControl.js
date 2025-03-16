@@ -37,7 +37,8 @@ const RiskControl = ({
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
-  const [activeControlTab, setActiveControlTab] = useState(0); // 0 pour "Control", 1 pour "Controls"
+  
+  console.log('currentAssoCiate', currentAssoCiate)
 
   const handleSubmit = (e) => {
     e.preventDefault();

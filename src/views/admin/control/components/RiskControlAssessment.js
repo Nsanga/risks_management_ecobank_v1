@@ -64,11 +64,11 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
   return (
     <Box fontSize='12px'>
       {/* Container Grid */}
-      <Grid templateColumns="1fr 1fr" gap={6} alignItems="start">
+      <Grid templateColumns="1fr 1fr" gap={4} alignItems="start">
         {/* Left Column (Table) */}
         <GridItem>
-          <Box bg="white" p={2} borderRadius="md" boxShadow="md" maxWidth="100%" height='80vh'>
-            <Table variant="simple" size="sm" width="100%">
+          <Box bg="white" p={2} borderRadius="md" boxShadow="md" maxWidth="100%">
+            <Table variant="simple" width="100%" fontSize='10px'>
               <Thead bg="gray.200">
                 <Tr>
                   <Th w="10%">Ref</Th>
@@ -118,7 +118,7 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
                 </FormControl>
               </GridItem>
 
-              <GridItem>
+              {/* <GridItem>
                 <FormControl>
                   <FormLabel fontSize="sm">Efficiency</FormLabel>
                   <Select
@@ -145,7 +145,7 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
                     <option>Not Acceptable</option>
                   </Select>
                 </FormControl>
-              </GridItem>
+              </GridItem> */}
 
               <GridItem>
                 <FormControl>
@@ -207,14 +207,14 @@ const RiskControlAssessment = ({ controlHistories, loading }) => {
                   >
                     <option>USD</option>
                     <option>EUR</option>
-                    <option>GBP</option>
+                    <option>XAF</option>
                   </Select>
                 </FormControl>
               </GridItem>
 
               <GridItem colSpan={2}>
                 <FormControl>
-                  <FormLabel fontSize="sm">Notes</FormLabel>
+                  <FormLabel fontSize="sm">Résultats du test</FormLabel>
                   <Textarea
                     fontSize="sm"
                     value={formData.notes}
