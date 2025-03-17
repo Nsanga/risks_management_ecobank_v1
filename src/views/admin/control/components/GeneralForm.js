@@ -40,11 +40,11 @@ const GeneralForm = ({
       const surname = profile.surname ? profile.surname : "";
 
       return {
-          key: `${profile._id}-${index}`, // Unicité assurée
-          value: `${name} ${surname}`.trim(),
-          label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+        key: `${profile._id}-${index}`, // Unicité assurée
+        value: `${name} ${surname}`.trim(),
+        label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
       };
-  });
+    });
 
   const frequencies = [
     { id: 1, label: "Daily" },
@@ -52,7 +52,7 @@ const GeneralForm = ({
     { id: 3, label: "Monthly" },
     { id: 4, label: "Quarterly" },
     { id: 5, label: "Semi-Annually" },
-    { id: 6, label: "Annually"}
+    { id: 6, label: "Annually" }
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({
@@ -127,6 +127,14 @@ const GeneralForm = ({
   useEffect(() => {
     if (currentAssoCiate) {
       handleChange({ target: { name: 'description', value: currentAssoCiate.description } });
+      // Vérifier si historyControl a des éléments
+      if (currentAssoCiate.historyControl && currentAssoCiate.historyControl.length > 0) {
+        // Récupérer l'élément le plus récent
+        const latestHistory = currentAssoCiate.historyControl[0]; // Supposons que le plus récent est le premier élément
+
+        // Passer les valeurs de dueOn et assessedOn
+        handleChange({ target: { name: 'nextAssessment', value: latestHistory.assessedOn } });
+      }
       const nomineeOption = profilesOptions.find(option => option.value === currentAssoCiate.nomineeControl);
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
@@ -227,7 +235,7 @@ const GeneralForm = ({
                 Nominee:
               </Text>
               <Box width="100%">
-              <Select
+                <Select
                   name="nominee"
                   placeholder='Select nominee'
                   styles={customStyles}
@@ -247,7 +255,7 @@ const GeneralForm = ({
                 Reviewer:
               </Text>
               <Box width="100%">
-              <Select
+                <Select
                   name="reviewer"
                   placeholder='Select reviewer'
                   styles={customStyles}
@@ -399,7 +407,7 @@ const GeneralForm = ({
                 </HStack>
               </FormControl>
               <Box>
-                <Button fontSize={12} colorScheme="blue" variant="solid" onClick={handleTestControlBySubTabClick}>
+                <Button fontSize={12} colorScheme="blue" variant="solid" onClick={handleTestControlBySubTabClick} disabled={currentAssoCiate.historyControl.length === 0 || new Date(currentAssoCiate.historyControl[0].assessedOn) > new Date()}>
                   Test du controle
                 </Button>
               </Box>

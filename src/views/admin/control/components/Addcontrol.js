@@ -226,9 +226,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   }, [entityRiskControls, formData.entity]);
 
   // Debugging: voir quand viewData est mis à jour
-  useEffect(() => {
-    console.log("Contenu mis à jour de viewData:", viewData);
-  }, [viewData]);
+  // useEffect(() => {
+  //   console.log("Contenu mis à jour de viewData:", viewData);
+  // }, [viewData]);
 
   const handleRowClick = (item, index) => {
     setIndexChoice(index);
@@ -450,6 +450,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
             profiles={profiles}
             currenChoice={currenChoice}
             indexChoice={indexChoice}
+            selectedEntityDescription={selectedEntityDescription}
           />
         )}
 

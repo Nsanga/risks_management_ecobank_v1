@@ -38,6 +38,7 @@ const RiskControlInformationView = ({
   selectedRisk,
   currenChoice,
   indexChoice,
+  selectedEntityDescription
 }) => {
   const [showTabs, setShowTabs] = useState(false);
   const [currentAssoCiate, setCurrentAssoCiate] = useState({});
@@ -264,6 +265,7 @@ const RiskControlInformationView = ({
                     activeSubTab={activeSubTab} // Passer l'état du sous-onglet
                     setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
                     handleTestControlBySubTabClick={handleTestControlBySubTabClick}
+                    selectedEntityDescription={selectedEntityDescription}
                   />
                 </TabPanel>
                 <TabPanel>

@@ -33,7 +33,8 @@ const RiskControl = ({
   currentAssoCiate,
   activeSubTab, 
   setActiveSubTab,
-  handleTestControlBySubTabClick
+  handleTestControlBySubTabClick,
+  selectedEntityDescription
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
@@ -73,7 +74,6 @@ const RiskControl = ({
             <Th>Active</Th>
             <Th>Key Ctrl</Th>
             <Th>Last Assess. Date</Th>
-            <Th>Last Assess. Design</Th>
             <Th>Last Assess. Performance</Th>
             <Th>Last Assess. Creator</Th>
             <Th>Last Assess. Status</Th>
@@ -85,10 +85,9 @@ const RiskControl = ({
             <Td>{currentAssoCiate?.controlDescription?.length > 20 ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` : currentAssoCiate?.controlDescription}</Td>
             <Td><CheckCircleIcon color="green.500" /></Td>
             <Td>{riskControlData.keyControl ? "Y" : "N"}</Td>
-            <Td>Acceptable</Td>
-            <Td>Not Assessed</Td>
-            <Td>Not Attended</Td>
-            <Td>---</Td>
+            <Td>{currentAssoCiate.historyControl[0].dueOn}</Td>
+            <Td>{currentAssoCiate.historyControl[0].performance}</Td>
+            <Td>{currentAssoCiate.historyControl[0].assessedBy}</Td>
             <Td>---</Td>
           </Tr>
         </Tbody>
@@ -100,8 +99,6 @@ const RiskControl = ({
         mt={6}
         index={activeSubTab} 
         onChange={setActiveSubTab}
-        // index={tabIndex}
-        // onChange={(index) => setTabIndex(index)} // Update tab index on tab change
       >
         <TabList>
           <Tab>Details</Tab>
@@ -129,7 +126,7 @@ const RiskControl = ({
 
           {/* History Tab Content */}
           <TabPanel>
-            <RiskControlAssessment />
+            <RiskControlAssessment currentAssoCiate={currentAssoCiate} selectedEntityDescription={selectedEntityDescription}/>
           </TabPanel>
         </TabPanels>
       </Tabs>
