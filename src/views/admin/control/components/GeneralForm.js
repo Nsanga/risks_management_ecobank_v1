@@ -139,6 +139,9 @@ const GeneralForm = ({
       } else {
         setReviewerValue({ value: currentAssoCiate.reviewerControl, label: currentAssoCiate.reviewerControl });
       }
+      if (currentAssoCiate.frequence) {
+        handleChange({ target: { name: 'frequencyAssessment', value: currentAssoCiate.frequence } });
+      }
     }
   }, [currentAssoCiate]);
 
@@ -369,7 +372,7 @@ const GeneralForm = ({
                       value={frequenciesOptions?.find(
                         (option) =>
                           option.value === formData.frequencyAssessment
-                      ) || currentAssoCiate?.frequence}
+                      )}
                       onChange={(selectedOption) =>
                         handleSelectChangeWithNext(
                           "frequencyAssessment",
