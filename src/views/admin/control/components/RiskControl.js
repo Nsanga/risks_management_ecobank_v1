@@ -85,9 +85,9 @@ const RiskControl = ({
             <Td>{currentAssoCiate?.controlDescription?.length > 20 ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` : currentAssoCiate?.controlDescription}</Td>
             <Td><CheckCircleIcon color="green.500" /></Td>
             <Td>{riskControlData.keyControl ? "Y" : "N"}</Td>
-            <Td>{currentAssoCiate.historyControl[0].dueOn}</Td>
-            <Td>{currentAssoCiate.historyControl[0].performance}</Td>
-            <Td>{currentAssoCiate.historyControl[0].assessedBy}</Td>
+            <Td>{currentAssoCiate.historyControl[0]?.dueOn}</Td>
+            <Td>{currentAssoCiate.historyControl[0]?.performance}</Td>
+            <Td>{currentAssoCiate.historyControl[0]?.assessedBy}</Td>
             <Td>---</Td>
           </Tr>
         </Tbody>

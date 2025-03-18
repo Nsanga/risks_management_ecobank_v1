@@ -407,7 +407,7 @@ const GeneralForm = ({
                 </HStack>
               </FormControl>
               <Box>
-                <Button fontSize={12} colorScheme="blue" variant="solid" onClick={handleTestControlBySubTabClick} disabled={currentAssoCiate.historyControl.length === 0 || new Date(currentAssoCiate.historyControl[0].assessedOn) > new Date()}>
+                <Button fontSize={12} colorScheme="blue" variant="solid" onClick={handleTestControlBySubTabClick} disabled={currentAssoCiate.historyControl.length === 0 || new Date(currentAssoCiate.historyControl[0]?.assessedOn) > new Date()}>
                   Test du controle
                 </Button>
               </Box>

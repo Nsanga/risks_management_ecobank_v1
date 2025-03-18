@@ -42,14 +42,14 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
   useEffect(() => {
     if (currentAssoCiate) {
       setFormData({
-        performance: currentAssoCiate.historyControl[0].performance || "Not Assessed",
-        assessedBy: currentAssoCiate.historyControl[0].assessedBy || "",
-        assessedOn: currentAssoCiate.historyControl[0].assessedOn || "",
-        dueOn: currentAssoCiate.historyControl[0].dueOn || "",
-        cost: currentAssoCiate.historyControl[0].cost || "",
-        currency: currentAssoCiate.historyControl[0].currency || "USD",
-        notes: currentAssoCiate.historyControl[0].notes || "",
-        attested: currentAssoCiate.historyControl[0].attested || true
+        performance: currentAssoCiate.historyControl[0]?.performance || "Not Assessed",
+        assessedBy: currentAssoCiate.historyControl[0]?.assessedBy || "",
+        assessedOn: currentAssoCiate.historyControl[0]?.assessedOn || "",
+        dueOn: currentAssoCiate.historyControl[0]?.dueOn || "",
+        cost: currentAssoCiate.historyControl[0]?.cost || "",
+        currency: currentAssoCiate.historyControl[0]?.currency || "USD",
+        notes: currentAssoCiate.historyControl[0]?.notes || "",
+        attested: currentAssoCiate.historyControl[0]?.attested || true
       });
     }
   }, [dispatch]);
