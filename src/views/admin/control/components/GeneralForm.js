@@ -27,13 +27,13 @@ const GeneralForm = ({
   profiles,
   handleChange,
   currentAssoCiate,
-  handleTestControlBySubTabClick
+  handleTestControlBySubTabClick,
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
 
   const profilesOptions = profiles
-    ?.filter(profile => profile.activeUser)
+    ?.filter((profile) => profile.activeUser)
     ?.map((profile, index) => {
       // Vérification de la présence de name et surname
       const name = profile.name ? profile.name : "";
@@ -52,7 +52,7 @@ const GeneralForm = ({
     { id: 3, label: "Monthly" },
     { id: 4, label: "Quarterly" },
     { id: 5, label: "Semi-Annually" },
-    { id: 6, label: "Annually" }
+    { id: 6, label: "Annually" },
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({
@@ -126,29 +126,51 @@ const GeneralForm = ({
 
   useEffect(() => {
     if (currentAssoCiate) {
-      handleChange({ target: { name: 'description', value: currentAssoCiate.description } });
+      handleChange({
+        target: { name: "description", value: currentAssoCiate.description },
+      });
       // Vérifier si historyControl a des éléments
-      if (currentAssoCiate.historyControl && currentAssoCiate.historyControl.length > 0) {
+      if (
+        currentAssoCiate.historyControl &&
+        currentAssoCiate.historyControl.length > 0
+      ) {
         // Récupérer l'élément le plus récent
         const latestHistory = currentAssoCiate.historyControl[0]; // Supposons que le plus récent est le premier élément
 
         // Passer les valeurs de dueOn et assessedOn
-        handleChange({ target: { name: 'nextAssessment', value: latestHistory.assessedOn } });
+        handleChange({
+          target: { name: "nextAssessment", value: latestHistory.assessedOn },
+        });
       }
-      const nomineeOption = profilesOptions.find(option => option.value === currentAssoCiate.nomineeControl);
+      const nomineeOption = profilesOptions.find(
+        (option) => option.value === currentAssoCiate.nomineeControl
+      );
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
       } else {
-        setNomineeValue({ value: currentAssoCiate.nomineeControl, label: currentAssoCiate.nomineeControl });
+        setNomineeValue({
+          value: currentAssoCiate.nomineeControl,
+          label: currentAssoCiate.nomineeControl,
+        });
       }
-      const reviewerOption = profilesOptions.find(option => option.value === currentAssoCiate.reviewerControl);
+      const reviewerOption = profilesOptions.find(
+        (option) => option.value === currentAssoCiate.reviewerControl
+      );
       if (reviewerOption) {
         setReviewerValue(reviewerOption);
       } else {
-        setReviewerValue({ value: currentAssoCiate.reviewerControl, label: currentAssoCiate.reviewerControl });
+        setReviewerValue({
+          value: currentAssoCiate.reviewerControl,
+          label: currentAssoCiate.reviewerControl,
+        });
       }
       if (currentAssoCiate.frequence) {
-        handleChange({ target: { name: 'frequencyAssessment', value: currentAssoCiate.frequence } });
+        handleChange({
+          target: {
+            name: "frequencyAssessment",
+            value: currentAssoCiate.frequence,
+          },
+        });
       }
     }
   }, [currentAssoCiate]);
@@ -237,13 +259,13 @@ const GeneralForm = ({
               <Box width="100%">
                 <Select
                   name="nominee"
-                  placeholder='Select nominee'
+                  placeholder="Select nominee"
                   styles={customStyles}
                   options={profilesOptions}
                   value={nomineeValue}
                   onChange={(selectedOption) => {
                     setNomineeValue(selectedOption);
-                    handleSelectChange('nominee', selectedOption);
+                    handleSelectChange("nominee", selectedOption);
                   }}
                 />
               </Box>
@@ -257,13 +279,13 @@ const GeneralForm = ({
               <Box width="100%">
                 <Select
                   name="reviewer"
-                  placeholder='Select reviewer'
+                  placeholder="Select reviewer"
                   styles={customStyles}
                   options={profilesOptions}
                   value={reviewerValue}
                   onChange={(selectedOption) => {
                     setReviewerValue(selectedOption);
-                    handleSelectChange('reviewer', selectedOption);
+                    handleSelectChange("reviewer", selectedOption);
                   }}
                 />
               </Box>
@@ -280,6 +302,44 @@ const GeneralForm = ({
                 type="date"
                 name="reviewDate"
                 value={formData.reviewDate}
+                onChange={handleChange}
+              />
+            </HStack>
+          </FormControl>
+
+          <FormControl mb={4}>
+            <HStack spacing={5} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>
+                Resumé du control :
+              </Text>
+              <Textarea
+                defaultValue={
+                  currentAssoCiate?.controlSummary
+                    ? currentAssoCiate?.controlSummary
+                    : currentAssoCiate?.controlSummary
+                }
+                fontSize={12}
+                name="description"
+                // value={formData.description}
+                onChange={handleChange}
+              />
+            </HStack>
+          </FormControl>
+
+          <FormControl mb={4}>
+            <HStack spacing={5} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>
+                Methodologie <br/>du teste:
+              </Text>
+              <Textarea
+                defaultValue={
+                  currentAssoCiate?.monitoringMethodology
+                    ? currentAssoCiate?.monitoringMethodology
+                    : currentAssoCiate?.monitoringMethodology
+                }
+                fontSize={12}
+                name="description"
+                // value={formData.description}
                 onChange={handleChange}
               />
             </HStack>
@@ -407,7 +467,17 @@ const GeneralForm = ({
                 </HStack>
               </FormControl>
               <Box>
-                <Button fontSize={12} colorScheme="blue" variant="solid" onClick={handleTestControlBySubTabClick} disabled={currentAssoCiate.historyControl.length === 0 || new Date(currentAssoCiate.historyControl[0]?.assessedOn) > new Date()}>
+                <Button
+                  fontSize={12}
+                  colorScheme="blue"
+                  variant="solid"
+                  onClick={handleTestControlBySubTabClick}
+                  disabled={
+                    currentAssoCiate.historyControl.length === 0 ||
+                    new Date(currentAssoCiate.historyControl[0]?.assessedOn) >
+                      new Date()
+                  }
+                >
                   Test du controle
                 </Button>
               </Box>
