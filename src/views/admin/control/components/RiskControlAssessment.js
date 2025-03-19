@@ -25,36 +25,45 @@ import { listControlHistories } from "redux/controlHistory/action";
 import { AddControlHistory } from "redux/controlHistory/action";
 import { listEntityRiskControls } from "redux/entityRiskControl/action";
 
-const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEntityDescription }) => {
+const RiskControlAssessment = ({
+  controlHistories,
+  currentAssoCiate,
+  selectedEntityDescription,
+}) => {
+  const userName = localStorage.getItem("username");
+
   const [formData, setFormData] = useState({
     performance: "Not Assessed",
-    assessedBy: "",
+    assessedBy: userName ? userName : "",
     assessedOn: "",
     dueOn: "",
     closedDate: "",
     notes: "",
-    attested: true
+    attested: true,
   });
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (currentAssoCiate) {
       setFormData({
-        performance: currentAssoCiate.historyControl[0]?.performance || "Not Assessed",
-        assessedBy: currentAssoCiate.historyControl[0]?.assessedBy || "",
+        performance:
+          currentAssoCiate.historyControl[0]?.performance || "Not Assessed",
+        assessedBy: userName
+          ? userName
+          : currentAssoCiate.historyControl[0]?.assessedBy || "",
         assessedOn: currentAssoCiate.historyControl[0]?.assessedOn || "",
         dueOn: currentAssoCiate.historyControl[0]?.dueOn || "",
         closedDate: currentAssoCiate.historyControl[0]?.closedDate || "",
         notes: currentAssoCiate.historyControl[0]?.notes || "",
-        attested: currentAssoCiate.historyControl[0]?.attested || true
+        attested: currentAssoCiate.historyControl[0]?.attested || true,
       });
     }
   }, [dispatch]);
-
   const handleSave = () => {
-    console.log(formData)
-    dispatch(AddControlHistory({ ...formData, idControl: currentAssoCiate._id }));
+    dispatch(
+      AddControlHistory({ ...formData, idControl: currentAssoCiate._id })
+    );
     dispatch(listEntityRiskControls(selectedEntityDescription));
     // setFormData({
     //   performance: "Not Assessed",
@@ -65,10 +74,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
     //   notes: "",
     //   attested: true
     // });
-  }
-  console.log(controlHistories)
+  };
   return (
-    <Box fontSize='12px'>
+    <Box fontSize="12px">
       {/* Container Grid */}
       <Flex gap={4} alignItems="start">
         {/* Left Column (Table) */}
@@ -96,7 +104,10 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                         <Td>{controlHistory.closedDate}</Td>
                         <Td>{controlHistory.performance}</Td>
                         <Td>
-                          <Checkbox isChecked={controlHistory.attested} isReadOnly />
+                          <Checkbox
+                            isChecked={controlHistory.attested}
+                            isReadOnly
+                          />
                         </Td>
                       </Tr>
                     ))}
@@ -117,7 +128,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                   <Select
                     fontSize="sm"
                     value={formData.performance}
-                    onChange={(e) => setFormData({ ...formData, performance: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, performance: e.target.value })
+                    }
                   >
                     <option>Not Assessed</option>
                     <option>Good</option>
@@ -163,7 +176,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                     type="text"
                     placeholder="Enter assessed name"
                     value={formData.assessedBy}
-                    onChange={(e) => setFormData({ ...formData, assessedBy: e.target.value })}
+                    // onChange={(e) =>
+                    //   setFormData({ ...formData, assessedBy: e.target.value })
+                    // }
                   />
                 </FormControl>
               </GridItem>
@@ -176,7 +191,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                     type="date"
                     placeholder="Enter assessed date"
                     value={formData.assessedOn}
-                    onChange={(e) => setFormData({ ...formData, assessedOn: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, assessedOn: e.target.value })
+                    }
                   />
                 </FormControl>
               </GridItem>
@@ -188,7 +205,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                     fontSize="sm"
                     type="date"
                     value={formData.dueOn}
-                    onChange={(e) => setFormData({ ...formData, dueOn: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, dueOn: e.target.value })
+                    }
                   />
                 </FormControl>
               </GridItem>
@@ -211,7 +230,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                   <Select
                     fontSize="sm"
                     value={formData.currency}
-                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, currency: e.target.value })
+                    }
                   >
                     <option>USD</option>
                     <option>EUR</option>
@@ -226,7 +247,9 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
                   <Textarea
                     fontSize="sm"
                     value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, notes: e.target.value })
+                    }
                   />
                 </FormControl>
               </GridItem>
@@ -243,7 +266,12 @@ const RiskControlAssessment = ({ controlHistories, currentAssoCiate, selectedEnt
         <Button fontSize="sm" colorScheme="red" variant="outline">
           UnAttest Assess
         </Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave}>
+        <Button
+          fontSize="sm"
+          colorScheme="green"
+          variant="outline"
+          onClick={handleSave}
+        >
           Save
         </Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">
