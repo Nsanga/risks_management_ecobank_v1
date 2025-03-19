@@ -24,6 +24,7 @@ import {
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import RiskControlAssessment from "./RiskControlAssessment"; // Importation du composant pour l'historique
 import GeneralForm from "./GeneralForm"; // Importation du composant GeneralForm (à ajuster selon l'emplacement du fichier)
+import { IoCloseCircle } from "react-icons/io5";
 
 const RiskControl = ({
   riskControlData,
@@ -73,9 +74,9 @@ const RiskControl = ({
             <Th>Description</Th>
             <Th>Active</Th>
             <Th>Key Ctrl</Th>
-            <Th>Last Assess. Date</Th>
-            <Th>Last Assess. Performance</Th>
-            <Th>Last Assess. Creator</Th>
+            <Th>Last Ass. Date</Th>
+            <Th>Last Ass. Perf.</Th>
+            <Th>Last Ass. Creator</Th>
             <Th>Last Assess. Status</Th>
           </Tr>
         </Thead>
@@ -83,7 +84,7 @@ const RiskControl = ({
           <Tr>
             <Td>{currentAssoCiate?.reference}</Td>
             <Td>{currentAssoCiate?.controlDescription?.length > 20 ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` : currentAssoCiate?.controlDescription}</Td>
-            <Td><CheckCircleIcon color="green.500" /></Td>
+            <Td>{riskControlData.activeSubTab ? <CheckCircleIcon color="green.500" /> : <IoCloseCircle color="red.500" />}</Td>
             <Td>{riskControlData.keyControl ? "Y" : "N"}</Td>
             <Td>{currentAssoCiate.historyControl[0]?.dueOn}</Td>
             <Td>{currentAssoCiate.historyControl[0]?.performance}</Td>
