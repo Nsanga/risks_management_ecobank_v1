@@ -20,6 +20,9 @@ import {
   EditIcon,
 } from "@chakra-ui/icons";
 import Select from "react-select";
+import { updateEntityRiskControl } from "redux/entityRiskControl/action";
+import { useDispatch } from "react-redux";
+import { listEntityRiskControls } from "redux/entityRiskControl/action";
 
 const GeneralForm = ({
   formData,
@@ -28,9 +31,11 @@ const GeneralForm = ({
   handleChange,
   currentAssoCiate,
   handleTestControlBySubTabClick,
+  selectedEntityDescription
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
+  const dispatch = useDispatch();
 
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
@@ -124,13 +129,49 @@ const GeneralForm = ({
     // handleSubmit(payload); // Appeler handleSubmit avec le payload
   };
 
+  const handleAmendControl = () => {
+    const postData = {
+      itemIds: [currentAssoCiate?._id],
+      itemType: "control",
+      updates: {
+        activeControl: formData.activeControl,
+        controlCategory: formData.controlCategory,
+        controlRef: formData.controlRef,
+        description: formData.description,
+        frequency: formData.frequency,
+        frequencyAssessment: formData.frequencyAssessment,
+        keyControl: formData.keyControl,
+        lastOperation: formData.lastOperation,
+        nextAssessment: formData.nextAssessment,
+        nextOperation: formData.nextOperation,
+        nomineeRisk: formData.nomineeRisk,
+        reviewDate: formData.reviewDate,
+        reviewerRisk: formData.reviewerRisk,
+        monitoringMethodology: formData.monitoringMethodology,
+        controlSummary: formData.controlSummary
+      }
+    }
+    console.log('postData:', postData);
+    dispatch(updateEntityRiskControl(postData)); 
+    dispatch(listEntityRiskControls(selectedEntityDescription)); 
+  }
+
   useEffect(() => {
     if (currentAssoCiate) {
       handleChange({
-        target: { name: "description", value: currentAssoCiate.description },
+        target: { name: "description", value: currentAssoCiate.controlDescription },
       });
       handleChange({
         target: { name: "activeControl", value: currentAssoCiate.activeControl },
+      });
+      handleChange({
+        target: { name: "keyControl", value: currentAssoCiate.keyControl },
+      });
+      handleChange({
+        target: { name: "controlRef", value: currentAssoCiate.reference },
+      });
+      handleChange({
+        target: { name: "controlSummary", value: currentAssoCiate.controlSummary },
       });
       // Vérifier si historyControl a des éléments
       if (
@@ -213,8 +254,8 @@ const GeneralForm = ({
                 fontSize={12}
                 type="text"
                 name="controlRef"
-                defaultValue={currentAssoCiate?.reference}
-                // value={formData.controlRef}
+                // value={currentAssoCiate?.reference}
+                value={formData.controlRef}
                 onChange={handleChange}
               />
             </HStack>
@@ -241,14 +282,9 @@ const GeneralForm = ({
                 Description:
               </Text>
               <Textarea
-                defaultValue={
-                  currentAssoCiate?.controlDescription
-                    ? currentAssoCiate?.controlDescription
-                    : currentAssoCiate?.description
-                }
+                value={formData?.description}
                 fontSize={12}
                 name="description"
-                // value={formData.description}
                 onChange={handleChange}
               />
             </HStack>
@@ -316,14 +352,9 @@ const GeneralForm = ({
                 Resumé du control :
               </Text>
               <Textarea
-                defaultValue={
-                  currentAssoCiate?.controlSummary
-                    ? currentAssoCiate?.controlSummary
-                    : currentAssoCiate?.controlSummary
-                }
+                value={formData?.controlSummary}
                 fontSize={12}
-                name="description"
-                // value={formData.description}
+                name="controlSummary"
                 onChange={handleChange}
               />
             </HStack>
@@ -468,22 +499,6 @@ const GeneralForm = ({
           </Box>
         </Box>
       </SimpleGrid>
-      <FormControl mb={4}>
-        <Text fontSize={12} fontWeight="bold" mb={4}>
-          Methodologie du teste:
-        </Text>
-        <Textarea
-          defaultValue={
-            currentAssoCiate?.monitoringMethodology
-              ? currentAssoCiate?.monitoringMethodology
-              : currentAssoCiate?.monitoringMethodology
-          }
-          fontSize={12}
-          name="description"
-          // value={formData.description}
-          onChange={handleChange}
-        />
-      </FormControl>
       <HStack spacing={4} mt={6} justify="center">
         <Button
           fontSize={12}
@@ -497,6 +512,7 @@ const GeneralForm = ({
           fontSize={12}
           colorScheme="green"
           variant="outline"
+          onClick={handleAmendControl}
           leftIcon={<EditIcon />}
         >
           Amend Control

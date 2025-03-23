@@ -91,7 +91,9 @@ const RiskControlInformationView = ({
     frequencyAssessment: "",
     nextAssessment: "",
     keyControl: false,
-    activeControl: true,
+    activeControl: false,
+    monitoringMethodology: "",
+    controlSummary: ""
   });
 
   const handleChangeRiskPage = (e) => {
@@ -166,6 +168,8 @@ const RiskControlInformationView = ({
       "reviewDate",
       "reviewer",
       "keyControl",
+      "monitoringMethodology",
+      "controlSummary"
     ];
 
     const payload = {
@@ -249,6 +253,7 @@ const RiskControlInformationView = ({
                     onClose={onClose}
                     selectedRisk={selectedRisk}
                     handleTestControlClick={handleTestControlClick}
+                    selectedEntityDescription={selectedEntityDescription}
                   />
                 </TabPanel>
                 {/* <TabPanel>

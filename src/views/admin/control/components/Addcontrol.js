@@ -80,16 +80,25 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const [nominee, setNominee] = React.useState(null);
   const [reviewer, setReviewer] = React.useState(null);
   const toast = useToast();
-
-  const profileOptions = profiles.map((profile) => ({
-    value: profile._id,
-    label: profile.name,
-  }));
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log("Contenu de viewData:", viewData);
-  }, []);
+  const profileOptions = profiles
+    ?.filter(profile => profile.activeUser)
+    ?.map((profile, index) => {
+      // Vérification de la présence de name et surname
+      const name = profile.name ? profile.name : "";
+      const surname = profile.surname ? profile.surname : "";
+
+      return {
+        key: `${profile._id}-${index}`, // Unicité assurée
+        value: `${name} ${surname}`.trim(),
+        label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+      };
+    });
+
+  // useEffect(() => {
+  //   console.log("Contenu de viewData:", viewData);
+  // }, []);
 
   // Gestion de la sélection des cases à cocher
   const handleCheckboxChange = (row, isChecked) => {
@@ -331,7 +340,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
     });
   };
 
-  const handleBulkAmend = () => {
+  const handleBulkAmend = async () => {
     if (!owner || !nominee) {
       toast({
         title: "Erreur",
@@ -349,25 +358,32 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       updates:
         currentView === "Risks"
           ? {
-              ownerRisk: owner.label,
-              nomineeRisk: nominee.label,
-              reviewerRisk: reviewer?.label ? reviewer?.label : "", // Ajoute reviewerRisk seulement s'il est défini
-            }
+            ownerRisk: owner.label,
+            nomineeRisk: nominee.label,
+            reviewerRisk: reviewer?.label ? reviewer.label : "", // Ajoute reviewerRisk seulement s'il est défini
+          }
           : {
-              ownerControl: owner.label,
-              nomineeControl: nominee.label,
-              reviewerControl: reviewer.label, // Ajoute reviewerControl seulement s'il est défini
-            },
+            ownerControl: owner.label,
+            nomineeControl: nominee.label,
+            reviewerControl: reviewer?.label ? reviewer.label : "", // Ajoute reviewerControl seulement s'il est défini
+          },
     };
-    // console.log(payload);
-    dispatch(updateEntityRiskControl(payload));
+
+    // Dispatch de la mise à jour et attente de la fin
+    await dispatch(updateEntityRiskControl(payload));
+
+    // Une fois la mise à jour terminée, lister les entités
+    dispatch(listEntityRiskControls(selectedEntity.description));
+
+    // Mettre à jour les données du formulaire
     setFormData({
       entity: selectedEntityDescription,
       entityMove: null,
       entityCopy: null,
     });
-    closeBulkAmendModal(); // Fermer la modal après sauvegarde
-    dispatch(listEntityRiskControls(selectedEntityDescription));
+
+    // Fermer la modal après sauvegarde
+    closeBulkAmendModal();
     setOwner(null);
     setNominee(null);
     setReviewer(null);
@@ -632,9 +648,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                   value={
                     selectedEntity
                       ? "ENT" +
-                        selectedEntity?.referenceId +
-                        " CAM - " +
-                        selectedEntity?.description
+                      selectedEntity?.referenceId +
+                      " CAM - " +
+                      selectedEntity?.description
                       : "None"
                   }
                   width={280}
@@ -715,9 +731,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                   value={
                     selectedEntity
                       ? "ENT" +
-                        selectedEntity?.referenceId +
-                        " CAM - " +
-                        selectedEntity?.description
+                      selectedEntity?.referenceId +
+                      " CAM - " +
+                      selectedEntity?.description
                       : "None"
                   }
                   width={280}
@@ -801,7 +817,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 options={profileOptions}
                 value={owner}
                 onChange={(selectedOption) => setOwner(selectedOption)}
-                // isDisabled={!isEditing}
+              // isDisabled={!isEditing}
               />
             </FormControl>
 
@@ -812,7 +828,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 options={profileOptions}
                 value={nominee}
                 onChange={(selectedOption) => setNominee(selectedOption)}
-                // isDisabled={!isEditing}
+              // isDisabled={!isEditing}
               />
             </FormControl>
 
@@ -823,7 +839,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
                 options={profileOptions}
                 value={reviewer}
                 onChange={(selectedOption) => setReviewer(selectedOption)}
-                // isDisabled={!isEditing}
+              // isDisabled={!isEditing}
               />
             </FormControl>
           </ModalBody>

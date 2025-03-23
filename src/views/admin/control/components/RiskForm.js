@@ -21,8 +21,9 @@ import Select from 'react-select';
 import { connect, useDispatch } from 'react-redux';
 import { updateEntityRiskControl } from 'redux/entityRiskControl/action';
 import { useEffect, useState } from 'react';
+import { listEntityRiskControls } from 'redux/entityRiskControl/action';
 
-function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk, handleTestControlClick }) {
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk, handleTestControlClick, selectedEntityDescription }) {
   const dispatch = useDispatch();
   const [ownerValue, setOwnerValue] = useState(null);
   const [nomineeValue, setNomineeValue] = useState(null);
@@ -129,21 +130,28 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
     })
   };
 
-  const handleAmend = () => {
+  const handleAmend = async () => {
     const payload = {
       itemIds: [selectedRisk._id],
       itemType: "risk",
       updates: {
         ...riskFormData,
+        ownerRisk: riskFormData.ownerRisk ? riskFormData.ownerRisk : undefined,
+        nomineeRisk: riskFormData.nomineeRisk ? riskFormData.nomineeRisk : undefined,
+        reviewerRisk: riskFormData.reviewerRisk ? riskFormData.reviewerRisk : undefined,
+        riskDescription: riskFormData.riskDescription ? riskFormData.riskDescription : undefined,
       },
     };
     console.log(payload);
-    dispatch(updateEntityRiskControl(payload)) ; 
+    await dispatch(updateEntityRiskControl(payload)); 
+    dispatch(listEntityRiskControls(selectedEntityDescription)); 
   };
-  console.log(riskFormData)
+  
   useEffect(() => {
     if (selectedRisk) {
-      handleChange({ target: { name: 'description', value: selectedRisk.riskDescription } });
+      handleChange({ target: { name: 'riskDescription', value: selectedRisk.riskDescription } });
+      handleChange({ target: { name: 'ownerEmail', value: selectedRisk.ownerEmail } });
+      handleChange({ target: { name: 'activeRisk', value: selectedRisk.activeRisk } });
       const ownerOption = profilesOptions.find(option => option.value === selectedRisk.ownerRisk);
       if (ownerOption) {
         setOwnerValue(ownerOption);
@@ -297,7 +305,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
 
       <FormControl mt={4}>
         <Text fontWeight="bold" fontSize={12} mb={2}>Description: </Text>
-        <Textarea fontSize={12} name="description" value={riskFormData.description} onChange={handleChange} />
+        <Textarea fontSize={12} name="riskDescription" value={riskFormData.riskDescription} onChange={handleChange} />
       </FormControl>
 
       {/* Buttons Section */}

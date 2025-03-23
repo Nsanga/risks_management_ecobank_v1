@@ -13,13 +13,6 @@ import {
   TabPanels,
   TabPanel,
   useToast,
-  Checkbox,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
 } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import RiskControlAssessment from "./RiskControlAssessment"; // Importation du composant pour l'historique
@@ -84,7 +77,7 @@ const RiskControl = ({
           <Tr>
             <Td>{currentAssoCiate?.reference}</Td>
             <Td>{currentAssoCiate?.controlDescription?.length > 20 ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` : currentAssoCiate?.controlDescription}</Td>
-            <Td>{currentAssoCiate?.activeSubTab ? <CheckCircleIcon color="green.500" /> : <IoCloseCircle color="red.500" />}</Td>
+            <Td>{currentAssoCiate?.activeControl ? <CheckCircleIcon color="green.500" /> : <IoCloseCircle color="red.500" />}</Td>
             <Td>{currentAssoCiate?.keyControl ? "Y" : "N"}</Td>
             <Td>{currentAssoCiate?.historyControl[0]?.dueOn}</Td>
             <Td>{currentAssoCiate?.historyControl[0]?.performance}</Td>
@@ -122,12 +115,13 @@ const RiskControl = ({
               handleSubmit={handleSubmit}
               currentAssoCiate={currentAssoCiate}
               handleTestControlBySubTabClick={handleTestControlBySubTabClick}
+              selectedEntityDescription={selectedEntityDescription}
             />
           </TabPanel>
 
           {/* History Tab Content */}
           <TabPanel>
-            <RiskControlAssessment currentAssoCiate={currentAssoCiate} selectedEntityDescription={selectedEntityDescription}/>
+            <RiskControlAssessment currentAssoCiate={currentAssoCiate} selectedEntityDescription={selectedEntityDescription} handleChange={handleChange}/>
           </TabPanel>
         </TabPanels>
       </Tabs>
