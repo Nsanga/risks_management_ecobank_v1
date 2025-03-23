@@ -457,7 +457,7 @@ const GeneralForm = ({
                   variant="solid"
                   onClick={handleTestControlBySubTabClick}
                   disabled={
-                    new Date(currentAssoCiate.historyControl[0]?.assessedOn) >
+                    new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
                     new Date()
                   }
                 >

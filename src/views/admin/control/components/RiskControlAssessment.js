@@ -48,15 +48,15 @@ const RiskControlAssessment = ({
     if (currentAssoCiate) {
       setFormData({
         performance:
-          currentAssoCiate.historyControl[0]?.performance || "Not Assessed",
+          currentAssoCiate?.historyControl[0]?.performance || "Not Assessed",
         assessedBy: userName
           ? userName
-          : currentAssoCiate.historyControl[0]?.assessedBy || "",
-        assessedOn: currentAssoCiate.historyControl[0]?.assessedOn || "",
-        dueOn: currentAssoCiate.historyControl[0]?.dueOn || "",
-        closedDate: currentAssoCiate.historyControl[0]?.closedDate || "",
-        notes: currentAssoCiate.historyControl[0]?.notes || "",
-        attested: currentAssoCiate.historyControl[0]?.attested || true,
+          : currentAssoCiate?.historyControl[0]?.assessedBy || "",
+        assessedOn: currentAssoCiate?.historyControl[0]?.assessedOn || "",
+        dueOn: currentAssoCiate?.historyControl[0]?.dueOn || "",
+        closedDate: currentAssoCiate?.historyControl[0]?.closedDate || "",
+        notes: currentAssoCiate?.historyControl[0]?.notes || "",
+        attested: currentAssoCiate?.historyControl[0]?.attested || true,
       });
     }
   }, [dispatch]);
@@ -86,17 +86,17 @@ const RiskControlAssessment = ({
               <Thead bg="gray.200">
                 <Tr>
                   <Th w="10%">Ref</Th>
-                  <Th w="20%">Assessed On</Th>
+                  <Th w="20%">Ass On</Th>
                   <Th w="20%">Due On</Th>
                   <Th w="10%">Closed date</Th>
-                  <Th w="20%">Performance</Th>
-                  <Th w="10%">Attested</Th>
+                  <Th w="20%">Perf</Th>
+                  <Th w="10%">Att</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {currentAssoCiate.historyControl.length > 0 && (
+                {currentAssoCiate?.historyControl.length > 0 && (
                   <>
-                    {currentAssoCiate.historyControl.map((controlHistory) => (
+                    {currentAssoCiate?.historyControl.map((controlHistory) => (
                       <Tr key={controlHistory._id}>
                         <Td>{controlHistory.reference}</Td>
                         <Td>{controlHistory.assessedOn}</Td>
