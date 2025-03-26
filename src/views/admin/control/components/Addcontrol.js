@@ -240,6 +240,10 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   // }, [viewData]);
 
   const handleRowClick = (item, index) => {
+    console.log('====================================');
+    console.log("item", item);
+    console.log("index", index);
+    console.log('====================================');
     setIndexChoice(index);
     setSelectedRisk(item);
     setIsEditMode(true);

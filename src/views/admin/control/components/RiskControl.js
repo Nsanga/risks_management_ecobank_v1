@@ -25,19 +25,23 @@ const RiskControl = ({
   handleSelectChange,
   handleChange,
   currentAssoCiate,
-  activeSubTab, 
+  activeSubTab,
   setActiveSubTab,
   handleTestControlBySubTabClick,
-  selectedEntityDescription
+  selectedEntityDescription,
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
-  
-  console.log('currentAssoCiate', currentAssoCiate)
+
+  console.log("currentAssoCiate", currentAssoCiate);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!riskControlData.controlRef || !riskControlData.nominee || !riskControlData.reviewer) {
+    if (
+      !riskControlData.controlRef ||
+      !riskControlData.nominee ||
+      !riskControlData.reviewer
+    ) {
       toast({
         title: "Error.",
         description: "Please fill out all required fields.",
@@ -59,10 +63,10 @@ const RiskControl = ({
   };
 
   return (
-    <Box className="container" fontSize='12px'>
+    <Box className="container" fontSize="12px">
       <Table variant="simple" mb={6}>
         <Thead bg="blue.100">
-          <Tr fontSize='10px'>
+          <Tr fontSize="10px">
             <Th>Ref</Th>
             <Th>Description</Th>
             <Th>Active</Th>
@@ -76,12 +80,34 @@ const RiskControl = ({
         <Tbody>
           <Tr>
             <Td>{currentAssoCiate?.reference}</Td>
-            <Td>{currentAssoCiate?.controlDescription?.length > 20 ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` : currentAssoCiate?.controlDescription}</Td>
-            <Td>{currentAssoCiate?.activeControl ? <CheckCircleIcon color="green.500" /> : <IoCloseCircle color="red.500" />}</Td>
+            <Td>
+              {currentAssoCiate?.controlDescription?.length > 20
+                ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...`
+                : currentAssoCiate?.controlDescription}
+            </Td>
+            <Td>
+              {currentAssoCiate?.activeControl ? (
+                <CheckCircleIcon color="green.500" />
+              ) : (
+                <IoCloseCircle color="red.500" />
+              )}
+            </Td>
             <Td>{currentAssoCiate?.keyControl ? "Y" : "N"}</Td>
-            <Td>{currentAssoCiate?.historyControl[0]?.dueOn}</Td>
-            <Td>{currentAssoCiate?.historyControl[0]?.performance}</Td>
-            <Td>{currentAssoCiate?.historyControl[0]?.assessedBy}</Td>
+            <Td>
+              {currentAssoCiate?.historyControl?.length
+                ? currentAssoCiate?.historyControl[0]?.dueOn
+                : ""}
+            </Td>
+            <Td>
+              {currentAssoCiate?.historyControl?.length
+                ? currentAssoCiate?.historyControl[0]?.performance
+                : ""}
+            </Td>
+            <Td>
+              {currentAssoCiate?.historyControl?.length
+                ? currentAssoCiate?.historyControl[0]?.assessedBy
+                : ""}
+            </Td>
             <Td>---</Td>
           </Tr>
         </Tbody>
@@ -91,7 +117,7 @@ const RiskControl = ({
         variant="soft-rounded"
         colorScheme="green"
         mt={6}
-        index={activeSubTab} 
+        index={activeSubTab}
         onChange={setActiveSubTab}
       >
         <TabList>
@@ -121,7 +147,11 @@ const RiskControl = ({
 
           {/* History Tab Content */}
           <TabPanel>
-            <RiskControlAssessment currentAssoCiate={currentAssoCiate} selectedEntityDescription={selectedEntityDescription} handleChange={handleChange}/>
+            <RiskControlAssessment
+              currentAssoCiate={currentAssoCiate}
+              selectedEntityDescription={selectedEntityDescription}
+              handleChange={handleChange}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>

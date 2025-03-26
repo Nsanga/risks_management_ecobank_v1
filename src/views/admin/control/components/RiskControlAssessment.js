@@ -46,8 +46,12 @@ const RiskControlAssessment = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(currentAssoCiate)
-    if (currentAssoCiate) {
+    console.log("currentAssoCiate", currentAssoCiate);
+    if (
+      currentAssoCiate &&
+      currentAssoCiate?.historyControl &&
+      currentAssoCiate?.historyControl?.length
+    ) {
       setFormData({
         performance:
           currentAssoCiate?.historyControl[0]?.performance || "Not Assessed",
@@ -65,7 +69,11 @@ const RiskControlAssessment = ({
   }, [dispatch]);
   const handleSave = () => {
     dispatch(
-      AddControlHistory({ ...formData, idControl: currentAssoCiate._id, monitoringMethodology: undefined })
+      AddControlHistory({
+        ...formData,
+        idControl: currentAssoCiate._id,
+        monitoringMethodology: undefined,
+      })
     );
     dispatch(listEntityRiskControls(selectedEntityDescription));
     // setFormData({
@@ -85,7 +93,7 @@ const RiskControlAssessment = ({
         {/* Left Column (Table) */}
         {/* <GridItem> */}
         <Box bg="white" width="70%">
-          <Table variant="simple" width="100%" fontSize='10px'>
+          <Table variant="simple" width="100%" fontSize="10px">
             <Thead bg="gray.200">
               <Tr>
                 <Th>Ref</Th>
@@ -97,27 +105,46 @@ const RiskControlAssessment = ({
               </Tr>
             </Thead>
             <Tbody>
-              {currentAssoCiate?.historyControl.length > 0 && (
-                <>
-                  {currentAssoCiate?.historyControl.map((controlHistory) => (
-                    <Tr key={controlHistory._id}>
-                      <Td>{controlHistory.reference}</Td>
-                      <Td>{controlHistory.assessedOn}</Td>
-                      <Td>{controlHistory.dueOn}</Td>
-                      <Td>{controlHistory.closedDate}</Td>
-                      <Td>{controlHistory.performance}</Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={controlHistory.attested}
-                          isReadOnly
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
-                </>
-              )}
+              {currentAssoCiate?.historyControl &&
+                currentAssoCiate?.historyControl?.length > 0 && (
+                  <>
+                    {currentAssoCiate?.historyControl.map((controlHistory) => (
+                      <Tr key={controlHistory._id}>
+                        <Td>{controlHistory.reference}</Td>
+                        <Td>{controlHistory.assessedOn}</Td>
+                        <Td>{controlHistory.dueOn}</Td>
+                        <Td>{controlHistory.closedDate}</Td>
+                        <Td>{controlHistory.performance}</Td>
+                        <Td>
+                          <Checkbox
+                            isChecked={controlHistory.attested}
+                            isReadOnly
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </>
+                )}
             </Tbody>
           </Table>
+          <FormControl
+            mb={4}
+            style={{
+              position: "relative",
+              top: "160px",
+            }}
+          >
+            <FormLabel fontSize="sm">Methodologie du teste:</FormLabel>
+            <Textarea
+              fontSize="sm"
+              textAlign="justify"
+              value={formData.monitoringMethodology}
+              // onChange={(e) =>
+              //   setFormData({ ...formData, monitoringMethodology: e.target.value })
+              // }
+              readOnly
+            />
+          </FormControl>
         </Box>
         {/* </GridItem> */}
 
@@ -135,9 +162,10 @@ const RiskControlAssessment = ({
                     setFormData({ ...formData, performance: e.target.value })
                   }
                 >
-                  <option>Not Assessed</option>
-                  <option>Good</option>
-                  <option>Unsatisfactory</option>
+                  <option>amélioration nécessaire</option>
+                  <option>non testé</option>
+                  <option>satisfaisant</option>
+                  <option>non satisfaisant </option>
                 </Select>
               </FormControl>
             </GridItem>
@@ -179,9 +207,9 @@ const RiskControlAssessment = ({
                   type="text"
                   placeholder="Enter assessed name"
                   value={formData.assessedBy}
-                // onChange={(e) =>
-                //   setFormData({ ...formData, assessedBy: e.target.value })
-                // }
+                  // onChange={(e) =>
+                  //   setFormData({ ...formData, assessedBy: e.target.value })
+                  // }
                 />
               </FormControl>
             </GridItem>
@@ -222,7 +250,9 @@ const RiskControlAssessment = ({
                   fontSize="sm"
                   type="date"
                   value={formData.closedDate}
-                  onChange={(e) => setFormData({ ...formData, closedDate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, closedDate: e.target.value })
+                  }
                 />
               </FormControl>
             </GridItem>
@@ -245,21 +275,6 @@ const RiskControlAssessment = ({
               </GridItem> */}
 
             <GridItem colSpan={2}>
-              <FormControl mb={4}>
-                <FormLabel fontSize="sm">
-                  Methodologie du teste:
-                </FormLabel>
-                <Textarea
-                  fontSize="sm"
-                  textAlign="justify"
-                  value={formData.monitoringMethodology}
-                  // onChange={(e) =>
-                  //   setFormData({ ...formData, monitoringMethodology: e.target.value })
-                  // }
-                  readOnly
-                />
-              </FormControl>
-
               <FormControl>
                 <FormLabel fontSize="sm">Résultats du test</FormLabel>
                 <Textarea

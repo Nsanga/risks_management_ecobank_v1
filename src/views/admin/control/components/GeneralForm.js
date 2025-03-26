@@ -31,7 +31,7 @@ const GeneralForm = ({
   handleChange,
   currentAssoCiate,
   handleTestControlBySubTabClick,
-  selectedEntityDescription
+  selectedEntityDescription,
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
@@ -148,21 +148,27 @@ const GeneralForm = ({
         reviewDate: formData.reviewDate,
         reviewerRisk: formData.reviewerRisk,
         monitoringMethodology: formData.monitoringMethodology,
-        controlSummary: formData.controlSummary
-      }
-    }
-    console.log('postData:', postData);
-    dispatch(updateEntityRiskControl(postData)); 
-    dispatch(listEntityRiskControls(selectedEntityDescription)); 
-  }
+        controlSummary: formData.controlSummary,
+      },
+    };
+    console.log("postData:", postData);
+    dispatch(updateEntityRiskControl(postData));
+    dispatch(listEntityRiskControls(selectedEntityDescription));
+  };
 
   useEffect(() => {
     if (currentAssoCiate) {
       handleChange({
-        target: { name: "description", value: currentAssoCiate.controlDescription },
+        target: {
+          name: "description",
+          value: currentAssoCiate.controlDescription,
+        },
       });
       handleChange({
-        target: { name: "activeControl", value: currentAssoCiate.activeControl },
+        target: {
+          name: "activeControl",
+          value: currentAssoCiate.activeControl,
+        },
       });
       handleChange({
         target: { name: "keyControl", value: currentAssoCiate.keyControl },
@@ -171,7 +177,10 @@ const GeneralForm = ({
         target: { name: "controlRef", value: currentAssoCiate.reference },
       });
       handleChange({
-        target: { name: "controlSummary", value: currentAssoCiate.controlSummary },
+        target: {
+          name: "controlSummary",
+          value: currentAssoCiate.controlSummary,
+        },
       });
       // Vérifier si historyControl a des éléments
       if (
@@ -277,14 +286,14 @@ const GeneralForm = ({
           </FormControl>
 
           <FormControl mb={4}>
-            <HStack spacing={14} alignItems="center">
+            <HStack spacing={5} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Description:
+                Resumé du control :
               </Text>
               <Textarea
-                value={formData?.description}
+                value={formData?.controlSummary}
                 fontSize={12}
-                name="description"
+                name="controlSummary"
                 onChange={handleChange}
               />
             </HStack>
@@ -347,14 +356,14 @@ const GeneralForm = ({
           </FormControl>
 
           <FormControl mb={4}>
-            <HStack spacing={5} alignItems="center">
+            <HStack spacing={14} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Resumé du control :
+                Description:
               </Text>
               <Textarea
-                value={formData?.controlSummary}
+                value={formData?.description}
                 fontSize={12}
-                name="controlSummary"
+                name="description"
                 onChange={handleChange}
               />
             </HStack>
@@ -487,9 +496,15 @@ const GeneralForm = ({
                   colorScheme="blue"
                   variant="solid"
                   onClick={handleTestControlBySubTabClick}
+                  // disabled={
+                  //   new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
+                  //   new Date()
+                  // }
                   disabled={
-                    new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
-                    new Date()
+                    Array.isArray(currentAssoCiate?.historyControl) &&
+                    currentAssoCiate.historyControl.length > 0 &&
+                    new Date(currentAssoCiate.historyControl[0]?.assessedOn) >
+                      new Date()
                   }
                 >
                   Test du controle

@@ -20,6 +20,9 @@ const RiskPage = ({
   isEditMode,
   selectedRisk,
 }) => {
+  console.log('====================================');
+  console.log("selectedRisk", selectedRisk);
+  console.log('====================================');
   // Initialize local state for each input field
   // const [formData, setFormData] = useState({
   //     entity: "",
