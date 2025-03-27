@@ -99,21 +99,23 @@ const RiskControlAssessment = ({
             <Tbody>
               {currentAssoCiate?.historyControl.length > 0 && (
                 <>
-                  {currentAssoCiate?.historyControl.map((controlHistory) => (
-                    <Tr key={controlHistory._id}>
-                      <Td>{controlHistory.reference}</Td>
-                      <Td>{controlHistory.assessedOn}</Td>
-                      <Td>{controlHistory.dueOn}</Td>
-                      <Td>{controlHistory.closedDate}</Td>
-                      <Td>{controlHistory.performance}</Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={controlHistory.attested}
-                          isReadOnly
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
+                  {currentAssoCiate.historyControl
+                    .slice(-5) // Récupère les cinq derniers éléments
+                    .map((controlHistory) => (
+                      <Tr key={controlHistory._id}>
+                        <Td>{controlHistory.reference}</Td>
+                        <Td>{controlHistory.assessedOn}</Td>
+                        <Td>{controlHistory.dueOn}</Td>
+                        <Td>{controlHistory.closedDate}</Td>
+                        <Td>{controlHistory.performance}</Td>
+                        <Td>
+                          <Checkbox
+                            isChecked={controlHistory.attested}
+                            isReadOnly
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
                 </>
               )}
             </Tbody>
