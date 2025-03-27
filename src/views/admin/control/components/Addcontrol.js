@@ -49,6 +49,7 @@ import { updateEntityRiskControl } from "redux/entityRiskControl/action";
 function AddControl({ entityRiskControls, loading, entities, profiles }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
+  const [selectedControl, setSelectedControl] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentView, setCurrentView] = useState("Risks");
   const [currenChoice, setCurrentChoice] = useState(null);
@@ -240,8 +241,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   // }, [viewData]);
 
   const handleRowClick = (item, index) => {
+    console.log('====================================');
+    console.log("item", item);
+    console.log("index", index);
+    console.log('====================================');
     setIndexChoice(index);
     setSelectedRisk(item);
+    setSelectedControl(item)
     setIsEditMode(true);
     onOpen();
   };

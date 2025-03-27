@@ -36,6 +36,7 @@ const RiskControlInformationView = ({
   newItemId,
   loading,
   selectedRisk,
+  selectedControl,
   currenChoice,
   indexChoice,
   selectedEntityDescription
@@ -46,9 +47,9 @@ const RiskControlInformationView = ({
   const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
 
   useEffect(() => {
-    setCurrentAssoCiate(currenChoice[indexChoice]);
+    setCurrentAssoCiate(currenChoice[indexChoice] || selectedControl);
   }, [indexChoice, currenChoice]);
-
+  
   const dispatch = useDispatch();
   const [formDataRiskPage, setFormDataRiskPage] = useState({
     entity: "",
@@ -230,6 +231,7 @@ const RiskControlInformationView = ({
               isEditMode={isEditMode}
               entities={entities}
               selectedRisk={selectedRisk}
+              currentAssoCiate={currentAssoCiate}
             />
             <Tabs variant="enclosed" mt={6} index={activeTab} onChange={setActiveTab}>
               <TabList>
@@ -252,6 +254,7 @@ const RiskControlInformationView = ({
                     newRiskId={newItemId}
                     onClose={onClose}
                     selectedRisk={selectedRisk}
+                    currentAssoCiate={currentAssoCiate}
                     handleTestControlClick={handleTestControlClick}
                     selectedEntityDescription={selectedEntityDescription}
                   />
@@ -266,6 +269,7 @@ const RiskControlInformationView = ({
                     handleSelectChange={handleSelectChange}
                     profiles={profiles}
                     onClose={onClose}
+                    selectedRisk={selectedRisk}
                     currentAssoCiate={currentAssoCiate}
                     activeSubTab={activeSubTab} // Passer l'état du sous-onglet
                     setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet

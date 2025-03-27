@@ -31,7 +31,8 @@ const GeneralForm = ({
   handleChange,
   currentAssoCiate,
   handleTestControlBySubTabClick,
-  selectedEntityDescription
+  selectedEntityDescription,
+  selectedRisk,
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
@@ -131,7 +132,7 @@ const GeneralForm = ({
 
   const handleAmendControl = () => {
     const postData = {
-      itemIds: [currentAssoCiate?._id],
+      itemIds: [currentAssoCiate?._id  || selectedRisk?._id],
       itemType: "control",
       updates: {
         activeControl: formData.activeControl,
@@ -148,76 +149,83 @@ const GeneralForm = ({
         reviewDate: formData.reviewDate,
         reviewerRisk: formData.reviewerRisk,
         monitoringMethodology: formData.monitoringMethodology,
-        controlSummary: formData.controlSummary
-      }
-    }
-    console.log('postData:', postData);
-    dispatch(updateEntityRiskControl(postData)); 
-    dispatch(listEntityRiskControls(selectedEntityDescription)); 
-  }
+        controlSummary: formData.controlSummary,
+      },
+    };
+    console.log("postData:", postData);
+    dispatch(updateEntityRiskControl(postData));
+    dispatch(listEntityRiskControls(selectedEntityDescription));
+  };
 
   useEffect(() => {
-    if (currentAssoCiate) {
+    if (currentAssoCiate || selectedRisk) {
       handleChange({
-        target: { name: "description", value: currentAssoCiate.controlDescription },
+        target: {
+          name: "description",
+          value: currentAssoCiate.controlDescription || selectedRisk?.controlDescription,
+        },
       });
       handleChange({
-        target: { name: "activeControl", value: currentAssoCiate.activeControl },
+        target: {
+          name: "activeControl",
+          value: currentAssoCiate.activeControl || selectedRisk?.activeControl,
+        },
       });
       handleChange({
-        target: { name: "keyControl", value: currentAssoCiate.keyControl },
+        target: { name: "keyControl", value: currentAssoCiate.keyControl || selectedRisk?.keyControl },
       });
       handleChange({
-        target: { name: "controlRef", value: currentAssoCiate.reference },
+        target: { name: "controlRef", value: currentAssoCiate.reference || selectedRisk?.reference },
       });
       handleChange({
-        target: { name: "controlSummary", value: currentAssoCiate.controlSummary },
+        target: {
+          name: "controlSummary",
+          value: currentAssoCiate.controlSummary || selectedRisk?.controlSummary,
+        },
       });
       // Vérifier si historyControl a des éléments
-      if (
-        currentAssoCiate.historyControl &&
-        currentAssoCiate.historyControl.length > 0
+      if ((currentAssoCiate.historyControl && currentAssoCiate.historyControl.length > 0) || (selectedRisk.historyControl && selectedRisk.historyControl.length > 0)
       ) {
         // Récupérer l'élément le plus récent
-        const latestHistory = currentAssoCiate.historyControl[0]; // Supposons que le plus récent est le premier élément
+        const latestHistory = currentAssoCiate.historyControl[0] || selectedRisk?.historyControl[0]; // Supposons que le plus récent est le premier élément
 
         // Passer les valeurs de dueOn et assessedOn
         handleChange({
-          target: { name: "nextAssessment", value: latestHistory.assessedOn },
+          target: { name: "nextAssessment", value: latestHistory.assessedOn || selectedRisk?.assessedOn },
         });
       }
       const nomineeOption = profilesOptions.find(
-        (option) => option.value === currentAssoCiate.nomineeControl
+        (option) => option.value === currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl
       );
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
       } else {
         setNomineeValue({
-          value: currentAssoCiate.nomineeControl,
-          label: currentAssoCiate.nomineeControl,
+          value: currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
+          label: currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
         });
       }
       const reviewerOption = profilesOptions.find(
-        (option) => option.value === currentAssoCiate.reviewerControl
+        (option) => option.value === currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl
       );
       if (reviewerOption) {
         setReviewerValue(reviewerOption);
       } else {
         setReviewerValue({
-          value: currentAssoCiate.reviewerControl,
-          label: currentAssoCiate.reviewerControl,
+          value: currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
+          label: currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
         });
       }
       if (currentAssoCiate.frequence) {
         handleChange({
           target: {
             name: "frequencyAssessment",
-            value: currentAssoCiate.frequence,
+            value: currentAssoCiate.frequence || selectedRisk?.frequence,
           },
         });
       }
     }
-  }, [currentAssoCiate]);
+  }, [currentAssoCiate, selectedRisk]);
 
   return (
     <Box className="form-container" as="form">
@@ -277,14 +285,14 @@ const GeneralForm = ({
           </FormControl>
 
           <FormControl mb={4}>
-            <HStack spacing={14} alignItems="center">
+            <HStack spacing={5} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Description:
+                Resumé du control :
               </Text>
               <Textarea
-                value={formData?.description}
+                value={formData?.controlSummary}
                 fontSize={12}
-                name="description"
+                name="controlSummary"
                 onChange={handleChange}
               />
             </HStack>
@@ -347,14 +355,14 @@ const GeneralForm = ({
           </FormControl>
 
           <FormControl mb={4}>
-            <HStack spacing={5} alignItems="center">
+            <HStack spacing={14} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Resumé du control :
+                Description:
               </Text>
               <Textarea
-                value={formData?.controlSummary}
+                value={formData?.description}
                 fontSize={12}
-                name="controlSummary"
+                name="description"
                 onChange={handleChange}
               />
             </HStack>
@@ -487,9 +495,15 @@ const GeneralForm = ({
                   colorScheme="blue"
                   variant="solid"
                   onClick={handleTestControlBySubTabClick}
+                  // disabled={
+                  //   new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
+                  //   new Date()
+                  // }
                   disabled={
-                    new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
-                    new Date()
+                    Array.isArray(currentAssoCiate?.historyControl) &&
+                    currentAssoCiate.historyControl.length > 0 &&
+                    new Date(currentAssoCiate.historyControl[0]?.assessedOn) >
+                      new Date()
                   }
                 >
                   Test du controle
