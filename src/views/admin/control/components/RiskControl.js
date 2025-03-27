@@ -82,9 +82,15 @@ const RiskControl = ({
           <Tr>
             <Td>{currentAssoCiate?.reference || selectedRisk?.reference}</Td>
             <Td>
-              {currentAssoCiate?.controlDescription?.length > 20 || selectedRisk?.controlDescription?.length > 20
-                ? `${currentAssoCiate?.controlDescription.substring(0, 35)}...` || `${selectedRisk?.controlDescription.substring(0, 35)}...`
-                : currentAssoCiate?.controlDescription || selectedRisk?.controlDescription}
+              {(() => {
+                const description = currentAssoCiate?.controlDescription || selectedRisk?.controlDescription;
+                if (description) {
+                  return description.length > 20
+                    ? `${description.substring(0, 35)}...`
+                    : description;
+                }
+                return null; // Ou une valeur par défaut si nécessaire
+              })()}
             </Td>
             <Td>
               {currentAssoCiate?.activeControl || selectedRisk?.activeControl ? (
