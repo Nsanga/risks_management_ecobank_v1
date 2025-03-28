@@ -227,7 +227,7 @@ const RiskPage = ({
             <Flex gap={4} mb={2}>
               <Text fontSize={12}>Risk Ref:</Text>
               <Text fontSize={12} fontWeight="bold">
-                {selectedRisk.reference || currentAssoCiate.reference}
+                {currentAssoCiate.reference}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
