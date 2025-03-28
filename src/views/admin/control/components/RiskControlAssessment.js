@@ -57,16 +57,38 @@ const RiskControlAssessment = ({
     ) {
       setFormData({
         performance:
-          currentAssoCiate?.historyControl[0]?.performance || selectedRisk?.historyControl[0]?.performance || "Not Assessed",
+          currentAssoCiate?.historyControl?.[0]?.performance ||
+          selectedRisk?.historyControl?.[0]?.performance ||
+          "Not Assessed",
         assessedBy: userName
           ? userName
-          : currentAssoCiate?.historyControl[0]?.assessedBy || selectedRisk?.historyControl[0]?.assessedBy || "",
-        assessedOn: currentAssoCiate?.historyControl[0]?.assessedOn || selectedRisk?.historyControl[0]?.assessedOn || "",
-        dueOn: currentAssoCiate?.historyControl[0]?.dueOn || selectedRisk?.historyControl[0]?.dueOn || "",
-        closedDate: currentAssoCiate?.historyControl[0]?.closedDate || selectedRisk?.historyControl[0]?.closedDate || "",
-        notes: currentAssoCiate?.historyControl[0]?.notes || selectedRisk?.historyControl[0]?.notes || "",
-        attested: currentAssoCiate?.historyControl[0]?.attested || selectedRisk?.historyControl[0]?.attested || true,
-        monitoringMethodology: currentAssoCiate?.monitoringMethodology || selectedRisk?.monitoringMethodology || "",
+          : currentAssoCiate?.historyControl?.[0]?.assessedBy ||
+            selectedRisk?.historyControl?.[0]?.assessedBy ||
+            "",
+        assessedOn:
+          currentAssoCiate?.historyControl?.[0]?.assessedOn ||
+          selectedRisk?.historyControl?.[0]?.assessedOn ||
+          "",
+        dueOn:
+          currentAssoCiate?.historyControl?.[0]?.dueOn ||
+          selectedRisk?.historyControl?.[0]?.dueOn ||
+          "",
+        closedDate:
+          currentAssoCiate?.historyControl?.[0]?.closedDate ||
+          selectedRisk?.historyControl?.[0]?.closedDate ||
+          "",
+        notes:
+          currentAssoCiate?.historyControl?.[0]?.notes ||
+          selectedRisk?.historyControl?.[0]?.notes ||
+          "",
+        attested:
+          currentAssoCiate?.historyControl?.[0]?.attested ||
+          selectedRisk?.historyControl?.[0]?.attested ||
+          true,
+        monitoringMethodology:
+          currentAssoCiate?.monitoringMethodology ||
+          selectedRisk?.monitoringMethodology ||
+          "",
       });
     }
   }, [dispatch]);
@@ -90,7 +112,8 @@ const RiskControlAssessment = ({
     // });
   };
 
-  const controlSelected = currentAssoCiate.historyControl || selectedRisk.historyControl
+  const controlSelected =
+    currentAssoCiate.historyControl || selectedRisk.historyControl;
 
   return (
     <Box fontSize="12px">
@@ -111,28 +134,30 @@ const RiskControlAssessment = ({
               </Tr>
             </Thead>
             <Tbody>
-              {(currentAssoCiate?.historyControl && currentAssoCiate?.historyControl.length > 0) ||
-                (selectedRisk?.historyControl && selectedRisk?.historyControl.length > 0) && (
-                  <>
-                    {controlSelected
-                      .slice(-5) // Récupère les cinq derniers éléments
-                      .map((controlHistory) => (
-                        <Tr key={controlHistory._id}>
-                          <Td>{controlHistory.reference}</Td>
-                          <Td>{controlHistory.assessedOn}</Td>
-                          <Td>{controlHistory.dueOn}</Td>
-                          <Td>{controlHistory.closedDate}</Td>
-                          <Td>{controlHistory.performance}</Td>
-                          <Td>
-                            <Checkbox
-                              isChecked={controlHistory.attested}
-                              isReadOnly
-                            />
-                          </Td>
-                        </Tr>
-                      ))}
-                  </>
-                )}
+              {(currentAssoCiate?.historyControl &&
+                currentAssoCiate?.historyControl.length > 0) ||
+                (selectedRisk?.historyControl &&
+                  selectedRisk?.historyControl.length > 0 && (
+                    <>
+                      {controlSelected
+                        .slice(-5) // Récupère les cinq derniers éléments
+                        .map((controlHistory) => (
+                          <Tr key={controlHistory._id}>
+                            <Td>{controlHistory.reference}</Td>
+                            <Td>{controlHistory.assessedOn}</Td>
+                            <Td>{controlHistory.dueOn}</Td>
+                            <Td>{controlHistory.closedDate}</Td>
+                            <Td>{controlHistory.performance}</Td>
+                            <Td>
+                              <Checkbox
+                                isChecked={controlHistory.attested}
+                                isReadOnly
+                              />
+                            </Td>
+                          </Tr>
+                        ))}
+                    </>
+                  ))}
             </Tbody>
           </Table>
           <FormControl
@@ -215,9 +240,9 @@ const RiskControlAssessment = ({
                   type="text"
                   placeholder="Enter assessed name"
                   value={formData.assessedBy}
-                // onChange={(e) =>
-                //   setFormData({ ...formData, assessedBy: e.target.value })
-                // }
+                  // onChange={(e) =>
+                  //   setFormData({ ...formData, assessedBy: e.target.value })
+                  // }
                 />
               </FormControl>
             </GridItem>

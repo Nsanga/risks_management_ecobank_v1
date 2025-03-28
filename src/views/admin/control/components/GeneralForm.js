@@ -132,7 +132,7 @@ const GeneralForm = ({
 
   const handleAmendControl = () => {
     const postData = {
-      itemIds: [currentAssoCiate?._id  || selectedRisk?._id],
+      itemIds: [currentAssoCiate?._id || selectedRisk?._id],
       itemType: "control",
       updates: {
         activeControl: formData.activeControl,
@@ -162,7 +162,9 @@ const GeneralForm = ({
       handleChange({
         target: {
           name: "description",
-          value: currentAssoCiate.controlDescription || selectedRisk?.controlDescription,
+          value:
+            currentAssoCiate.controlDescription ||
+            selectedRisk?.controlDescription,
         },
       });
       handleChange({
@@ -172,48 +174,71 @@ const GeneralForm = ({
         },
       });
       handleChange({
-        target: { name: "keyControl", value: currentAssoCiate.keyControl || selectedRisk?.keyControl },
+        target: {
+          name: "keyControl",
+          value: currentAssoCiate.keyControl || selectedRisk?.keyControl,
+        },
       });
       handleChange({
-        target: { name: "controlRef", value: currentAssoCiate.reference || selectedRisk?.reference },
+        target: {
+          name: "controlRef",
+          value: currentAssoCiate.reference || selectedRisk?.reference,
+        },
       });
       handleChange({
         target: {
           name: "controlSummary",
-          value: currentAssoCiate.controlSummary || selectedRisk?.controlSummary,
+          value:
+            currentAssoCiate.controlSummary || selectedRisk?.controlSummary,
         },
       });
       // Vérifier si historyControl a des éléments
-      if ((currentAssoCiate.historyControl && currentAssoCiate.historyControl.length > 0) || (selectedRisk.historyControl && selectedRisk.historyControl.length > 0)
+      if (
+        (currentAssoCiate.historyControl &&
+          currentAssoCiate.historyControl.length > 0) ||
+        (selectedRisk.historyControl && selectedRisk.historyControl.length > 0)
       ) {
         // Récupérer l'élément le plus récent
-        const latestHistory = currentAssoCiate.historyControl[0] || selectedRisk?.historyControl[0]; // Supposons que le plus récent est le premier élément
+        const latestHistory =
+          currentAssoCiate?.historyControl?.[0] ||
+          selectedRisk?.historyControl?.[0]; // Supposons que le plus récent est le premier élément
 
         // Passer les valeurs de dueOn et assessedOn
         handleChange({
-          target: { name: "nextAssessment", value: latestHistory.assessedOn || selectedRisk?.assessedOn },
+          target: {
+            name: "nextAssessment",
+            value: latestHistory.assessedOn || selectedRisk?.assessedOn,
+          },
         });
       }
       const nomineeOption = profilesOptions.find(
-        (option) => option.value === currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl
+        (option) =>
+          option.value === currentAssoCiate.nomineeControl ||
+          selectedRisk?.nomineeControl
       );
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
       } else {
         setNomineeValue({
-          value: currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
-          label: currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
+          value:
+            currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
+          label:
+            currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
         });
       }
       const reviewerOption = profilesOptions.find(
-        (option) => option.value === currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl
+        (option) =>
+          option.value === currentAssoCiate.reviewerControl ||
+          selectedRisk?.reviewerControl
       );
       if (reviewerOption) {
         setReviewerValue(reviewerOption);
       } else {
         setReviewerValue({
-          value: currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
-          label: currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
+          value:
+            currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
+          label:
+            currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
         });
       }
       if (currentAssoCiate.frequence) {
