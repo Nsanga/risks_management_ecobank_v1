@@ -170,10 +170,10 @@ const RiskControlAssessment = ({
                     setFormData({ ...formData, performance: e.target.value })
                   }
                 >
-                  <option>amélioration nécessaire</option>
-                  <option>non testé</option>
-                  <option>satisfaisant</option>
-                  <option>non satisfaisant </option>
+                  <option>Amélioration nécessaire</option>
+                  <option>Non testé</option>
+                  <option>Satisfaisant</option>
+                  <option>Non satisfaisant </option>
                 </Select>
               </FormControl>
             </GridItem>
