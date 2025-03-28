@@ -50,50 +50,37 @@ const RiskControlAssessment = ({
     if (
       (currentAssoCiate &&
         currentAssoCiate?.historyControl &&
-        currentAssoCiate?.historyControl?.length) ||
+        currentAssoCiate?.historyControl?.length > 0) ||
       (selectedRisk &&
         selectedRisk?.historyControl &&
-        selectedRisk?.historyControl?.length)
+        selectedRisk?.historyControl?.length > 0)
     ) {
-      setFormData({
-        performance:
-          currentAssoCiate?.historyControl?.[0]?.performance ||
-          selectedRisk?.historyControl?.[0]?.performance ||
-          "Not Assessed",
-        assessedBy: userName
-          ? userName
-          : currentAssoCiate?.historyControl?.[0]?.assessedBy ||
-            selectedRisk?.historyControl?.[0]?.assessedBy ||
+      const historyControl =
+        currentAssoCiate?.historyControl || selectedRisk?.historyControl;
+  
+      if (historyControl && historyControl.length > 0) {
+        const latestHistory = historyControl[0];
+  
+        setFormData({
+          performance: latestHistory?.performance || "Not Assessed",
+          assessedBy: userName
+            ? userName
+            : latestHistory?.assessedBy || "",
+          assessedOn: latestHistory?.assessedOn || "",
+          dueOn: latestHistory?.dueOn || "",
+          closedDate: latestHistory?.closedDate || "",
+          notes: latestHistory?.notes || "",
+          attested: latestHistory?.attested || true,
+          monitoringMethodology:
+            currentAssoCiate?.monitoringMethodology ||
+            selectedRisk?.monitoringMethodology ||
             "",
-        assessedOn:
-          currentAssoCiate?.historyControl?.[0]?.assessedOn ||
-          selectedRisk?.historyControl?.[0]?.assessedOn ||
-          "",
-        dueOn:
-          currentAssoCiate?.historyControl?.[0]?.dueOn ||
-          selectedRisk?.historyControl?.[0]?.dueOn ||
-          "",
-        closedDate:
-          currentAssoCiate?.historyControl?.[0]?.closedDate ||
-          selectedRisk?.historyControl?.[0]?.closedDate ||
-          "",
-        notes:
-          currentAssoCiate?.historyControl?.[0]?.notes ||
-          selectedRisk?.historyControl?.[0]?.notes ||
-          "",
-        attested:
-          currentAssoCiate?.historyControl?.[0]?.attested ||
-          selectedRisk?.historyControl?.[0]?.attested ||
-          true,
-        monitoringMethodology:
-          currentAssoCiate?.monitoringMethodology ||
-          selectedRisk?.monitoringMethodology ||
-          "",
-      });
+        });
+      }
     }
   }, [dispatch]);
-  const handleSave = () => {
-    dispatch(
+  const handleSave = async () => {
+    await dispatch(
       AddControlHistory({
         ...formData,
         idControl: currentAssoCiate._id || selectedRisk._id,

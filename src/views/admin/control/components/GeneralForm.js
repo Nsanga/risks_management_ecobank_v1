@@ -66,29 +66,38 @@ const GeneralForm = ({
     label: frequency.label,
   }));
 
-  const calculateRemindOnDate = (frequency) => {
-    const today = new Date();
+  const calculateRemindOnDate = (frequency, lastOperationDate) => {
+    // Vérifiez si lastOperationDate est valide
+    if (!lastOperationDate || isNaN(new Date(lastOperationDate).getTime())) {
+      console.error("Invalid lastOperationDate:", lastOperationDate);
+      return null; // Ou une date par défaut, selon vos besoins
+    }
+
+    const lastOperation = new Date(lastOperationDate);
     let nextDate;
 
     if (frequency === "Daily") {
-      nextDate = new Date(today.setDate(today.getDate() + 1)); // Add 1 day
+      nextDate = new Date(lastOperation.setDate(lastOperation.getDate() + 1)); // Add 1 day
     } else if (frequency === "Weekly") {
-      nextDate = new Date(today.setDate(today.getDate() + 7)); // Add 7 days
+      nextDate = new Date(lastOperation.setDate(lastOperation.getDate() + 7)); // Add 7 days
     } else if (frequency === "Monthly") {
-      nextDate = new Date(today.setMonth(today.getMonth() + 1)); // Add 1 month
+      nextDate = new Date(lastOperation.setMonth(lastOperation.getMonth() + 1)); // Add 1 month
     } else if (frequency === "Quarterly") {
-      nextDate = new Date(today.setMonth(today.getMonth() + 3)); // Add 3 months
+      nextDate = new Date(lastOperation.setMonth(lastOperation.getMonth() + 3)); // Add 3 months
     } else if (frequency === "Semi-Annually") {
-      nextDate = new Date(today.setMonth(today.getMonth() + 6)); // Add 6 months
+      nextDate = new Date(lastOperation.setMonth(lastOperation.getMonth() + 6)); // Add 6 months
+    } else if (frequency === "Annually") {
+      nextDate = new Date(lastOperation.setFullYear(lastOperation.getFullYear() + 1)); // Add 1 year
     }
 
     return nextDate.toISOString().split("T")[0]; // Format date as YYYY-MM-DD
-  };
+  }
 
   // General handler for frequency change
   const handleSelectChangeWithNext = (frequencyType, selectedOption) => {
     const frequency = selectedOption.value;
-    const newNextDate = calculateRemindOnDate(frequency);
+    const lastOperationDate = formData.lastOperation; // Get the last operation date
+    const newNextDate = calculateRemindOnDate(frequency, lastOperationDate);
 
     handleChange({
       target: {
@@ -99,11 +108,30 @@ const GeneralForm = ({
 
     handleChange({
       target: {
-        name:
-          frequencyType === "frequency" ? "nextOperation" : "nextAssessment",
+        name: frequencyType === "frequency" ? "nextOperation" : "nextAssessment",
         value: newNextDate,
       },
     });
+  };
+
+  const handleFrequencyChange = (selectedOption) => {
+    handleChange({
+      target: {
+        name: "frequency",
+        value: selectedOption.value,
+      },
+    });
+
+    // Si lastOperation est déjà défini, calcule nextOperation
+    if (formData.lastOperation) {
+      const newNextDate = calculateRemindOnDate(selectedOption.value, formData.lastOperation);
+      handleChange({
+        target: {
+          name: "nextOperation",
+          value: newNextDate,
+        },
+      });
+    }
   };
 
   const customStyles = {
@@ -163,46 +191,44 @@ const GeneralForm = ({
         target: {
           name: "description",
           value:
-            currentAssoCiate.controlDescription ||
+            currentAssoCiate?.controlDescription ||
             selectedRisk?.controlDescription,
         },
       });
       handleChange({
         target: {
           name: "activeControl",
-          value: currentAssoCiate.activeControl || selectedRisk?.activeControl,
+          value: currentAssoCiate?.activeControl || selectedRisk?.activeControl,
         },
       });
       handleChange({
         target: {
           name: "keyControl",
-          value: currentAssoCiate.keyControl || selectedRisk?.keyControl,
+          value: currentAssoCiate?.keyControl || selectedRisk?.keyControl,
         },
       });
       handleChange({
         target: {
           name: "controlRef",
-          value: currentAssoCiate.reference || selectedRisk?.reference,
+          value: currentAssoCiate?.reference || selectedRisk?.reference,
         },
       });
       handleChange({
         target: {
           name: "controlSummary",
           value:
-            currentAssoCiate.controlSummary || selectedRisk?.controlSummary,
+            currentAssoCiate?.controlSummary || selectedRisk?.controlSummary,
         },
       });
+  
       // Vérifier si historyControl a des éléments
-      if (
-        (currentAssoCiate.historyControl &&
-          currentAssoCiate.historyControl.length > 0) ||
-        (selectedRisk.historyControl && selectedRisk.historyControl.length > 0)
-      ) {
+      const historyControl =
+        currentAssoCiate?.historyControl || selectedRisk?.historyControl;
+  
+      if (historyControl && historyControl.length > 0) {
         // Récupérer l'élément le plus récent
-        const latestHistory =
-          currentAssoCiate?.historyControl?.[0] ||
-          selectedRisk?.historyControl?.[0]; // Supposons que le plus récent est le premier élément
-
+        const latestHistory = historyControl[0]; // Supposons que le plus récent est le premier élément
+  
         // Passer les valeurs de dueOn et assessedOn
         handleChange({
           target: {
@@ -211,9 +237,10 @@ const GeneralForm = ({
           },
         });
       }
+  
       const nomineeOption = profilesOptions.find(
         (option) =>
-          option.value === currentAssoCiate.nomineeControl ||
+          option.value === currentAssoCiate?.nomineeControl ||
           selectedRisk?.nomineeControl
       );
       if (nomineeOption) {
@@ -221,14 +248,15 @@ const GeneralForm = ({
       } else {
         setNomineeValue({
           value:
-            currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
+            currentAssoCiate?.nomineeControl || selectedRisk?.nomineeControl,
           label:
-            currentAssoCiate.nomineeControl || selectedRisk?.nomineeControl,
+            currentAssoCiate?.nomineeControl || selectedRisk?.nomineeControl,
         });
       }
+  
       const reviewerOption = profilesOptions.find(
         (option) =>
-          option.value === currentAssoCiate.reviewerControl ||
+          option.value === currentAssoCiate?.reviewerControl ||
           selectedRisk?.reviewerControl
       );
       if (reviewerOption) {
@@ -236,16 +264,17 @@ const GeneralForm = ({
       } else {
         setReviewerValue({
           value:
-            currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
+            currentAssoCiate?.reviewerControl || selectedRisk?.reviewerControl,
           label:
-            currentAssoCiate.reviewerControl || selectedRisk?.reviewerControl,
+            currentAssoCiate?.reviewerControl || selectedRisk?.reviewerControl,
         });
       }
-      if (currentAssoCiate.frequence) {
+  
+      if (currentAssoCiate?.frequence) {
         handleChange({
           target: {
             name: "frequencyAssessment",
-            value: currentAssoCiate.frequence || selectedRisk?.frequence,
+            value: currentAssoCiate?.frequence || selectedRisk?.frequence,
           },
         });
       }
@@ -423,9 +452,7 @@ const GeneralForm = ({
                       value={frequenciesOptions?.find(
                         (option) => option.value === formData.frequency
                       )}
-                      onChange={(selectedOption) =>
-                        handleSelectChangeWithNext("frequency", selectedOption)
-                      }
+                      onChange={handleFrequencyChange}
                     />
                   </Box>
                 </HStack>
@@ -440,7 +467,20 @@ const GeneralForm = ({
                     type="date"
                     name="lastOperation"
                     value={formData.lastOperation}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e); // Traite d'abord la mise à jour de lastOperation
+
+                      // Si la fréquence est définie, calcule automatiquement nextOperation
+                      if (formData.frequency) {
+                        const newNextDate = calculateRemindOnDate(formData.frequency, e.target.value);
+                        handleChange({
+                          target: {
+                            name: "nextOperation",
+                            value: newNextDate,
+                          },
+                        });
+                      }
+                    }}
                   />
                 </HStack>
               </FormControl>
@@ -526,9 +566,9 @@ const GeneralForm = ({
                   // }
                   disabled={
                     Array.isArray(currentAssoCiate?.historyControl) &&
-                    currentAssoCiate.historyControl.length > 0 &&
-                    new Date(currentAssoCiate.historyControl[0]?.assessedOn) >
-                      new Date()
+                    currentAssoCiate?.historyControl.length > 0 &&
+                    new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
+                    new Date()
                   }
                 >
                   Test du controle

@@ -79,55 +79,54 @@ const RiskControl = ({
           </Tr>
         </Thead>
         <Tbody>
-          <Tr>
-            <Td>{currentAssoCiate?.reference || selectedRisk?.reference}</Td>
-            <Td>
-              {(() => {
-                const description =
-                  currentAssoCiate?.controlDescription ||
-                  selectedRisk?.controlDescription;
-                if (description) {
-                  return description.length > 20
-                    ? `${description.substring(0, 35)}...`
-                    : description;
-                }
-                return null; // Ou une valeur par défaut si nécessaire
-              })()}
-            </Td>
-            <Td>
-              {currentAssoCiate?.activeControl ||
-              selectedRisk?.activeControl ? (
-                <CheckCircleIcon color="green.500" />
-              ) : (
-                <IoCloseCircle color="red.500" />
-              )}
-            </Td>
-            <Td>
-              {currentAssoCiate?.keyControl || selectedRisk?.keyControl
-                ? "Y"
-                : "N"}
-            </Td>
-            {(currentAssoCiate?.historyControl?.length > 0 ||
-              selectedRisk?.historyControl?.length > 0) && (
-              <>
-                <Td>
-                  {currentAssoCiate?.historyControl?.[0]?.dueOn ||
-                    selectedRisk?.historyControl?.[0]?.dueOn}
-                </Td>
-                <Td>
-                  {currentAssoCiate?.historyControl?.[0]?.performance ||
-                    selectedRisk?.historyControl?.[0]?.performance}
-                </Td>
-                <Td>
-                  {currentAssoCiate?.historyControl?.[0]?.assessedBy ||
-                    selectedRisk?.historyControl?.[0]?.assessedBy}
-                </Td>
-              </>
-            )}
-
-            <Td>---</Td>
-          </Tr>
-        </Tbody>
+  <Tr>
+    <Td>{currentAssoCiate?.reference || selectedRisk?.reference}</Td>
+    <Td>
+      {(() => {
+        const description =
+          currentAssoCiate?.controlDescription ||
+          selectedRisk?.controlDescription;
+        if (description) {
+          return description.length > 20
+            ? `${description.substring(0, 35)}...`
+            : description;
+        }
+        return null; // Ou une valeur par défaut si nécessaire
+      })()}
+    </Td>
+    <Td>
+      {currentAssoCiate?.activeControl || selectedRisk?.activeControl ? (
+        <CheckCircleIcon color="green.500" />
+      ) : (
+        <IoCloseCircle color="red.500" />
+      )}
+    </Td>
+    <Td>
+      {currentAssoCiate?.keyControl || selectedRisk?.keyControl ? "Y" : "N"}
+    </Td>
+    {((currentAssoCiate?.historyControl && currentAssoCiate.historyControl.length > 0) ||
+      (selectedRisk?.historyControl && selectedRisk.historyControl.length > 0)) && (
+      <>
+        <Td>
+          {currentAssoCiate?.historyControl?.[0]?.dueOn ||
+            selectedRisk?.historyControl?.[0]?.dueOn || 
+            "N/A"} {/* Valeur par défaut si aucune date n'est disponible */}
+        </Td>
+        <Td>
+          {currentAssoCiate?.historyControl?.[0]?.performance ||
+            selectedRisk?.historyControl?.[0]?.performance || 
+            "N/A"} {/* Valeur par défaut si aucune performance n'est disponible */}
+        </Td>
+        <Td>
+          {currentAssoCiate?.historyControl?.[0]?.assessedBy ||
+            selectedRisk?.historyControl?.[0]?.assessedBy || 
+            "N/A"} {/* Valeur par défaut si aucun évaluateur n'est disponible */}
+        </Td>
+      </>
+    )}
+    <Td>---</Td>
+  </Tr>
+</Tbody>
       </Table>
 
       <Tabs

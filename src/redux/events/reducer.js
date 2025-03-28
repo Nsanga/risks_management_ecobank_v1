@@ -23,6 +23,19 @@ const EventReducer = (state = INITIAL_STATE, action) =>
         draft.events = [];
         draft.error = action.payload;
         break;
+      case types.GET_EVENTS_BY_ENTITY_REQUEST:
+        draft.loading = true;
+        draft.error = null;
+        break;
+      case types.GET_EVENTS_BY_ENTITY_SUCCESS:
+        draft.loading = false;
+        draft.events = action.payload.data.events;
+        break;
+      case types.GET_EVENTS_BY_ENTITY_FAILED:
+        draft.loading = false;
+        draft.events = [];
+        draft.error = action.payload;
+        break;
       case types.UPDATE_EVENT_REQUEST:
         draft.loading = true;
         draft.error = null;

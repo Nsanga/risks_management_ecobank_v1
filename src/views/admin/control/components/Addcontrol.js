@@ -45,8 +45,10 @@ import Loader from "../../../../assets/img/loader.gif";
 import { copyEntityRiskControl } from "redux/entityRiskControl/action";
 import { moveEntityRiskControl } from "redux/entityRiskControl/action";
 import { updateEntityRiskControl } from "redux/entityRiskControl/action";
+import { listEventsByEntity } from "redux/events/action";
+import CardDetails from "views/admin/risks/components/cardDetails";
 
-function AddControl({ entityRiskControls, loading, entities, profiles }) {
+function AddControl({ entityRiskControls, loading, entities, profiles, events }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [selectedControl, setSelectedControl] = useState(null);
@@ -207,7 +209,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
         setViewData({
           Risks: entityRiskControls[0]?.risks || [],
           Controls: entityRiskControls[0]?.controls || [],
-          Events: [],
+          Events: events,
           Actions: [],
           Kits: [],
           Obligations: [],
@@ -398,6 +400,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   useEffect(() => {
     if (selectedEntityDescription) {
       dispatch(listEntityRiskControls(selectedEntityDescription));
+      dispatch(listEventsByEntity(selectedEntity?._id));
       setFormData({
         entity: selectedEntityDescription,
         entityMove: null,
@@ -457,8 +460,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
       {/* </Flex> */}
       <Flex
         direction="column"
-        justifyContent="center"
-        align="center"
         mb={5}
         w="100%"
       >
@@ -540,102 +541,116 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
 
         {numberOfItems > 0 ? (
           <>
-            <Table variant="simple" mt={4}>
-              <Thead>
-                <Tr>
-                  <div
-                    style={{ position: "relative", left: "25px", top: "15px" }}
-                  >
-                    <Checkbox
-                      onChange={handleSelectAll}
-                      isChecked={
-                        selectedRows.length === viewData[currentView].length &&
-                        viewData[currentView].length > 0
-                      }
-                    />
-                  </div>
+            {currentView === "Events" && viewData.Events && viewData.Events.length > 0 && (
+              <Box mt={4} p={4}>
+                <CardDetails events={events} loading={loading} />
+              </Box>
+            )}
 
-                  {/* <Th fontSize={10}></Th> */}
-                  {columnsByView[currentView].map((col) => (
-                    <Th fontSize={10} key={col.key}>
-                      {col.label}
-                    </Th>
-                  ))}
-                </Tr>
-              </Thead>
-              {loading ? (
-                <Flex alignItems="center" justifyContent="center" width="100%">
-                  <Image src={Loader} alt="Loading..." height={25} width={25} />
-                </Flex>
-              ) : (
-                <Tbody>
-                  {viewData[currentView].map((row, index) => (
-                    <Tr key={index} cursor="pointer">
-                      <Td>
+            {(currentView === "Risks" && viewData.Risks && viewData.Risks.length > 0) ||
+              (currentView === "Controls" && viewData.Controls && viewData.Controls.length > 0) ? (
+              <>
+                <Table variant="simple" mt={4}>
+                  <Thead>
+                    <Tr>
+                      <div
+                        style={{ position: "relative", left: "25px", top: "15px" }}
+                      >
                         <Checkbox
-                          onChange={(e) =>
-                            handleCheckboxChange(row, e.target.checked)
+                          onChange={handleSelectAll}
+                          isChecked={
+                            selectedRows.length === viewData[currentView]?.length &&
+                            viewData[currentView]?.length > 0
                           }
-                          isChecked={isRowSelected(row)}
                         />
-                      </Td>
-                      {columnsByView[currentView].map((col) => (
-                        <Td
-                          fontSize={12}
-                          key={col.key}
-                          onClick={() => handleRowClick(row, index)}
-                        >
-                          {row[col.key]?.length > 20
-                            ? `${row[col.key].substring(0, 16)}...`
-                            : row[col.key]}
-                        </Td>
+                      </div>
+
+                      {columnsByView[currentView]?.map((col) => (
+                        <Th fontSize={10} key={col.key}>
+                          {col.label}
+                        </Th>
                       ))}
                     </Tr>
-                  ))}
-                </Tbody>
-              )}
-            </Table>
+                  </Thead>
+                  {loading ? (
+                    <Flex alignItems="center" justifyContent="center" width="100%">
+                      <Image src={Loader} alt="Loading..." height={25} width={25} />
+                    </Flex>
+                  ) : (
+                    <Tbody>
+                      {viewData[currentView]?.map((row, index) => (
+                        <Tr key={index} cursor="pointer">
+                          <Td>
+                            <Checkbox
+                              onChange={(e) =>
+                                handleCheckboxChange(row, e.target.checked)
+                              }
+                              isChecked={isRowSelected(row)}
+                            />
+                          </Td>
+                          {columnsByView[currentView]?.map((col) => (
+                            <Td
+                              fontSize={12}
+                              key={col.key}
+                              onClick={() => handleRowClick(row, index)}
+                            >
+                              {row[col.key]?.length > 20
+                                ? `${row[col.key].substring(0, 16)}...`
+                                : row[col.key]}
+                            </Td>
+                          ))}
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  )}
+                </Table>
+                {selectedRows.length > 0 && (
+                  <HStack mt={4} spacing={4} justifyContent="start">
+                    <Button
+                      colorScheme="blue"
+                      fontSize={12}
+                      leftIcon={<EditIcon />}
+                      onClick={bulkAmendModalOpen}
+                    >
+                      Bulk Amend
+                    </Button>
+                    <Button
+                      colorScheme="teal"
+                      fontSize={12}
+                      leftIcon={<IoMove />}
+                      onClick={moveModalOpen}
+                    >
+                      Move {currentView === "Risks" ? "Risk" : "Control"}
+                    </Button>
+                    <Button
+                      colorScheme="green"
+                      fontSize={12}
+                      leftIcon={<CopyIcon />}
+                      onClick={copyModalOpen}
+                    >
+                      Copy {currentView === "Risks" ? "Risk" : "Control"}
+                    </Button>
+                  </HStack>
+                )}
+              </>
+            ) : (
+              <Flex
+                // fontSize={12}
+                // mt={4}
+                // p={4}
+                // justifyContent="end"
+                // alignItems="center"
+              >
+                {/* No data available for {currentView} */}
+              </Flex>
+            )}
           </>
         ) : (
-          <Flex
-            fontSize={12}
-            mt={4}
-            p={4}
-            justifyContent="end"
-            alignItems="center"
-          >
-            No data available for {currentView}
+          <Flex>
+            {/* No data available for {currentView} */}
           </Flex>
         )}
       </Flex>
-      {selectedRows.length > 0 && (
-        <HStack mt={4} spacing={4} justifyContent="start">
-          <Button
-            colorScheme="blue"
-            fontSize={12}
-            leftIcon={<EditIcon />}
-            onClick={bulkAmendModalOpen}
-          >
-            Bulk Amend
-          </Button>
-          <Button
-            colorScheme="teal"
-            fontSize={12}
-            leftIcon={<IoMove />}
-            onClick={moveModalOpen}
-          >
-            Move {currentView === "Risks" ? "Risk" : "Control"}
-          </Button>
-          <Button
-            colorScheme="green"
-            fontSize={12}
-            leftIcon={<CopyIcon />}
-            onClick={copyModalOpen}
-          >
-            Copy {currentView === "Risks" ? "Risk" : "Control"}
-          </Button>
-        </HStack>
-      )}
 
       {/* Modal for Move */}
       <Modal isCentered isOpen={isModalMoveOpen} onClose={closeMoveModal}>
@@ -887,9 +902,10 @@ function AddControl({ entityRiskControls, loading, entities, profiles }) {
   );
 }
 
-const mapStateToProps = ({ EntityRiskControlReducer }) => ({
+const mapStateToProps = ({ EntityRiskControlReducer, EventReducer }) => ({
   entityRiskControls: EntityRiskControlReducer.entityRiskControls,
   loading: EntityRiskControlReducer.loading,
+  events: EventReducer.events
 });
 
 export default connect(mapStateToProps)(AddControl);
