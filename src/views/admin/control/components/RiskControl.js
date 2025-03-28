@@ -83,7 +83,9 @@ const RiskControl = ({
             <Td>{currentAssoCiate?.reference || selectedRisk?.reference}</Td>
             <Td>
               {(() => {
-                const description = currentAssoCiate?.controlDescription || selectedRisk?.controlDescription;
+                const description =
+                  currentAssoCiate?.controlDescription ||
+                  selectedRisk?.controlDescription;
                 if (description) {
                   return description.length > 20
                     ? `${description.substring(0, 35)}...`
@@ -93,23 +95,32 @@ const RiskControl = ({
               })()}
             </Td>
             <Td>
-              {currentAssoCiate?.activeControl || selectedRisk?.activeControl ? (
+              {currentAssoCiate?.activeControl ||
+              selectedRisk?.activeControl ? (
                 <CheckCircleIcon color="green.500" />
               ) : (
                 <IoCloseCircle color="red.500" />
               )}
             </Td>
-            <Td>{currentAssoCiate?.keyControl || selectedRisk?.keyControl ? "Y" : "N"}</Td>
-            {currentAssoCiate?.historyControl?.length > 0 || selectedRisk?.historyControl?.length > 0 && (
+            <Td>
+              {currentAssoCiate?.keyControl || selectedRisk?.keyControl
+                ? "Y"
+                : "N"}
+            </Td>
+            {(currentAssoCiate?.historyControl?.length > 0 ||
+              selectedRisk?.historyControl?.length > 0) && (
               <>
                 <Td>
-                  {currentAssoCiate?.historyControl[0]?.dueOn || selectedRisk?.historyControl[0]?.dueOn}
+                  {currentAssoCiate?.historyControl?.[0]?.dueOn ||
+                    selectedRisk?.historyControl?.[0]?.dueOn}
                 </Td>
                 <Td>
-                  {currentAssoCiate?.historyControl[0]?.performance || selectedRisk?.historyControl[0]?.performance}
+                  {currentAssoCiate?.historyControl?.[0]?.performance ||
+                    selectedRisk?.historyControl?.[0]?.performance}
                 </Td>
                 <Td>
-                  {currentAssoCiate?.historyControl[0]?.assessedBy || selectedRisk?.historyControl[0]?.assessedBy}
+                  {currentAssoCiate?.historyControl?.[0]?.assessedBy ||
+                    selectedRisk?.historyControl?.[0]?.assessedBy}
                 </Td>
               </>
             )}
