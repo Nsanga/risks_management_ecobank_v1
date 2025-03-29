@@ -30,8 +30,8 @@ const RiskControl = ({
   handleTestControlBySubTabClick,
   selectedEntityDescription,
   selectedRisk,
+  selectedFrequency,
 }) => {
-  const [tabIndex, setTabIndex] = useState(0);
   const toast = useToast();
 
   console.log("currentAssoCiate", currentAssoCiate);
@@ -169,6 +169,7 @@ const RiskControl = ({
               selectedRisk={selectedRisk}
               selectedEntityDescription={selectedEntityDescription}
               handleChange={handleChange}
+              selectedFrequency={selectedFrequency}
             />
           </TabPanel>
         </TabPanels>

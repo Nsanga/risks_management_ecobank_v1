@@ -132,7 +132,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
 
   const handleAmend = async () => {
     const payload = {
-      itemIds: selectedRisk ? [selectedRisk._id] : [currentAssoCiate._id],
+      itemIds: selectedRisk ? [selectedRisk?._id] : [currentAssoCiate?._id],
       itemType: "risk",
       updates: {
         ...riskFormData,
@@ -149,27 +149,27 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
   
   useEffect(() => {
     if (selectedRisk || currentAssoCiate) {
-      handleChange({ target: { name: 'riskDescription', value: selectedRisk.riskDescription || currentAssoCiate.riskDescription } });
-      handleChange({ target: { name: 'ownerEmail', value: selectedRisk.ownerEmail || currentAssoCiate.ownerEmail } });
-      handleChange({ target: { name: 'activeRisk', value: selectedRisk.activeRisk || currentAssoCiate.activeRisk } });
-      const ownerOption = profilesOptions.find(option => option.value === selectedRisk.ownerRisk || currentAssoCiate.ownerRisk);
+      handleChange({ target: { name: 'riskDescription', value: selectedRisk?.riskDescription || currentAssoCiate?.riskDescription } });
+      handleChange({ target: { name: 'ownerEmail', value: selectedRisk?.ownerEmail || currentAssoCiate?.ownerEmail } });
+      handleChange({ target: { name: 'activeRisk', value: selectedRisk?.activeRisk || currentAssoCiate?.activeRisk } });
+      const ownerOption = profilesOptions.find(option => option.value === selectedRisk?.ownerRisk || currentAssoCiate?.ownerRisk);
       if (ownerOption) {
         setOwnerValue(ownerOption);
       } else {
         // Si la valeur n'est pas dans les options, définir une valeur personnalisée
-        setOwnerValue({ value: selectedRisk.ownerRisk || currentAssoCiate.ownerRisk, label: selectedRisk.ownerRisk || currentAssoCiate.ownerRisk });
+        setOwnerValue({ value: selectedRisk?.ownerRisk || currentAssoCiate?.ownerRisk, label: selectedRisk?.ownerRisk || currentAssoCiate?.ownerRisk });
       }
-      const nomineeOption = profilesOptions.find(option => option.value === selectedRisk.nomineeRisk || currentAssoCiate.nomineeRisk);
+      const nomineeOption = profilesOptions.find(option => option.value === selectedRisk?.nomineeRisk || currentAssoCiate?.nomineeRisk);
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
       } else {
-        setNomineeValue({ value: selectedRisk.nomineeRisk || currentAssoCiate.nomineeRisk, label: selectedRisk.nomineeRisk || currentAssoCiate.nomineeRisk });
+        setNomineeValue({ value: selectedRisk?.nomineeRisk || currentAssoCiate?.nomineeRisk, label: selectedRisk?.nomineeRisk || currentAssoCiate?.nomineeRisk });
       }
-      const reviewerOption = profilesOptions.find(option => option.value === selectedRisk.reviewerRisk || currentAssoCiate.reviewerRisk);
+      const reviewerOption = profilesOptions.find(option => option.value === selectedRisk?.reviewerRisk || currentAssoCiate?.reviewerRisk);
       if (reviewerOption) {
         setReviewerValue(reviewerOption);
       } else {
-        setReviewerValue({ value: selectedRisk.reviewerRisk || currentAssoCiate.reviewerRisk, label: selectedRisk.reviewerRisk || currentAssoCiate.reviewerRisk });
+        setReviewerValue({ value: selectedRisk?.reviewerRisk || currentAssoCiate?.reviewerRisk, label: selectedRisk?.reviewerRisk || currentAssoCiate?.reviewerRisk });
       }
     }
   }, [selectedRisk, currentAssoCiate]);

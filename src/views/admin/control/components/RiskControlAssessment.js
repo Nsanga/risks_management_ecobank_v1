@@ -26,7 +26,7 @@ import { AddControlHistory } from "redux/controlHistory/action";
 import { listEntityRiskControls } from "redux/entityRiskControl/action";
 
 const RiskControlAssessment = ({
-  controlHistories,
+  selectedFrequency,
   currentAssoCiate,
   selectedRisk,
   selectedEntityDescription,
@@ -38,69 +38,54 @@ const RiskControlAssessment = ({
     assessedBy: userName ? userName : "",
     assessedOn: "",
     dueOn: "",
-    closedDate: "",
+    closeDate: "",
     notes: "",
-    attested: true,
+    attested: false,
     monitoringMethodology: "",
   });
-
+  const [monitoring, setMonitoring] = useState('');
+  console.log(currentAssoCiate)
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (
-      (currentAssoCiate &&
-        currentAssoCiate?.historyControl &&
-        currentAssoCiate?.historyControl?.length > 0) ||
-      (selectedRisk &&
-        selectedRisk?.historyControl &&
-        selectedRisk?.historyControl?.length > 0)
-    ) {
-      const historyControl =
-        currentAssoCiate?.historyControl || selectedRisk?.historyControl;
-  
-      if (historyControl && historyControl.length > 0) {
-        const latestHistory = historyControl[0];
-  
+    const methodology = currentAssoCiate?.monitoringMethodology || selectedRisk?.monitoringMethodology;
+    setMonitoring(methodology)
+    const hasHistoryControl = (currentAssoCiate || selectedRisk) &&
+      ((currentAssoCiate?.historyControl && currentAssoCiate?.historyControl.length > 0) ||
+        (selectedRisk?.historyControl && selectedRisk?.historyControl.length > 0));
+
+    if (hasHistoryControl) {
+      const historyControl = currentAssoCiate?.historyControl || selectedRisk?.historyControl;
+      const latestHistory = historyControl && historyControl.length > 0 ? historyControl[0] : null;
+
+      if (latestHistory) {
         setFormData({
           performance: latestHistory?.performance || "Not Assessed",
-          assessedBy: userName
-            ? userName
-            : latestHistory?.assessedBy || "",
+          assessedBy: userName || latestHistory?.assessedBy || "",
           assessedOn: latestHistory?.assessedOn || "",
           dueOn: latestHistory?.dueOn || "",
-          closedDate: latestHistory?.closedDate || "",
+          closeDate: latestHistory?.closeDate || "",
           notes: latestHistory?.notes || "",
           attested: latestHistory?.attested || true,
-          monitoringMethodology:
-            currentAssoCiate?.monitoringMethodology ||
-            selectedRisk?.monitoringMethodology ||
-            "",
         });
       }
     }
   }, [dispatch]);
+
   const handleSave = async () => {
+    console.log(formData)
     await dispatch(
       AddControlHistory({
         ...formData,
         idControl: currentAssoCiate._id || selectedRisk._id,
-        monitoringMethodology: undefined,
+        frequency: selectedFrequency
       })
     );
     dispatch(listEntityRiskControls(selectedEntityDescription));
-    // setFormData({
-    //   performance: "Not Assessed",
-    //   assessedBy: "",
-    //   assessedOn: "",
-    //   dueOn: "",
-    //   closedDate: "",
-    //   notes: "",
-    //   attested: true
-    // });
   };
 
   const controlSelected =
-    currentAssoCiate.historyControl || selectedRisk.historyControl;
+    currentAssoCiate?.historyControl || selectedRisk?.historyControl || [];
 
   return (
     <Box fontSize="12px">
@@ -121,30 +106,29 @@ const RiskControlAssessment = ({
               </Tr>
             </Thead>
             <Tbody>
-              {(currentAssoCiate?.historyControl &&
-                currentAssoCiate?.historyControl.length > 0) ||
-                (selectedRisk?.historyControl &&
-                  selectedRisk?.historyControl.length > 0 && (
-                    <>
-                      {controlSelected
-                        .slice(-5) // Récupère les cinq derniers éléments
-                        .map((controlHistory) => (
-                          <Tr key={controlHistory._id}>
-                            <Td>{controlHistory.reference}</Td>
-                            <Td>{controlHistory.assessedOn}</Td>
-                            <Td>{controlHistory.dueOn}</Td>
-                            <Td>{controlHistory.closedDate}</Td>
-                            <Td>{controlHistory.performance}</Td>
-                            <Td>
-                              <Checkbox
-                                isChecked={controlHistory.attested}
-                                isReadOnly
-                              />
-                            </Td>
-                          </Tr>
-                        ))}
-                    </>
-                  ))}
+              {controlSelected.length > 0 ? (
+                controlSelected
+                  .slice(-5) // Récupère les cinq derniers éléments
+                  .map((controlHistory) => (
+                    <Tr key={controlHistory._id}>
+                      <Td>{controlHistory.reference}</Td>
+                      <Td>{controlHistory.assessedOn}</Td>
+                      <Td>{controlHistory.dueOn}</Td>
+                      <Td>{controlHistory.closeDate}</Td>
+                      <Td>{controlHistory.performance}</Td>
+                      <Td>
+                        <Checkbox
+                          isChecked={controlHistory.attested}
+                          isReadOnly
+                        />
+                      </Td>
+                    </Tr>
+                  ))
+              ) : (
+                <Tr>
+                  <Td colSpan={6} textAlign="center">Aucun historique disponible</Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
           <FormControl
@@ -158,10 +142,7 @@ const RiskControlAssessment = ({
             <Textarea
               fontSize="sm"
               textAlign="justify"
-              value={formData.monitoringMethodology}
-              // onChange={(e) =>
-              //   setFormData({ ...formData, monitoringMethodology: e.target.value })
-              // }
+              value={monitoring}
               readOnly
             />
           </FormControl>
@@ -227,9 +208,9 @@ const RiskControlAssessment = ({
                   type="text"
                   placeholder="Enter assessed name"
                   value={formData.assessedBy}
-                  // onChange={(e) =>
-                  //   setFormData({ ...formData, assessedBy: e.target.value })
-                  // }
+                // onChange={(e) =>
+                //   setFormData({ ...formData, assessedBy: e.target.value })
+                // }
                 />
               </FormControl>
             </GridItem>
@@ -269,9 +250,9 @@ const RiskControlAssessment = ({
                 <Input
                   fontSize="sm"
                   type="date"
-                  value={formData.closedDate}
+                  value={formData.closeDate}
                   onChange={(e) =>
-                    setFormData({ ...formData, closedDate: e.target.value })
+                    setFormData({ ...formData, closeDate: e.target.value })
                   }
                 />
               </FormControl>
@@ -326,6 +307,9 @@ const RiskControlAssessment = ({
           onClick={handleSave}
         >
           Save
+        </Button>
+        <Button fontSize="sm" colorScheme="blue" variant="outline">
+          Attest Assess
         </Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">
           Cancel

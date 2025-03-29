@@ -45,11 +45,12 @@ const RiskControlInformationView = ({
   const [currentAssoCiate, setCurrentAssoCiate] = useState({});
   const [activeTab, setActiveTab] = useState(0); // 0 pour "General", 1 pour "Controls"
   const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
+  const [selectedFrequency, setSelectedFrequency] = useState('');
 
   useEffect(() => {
     setCurrentAssoCiate(currenChoice[indexChoice] || selectedControl);
   }, [indexChoice, currenChoice]);
-  
+
   const dispatch = useDispatch();
   const [formDataRiskPage, setFormDataRiskPage] = useState({
     entity: "",
@@ -203,8 +204,9 @@ const RiskControlInformationView = ({
     setActiveSubTab(1); // Passer au sous-onglet "History"
   };
 
-  const handleTestControlBySubTabClick = () => {
+  const handleTestControlBySubTabClick = (frequency) => {
     setActiveSubTab(1); // Passer au sous-onglet "History"
+    setSelectedFrequency(frequency);
   };
 
   const handleClose = () => {
@@ -275,6 +277,8 @@ const RiskControlInformationView = ({
                     setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
                     handleTestControlBySubTabClick={handleTestControlBySubTabClick}
                     selectedEntityDescription={selectedEntityDescription}
+                    selectedFrequency={selectedFrequency} // Passer la fréquence sélectionnée
+                    setSelectedFrequency={setSelectedFrequency} // Passer la fonction pour mettre à jour la fréquence
                   />
                 </TabPanel>
                 <TabPanel>
