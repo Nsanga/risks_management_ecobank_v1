@@ -30,6 +30,7 @@ const RiskControlAssessment = ({
   currentAssoCiate,
   selectedRisk,
   selectedEntityDescription,
+  onClose
 }) => {
   const userName = localStorage.getItem("username");
 

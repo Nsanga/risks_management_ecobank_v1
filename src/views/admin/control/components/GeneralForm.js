@@ -33,6 +33,7 @@ const GeneralForm = ({
   handleTestControlBySubTabClick,
   selectedEntityDescription,
   selectedRisk,
+  onClose,
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
@@ -162,7 +163,7 @@ const GeneralForm = ({
     // handleSubmit(payload); // Appeler handleSubmit avec le payload
   };
 
-  const handleAmendControl = () => {
+  const handleAmendControl = async () => {
     const postData = {
       itemIds: [currentAssoCiate?._id || selectedRisk?._id],
       itemType: "control",
@@ -171,7 +172,7 @@ const GeneralForm = ({
         controlCategory: formData.controlCategory,
         controlRef: formData.controlRef,
         description: formData.description,
-        frequency: formData.frequency,
+        frequence: formData.frequency,
         frequencyAssessment: formData.frequencyAssessment,
         keyControl: formData.keyControl,
         lastOperation: formData.lastOperation,
@@ -185,8 +186,8 @@ const GeneralForm = ({
       },
     };
     // console.log("postData:", postData);
-    dispatch(updateEntityRiskControl(postData));
-    // dispatch(listEntityRiskControls(selectedEntityDescription));
+    await dispatch(updateEntityRiskControl(postData));
+    dispatch(listEntityRiskControls(selectedEntityDescription));
   };
 
   useEffect(() => {
@@ -640,6 +641,7 @@ const GeneralForm = ({
           colorScheme="red"
           variant="outline"
           leftIcon={<CloseIcon />}
+          onClick={onClose}
         >
           Cancel
         </Button>

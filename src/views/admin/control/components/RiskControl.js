@@ -31,6 +31,7 @@ const RiskControl = ({
   selectedEntityDescription,
   selectedRisk,
   selectedFrequency,
+  onClose
 }) => {
   const toast = useToast();
 
@@ -159,6 +160,7 @@ const RiskControl = ({
               selectedRisk={selectedRisk}
               handleTestControlBySubTabClick={handleTestControlBySubTabClick}
               selectedEntityDescription={selectedEntityDescription}
+              onClose={onClose}
             />
           </TabPanel>
 

@@ -213,6 +213,34 @@ const RiskControlInformationView = ({
     onClose();
     setActiveTab(0);
     setActiveSubTab(0);
+    setFormDataRiskForm({
+      ownerRisk: null,
+      ownerEmail: false,
+      nomineeRisk: null,
+      reviewerRisk: null,
+      activeRisk: true,
+      description: "",
+      frequency: "",
+      remindOne: "",
+      riskDescription: ""
+    });
+    setFormDataRiskControl({
+      controlRef: "",
+      controlCategory: "",
+      description: "",
+      nomineeRisk: null,
+      reviewerRisk: null,
+      reviewDate: "",
+      frequency: "",
+      lastOperation: "",
+      nextOperation: "",
+      frequencyAssessment: "",
+      nextAssessment: "",
+      keyControl: false,
+      activeControl: false,
+      monitoringMethodology: "",
+      controlSummary: ""
+    });
   }
 
   return (
@@ -223,7 +251,7 @@ const RiskControlInformationView = ({
           <ModalHeader>
             {isEditMode ? "Edit Risk Control" : "Add New Risk Control"}
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClose={handleClose}/>
           <ModalBody p={4}>
             {/* You can pass selectedRisk data to the RiskPage or any other component as needed */}
             <RiskPage
