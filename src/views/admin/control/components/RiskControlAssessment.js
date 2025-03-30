@@ -78,7 +78,7 @@ const RiskControlAssessment = ({
           assessedOn: latestHistory?.assessedOn || "",
           dueOn: latestHistory?.dueOn || "",
           closeDate: latestHistory?.closeDate || "",
-          notes: latestHistory?.notes || "",
+          note: latestHistory?.note || "",
           attested: latestHistory?.attested || true,
         });
       }
@@ -282,9 +282,9 @@ const RiskControlAssessment = ({
                 <FormLabel fontSize="sm">Résultats du test</FormLabel>
                 <Textarea
                   fontSize="sm"
-                  value={formData.notes}
+                  value={formData.note}
                   onChange={(e) =>
-                    setFormData({ ...formData, notes: e.target.value })
+                    setFormData({ ...formData, note: e.target.value })
                   }
                 />
               </FormControl>
