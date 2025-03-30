@@ -30,7 +30,7 @@ const RiskControlAssessment = ({
   currentAssoCiate,
   selectedRisk,
   selectedEntityDescription,
-  onClose
+  onClose,
 }) => {
   const userName = localStorage.getItem("username");
 
@@ -44,32 +44,38 @@ const RiskControlAssessment = ({
     attested: false,
     monitoringMethodology: "",
   });
-  const [monitoring, setMonitoring] = useState('');
-  console.log(currentAssoCiate)
+  const [monitoring, setMonitoring] = useState("");
+  console.log(currentAssoCiate);
   const dispatch = useDispatch();
-
   const handleSave = async () => {
-    console.log(formData)
+    console.log(formData);
     await dispatch(
       AddControlHistory({
         ...formData,
-        idControl: currentAssoCiate._id || selectedRisk._id,
-        frequency: selectedFrequency
+        idControl: selectedRisk._id,
+        frequency: selectedFrequency,
       })
     );
     dispatch(listEntityRiskControls(selectedEntityDescription));
   };
 
   useEffect(() => {
-    const methodology = currentAssoCiate?.monitoringMethodology || selectedRisk?.monitoringMethodology;
-    setMonitoring(methodology)
-    const hasHistoryControl = (currentAssoCiate || selectedRisk) &&
-      ((currentAssoCiate?.historyControl && currentAssoCiate?.historyControl.length > 0) ||
-        (selectedRisk?.historyControl && selectedRisk?.historyControl.length > 0));
+    const methodology =
+      currentAssoCiate?.monitoringMethodology ||
+      selectedRisk?.monitoringMethodology;
+    setMonitoring(methodology);
+    const hasHistoryControl =
+      (currentAssoCiate || selectedRisk) &&
+      ((currentAssoCiate?.historyControl &&
+        currentAssoCiate?.historyControl.length > 0) ||
+        (selectedRisk?.historyControl &&
+          selectedRisk?.historyControl.length > 0));
 
     if (hasHistoryControl) {
-      const historyControl = currentAssoCiate?.historyControl || selectedRisk?.historyControl;
-      const latestHistory = historyControl && historyControl.length > 0 ? historyControl[0] : null;
+      const historyControl =
+        currentAssoCiate?.historyControl || selectedRisk?.historyControl;
+      const latestHistory =
+        historyControl && historyControl.length > 0 ? historyControl[0] : null;
 
       if (latestHistory) {
         setFormData({
@@ -128,7 +134,9 @@ const RiskControlAssessment = ({
                   ))
               ) : (
                 <Tr>
-                  <Td colSpan={6} textAlign="center">Aucun historique disponible</Td>
+                  <Td colSpan={6} textAlign="center">
+                    Aucun historique disponible
+                  </Td>
                 </Tr>
               )}
             </Tbody>
@@ -210,9 +218,9 @@ const RiskControlAssessment = ({
                   type="text"
                   placeholder="Enter assessed name"
                   value={formData.assessedBy}
-                // onChange={(e) =>
-                //   setFormData({ ...formData, assessedBy: e.target.value })
-                // }
+                  // onChange={(e) =>
+                  //   setFormData({ ...formData, assessedBy: e.target.value })
+                  // }
                 />
               </FormControl>
             </GridItem>
