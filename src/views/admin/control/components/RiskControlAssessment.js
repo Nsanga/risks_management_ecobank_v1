@@ -48,6 +48,18 @@ const RiskControlAssessment = ({
   console.log(currentAssoCiate)
   const dispatch = useDispatch();
 
+  const handleSave = async () => {
+    console.log(formData)
+    await dispatch(
+      AddControlHistory({
+        ...formData,
+        idControl: currentAssoCiate._id || selectedRisk._id,
+        frequency: selectedFrequency
+      })
+    );
+    dispatch(listEntityRiskControls(selectedEntityDescription));
+  };
+
   useEffect(() => {
     const methodology = currentAssoCiate?.monitoringMethodology || selectedRisk?.monitoringMethodology;
     setMonitoring(methodology)
@@ -71,19 +83,8 @@ const RiskControlAssessment = ({
         });
       }
     }
-  }, [dispatch]);
-
-  const handleSave = async () => {
-    console.log(formData)
-    await dispatch(
-      AddControlHistory({
-        ...formData,
-        idControl: currentAssoCiate._id || selectedRisk._id,
-        frequency: selectedFrequency
-      })
-    );
     dispatch(listEntityRiskControls(selectedEntityDescription));
-  };
+  }, [dispatch]);
 
   const controlSelected =
     currentAssoCiate?.historyControl || selectedRisk?.historyControl || [];
