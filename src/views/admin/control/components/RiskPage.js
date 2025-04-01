@@ -19,7 +19,6 @@ const RiskPage = ({
   handleSelectChange,
   isEditMode,
   selectedRisk,
-  currentAssoCiate,
 }) => {
   // Initialize local state for each input field
   // const [formData, setFormData] = useState({
@@ -90,7 +89,7 @@ const RiskPage = ({
               <Input
                 fontSize={12}
                 name="entity"
-                value={selectedRisk.departmentFunction || currentAssoCiate.departmentFunction}
+                value={selectedRisk.departmentFunction}
                 readOnly
               />
             </Box>
@@ -108,7 +107,7 @@ const RiskPage = ({
               <Input
                 fontSize={12}
                 name="location"
-                value={selectedRisk.location || currentAssoCiate.location}
+                value={selectedRisk.location}
                 onChange={handleChange}
                 // onBlur={logPayload} // Log payload on blur
               />
@@ -151,7 +150,7 @@ const RiskPage = ({
             <Textarea
               fontSize={12}
               name="description"
-              value={selectedRisk.description || currentAssoCiate.description}
+              value={selectedRisk.description}
               // onChange={handleChange}
               readOnly
               // onBlur={logPayload} // Log payload on blur
@@ -164,7 +163,7 @@ const RiskPage = ({
             <Input
               fontSize={12}
               name="riskCategory"
-              value={selectedRisk.riskCategory || currentAssoCiate.riskCategory}
+              value={selectedRisk.riskCategory}
               onChange={handleChange}
               readOnly
               // onBlur={logPayload} // Log payload on blur
@@ -193,7 +192,7 @@ const RiskPage = ({
             <Textarea
               fontSize={12}
               name="description"
-              value={selectedRisk?.riskSummary || currentAssoCiate.riskSummary}
+              value={selectedRisk?.riskSummary}
               // onChange={handleChange}
               readOnly
               // onBlur={logPayload} // Log payload on blur
@@ -209,7 +208,7 @@ const RiskPage = ({
             <Textarea
               fontSize={12}
               name="description"
-              value={selectedRisk?.riskDescription || currentAssoCiate.riskDescription}
+              value={selectedRisk?.riskDescription}
               // onChange={handleChange}
               readOnly
               // onBlur={logPayload} // Log payload on blur
@@ -227,7 +226,7 @@ const RiskPage = ({
             <Flex gap={4} mb={2}>
               <Text fontSize={12}>Risk Ref:</Text>
               <Text fontSize={12} fontWeight="bold">
-                {selectedRisk?.reference || currentAssoCiate?.reference}
+                {selectedRisk?.reference}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>

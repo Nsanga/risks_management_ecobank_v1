@@ -23,12 +23,12 @@ import { updateEntityRiskControl } from 'redux/entityRiskControl/action';
 import { useEffect, useState } from 'react';
 import { listEntityRiskControls } from 'redux/entityRiskControl/action';
 
-function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk, currentAssoCiate, handleTestControlClick, selectedEntityDescription }) {
+function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, onClose, selectedRisk, handleTestControlClick, selectedEntityDescription }) {
   const dispatch = useDispatch();
   const [ownerValue, setOwnerValue] = useState(null);
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
-  console.log("currentAssoCiate:", currentAssoCiate)
+
   const profilesOptions = profiles
     ?.filter(profile => profile.activeUser)
     ?.map((profile, index) => {
@@ -132,7 +132,7 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
 
   const handleAmend = async () => {
     const payload = {
-      itemIds: selectedRisk ? [selectedRisk?._id] : [currentAssoCiate?._id],
+      itemIds: [selectedRisk?._id],
       itemType: "risk",
       updates: {
         ...riskFormData,
@@ -142,37 +142,37 @@ function RiskForm({ riskFormData, handleSelectChange, profiles, handleChange, on
         riskDescription: riskFormData.riskDescription ? riskFormData.riskDescription : undefined,
       },
     };
-    console.log(payload);
+    // console.log(payload);
     await dispatch(updateEntityRiskControl(payload)); 
     dispatch(listEntityRiskControls(selectedEntityDescription)); 
   };
   
   useEffect(() => {
-    if (selectedRisk || currentAssoCiate) {
-      handleChange({ target: { name: 'riskDescription', value: selectedRisk?.riskDescription || currentAssoCiate?.riskDescription } });
-      handleChange({ target: { name: 'ownerEmail', value: selectedRisk?.ownerEmail || currentAssoCiate?.ownerEmail } });
-      handleChange({ target: { name: 'activeRisk', value: selectedRisk?.activeRisk || currentAssoCiate?.activeRisk } });
-      const ownerOption = profilesOptions.find(option => option.value === selectedRisk?.ownerRisk || currentAssoCiate?.ownerRisk);
+    if (selectedRisk) {
+      handleChange({ target: { name: 'riskDescription', value: selectedRisk?.riskDescription } });
+      handleChange({ target: { name: 'ownerEmail', value: selectedRisk?.ownerEmail } });
+      handleChange({ target: { name: 'activeRisk', value: selectedRisk?.activeRisk } });
+      const ownerOption = profilesOptions.find(option => option.value === selectedRisk?.ownerRisk);
       if (ownerOption) {
         setOwnerValue(ownerOption);
       } else {
         // Si la valeur n'est pas dans les options, définir une valeur personnalisée
-        setOwnerValue({ value: selectedRisk?.ownerRisk || currentAssoCiate?.ownerRisk, label: selectedRisk?.ownerRisk || currentAssoCiate?.ownerRisk });
+        setOwnerValue({ value: selectedRisk?.ownerRisk, label: selectedRisk?.ownerRisk });
       }
-      const nomineeOption = profilesOptions.find(option => option.value === selectedRisk?.nomineeRisk || currentAssoCiate?.nomineeRisk);
+      const nomineeOption = profilesOptions.find(option => option.value === selectedRisk?.nomineeRisk);
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
       } else {
-        setNomineeValue({ value: selectedRisk?.nomineeRisk || currentAssoCiate?.nomineeRisk, label: selectedRisk?.nomineeRisk || currentAssoCiate?.nomineeRisk });
+        setNomineeValue({ value: selectedRisk?.nomineeRisk, label: selectedRisk?.nomineeRisk });
       }
-      const reviewerOption = profilesOptions.find(option => option.value === selectedRisk?.reviewerRisk || currentAssoCiate?.reviewerRisk);
+      const reviewerOption = profilesOptions.find(option => option.value === selectedRisk?.reviewerRisk);
       if (reviewerOption) {
         setReviewerValue(reviewerOption);
       } else {
-        setReviewerValue({ value: selectedRisk?.reviewerRisk || currentAssoCiate?.reviewerRisk, label: selectedRisk?.reviewerRisk || currentAssoCiate?.reviewerRisk });
+        setReviewerValue({ value: selectedRisk?.reviewerRisk, label: selectedRisk?.reviewerRisk });
       }
     }
-  }, [selectedRisk, currentAssoCiate]);
+  }, [selectedRisk]);
   
   return (
     <Box>

@@ -24,7 +24,7 @@ const RiskControl = ({
   profiles,
   handleSelectChange,
   handleChange,
-  currentAssoCiate,
+  selectedControl,
   activeSubTab,
   setActiveSubTab,
   handleTestControlBySubTabClick,
@@ -34,8 +34,6 @@ const RiskControl = ({
   onClose
 }) => {
   const toast = useToast();
-
-  console.log("currentAssoCiate", currentAssoCiate);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,7 +52,7 @@ const RiskControl = ({
       return;
     }
 
-    console.log("Form submitted:", riskControlData);
+    // console.log("Form submitted:", riskControlData);
     toast({
       title: "Success!",
       description: "Form submitted successfully.",
@@ -81,12 +79,10 @@ const RiskControl = ({
         </Thead>
         <Tbody>
   <Tr>
-    <Td>{currentAssoCiate?.reference || selectedRisk?.reference}</Td>
+    <Td>{selectedControl?.reference}</Td>
     <Td>
       {(() => {
-        const description =
-          currentAssoCiate?.controlDescription ||
-          selectedRisk?.controlDescription;
+        const description = selectedControl?.controlDescription;
         if (description) {
           return description.length > 20
             ? `${description.substring(0, 35)}...`
@@ -96,31 +92,27 @@ const RiskControl = ({
       })()}
     </Td>
     <Td>
-      {currentAssoCiate?.activeControl || selectedRisk?.activeControl ? (
+      {selectedControl?.activeControl ? (
         <CheckCircleIcon color="green.500" />
       ) : (
         <IoCloseCircle color="red.500" />
       )}
     </Td>
     <Td>
-      {currentAssoCiate?.keyControl || selectedRisk?.keyControl ? "Y" : "N"}
+      {selectedControl?.keyControl ? "Y" : "N"}
     </Td>
-    {((currentAssoCiate?.historyControl && currentAssoCiate.historyControl.length > 0) ||
-      (selectedRisk?.historyControl && selectedRisk.historyControl.length > 0)) && (
+    {(selectedControl?.historyControl && selectedControl.historyControl.length > 0) && (
       <>
         <Td>
-          {currentAssoCiate?.historyControl?.[0]?.dueOn ||
-            selectedRisk?.historyControl?.[0]?.dueOn || 
+          {selectedControl?.historyControl?.[0]?.dueOn ||
             "N/A"} {/* Valeur par défaut si aucune date n'est disponible */}
         </Td>
         <Td>
-          {currentAssoCiate?.historyControl?.[0]?.performance ||
-            selectedRisk?.historyControl?.[0]?.performance || 
+          {selectedControl?.historyControl?.[0]?.performance ||
             "N/A"} {/* Valeur par défaut si aucune performance n'est disponible */}
         </Td>
         <Td>
-          {currentAssoCiate?.historyControl?.[0]?.assessedBy ||
-            selectedRisk?.historyControl?.[0]?.assessedBy || 
+          {selectedControl?.historyControl?.[0]?.assessedBy ||
             "N/A"} {/* Valeur par défaut si aucun évaluateur n'est disponible */}
         </Td>
       </>
@@ -156,8 +148,7 @@ const RiskControl = ({
               handleSelectChange={handleSelectChange}
               profiles={profiles}
               handleSubmit={handleSubmit}
-              currentAssoCiate={currentAssoCiate}
-              selectedRisk={selectedRisk}
+              selectedControl={selectedControl}
               handleTestControlBySubTabClick={handleTestControlBySubTabClick}
               selectedEntityDescription={selectedEntityDescription}
               onClose={onClose}
@@ -167,8 +158,7 @@ const RiskControl = ({
           {/* History Tab Content */}
           <TabPanel>
             <RiskControlAssessment
-              currentAssoCiate={currentAssoCiate}
-              selectedRisk={selectedRisk}
+              selectedControl={selectedControl}
               selectedEntityDescription={selectedEntityDescription}
               handleChange={handleChange}
               selectedFrequency={selectedFrequency}

@@ -42,16 +42,11 @@ const RiskControlInformationView = ({
   selectedEntityDescription
 }) => {
   const [showTabs, setShowTabs] = useState(false);
-  const [currentAssoCiate, setCurrentAssoCiate] = useState({});
   const [activeTab, setActiveTab] = useState(0); // 0 pour "General", 1 pour "Controls"
   const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
   const [selectedFrequency, setSelectedFrequency] = useState('');
-
-  useEffect(() => {
-    setCurrentAssoCiate(currenChoice[indexChoice] || selectedControl);
-    console.log("selectedRisk", selectedRisk)
-    console.log("currenChoice", currenChoice)
-  }, [indexChoice, currenChoice]);
+  // console.log("selectedRisk", selectedRisk)
+  // console.log("selectedControl", selectedControl)
 
   const dispatch = useDispatch();
   const [formDataRiskPage, setFormDataRiskPage] = useState({
@@ -263,7 +258,6 @@ const RiskControlInformationView = ({
               isEditMode={isEditMode}
               entities={entities}
               selectedRisk={selectedRisk}
-              currentAssoCiate={currentAssoCiate}
             />
             <Tabs variant="enclosed" mt={6} index={activeTab} onChange={setActiveTab}>
               <TabList>
@@ -286,7 +280,6 @@ const RiskControlInformationView = ({
                     newRiskId={newItemId}
                     onClose={onClose}
                     selectedRisk={selectedRisk}
-                    currentAssoCiate={currentAssoCiate}
                     handleTestControlClick={handleTestControlClick}
                     selectedEntityDescription={selectedEntityDescription}
                   />
@@ -301,8 +294,7 @@ const RiskControlInformationView = ({
                     handleSelectChange={handleSelectChange}
                     profiles={profiles}
                     onClose={onClose}
-                    selectedRisk={selectedRisk}
-                    currentAssoCiate={currentAssoCiate}
+                    selectedControl={selectedControl}
                     activeSubTab={activeSubTab} // Passer l'état du sous-onglet
                     setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
                     handleTestControlBySubTabClick={handleTestControlBySubTabClick}

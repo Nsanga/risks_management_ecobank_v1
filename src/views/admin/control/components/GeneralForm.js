@@ -29,17 +29,16 @@ const GeneralForm = ({
   handleSelectChange,
   profiles,
   handleChange,
-  currentAssoCiate,
+  selectedControl,
   handleTestControlBySubTabClick,
   selectedEntityDescription,
-  selectedRisk,
   onClose,
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
   const [reviewerValue, setReviewerValue] = useState(null);
   const [selectedFrequency, setSelectedFrequency] = useState(() => {
     // Initialiser avec la fréquence par défaut
-    return currentAssoCiate?.frequence || selectedRisk?.frequence || '';
+    return selectedControl?.frequence || '';
   });
   const dispatch = useDispatch();
 
@@ -74,7 +73,7 @@ const GeneralForm = ({
   const calculateRemindOnDate = (frequency, lastOperationDate) => {
     // Vérifiez si lastOperationDate est valide
     if (!lastOperationDate || isNaN(new Date(lastOperationDate).getTime())) {
-      console.error("Invalid lastOperationDate:", lastOperationDate);
+      // console.error("Invalid lastOperationDate:", lastOperationDate);
       return null; // Ou une date par défaut, selon vos besoins
     }
 
@@ -165,7 +164,7 @@ const GeneralForm = ({
 
   const handleAmendControl = async () => {
     const postData = {
-      itemIds: [currentAssoCiate?._id || selectedRisk?._id],
+      itemIds: [selectedControl?._id],
       itemType: "control",
       updates: {
         activeControl: formData.activeControl,
@@ -191,105 +190,98 @@ const GeneralForm = ({
   };
 
   useEffect(() => {
-    if (currentAssoCiate || selectedRisk) {
+    if (selectedControl) {
       handleChange({
         target: {
           name: "description",
           value:
-            currentAssoCiate?.controlDescription ||
-            selectedRisk?.controlDescription,
+            selectedControl?.controlDescription,
         },
       });
       handleChange({
         target: {
           name: "activeControl",
-          value: currentAssoCiate?.activeControl || selectedRisk?.activeControl,
+          value: selectedControl?.activeControl,
         },
       });
       handleChange({
         target: {
           name: "keyControl",
-          value: currentAssoCiate?.keyControl || selectedRisk?.keyControl,
+          value: selectedControl?.keyControl,
         },
       });
       handleChange({
         target: {
           name: "reviewDate",
           value:
-            currentAssoCiate?.reviewDate ||
-            selectedRisk?.reviewDate,
+            selectedControl?.reviewDate,
         },
       });
       handleChange({
         target: {
           name: "lastOperation",
           value:
-            currentAssoCiate?.lastOperation ||
-            selectedRisk?.lastOperation,
+            selectedControl?.lastOperation,
         },
       });
       handleChange({
         target: {
           name: "frequency",
-          value: currentAssoCiate?.frequence ||
-          selectedRisk?.frequence,
+          value: selectedControl?.frequence,
         },
       });
       handleChange({
         target: {
           name: "nextOperation",
-          value: currentAssoCiate?.nextOperation ||
-          selectedRisk?.nextOperation,
+          value: selectedControl?.nextOperation,
         },
       });
       handleChange({
         target: {
           name: "controlRef",
-          value: currentAssoCiate?.reference || selectedRisk?.reference,
+          value: selectedControl?.reference,
         },
       });
       handleChange({
         target: {
           name: "controlSummary",
           value:
-            currentAssoCiate?.controlSummary || selectedRisk?.controlSummary,
+            selectedControl?.controlSummary,
         },
       });
 
       const nomineeOption = profilesOptions.find(
         (option) =>
-          option.value === currentAssoCiate?.nomineeControl ||
-          selectedRisk?.nomineeControl
+          option.value === selectedControl?.nomineeControl
       );
       if (nomineeOption) {
         setNomineeValue(nomineeOption);
       } else {
         setNomineeValue({
           value:
-            currentAssoCiate?.nomineeControl || selectedRisk?.nomineeControl,
+            selectedControl?.nomineeControl,
           label:
-            currentAssoCiate?.nomineeControl || selectedRisk?.nomineeControl,
+            selectedControl?.nomineeControl,
         });
       }
 
       const reviewerOption = profilesOptions.find(
         (option) =>
-          option.value === currentAssoCiate?.reviewerControl ||
-          selectedRisk?.reviewerControl
+          option.value === selectedControl?.reviewerControl
       );
       if (reviewerOption) {
         setReviewerValue(reviewerOption);
       } else {
         setReviewerValue({
           value:
-            currentAssoCiate?.reviewerControl || selectedRisk?.reviewerControl,
+            selectedControl?.reviewerControl,
           label:
-            currentAssoCiate?.reviewerControl || selectedRisk?.reviewerControl,
+            selectedControl?.reviewerControl,
         });
       }
 
-      if (currentAssoCiate || selectedRisk) {
-        const frequency = currentAssoCiate?.frequence || selectedRisk?.frequence;
+      if (selectedControl) {
+        const frequency = selectedControl?.frequence;
         if (frequency) {
           setSelectedFrequency(frequency); // Mettre à jour la fréquence sélectionnée
           handleChange({
@@ -301,7 +293,7 @@ const GeneralForm = ({
         }
       }
     }
-  }, [currentAssoCiate, selectedRisk]);
+  }, [selectedControl]);
 
   return (
     <Box className="form-container" as="form">
@@ -338,9 +330,10 @@ const GeneralForm = ({
                 fontSize={12}
                 type="text"
                 name="controlRef"
-                // value={currentAssoCiate?.reference}
+                // value={selectedControl?.reference}
                 value={formData.controlRef}
                 onChange={handleChange}
+                readOnly
               />
             </HStack>
           </FormControl>
@@ -572,7 +565,7 @@ const GeneralForm = ({
                     fontSize={12}
                     type="date"
                     name="nextAssessment"
-                    value={currentAssoCiate?.nextAssessMent || selectedRisk?.nextAssessMent}
+                    value={selectedControl?.nextAssessMent}
                     isReadOnly
                   />
                 </HStack>
@@ -583,18 +576,12 @@ const GeneralForm = ({
                   colorScheme="blue"
                   variant="solid"
                   onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
-                  // disabled={
-                  //   new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
-                  //   new Date()
-                  // }
                   disabled={
-                    Array.isArray(currentAssoCiate?.historyControl) &&
-                    currentAssoCiate?.historyControl.length > 0 &&
-                    new Date(currentAssoCiate?.historyControl[0]?.assessedOn) >
-                    new Date()
+                    selectedControl?.historyControl?.length > 0 &&
+                    !selectedControl.historyControl[0]?.attested
                   }
                 >
-                  Test du controle
+                  Test du contrôle
                 </Button>
               </Box>
             </Flex>

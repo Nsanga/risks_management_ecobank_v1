@@ -27,7 +27,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
     location: 'CAMEROUN',
     businessLine: ''
   });
-  console.log(selectedEntity)
+  // console.log(selectedEntity)
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormValues(prevValues => ({

@@ -27,7 +27,7 @@ const DeleteModal = ({ selectedEntity, isDeleteDisabled }) => {
     const history = useHistory();
 
     const handleDelete = () => {
-        console.log(selectedEntity)
+        // console.log(selectedEntity)
         dispatch(deleteEvent(selectedEntity._id));
         onClose();
         setReason("")

@@ -243,9 +243,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
   // }, [viewData]);
 
   const handleRowClick = (item, index) => {
+    // console.log("item:", item);
+    const risk = viewData.Risks[index];
+    // console.log("risk:", risk);
+    const control = viewData.Controls[index];
+    // console.log("control:", control);
     setIndexChoice(index);
-    setSelectedRisk(item);
-    setSelectedControl(item)
+    setSelectedRisk(risk);
+    setSelectedControl(control)
     setIsEditMode(true);
     onOpen();
   };
@@ -459,11 +464,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
         mb={5}
         w="100%"
       >
-        {selectedRisk && (
+        {selectedRisk && selectedControl && (
           <RiskControlInformationView
             isOpen={isOpen}
             onClose={onClose}
             selectedRisk={selectedRisk}
+            selectedControl={selectedControl}
             isEditMode={isEditMode}
             entities={entities}
             profiles={profiles}
