@@ -18,7 +18,7 @@ const Commentary = (
     }
 ) => {
     return (
-        <Flex flexDirection='column' gap={4}>
+        <Flex flexDirection='column' gap={4} fontSize="12px">
             <Box p={5} shadow='md' borderWidth='1px'>
             <Flex justifyContent='space-between' alignItems="center">
                 <Flex gap={6} alignItems="center">

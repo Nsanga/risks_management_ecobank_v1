@@ -9,7 +9,7 @@ const LossesEntities = ({
 }) => {
 
     return (
-        <Flex justifyContent='space-between'>
+        <Flex justifyContent='space-between' fontSize="12px">
             <Box p={5} shadow='md' borderWidth='1px' width='49%'>
                 <Box bg='green.400' color='#FFF' mb={6} padding={2}>
                     Area of Detection

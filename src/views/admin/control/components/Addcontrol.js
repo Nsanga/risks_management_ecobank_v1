@@ -243,10 +243,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
   // }, [viewData]);
 
   const handleRowClick = (item, index) => {
-    console.log('====================================');
-    console.log("item", item);
-    console.log("index", index);
-    console.log('====================================');
     setIndexChoice(index);
     setSelectedRisk(item);
     setSelectedControl(item)
@@ -635,19 +631,25 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
               </>
             ) : (
               <Flex
-                // fontSize={12}
-                // mt={4}
-                // p={4}
-                // justifyContent="end"
-                // alignItems="center"
+                fontSize={12}
+                mt={4}
+                p={4}
+                justifyContent="end"
+                alignItems="center"
               >
-                {/* No data available for {currentView} */}
+                No data available for {currentView}
               </Flex>
             )}
           </>
         ) : (
-          <Flex>
-            {/* No data available for {currentView} */}
+          <Flex
+            fontSize={12}
+            mt={4}
+            p={4}
+            justifyContent="center"
+            alignItems="center"
+          >
+            No data available for {currentView}
           </Flex>
         )}
       </Flex>

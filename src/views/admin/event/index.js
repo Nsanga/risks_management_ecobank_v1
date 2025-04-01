@@ -190,9 +190,9 @@ const Event = ({ profiles, entities }) => {
                                         />
                                         <DetailsForm detailledDescription={event.details.descriptionDetailled} />
                                         <LossesEntities
-                                            entityofDetection={event?.details?.entityOfDetection?.referenceId ? `ENT ${event?.details?.entityOfDetection?.referenceId} 'CAM - ' ${event?.details?.entityOfDetection?.description}` : ""}
+                                            entityofDetection={event?.details?.entityOfDetection?.referenceId ? `ENT ${event?.details?.entityOfDetection?.referenceId} CAM - ${event?.details?.entityOfDetection?.description}` : ""}
                                             subEntityofDetection={event?.details?.subentityOfDetection}
-                                            entityofDOrigin={event?.details?.entityOfOrigin?.referenceId ? `ENT ${event.details.entityOfOrigin.referenceId} 'CAM - ' ${event.details.entityOfOrigin.description}` : ''}
+                                            entityofDOrigin={event?.details?.entityOfOrigin?.referenceId ? `ENT ${event.details.entityOfOrigin.referenceId} CAM - ${event.details.entityOfOrigin.description}` : ''}
                                             subEntityofOrigin={event.details.subentityOfOrigin}
                                         />
                                         <Commentary

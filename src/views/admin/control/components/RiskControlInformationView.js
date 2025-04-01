@@ -49,6 +49,8 @@ const RiskControlInformationView = ({
 
   useEffect(() => {
     setCurrentAssoCiate(currenChoice[indexChoice] || selectedControl);
+    console.log("selectedRisk", selectedRisk)
+    console.log("currenChoice", currenChoice)
   }, [indexChoice, currenChoice]);
 
   const dispatch = useDispatch();

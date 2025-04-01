@@ -12,7 +12,7 @@ const Head = ({
     ...rest
 }) => {
     return (
-        <Box p={5} shadow='md' borderWidth='1px' {...rest}>
+        <Box p={5} shadow='md' borderWidth='1px' {...rest}  fontSize="12px">
             <Box bg='green.400' color='#FFF' mb={6} padding={2}>
                 Event details
             </Box>

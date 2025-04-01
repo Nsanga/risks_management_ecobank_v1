@@ -4,7 +4,7 @@ import React from 'react'
 const DetailsForm = ({detailledDescription}) => {
 
     return (
-        <Flex flexDirection='column' gap={4}>
+        <Flex flexDirection='column' gap={4} fontSize="12px">
             <Box p={5} shadow='md' borderWidth='1px'>
                 <Box bg='green.400' color='#FFF' mb={6} padding={2}>
                     Detailed Description

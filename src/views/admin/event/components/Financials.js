@@ -13,7 +13,7 @@ const Finances = ({
 }) => {
 
   return (
-    <Box p={5} shadow='md' borderWidth='1px'>
+    <Box p={5} shadow='md' borderWidth='1px' fontSize="12px">
       <Flex justifyContent='space-between' pt={5}>
         <Flex flexDirection='column' gap={2}>
           <Flex gap={20} alignItems="center">
