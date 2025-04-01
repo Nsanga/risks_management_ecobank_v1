@@ -1,5 +1,3 @@
-// src/components/RiskControlAssessment.js
-
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -17,85 +15,88 @@ import {
   Th,
   Td,
   Checkbox,
+  useDisclosure,
   Grid,
   GridItem,
 } from "@chakra-ui/react";
-import { connect, useDispatch } from "react-redux";
-import { listControlHistories } from "redux/controlHistory/action";
-import { AddControlHistory } from "redux/controlHistory/action";
+import { useDispatch, useSelector } from "react-redux";
 import { listEntityRiskControls } from "redux/entityRiskControl/action";
+import { AddControlHistory } from "redux/controlHistory/action";
+import ActionModal from "./ActionModal";
 
 const RiskControlAssessment = ({
   selectedFrequency,
   currentAssoCiate,
   selectedRisk,
   selectedEntityDescription,
-  onClose
 }) => {
-  const userName = localStorage.getItem("username");
-
+  const userName = localStorage.getItem("username") || "";
+  const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const controlHistories = useSelector((state) => state.ControlHistoryReducer.controlHistories);
+  
   const [formData, setFormData] = useState({
     performance: "Not Assessed",
-    assessedBy: userName ? userName : "",
+    assessedBy: userName,
     assessedOn: "",
     dueOn: "",
     closeDate: "",
     notes: "",
     attested: false,
-    monitoringMethodology: "",
   });
-  const [monitoring, setMonitoring] = useState('');
-  console.log(currentAssoCiate)
-  const dispatch = useDispatch();
+
+  const [monitoring, setMonitoring] = useState("");
+  const [actionData, setActionData] = useState({
+    description: "",
+    delais: "",
+    proprietaire: "",
+    entite: "",
+    evolution: "",
+  });
+
+  useEffect(() => {
+    const methodology = currentAssoCiate?.monitoringMethodology || selectedRisk?.monitoringMethodology;
+    setMonitoring(methodology || "");
+
+    const historyControl = currentAssoCiate?.historyControl || selectedRisk?.historyControl || [];
+    if (historyControl.length > 0) {
+      const latestHistory = historyControl[0];
+      setFormData({
+        performance: latestHistory.performance || "Not Assessed",
+        assessedBy: latestHistory.assessedBy || userName,
+        assessedOn: latestHistory.assessedOn || "",
+        dueOn: latestHistory.dueOn || "",
+        closeDate: latestHistory.closeDate || "",
+        notes: latestHistory.notes || "",
+        attested: latestHistory.attested || false,
+      });
+    }
+    dispatch(listEntityRiskControls(selectedEntityDescription));
+  }, [dispatch, currentAssoCiate, selectedRisk, selectedEntityDescription, userName]);
 
   const handleSave = async () => {
-    const controlId = currentAssoCiate.activeRisk || !currentAssoCiate.activeRisk ? selectedRisk._id : currentAssoCiate._id
-    console.log(controlId)
+    // Vérification de la condition sur la performance
+    if (formData.performance !== "Satisfaisant") {
+      // Si la performance n'est pas "Satisfaisant", ouvrir la modal
+      onOpen();
+      return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
+    }
+
+    // Sinon, procéder à l'enregistrement des données
+    const controlId = currentAssoCiate?.activeRisk ? currentAssoCiate._id : selectedRisk?._id;
     await dispatch(
       AddControlHistory({
         ...formData,
         idControl: controlId,
-        frequency: selectedFrequency
+        frequency: selectedFrequency,
       })
     );
     dispatch(listEntityRiskControls(selectedEntityDescription));
   };
 
-  useEffect(() => {
-    const methodology = currentAssoCiate?.monitoringMethodology || selectedRisk?.monitoringMethodology;
-    setMonitoring(methodology)
-    const hasHistoryControl = (currentAssoCiate || selectedRisk) &&
-      ((currentAssoCiate?.historyControl && currentAssoCiate?.historyControl.length > 0) ||
-        (selectedRisk?.historyControl && selectedRisk?.historyControl.length > 0));
-
-    if (hasHistoryControl) {
-      const historyControl = currentAssoCiate?.historyControl || selectedRisk?.historyControl;
-      const latestHistory = historyControl && historyControl.length > 0 ? historyControl[0] : null;
-
-      if (latestHistory) {
-        setFormData({
-          performance: latestHistory?.performance || "Not Assessed",
-          assessedBy: userName || latestHistory?.assessedBy || "",
-          assessedOn: latestHistory?.assessedOn || "",
-          dueOn: latestHistory?.dueOn || "",
-          closeDate: latestHistory?.closeDate || "",
-          note: latestHistory?.note || "",
-          attested: latestHistory?.attested || true,
-        });
-      }
-    }
-    dispatch(listEntityRiskControls(selectedEntityDescription));
-  }, [dispatch]);
-
-  const controlSelected =
-    currentAssoCiate?.historyControl || selectedRisk?.historyControl || [];
-
   return (
     <Box fontSize="12px">
-      {/* Container Grid */}
       <Flex gap={4} alignItems="start">
-        {/* Left Column (Table) */}
-        {/* <GridItem> */}
         <Box bg="white" width="70%">
           <Table variant="simple" width="100%" fontSize="10px">
             <Thead bg="gray.200">
@@ -109,24 +110,19 @@ const RiskControlAssessment = ({
               </Tr>
             </Thead>
             <Tbody>
-              {controlSelected.length > 0 ? (
-                controlSelected
-                  .slice(-5) // Récupère les cinq derniers éléments
-                  .map((controlHistory) => (
-                    <Tr key={controlHistory._id}>
-                      <Td>{controlHistory.reference}</Td>
-                      <Td>{controlHistory.assessedOn}</Td>
-                      <Td>{controlHistory.dueOn}</Td>
-                      <Td>{controlHistory.closeDate}</Td>
-                      <Td>{controlHistory.performance}</Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={controlHistory.attested}
-                          isReadOnly
-                        />
-                      </Td>
-                    </Tr>
-                  ))
+              {controlHistories.length > 0 ? (
+                controlHistories.slice(-5).map((controlHistory) => (
+                  <Tr key={controlHistory._id}>
+                    <Td>{controlHistory.reference}</Td>
+                    <Td>{controlHistory.assessedOn}</Td>
+                    <Td>{controlHistory.dueOn}</Td>
+                    <Td>{controlHistory.closeDate}</Td>
+                    <Td>{controlHistory.performance}</Td>
+                    <Td>
+                      <Checkbox isChecked={controlHistory.attested} isReadOnly />
+                    </Td>
+                  </Tr>
+                ))
               ) : (
                 <Tr>
                   <Td colSpan={6} textAlign="center">Aucun historique disponible</Td>
@@ -134,26 +130,12 @@ const RiskControlAssessment = ({
               )}
             </Tbody>
           </Table>
-          <FormControl
-            mb={4}
-            style={{
-              position: "relative",
-              top: "160px",
-            }}
-          >
-            <FormLabel fontSize="sm">Methodologie du teste:</FormLabel>
-            <Textarea
-              fontSize="sm"
-              textAlign="justify"
-              value={monitoring}
-              readOnly
-            />
+          <FormControl mt={4}>
+            <FormLabel fontSize="sm">Méthodologie du test :</FormLabel>
+            <Textarea fontSize="sm" textAlign="justify" value={monitoring} readOnly />
           </FormControl>
         </Box>
-        {/* </GridItem> */}
 
-        {/* Right Column (Form) */}
-        {/* <GridItem> */}
         <Box bg="white" width="30%">
           <Grid templateColumns="repeat(2, 1fr)" gap={4}>
             <GridItem>
@@ -173,36 +155,6 @@ const RiskControlAssessment = ({
                 </Select>
               </FormControl>
             </GridItem>
-
-            {/* <GridItem>
-                <FormControl>
-                  <FormLabel fontSize="sm">Efficiency</FormLabel>
-                  <Select
-                    fontSize="sm"
-                    value={formData.efficiency}
-                    onChange={(e) => setFormData({ ...formData, efficiency: e.target.value })}
-                  >
-                    <option>Not Assessed</option>
-                    <option>Good</option>
-                    <option>Unsatisfactory</option>
-                  </Select>
-                </FormControl>
-              </GridItem>
-
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontSize="sm">Design</FormLabel>
-                  <Select
-                    fontSize="sm"
-                    value={formData.design}
-                    onChange={(e) => setFormData({ ...formData, design: e.target.value })}
-                  >
-                    <option>Acceptable</option>
-                    <option>Not Acceptable</option>
-                  </Select>
-                </FormControl>
-              </GridItem> */}
-
             <GridItem>
               <FormControl>
                 <FormLabel fontSize="sm">Assessed By</FormLabel>
@@ -211,13 +163,9 @@ const RiskControlAssessment = ({
                   type="text"
                   placeholder="Enter assessed name"
                   value={formData.assessedBy}
-                // onChange={(e) =>
-                //   setFormData({ ...formData, assessedBy: e.target.value })
-                // }
                 />
               </FormControl>
             </GridItem>
-
             <GridItem>
               <FormControl>
                 <FormLabel fontSize="sm">Assessed On</FormLabel>
@@ -232,7 +180,6 @@ const RiskControlAssessment = ({
                 />
               </FormControl>
             </GridItem>
-
             <GridItem>
               <FormControl>
                 <FormLabel fontSize="sm">Due On</FormLabel>
@@ -246,7 +193,6 @@ const RiskControlAssessment = ({
                 />
               </FormControl>
             </GridItem>
-
             <GridItem>
               <FormControl>
                 <FormLabel fontSize="sm">Closed date</FormLabel>
@@ -260,23 +206,6 @@ const RiskControlAssessment = ({
                 />
               </FormControl>
             </GridItem>
-
-            {/* <GridItem>
-                <FormControl>
-                  <FormLabel fontSize="sm">Currency</FormLabel>
-                  <Select
-                    fontSize="sm"
-                    value={formData.currency}
-                    onChange={(e) =>
-                      setFormData({ ...formData, currency: e.target.value })
-                    }
-                  >
-                    <option>USD</option>
-                    <option>EUR</option>
-                    <option>XAF</option>
-                  </Select>
-                </FormControl>
-              </GridItem> */}
 
             <GridItem colSpan={2}>
               <FormControl>
@@ -292,39 +221,19 @@ const RiskControlAssessment = ({
             </GridItem>
           </Grid>
         </Box>
-        {/* </GridItem> */}
       </Flex>
 
-      {/* Buttons */}
       <Flex justifyContent="center" gap={4} mt={6}>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">
-          Amend Assess
-        </Button>
-        <Button fontSize="sm" colorScheme="red" variant="outline">
-          UnAttest Assess
-        </Button>
-        <Button
-          fontSize="sm"
-          colorScheme="green"
-          variant="outline"
-          onClick={handleSave}
-        >
-          Save
-        </Button>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">
-          Attest Assess
-        </Button>
-        <Button fontSize="sm" colorScheme="red" variant="outline">
-          Cancel
-        </Button>
+        <Button fontSize="sm" colorScheme="blue" variant="outline">Amend Assess</Button>
+        <Button fontSize="sm" colorScheme="red" variant="outline">UnAttest Assess</Button>
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave}>Save</Button>
+        <Button fontSize="sm" colorScheme="blue" variant="outline">Attest Assess</Button>
+        <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
+
+      <ActionModal isOpen={isOpen} onClose={onClose} actionData={actionData} setActionData={setActionData} />
     </Box>
   );
 };
 
-const mapStateToProps = ({ ControlHistoryReducer }) => ({
-  controlHistories: ControlHistoryReducer.controlHistories,
-  loading: ControlHistoryReducer.loading,
-});
-
-export default connect(mapStateToProps)(RiskControlAssessment);
+export default RiskControlAssessment;
