@@ -134,7 +134,7 @@ const RiskControlAssessment = ({
         frequency: selectedFrequency,
       })
     );
-    dispatch(listControlActions(controlId));
+    dispatch(listControlActions({idControl:controlId}));
     }
   };
 

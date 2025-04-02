@@ -406,7 +406,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     if (selectedEntityDescription) {
       dispatch(listEntityRiskControls(selectedEntityDescription));
       dispatch(listEventsByEntity(selectedEntity?._id));
-      dispatch(listEntityActions(selectedEntity?._id));
+      dispatch(listEntityActions({idControl:selectedEntity?._id}));
       setFormData({
         entity: selectedEntityDescription,
         entityMove: null,
