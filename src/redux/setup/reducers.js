@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import AccountReducer from 'redux/accountManagement/reducer';
+import ActionReducer from 'redux/actions/reducer';
 import CampaignReducer from 'redux/campagne/reducer';
 import ControlHistoryReducer from 'redux/controlHistory/reducer';
 import EntityReducer from 'redux/entitiy/reducer';
@@ -29,7 +30,8 @@ const rootReducer = combineReducers({
   UserGroupReducer,
   RiskControlReducer,
   EntityRiskControlReducer,
-  ControlHistoryReducer
+  ControlHistoryReducer,
+  ActionReducer
 });
 
 export default rootReducer;

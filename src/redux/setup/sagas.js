@@ -1,5 +1,6 @@
 import { all } from 'redux-saga/effects';
 import AccountSaga from 'redux/accountManagement/saga';
+import ActionSaga from 'redux/actions/saga';
 import CampaignSaga from 'redux/campagne/saga';
 import ControlHistorySaga from 'redux/controlHistory/saga';
 import EntitySaga from 'redux/entitiy/saga';
@@ -30,6 +31,7 @@ export default function* Sagas() {
     UserGroupSaga(),
     RiskControlSaga(),
     EntityRiskControlSaga(),
-    ControlHistorySaga()
+    ControlHistorySaga(),
+    ActionSaga()
   ]);
 }

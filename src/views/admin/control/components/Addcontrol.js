@@ -47,8 +47,10 @@ import { moveEntityRiskControl } from "redux/entityRiskControl/action";
 import { updateEntityRiskControl } from "redux/entityRiskControl/action";
 import { listEventsByEntity } from "redux/events/action";
 import CardDetails from "views/admin/risks/components/cardDetails";
+import { listEntityActions } from "redux/actions/action";
+import ActionCard from "./ActionCard";
 
-function AddControl({ entityRiskControls, loading, entities, profiles, events }) {
+function AddControl({ entityRiskControls, loading, entities, profiles, events, actions }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [selectedControl, setSelectedControl] = useState(null);
@@ -210,7 +212,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
           Risks: entityRiskControls[0]?.risks || [],
           Controls: entityRiskControls[0]?.controls || [],
           Events: events,
-          Actions: [],
+          Actions: actions,
           Kits: [],
           Obligations: [],
         });
@@ -265,22 +267,24 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
 
   const customStyles = {
     control: (provided) => ({
-      ...provided,
-      fontSize: "12px",
+        ...provided,
+        fontSize: "12px",
     }),
     menu: (provided) => ({
-      ...provided,
-      fontSize: "12px",
+        ...provided,
+        fontSize: "12px",
+        maxHeight: "200px", // Définir une hauteur maximale pour le menu
+        overflowY: "auto", // Activer le défilement vertical
     }),
     option: (provided) => ({
-      ...provided,
-      fontSize: "12px",
+        ...provided,
+        fontSize: "12px",
     }),
     singleValue: (provided) => ({
-      ...provided,
-      fontSize: "12px",
+        ...provided,
+        fontSize: "12px",
     }),
-  };
+};
 
   const handleCopyEntitySelectedChange = (name, selectedOption) => {
     setFormData((prevState) => ({
@@ -402,12 +406,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
     if (selectedEntityDescription) {
       dispatch(listEntityRiskControls(selectedEntityDescription));
       dispatch(listEventsByEntity(selectedEntity?._id));
+      dispatch(listEntityActions(selectedEntity?._id));
       setFormData({
         entity: selectedEntityDescription,
         entityMove: null,
         entityCopy: null,
       });
     }
+    console.log("actions:", actions)
   }, [selectedEntityDescription, dispatch]);
 
   return (
@@ -473,7 +479,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
             isEditMode={isEditMode}
             entities={entities}
             profiles={profiles}
-            currenChoice={currenChoice}
+            currentView={currentView}
             indexChoice={indexChoice}
             selectedEntityDescription={selectedEntityDescription}
           />
@@ -546,6 +552,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
             {currentView === "Events" && viewData.Events && viewData.Events.length > 0 && (
               <Box mt={4} p={4}>
                 <CardDetails events={events} loading={loading} />
+              </Box>
+            )}
+
+            {currentView === "Actions" && viewData.Actions && viewData.Actions.length > 0 && (
+              <Box mt={4}>
+                <ActionCard actions={actions} />
               </Box>
             )}
 
@@ -910,10 +922,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events })
   );
 }
 
-const mapStateToProps = ({ EntityRiskControlReducer, EventReducer }) => ({
+const mapStateToProps = ({ EntityRiskControlReducer, EventReducer, ActionReducer }) => ({
   entityRiskControls: EntityRiskControlReducer.entityRiskControls,
   loading: EntityRiskControlReducer.loading,
-  events: EventReducer.events
+  events: EventReducer.events,
+  actions: ActionReducer.actions
 });
 
 export default connect(mapStateToProps)(AddControl);

@@ -10,13 +10,35 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
   Textarea,
 } from "@chakra-ui/react";
+import Select from "react-select";
 
-const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm }) => {
+const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm, profileOptions, entitiesOptions }) => {
+  console.log("profileOptions", profileOptions)
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+      maxHeight: "200px", // Définir une hauteur maximale pour le menu
+      overflowY: "auto", // Activer le défilement vertical
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Action</ModalHeader>
@@ -24,64 +46,73 @@ const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm }) 
           <FormControl mb={4}>
             <FormLabel>Description de l’action</FormLabel>
             <Textarea
-              value={actionData.description}
+              value={actionData.descriptionAction}
               onChange={(e) =>
-                setActionData({ ...actionData, description: e.target.value })
+                setActionData({ ...actionData, descriptionAction: e.target.value })
               }
             />
           </FormControl>
 
           <FormControl mb={4}>
-            <FormLabel>Délai</FormLabel>
+            <FormLabel>Délais</FormLabel>
             <Input
               type="date"
-              value={actionData.delais}
+              value={actionData.delaisAction}
               onChange={(e) =>
-                setActionData({ ...actionData, delais: e.target.value })
+                setActionData({ ...actionData, delaisAction: e.target.value })
               }
             />
           </FormControl>
 
           <FormControl mb={4}>
             <FormLabel>Propriétaire de l’action</FormLabel>
-            <Input
-              type="text"
-              value={actionData.proprietaire}
-              onChange={(e) =>
-                setActionData({ ...actionData, proprietaire: e.target.value })
-              }
+            <Select
+              placeholder="Select Owner"
+              options={profileOptions}
+              styles={customStyles}
+              value={profileOptions?.find(option => option.label === actionData.proprioAction)}
+              onChange={(selectedOption) => {
+                setActionData({
+                  ...actionData,
+                  proprioAction: selectedOption.label // Récupérer le label
+                });
+              }}
             />
           </FormControl>
 
           <FormControl mb={4}>
             <FormLabel>Entité</FormLabel>
             <Select
-              value={actionData.entite}
-              onChange={(e) =>
-                setActionData({ ...actionData, entite: e.target.value })
-              }
-            >
-              <option value="">Sélectionnez une entité</option>
-              <option value="Entité 1">Entité 1</option>
-              <option value="Entité 2">Entité 2</option>
-            </Select>
+              options={entitiesOptions}
+              styles={customStyles}
+              placeholder="Select Entity"
+              value={entitiesOptions?.find(
+                (ent) => ent.value === actionData.idEntity
+              )}
+              onChange={(selectedOption) => {
+                setActionData({
+                  ...actionData,
+                  idEntity: selectedOption.value // Récupérer le value
+                });
+              }}
+            />
           </FormControl>
 
           <FormControl mb={4}>
             <FormLabel>Évolution</FormLabel>
             <Input
               type="text"
-              value={actionData.evolution}
+              value={actionData.evolutionAction}
               onChange={(e) =>
-                setActionData({ ...actionData, evolution: e.target.value })
+                setActionData({ ...actionData, evolutionAction: e.target.value })
               }
             />
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" onClick={onClose}>Annuler</Button>
-          <Button colorScheme="green" ml={3} onClick={onConfirm}>Confirmer</Button>
+          <Button colorScheme="red" onClick={onClose}>Annuler</Button>
+          <Button colorScheme="blue" ml={3} onClick={onConfirm}>Confirmer</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

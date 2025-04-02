@@ -23,16 +23,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { listEntityRiskControls } from "redux/entityRiskControl/action";
 import { AddControlHistory } from "redux/controlHistory/action";
 import ActionModal from "./ActionModal";
+import { AddAction } from "redux/actions/action";
+import { listControlActions } from "redux/actions/action";
 
 const RiskControlAssessment = ({
   selectedFrequency,
   selectedControl,
   selectedEntityDescription,
 }) => {
-  const userName = localStorage.getItem("username") || "";
+  const userName = localStorage.getItem("username");
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const controlHistories = useSelector((state) => state.ControlHistoryReducer.controlHistories);
+  const profiles = useSelector(state => state.ProfileReducer.profiles);
+  const entities = useSelector(state => state.EntityReducer.entities);
+  const actions = useSelector(state => state.ActionReducer.actions);
+
+  const profileOptions = profiles
+    ?.filter(profile => profile.activeUser)
+    ?.map((profile, index) => {
+      // Vérification de la présence de name et surname
+      const name = profile.name ? profile.name : "";
+      const surname = profile.surname ? profile.surname : "";
+
+      return {
+        key: `${profile._id}-${index}`, // Unicité assurée
+        value: `${name} ${surname}`.trim(),
+        label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+      };
+    });
+
+  const entitiesOptions = entities?.map((entity, index) => ({
+    key: `${entity._id}-${index}`,
+    value: entity._id,
+    label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    description: entity.description,
+    fullEntity: entity,
+  }));
 
   const [formData, setFormData] = useState({
     performance: "Not Assessed",
@@ -63,11 +89,11 @@ const RiskControlAssessment = ({
 
   const [monitoring, setMonitoring] = useState("");
   const [actionData, setActionData] = useState({
-    description: "",
-    delais: "",
-    proprietaire: "",
-    entite: "",
-    evolution: "",
+    descriptionAction: "",
+    delaisAction: "",
+    proprioAction: "",
+    idEntity: null,
+    evolutionAction: "",
   });
 
   useEffect(() => {
@@ -88,18 +114,37 @@ const RiskControlAssessment = ({
         attested: latestHistory.attested || false,
       }));
     }
+    console.log("actions:", actions) 
   }, [dispatch, selectedControl, selectedEntityDescription, userName]);
+
+  const controlId = selectedControl._id;
 
   const handleSave = async () => {
     // Vérification de la condition sur la performance
-    if (formData.performance === "Non satisfaisant") {
+    if (formData.performance === "Unsatisfactory") {
       // Si la performance n'est pas "Satisfaisant", ouvrir la modal
       onOpen();
       return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
+    } else {
+      // Sinon, procéder à l'enregistrement des données
+    await dispatch(
+      AddControlHistory({
+        ...formData,
+        idControl: controlId,
+        frequency: selectedFrequency,
+      })
+    );
+    dispatch(listControlActions(controlId));
     }
+  };
 
-    // Sinon, procéder à l'enregistrement des données
-    const controlId = selectedControl._id;
+  const handleSaveAction = async () => {
+    const postData = {
+      ...actionData,
+      idControl: controlId,
+    }
+    console.log("postData:", postData)
+    await dispatch((AddAction(postData)));
     await dispatch(
       AddControlHistory({
         ...formData,
@@ -108,7 +153,8 @@ const RiskControlAssessment = ({
       })
     );
     dispatch(listEntityRiskControls(selectedEntityDescription));
-  };
+    onClose();
+  }
 
   return (
     <Box fontSize="12px">
@@ -261,12 +307,19 @@ const RiskControlAssessment = ({
       <Flex justifyContent="center" gap={4} mt={6}>
         <Button fontSize="sm" colorScheme="blue" variant="outline">Amend Assess</Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">UnAttest Assess</Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={selectedControl?.historyControl?.length > 0 &&!selectedControl.historyControl[0]?.attested}>Save</Button>
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={selectedControl?.historyControl?.length > 0 && !selectedControl.historyControl[0]?.attested}>Save</Button>
         <Button fontSize="sm" colorScheme="blue" variant="outline">Attest Assess</Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
-      <ActionModal isOpen={isOpen} onClose={onClose} actionData={actionData} setActionData={setActionData} />
+      <ActionModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      onConfirm={handleSaveAction}
+      actionData={actionData} 
+      setActionData={setActionData} 
+      profileOptions={profileOptions} 
+      entitiesOptions={entitiesOptions} />
     </Box>
   );
 };

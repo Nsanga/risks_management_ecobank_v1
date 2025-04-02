@@ -37,7 +37,7 @@ const RiskControlInformationView = ({
   loading,
   selectedRisk,
   selectedControl,
-  currenChoice,
+  currentView,
   indexChoice,
   selectedEntityDescription
 }) => {
@@ -178,13 +178,15 @@ const RiskControlInformationView = ({
     };
     dispatch(AddEntityRiskControl(payload));
   };
-
+  console.log("currentView", currentView)
   useEffect(() => {
-    if (addSuccess) {
-      setShowTabs(true); // Mettre à jour l'affichage si l'action est réussie
+    if (currentView === "Controls") {
+      setActiveTab(1);
+      setActiveSubTab(0);
+    } else {
+      setActiveTab(0);
+      setActiveSubTab(0);
     }
-    setActiveTab(0);
-    setActiveSubTab(0);
   }, [addSuccess]);
 
   useEffect(() => {
@@ -248,7 +250,7 @@ const RiskControlInformationView = ({
           <ModalHeader>
             {isEditMode ? "Edit Risk Control" : "Add New Risk Control"}
           </ModalHeader>
-          <ModalCloseButton onClose={handleClose}/>
+          <ModalCloseButton onClose={handleClose} />
           <ModalBody p={4}>
             {/* You can pass selectedRisk data to the RiskPage or any other component as needed */}
             <RiskPage
