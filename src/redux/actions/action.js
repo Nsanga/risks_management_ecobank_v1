@@ -5,9 +5,9 @@ export const listControlActions = (idControl) => ({
   payload: { idControl }
 });
 
-export const listEntityActions = (entityId) => ({
+export const listEntityActions = (idEntity) => ({
   type: types.GET_ENTITY_ACTIONS_REQUEST,
-  payload: { entityId }
+  payload: { idEntity }
 });
 
 export const updateAction = (id, actionData) => ({

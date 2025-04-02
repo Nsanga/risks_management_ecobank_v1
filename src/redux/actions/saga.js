@@ -26,7 +26,7 @@ function* listByControl(action) {
 
 function* listByEntity(action) {
     try {
-        let link = `${url}/api/v1/actions/byEntity`;
+        let link = `${url}/api/v1/actions/byEntitity`;
         const data = yield getRequest(link, JSON.stringify(action.payload));
         console.log(data)
         if (data.status === 200) {
