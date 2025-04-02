@@ -8,9 +8,9 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
 
-function* listByControle(action) {
+function* listByControl(action) {
     try {
-        let link = `${url}/api/v1/actions/byControl/${action.payload}`;
+        let link = `${url}/api/v1/actions/byControl`;
         const data = yield getRequest(link);
         console.log(data)
         if (data.status === 200) {
@@ -26,7 +26,7 @@ function* listByControle(action) {
 
 function* listByEntity(action) {
     try {
-        let link = `${url}/api/v1/actions/byEntity/${action.payload}`;
+        let link = `${url}/api/v1/actions/byEntity`;
         const data = yield getRequest(link);
         console.log(data)
         if (data.status === 200) {
@@ -105,7 +105,7 @@ function* deleteAction(action) {
 }
 
 export default function* ActionSaga() {
-    yield takeLatest(types.GET_ACTIONS_REQUEST, listByControle);
+    yield takeLatest(types.GET_ACTIONS_REQUEST, listByControl);
     yield takeLatest(types.GET_ENTITY_ACTIONS_SUCCESS, listByEntity)
     yield takeLatest(types.UPDATE_ACTION_REQUEST, update);
     yield takeLatest(types.ADD_ACTION_REQUEST, add);
