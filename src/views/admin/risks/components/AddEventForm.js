@@ -14,9 +14,9 @@ import {
   Box,
   Flex,
   Button,
-  Image
+  Image,
 } from "@chakra-ui/react";
-import { useDisclosure } from '@chakra-ui/react';
+import { useDisclosure } from "@chakra-ui/react";
 import Details from "./Details";
 import Commentary from "./Commentary";
 import Finances from "./Finances";
@@ -29,14 +29,14 @@ import { FaFilePen } from "react-icons/fa6";
 import { connect, useDispatch } from "react-redux";
 import { AddEvent } from "redux/events/action";
 import { updateEvent } from "redux/events/action";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import Loader from "../../../../assets/img/loader.gif";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
-    return text || '';
+    return text || "";
   }
-  return text.substring(0, maxLength) + '...';
+  return text.substring(0, maxLength) + "...";
 };
 
 function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
@@ -47,8 +47,10 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const [additionalData, setAdditionalData] = useState({});
   const [currency, setCurrency] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
+  const [totalCurrenciesProps, setTotalCurrenciesProps] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
 
-  const categories = data.map(item => item.title);
+  const categories = data.map((item) => item.title);
 
   const handleDetailsChange = (data) => {
     setDetailsData(data);
@@ -71,31 +73,34 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
   const additionalInfoData = Object.keys(additionalData).map((key, index) => ({
     category: categories[index],
-    description: additionalData[key]
+    description: additionalData[key],
   }));
 
-  const approved = true
+  const approved = true;
 
   const handleSubmit = async () => {
-    if (!detailsData.description || !detailsData.entityOfDetection || !detailsData.entityOfOrigin || !detailsData.owner || !detailsData.nominee || !detailsData.detection_date) {
-      toast.error('Please enter all required fields');
+    if (
+      !detailsData.description ||
+      !detailsData.entityOfDetection ||
+      !detailsData.entityOfOrigin ||
+      !detailsData.owner ||
+      !detailsData.nominee ||
+      !detailsData.detection_date
+    ) {
+      toast.error("Please enter all required fields");
     } else {
       const payload = {
         details: {
           ...detailsData,
           rate: currency,
-          recorded_by: localStorage.getItem('username'),
+          recorded_by: localStorage.getItem("username"),
         },
         commentary: {
-          ...commentaryData
+          ...commentaryData,
         },
-        financials: [
-          ...financesData
-        ],
-        additionnalInfo: [
-          ...additionalInfoData
-        ],
-        approved: approved
+        financials: [...financesData],
+        additionnalInfo: [...additionalInfoData],
+        approved: approved,
       };
 
       console.log(payload);
@@ -105,10 +110,10 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         await dispatch(AddEvent(payload));
         onClose(); // Ferme la modal après la soumission réussie
       } catch (error) {
-        console.error('Erreur lors de la soumission:', error);
+        console.error("Erreur lors de la soumission:", error);
         // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
   };
@@ -118,18 +123,14 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       details: {
         ...detailsData,
         rate: currency,
-        recorded_by: localStorage.getItem('username'),
+        recorded_by: localStorage.getItem("username"),
       },
       commentary: {
-        ...commentaryData
+        ...commentaryData,
       },
-      financials: [
-        ...financesData
-      ],
-      additionnalInfo: [
-        ...additionalInfoData
-      ],
-      approved: approved
+      financials: [...financesData],
+      additionnalInfo: [...additionalInfoData],
+      approved: approved,
     };
 
     console.log(payload);
@@ -138,71 +139,122 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       await dispatch(updateEvent(event._id, payload));
       onClose(); // Ferme la modal après la soumission réussie
     } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
+      console.error("Erreur lors de la soumission:", error);
       // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
     }
   };
 
   return (
     <>
-      <Flex justifyContent='flex-end'>
+      <Flex justifyContent="flex-end">
         <Box top="20px">
-          {event ?
-            <Button leftIcon={<FaFilePen />} onClick={onOpen} variant='outline' colorScheme='blue' disabled={isAmendDisabled}>Amend </Button> :
-            <Button leftIcon={<AddIcon />} onClick={onOpen} variant="outline" colorScheme='blue' size='sm'>
+          {event ? (
+            <Button
+              leftIcon={<FaFilePen />}
+              onClick={onOpen}
+              variant="outline"
+              colorScheme="blue"
+              disabled={isAmendDisabled}
+            >
+              Amend{" "}
+            </Button>
+          ) : (
+            <Button
+              leftIcon={<AddIcon />}
+              onClick={onOpen}
+              variant="outline"
+              colorScheme="blue"
+              size="sm"
+            >
               Add new event
-            </Button>}
-
+            </Button>
+          )}
         </Box>
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+        size="6xl"
+      >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{event ? `EVT${event.num_ref} ${truncateText(event?.details.description, 50)}` : 'New event'}</ModalHeader>
+          <ModalHeader>
+            {event
+              ? `EVT${event.num_ref} ${truncateText(
+                  event?.details.description,
+                  50
+                )}`
+              : "New event"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Tabs>
+            <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
               <TabList>
                 <Tab>Details</Tab>
                 <Tab>Commentary</Tab>
-                <Tab >Financials</Tab>
-                <Tab>Additional info <span style={{ color: 'red' }}>*</span></Tab>
+                <Tab>
+                  Financials <span style={{ color: "red" }}>*</span>
+                </Tab>
+                <Tab>
+                  Additional info <span style={{ color: "red" }}>*</span>
+                </Tab>
               </TabList>
 
               <TabPanels>
                 <TabPanel>
-                  <Details onDetailsChange={handleDetailsChange} event={event} entities={entities} profiles={profiles} />
+                  <Details
+                    onDetailsChange={handleDetailsChange}
+                    event={event}
+                    entities={entities}
+                    profiles={profiles}
+                  />
                 </TabPanel>
                 <TabPanel>
-                  <Commentary onCommentaryChange={handleCommentaryChange} event={event} />
+                  <Commentary
+                    onCommentaryChange={handleCommentaryChange}
+                    event={event}
+                  />
                 </TabPanel>
                 <TabPanel>
-                  <Finances onFinancesChange={handleFinancesChange} financesData={financesData} isEdit={isEdit} event={event} />
+                  <Finances
+                    onFinancesChange={handleFinancesChange}
+                    financesData={financesData}
+                    isEdit={isEdit}
+                    event={event}
+                    setTotalCurrenciesProps={setTotalCurrenciesProps}
+                  />
                 </TabPanel>
                 <TabPanel>
-                  <Additional onAdditionalChange={handleAdditionalChange} event={event} />
+                  <Additional
+                    onAdditionalChange={handleAdditionalChange}
+                    event={event}
+                  />
                 </TabPanel>
               </TabPanels>
             </Tabs>
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={event ? handleUpdate : handleSubmit} colorScheme="blue" mr={2}>
-              {
-                isLoading ? (
-                  <Flex alignItems="center" justifyContent="center" width="100%">
-                    <Image src={Loader} alt="Loading..." height={25} width={25} />
-                  </Flex>
-                ) : (
-                  <>
-                    {event ? "Amend and Approuve" : "Save and Approuve"}
-                  </>
-                )
-              }
+            <Button
+              onClick={event ? handleUpdate : handleSubmit}
+              colorScheme="blue"
+              mr={2}
+              disabled={activeTab === 2 && totalCurrenciesProps < 1}
+            >
+              {isLoading ? (
+                <Flex alignItems="center" justifyContent="center" width="100%">
+                  <Image src={Loader} alt="Loading..." height={25} width={25} />
+                </Flex>
+              ) : (
+                <>{event ? "Amend and Approuve" : "Save and Approuve"}</>
+              )}
             </Button>
             {/* <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} /> */}
-            <Button colorScheme="red" mr={2} onClick={onClose}>Cancel</Button>
+            <Button colorScheme="red" mr={2} onClick={onClose}>
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
