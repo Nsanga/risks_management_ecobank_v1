@@ -403,18 +403,22 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
   };
 
   useEffect(() => {
-    if (selectedEntityDescription) {
-      dispatch(listEntityRiskControls(selectedEntityDescription));
-      dispatch(listEventsByEntity(selectedEntity?._id));
-      dispatch(listEntityActions({idEntity:selectedEntity?._id}));
-      setFormData({
-        entity: selectedEntityDescription,
-        entityMove: null,
-        entityCopy: null,
-      });
-    }
-    console.log("actions:", actions)
-  }, [selectedEntityDescription, dispatch]);
+    const fetchData = async () => {
+      if (selectedEntityDescription) {
+        await dispatch(listEntityRiskControls(selectedEntityDescription));
+        await dispatch(listEventsByEntity(selectedEntity?._id));
+        await dispatch(listEntityActions({ idControl: selectedEntity?._id }));
+        setFormData({
+          entity: selectedEntityDescription,
+          entityMove: null,
+          entityCopy: null,
+        });
+      }
+      console.log("actions:", actions);
+    };
+
+    fetchData(); // Appel de la fonction asynchrone
+  }, [selectedEntityDescription, dispatch, selectedEntity]); 
 
   return (
     <>

@@ -11,7 +11,7 @@ import { deleteRequest } from 'helper/api';
 function* listByControl(action) {
     try {
         let link = `${url}/api/v1/actions/byControl`;
-        const data = yield getRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload));
         console.log(data)
         if (data.status === 200) {
             yield put({ type: types.GET_ACTIONS_SUCCESS, payload: data });
@@ -25,9 +25,10 @@ function* listByControl(action) {
 }
 
 function* listByEntity(action) {
+    console.log("actions.action::", action)
     try {
         let link = `${url}/api/v1/actions/byEntitity`;
-        const data = yield getRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload));
         console.log(data)
         if (data.status === 200) {
             yield put({ type: types.GET_ENTITY_ACTIONS_SUCCESS, payload: data });
