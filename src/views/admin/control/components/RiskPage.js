@@ -19,6 +19,7 @@ const RiskPage = ({
   handleSelectChange,
   isEditMode,
   selectedRisk,
+  selectedControl,
 }) => {
   // Initialize local state for each input field
   // const [formData, setFormData] = useState({
@@ -227,6 +228,13 @@ const RiskPage = ({
               <Text fontSize={12}>Risk Ref:</Text>
               <Text fontSize={12} fontWeight="bold">
                 {selectedRisk?.reference}
+              </Text>
+            </Flex>
+
+            <Flex gap={4} mb={2}>
+              <Text fontSize={12}>Control Ref:</Text>
+              <Text fontSize={12} fontWeight="bold">
+                {selectedControl?.reference}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>

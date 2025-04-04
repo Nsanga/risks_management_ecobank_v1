@@ -39,14 +39,12 @@ const RiskControlInformationView = ({
   selectedControl,
   currentView,
   indexChoice,
-  selectedEntityDescription
+  selectedEntityDescription,
 }) => {
   const [showTabs, setShowTabs] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // 0 pour "General", 1 pour "Controls"
   const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
-  const [selectedFrequency, setSelectedFrequency] = useState('');
-  // console.log("selectedRisk", selectedRisk)
-  // console.log("selectedControl", selectedControl)
+  const [selectedFrequency, setSelectedFrequency] = useState("");
 
   const dispatch = useDispatch();
   const [formDataRiskPage, setFormDataRiskPage] = useState({
@@ -74,7 +72,7 @@ const RiskControlInformationView = ({
     description: "",
     frequency: "",
     remindOne: "",
-    riskDescription: ""
+    riskDescription: "",
   });
 
   const [formDataRiskControl, setFormDataRiskControl] = useState({
@@ -92,7 +90,7 @@ const RiskControlInformationView = ({
     keyControl: false,
     activeControl: false,
     monitoringMethodology: "",
-    controlSummary: ""
+    controlSummary: "",
   });
 
   const handleChangeRiskPage = (e) => {
@@ -168,7 +166,7 @@ const RiskControlInformationView = ({
       "reviewer",
       "keyControl",
       "monitoringMethodology",
-      "controlSummary"
+      "controlSummary",
     ];
 
     const payload = {
@@ -178,7 +176,7 @@ const RiskControlInformationView = ({
     };
     dispatch(AddEntityRiskControl(payload));
   };
-  console.log("currentView", currentView)
+  console.log("currentView", currentView);
   useEffect(() => {
     if (currentView === "Controls") {
       setActiveTab(1);
@@ -187,7 +185,7 @@ const RiskControlInformationView = ({
       setActiveTab(0);
       setActiveSubTab(0);
     }
-  }, [addSuccess]);
+  }, [currentView]);
 
   useEffect(() => {
     if (newItemId) {
@@ -210,7 +208,7 @@ const RiskControlInformationView = ({
 
   const handleClose = () => {
     onClose();
-    setActiveTab(0);
+    // setActiveTab(0);
     setActiveSubTab(0);
     setFormDataRiskForm({
       ownerRisk: null,
@@ -221,7 +219,7 @@ const RiskControlInformationView = ({
       description: "",
       frequency: "",
       remindOne: "",
-      riskDescription: ""
+      riskDescription: "",
     });
     setFormDataRiskControl({
       controlRef: "",
@@ -238,13 +236,18 @@ const RiskControlInformationView = ({
       keyControl: false,
       activeControl: false,
       monitoringMethodology: "",
-      controlSummary: ""
+      controlSummary: "",
     });
-  }
+  };
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleClose} scrollBehavior="inside" size="6xl">
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        scrollBehavior="inside"
+        size="6xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -260,8 +263,14 @@ const RiskControlInformationView = ({
               isEditMode={isEditMode}
               entities={entities}
               selectedRisk={selectedRisk}
+              selectedControl={selectedControl}
             />
-            <Tabs variant="enclosed" mt={6} index={activeTab} onChange={setActiveTab}>
+            <Tabs
+              variant="enclosed"
+              mt={6}
+              index={activeTab}
+              onChange={setActiveTab}
+            >
               <TabList>
                 <Tab fontSize={12}>General</Tab>
                 {/* <Tab fontSize={12} >Goals</Tab> */}
@@ -299,7 +308,9 @@ const RiskControlInformationView = ({
                     selectedControl={selectedControl}
                     activeSubTab={activeSubTab} // Passer l'état du sous-onglet
                     setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
-                    handleTestControlBySubTabClick={handleTestControlBySubTabClick}
+                    handleTestControlBySubTabClick={
+                      handleTestControlBySubTabClick
+                    }
                     selectedEntityDescription={selectedEntityDescription}
                     selectedFrequency={selectedFrequency} // Passer la fréquence sélectionnée
                     setSelectedFrequency={setSelectedFrequency} // Passer la fonction pour mettre à jour la fréquence

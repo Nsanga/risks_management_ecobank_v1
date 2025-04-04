@@ -14,8 +14,16 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 
-const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm, profileOptions, entitiesOptions }) => {
-  console.log("profileOptions", profileOptions)
+const ActionModal = ({
+  isOpen,
+  onClose,
+  actionData,
+  setActionData,
+  onConfirm,
+  profileOptions,
+  entitiesOptions,
+}) => {
+  console.log("profileOptions", profileOptions);
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -48,7 +56,10 @@ const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm, pr
             <Textarea
               value={actionData.descriptionAction}
               onChange={(e) =>
-                setActionData({ ...actionData, descriptionAction: e.target.value })
+                setActionData({
+                  ...actionData,
+                  descriptionAction: e.target.value,
+                })
               }
             />
           </FormControl>
@@ -70,11 +81,13 @@ const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm, pr
               placeholder="Select Owner"
               options={profileOptions}
               styles={customStyles}
-              value={profileOptions?.find(option => option.label === actionData.proprioAction)}
+              value={profileOptions?.find(
+                (option) => option.label === actionData.proprioAction
+              )}
               onChange={(selectedOption) => {
                 setActionData({
                   ...actionData,
-                  proprioAction: selectedOption.label // Récupérer le label
+                  proprioAction: selectedOption.label, // Récupérer le label
                 });
               }}
             />
@@ -92,7 +105,7 @@ const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm, pr
               onChange={(selectedOption) => {
                 setActionData({
                   ...actionData,
-                  idEntity: selectedOption.value // Récupérer le value
+                  idEntity: selectedOption.value, // Récupérer le value
                 });
               }}
             />
@@ -104,15 +117,22 @@ const ActionModal = ({ isOpen, onClose, actionData, setActionData, onConfirm, pr
               type="text"
               value={actionData.evolutionAction}
               onChange={(e) =>
-                setActionData({ ...actionData, evolutionAction: e.target.value })
+                setActionData({
+                  ...actionData,
+                  evolutionAction: e.target.value,
+                })
               }
             />
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="red" onClick={onClose}>Annuler</Button>
-          <Button colorScheme="blue" ml={3} onClick={onConfirm}>Confirmer</Button>
+          <Button colorScheme="red" onClick={onClose}>
+            Annuler
+          </Button>
+          <Button colorScheme="blue" ml={3} onClick={onConfirm}>
+            Save
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
