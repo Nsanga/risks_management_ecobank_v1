@@ -11,10 +11,10 @@ import { deleteRequest } from 'helper/api';
 function* listByControl(action) {
     try {
         let link = `${url}/api/v1/actions/byControl`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log(data)
-        if (data.status === 200) {
-            yield put({ type: types.GET_ACTIONS_SUCCESS, payload: data });
+        const response = yield postRequest(link, JSON.stringify(action.payload));
+        console.log("API Response::", response);
+        if (response.statut === 200) {
+            yield put({ type: types.GET_ACTIONS_SUCCESS, payload: { data: response.data } });
         } else {
             yield put({ type: types.GET_ACTIONS_FAILED, payload: "echec recuperation des données" });
         }
@@ -28,10 +28,10 @@ function* listByEntity(action) {
     console.log("actions.action::", action)
     try {
         let link = `${url}/api/v1/actions/byEntitity`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log(data)
-        if (data.status === 200) {
-            yield put({ type: types.GET_ENTITY_ACTIONS_SUCCESS, payload: data });
+        const response = yield postRequest(link, JSON.stringify(action.payload));
+        console.log("API Response::", response);
+        if (response.statut === 200) {
+            yield put({ type: types.GET_ENTITY_ACTIONS_SUCCESS, payload: { data: response.data } });
         } else {
             yield put({ type: types.GET_ENTITY_ACTIONS_FAILED, payload: "echec recuperation des données" });
         }
@@ -107,7 +107,7 @@ function* deleteAction(action) {
 
 export default function* ActionSaga() {
     yield takeLatest(types.GET_ACTIONS_REQUEST, listByControl);
-    yield takeLatest(types.GET_ENTITY_ACTIONS_SUCCESS, listByEntity)
+    yield takeLatest(types.GET_ENTITY_ACTIONS_REQUEST, listByEntity);
     yield takeLatest(types.UPDATE_ACTION_REQUEST, update);
     yield takeLatest(types.ADD_ACTION_REQUEST, add);
     yield takeLatest(types.DELETE_ACTION_REQUEST, deleteAction);

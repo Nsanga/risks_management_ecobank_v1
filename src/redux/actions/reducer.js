@@ -14,7 +14,7 @@ function ActionReducer(state = INITIAL_STATE, action) {
         loading: true,
         error: null,
       };
-    case types.GET_ACTIONS_SUCCESS: 
+    case types.GET_ACTIONS_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -24,7 +24,25 @@ function ActionReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        actions: [], 
+        actions: [],
+      };
+    case types.GET_ENTITY_ACTIONS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.GET_ENTITY_ACTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        actions: action.payload.data,
+      };
+    case types.GET_ENTITY_ACTIONS_FAILED:
+      return {
+        ...state,
+        loading: false,
+        actions: [],
       };
     case types.UPDATE_ACTION_REQUEST:
       return {

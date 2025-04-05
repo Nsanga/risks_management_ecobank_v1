@@ -51,6 +51,7 @@ import { listEntityActions } from "redux/actions/action";
 import ActionCard from "./ActionCard";
 
 function AddControl({ entityRiskControls, loading, entities, profiles, events, actions }) {
+  console.log("actions:", actions);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [selectedControl, setSelectedControl] = useState(null);
@@ -197,7 +198,6 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     Controls: [
       { label: "Reference Id", key: "reference" },
       { label: "Description", key: "controlSummary" },
-      { label: "Library", key: "library" },
       { label: "Category", key: "preventiveDetectiveControl" },
       { label: "Owner", key: "ownerControl" },
       { label: "Nominee", key: "nomineeControl" },
@@ -267,24 +267,24 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
 
   const customStyles = {
     control: (provided) => ({
-        ...provided,
-        fontSize: "12px",
+      ...provided,
+      fontSize: "12px",
     }),
     menu: (provided) => ({
-        ...provided,
-        fontSize: "12px",
-        maxHeight: "200px", // Définir une hauteur maximale pour le menu
-        overflowY: "auto", // Activer le défilement vertical
+      ...provided,
+      fontSize: "12px",
+      maxHeight: "200px", // Définir une hauteur maximale pour le menu
+      overflowY: "auto", // Activer le défilement vertical
     }),
     option: (provided) => ({
-        ...provided,
-        fontSize: "12px",
+      ...provided,
+      fontSize: "12px",
     }),
     singleValue: (provided) => ({
-        ...provided,
-        fontSize: "12px",
+      ...provided,
+      fontSize: "12px",
     }),
-};
+  };
 
   const handleCopyEntitySelectedChange = (name, selectedOption) => {
     setFormData((prevState) => ({
@@ -403,22 +403,17 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (selectedEntityDescription) {
-        await dispatch(listEntityRiskControls(selectedEntityDescription));
-        await dispatch(listEventsByEntity(selectedEntity?._id));
-        await dispatch(listEntityActions({ idControl: selectedEntity?._id }));
-        setFormData({
-          entity: selectedEntityDescription,
-          entityMove: null,
-          entityCopy: null,
-        });
-      }
-      console.log("actions:", actions);
-    };
-
-    fetchData(); // Appel de la fonction asynchrone
-  }, [selectedEntityDescription, dispatch, selectedEntity]); 
+    if (selectedEntityDescription) {
+      dispatch(listEntityRiskControls(selectedEntityDescription));
+      dispatch(listEventsByEntity(selectedEntity?._id));
+      dispatch(listEntityActions({ idEntity: selectedEntity?._id }));
+      setFormData({
+        entity: selectedEntityDescription,
+        entityMove: null,
+        entityCopy: null,
+      });
+    }
+  }, [selectedEntityDescription, dispatch, selectedEntity]);
 
   return (
     <>
@@ -551,7 +546,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
           </Flex>
         </Box>
 
-        {numberOfItems > 0 ? (
+        {numberOfItems > 0 && (
           <>
             {currentView === "Events" && viewData.Events && viewData.Events.length > 0 && (
               <Box mt={4} p={4}>
@@ -663,7 +658,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
               </Flex>
             )}
           </>
-        ) : (
+        )}
+        {numberOfItems === 0 && (
           <Flex
             fontSize={12}
             mt={4}
@@ -930,7 +926,7 @@ const mapStateToProps = ({ EntityRiskControlReducer, EventReducer, ActionReducer
   entityRiskControls: EntityRiskControlReducer.entityRiskControls,
   loading: EntityRiskControlReducer.loading,
   events: EventReducer.events,
-  actions: ActionReducer.actions
+  actions: ActionReducer.actions,
 });
 
 export default connect(mapStateToProps)(AddControl);

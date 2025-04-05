@@ -51,20 +51,21 @@ const Finances = ({
   useEffect(() => {
     if (event?.financials) {
       const updatedData = initialData.map((item) => {
-        const financialItem = event.financials.find(
-          (f) => f.name === item.name
-        );
+        const financialItem = event.financials.find((f) => f.name === item.name);
         return financialItem ? { ...item, values: financialItem.values } : item;
       });
       setTableData(updatedData);
-
+  
       const totalRow = event.financials.find((f) => f.name === "Total");
       if (totalRow && totalRow.values[0] != null) {
-        setTotalCurrencies(totalRow.values[0]); // Stocker la valeur dans le contexte
+        setTotalCurrencies(totalRow.values[0]);
         setTotalCurrenciesProps(totalRow.values[0]);
       }
+  
+      // ✅ Notifie le parent que les données initiales sont prêtes
+      onFinancesChange(updatedData, selectedCurrency); 
     }
-  }, [event]);
+  }, [event]);  
 
   const handleRateChange = (rate, value) => {
     setExchangeRates((prevRates) => ({
@@ -303,7 +304,7 @@ const Finances = ({
     setAvailableCurrencies(updatedAvailableCurrencies);
     setTotalCurrencies(newTotalCurrencies);
     setTotalCurrenciesProps(newTotalCurrencies);
-    onFinancesChange(financesData, selectedCurrency);
+    onFinancesChange(convertedData, newCurrency);
   };
 
   return (

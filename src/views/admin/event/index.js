@@ -174,7 +174,7 @@ const Event = ({ profiles, entities }) => {
         <>
           {!event ? (
             <Flex alignItems="center" justifyContent="center">
-              <Text color="gray.500" fontSize="2xl">
+              <Text fontSize="12px">
                 This event do not exist.
               </Text>
             </Flex>

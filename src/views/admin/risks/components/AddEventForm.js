@@ -62,6 +62,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
   const handleFinancesChange = (data, selectedCurrency) => {
     setFinancesData(data);
+    console.log(selectedCurrency)
     setCurrency(selectedCurrency);
   };
 
@@ -92,7 +93,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       const payload = {
         details: {
           ...detailsData,
-          rate: currency,
+          rate: currency || "USD",
           recorded_by: localStorage.getItem("username"),
         },
         commentary: {
@@ -122,7 +123,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     const payload = {
       details: {
         ...detailsData,
-        rate: currency,
+        rate: currency || "USD",
         recorded_by: localStorage.getItem("username"),
       },
       commentary: {

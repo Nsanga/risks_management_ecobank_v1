@@ -78,51 +78,51 @@ const RiskControl = ({
           </Tr>
         </Thead>
         <Tbody>
-  <Tr>
-    <Td>{selectedControl?.reference}</Td>
-    <Td>
-      {(() => {
-        const description = selectedControl?.controlDescription;
-        if (description) {
-          return description.length > 20
-            ? `${description.substring(0, 35)}...`
-            : description;
-        }
-        return null; // Ou une valeur par défaut si nécessaire
-      })()}
-    </Td>
-    <Td>
-      {selectedControl?.activeControl ? (
-        <CheckCircleIcon color="green.500" />
-      ) : (
-        <IoCloseCircle color="red.500" />
-      )}
-    </Td>
-    <Td>
-      {selectedControl?.keyControl ? "Y" : "N"}
-    </Td>
-    {(selectedControl?.historyControl && selectedControl.historyControl.length > 0) && (
-      <>
-        <Td>
-          {selectedControl?.historyControl?.[0]?.dueOn ||
-            "N/A"} {/* Valeur par défaut si aucune date n'est disponible */}
-        </Td>
-        <Td>
-          {selectedControl?.historyControl?.[0]?.performance ||
-            "N/A"} {/* Valeur par défaut si aucune performance n'est disponible */}
-        </Td>
-        <Td>
-          {selectedControl?.historyControl?.[0]?.assessedBy ||
-            "N/A"} {/* Valeur par défaut si aucun évaluateur n'est disponible */}
-        </Td>
-      </>
-    )}
-    <Td>---</Td>
-  </Tr>
-</Tbody>
+          <Tr>
+            <Td>{selectedControl?.reference}</Td>
+            <Td>
+              {(() => {
+                const description = selectedControl?.controlDescription;
+                if (description) {
+                  return description.length > 20
+                    ? `${description.substring(0, 35)}...`
+                    : description;
+                }
+                return null; // Ou une valeur par défaut si nécessaire
+              })()}
+            </Td>
+            <Td>
+              {selectedControl?.activeControl ? (
+                <CheckCircleIcon color="green.500" />
+              ) : (
+                <IoCloseCircle color="red.500" />
+              )}
+            </Td>
+            <Td>
+              {selectedControl?.keyControl ? "Y" : "N"}
+            </Td>
+            {(selectedControl?.historyControl && selectedControl.historyControl.length > 0) && (
+              <>
+                <Td>
+                  {selectedControl?.historyControl?.[0]?.dueOn ||
+                    "N/A"} {/* Valeur par défaut si aucune date n'est disponible */}
+                </Td>
+                <Td>
+                  {selectedControl?.historyControl?.[0]?.performance ||
+                    "N/A"} {/* Valeur par défaut si aucune performance n'est disponible */}
+                </Td>
+                <Td>
+                  {selectedControl?.historyControl?.[0]?.assessedBy ||
+                    "N/A"} {/* Valeur par défaut si aucun évaluateur n'est disponible */}
+                </Td>
+              </>
+            )}
+            <Td>---</Td>
+          </Tr>
+        </Tbody>
       </Table>
 
-      <Tabs
+      {/* <Tabs
         variant="soft-rounded"
         colorScheme="green"
         mt={6}
@@ -137,12 +137,12 @@ const RiskControl = ({
           <Tab>Risk focus</Tab>
           <Tab>Risks logs</Tab>
           <Tab>Linked items</Tab>
-        </TabList>
+        </TabList> */}
 
-        <TabPanels>
-          <TabPanel>
+        {/* <TabPanels>
+          <TabPanel> */}
             {/* Import the GeneralForm component */}
-            <GeneralForm
+            {/* <GeneralForm
               formData={riskControlData}
               handleChange={handleChange}
               handleSelectChange={handleSelectChange}
@@ -153,19 +153,19 @@ const RiskControl = ({
               selectedEntityDescription={selectedEntityDescription}
               onClose={onClose}
             />
-          </TabPanel>
+          </TabPanel> */}
 
           {/* History Tab Content */}
-          <TabPanel>
+          {/* <TabPanel>
             <RiskControlAssessment
               selectedControl={selectedControl}
               selectedEntityDescription={selectedEntityDescription}
               handleChange={handleChange}
               selectedFrequency={selectedFrequency}
             />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          </TabPanel> */}
+        {/* </TabPanels>
+      </Tabs> */}
     </Box>
   );
 };

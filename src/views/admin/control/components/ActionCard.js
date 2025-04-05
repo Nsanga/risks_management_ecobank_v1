@@ -22,11 +22,13 @@ const ActionCard = ({
              p={4}
              boxShadow="md"
              bg="white"
+             fontSize="12px"
+             marginBottom={4}
              key={action._id}
          >
              <Stack spacing={3}>
-                 <Heading size="md">Référence: {action.reference}</Heading>
-                 <Text fontSize="lg">{action.descriptionAction}</Text>
+                 <Heading size="sm">Référence: ACT{action.reference}</Heading>
+                 <Text>{action.descriptionAction}</Text>
                  <Divider />
                  <Flex justify="space-between">
                      <Text fontWeight="bold">Délai:</Text>
@@ -36,7 +38,7 @@ const ActionCard = ({
                      <Text fontWeight="bold">Propriétaire:</Text>
                      <Text>{action.proprioAction}</Text>
                  </Flex>
-                 <Flex justify="space-between">
+                 <Flex justify="space-between" wrap="wrap">
                      <Text fontWeight="bold">Évolution:</Text>
                      <Badge colorScheme="green">{action.evolutionAction}</Badge>
                  </Flex>

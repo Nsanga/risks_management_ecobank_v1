@@ -34,7 +34,7 @@ const Commentary = (
                     </Box>
                 </Flex>
                 <Flex width={155}>
-                    <Checkbox isChecked={activeEvent} readOnly>Active Event</Checkbox>
+                    <Checkbox isChecked={activeEvent} readOnly><span style={{fontSize:"12px"}}>Active Event</span></Checkbox>
                 </Flex>
             </Flex>
             <Flex justifyContent='space-between' alignItems="center">
@@ -55,11 +55,11 @@ const Commentary = (
                     <Text style={{ color: 'blue', fontWeight: 'bold' }}>{moment(dateRecording).format('DD/MM/YYYY')} at {moment(timeRecording).format('HH:MM')}</Text>
                 </Flex>
                 <Flex width={155}>
-                    <Checkbox isChecked={excludeFundLosse} readOnly>Exclude Fund Losses</Checkbox>
+                    <Checkbox isChecked={excludeFundLosse} readOnly><span style={{fontSize:"12px"}}>Exclude Fund Losses</span></Checkbox>
                 </Flex>
             </Flex>
             <Flex justifyContent='space-between' alignItems="center">
-                <Checkbox isChecked={externalEvent} readOnly>External Event</Checkbox>
+                <Checkbox isChecked={externalEvent} readOnly><span style={{fontSize:"12px"}}>External Event</span></Checkbox>
                 <Flex gap={5} alignItems="center">
                     <Text>Detection Date:</Text>
                     <Box >
@@ -67,7 +67,7 @@ const Commentary = (
                     </Box>
                 </Flex>
                 <Flex width={155}>
-                    <Checkbox isChecked={notify} readOnly>Notify</Checkbox>
+                    <Checkbox isChecked={notify} readOnly><span style={{fontSize:"12px"}}>Notify</span></Checkbox>
                 </Flex>
             </Flex>
             </Box>
