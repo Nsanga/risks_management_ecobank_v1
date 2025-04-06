@@ -97,44 +97,13 @@ const GeneralForm = ({
     return nextDate.toISOString().split("T")[0]; // Format date as YYYY-MM-DD
   }
 
-  // General handler for frequency change
-  // const handleSelectChangeWithNext = (frequencyType, selectedOption) => {
-  //   const frequency = selectedOption.value;
-  //   const lastOperationDate = formData.lastOperation; // Get the last operation date
-  //   const newNextDate = calculateRemindOnDate(frequency, lastOperationDate);
-
-  //   handleChange({
-  //     target: {
-  //       name: frequencyType,
-  //       value: frequency,
-  //     },
-  //   });
-
-  //   handleChange({
-  //     target: {
-  //       name: "nextOperation",
-  //       value: newNextDate,
-  //     },
-  //   });
-  // };
-
   const handleFrequencyChange = (selectedOption) => {
-    handleChange({
-      target: {
-        name: "frequency",
-        value: selectedOption.value,
-      },
-    });
+    handleChange("frequency", selectedOption.value);
 
     // Si lastOperation est déjà défini, calcule nextOperation
     if (formData.lastOperation) {
       const newNextDate = calculateRemindOnDate(selectedOption.value, formData.lastOperation);
-      handleChange({
-        target: {
-          name: "nextOperation",
-          value: newNextDate,
-        },
-      });
+      handleChange("nextOperation", newNextDate);
     }
   };
 
@@ -224,12 +193,12 @@ const GeneralForm = ({
             selectedControl?.lastOperation,
         },
       });
-      handleChange({
-        target: {
-          name: "frequency",
-          value: selectedControl?.frequence,
-        },
-      });
+      if (selectedControl) {
+        const frequency = selectedControl?.frequence;
+        if (frequency) {
+          handleChange("frequency", frequency); // Mettre à jour la fréquence
+        }
+      }
       handleChange({
         target: {
           name: "nextOperation",
@@ -483,7 +452,7 @@ const GeneralForm = ({
                     name="lastOperation"
                     value={formData.lastOperation}
                     onChange={(e) => {
-                      handleChange(e); // Traite d'abord la mise à jour de lastOperation
+                      handleChange("lastOperation", e.target.value); // Traite d'abord la mise à jour de lastOperation
 
                       // Si la fréquence est définie, calcule automatiquement nextOperation
                       if (formData.frequency) {
@@ -545,13 +514,11 @@ const GeneralForm = ({
                           option.value === formData.frequencyAssessment
                       )}
                       onChange={(selectedOption) => {
-                        setSelectedFrequency(selectedOption.value);
-                        handleChange(
-                          "frequencyAssessment",
-                          selectedOption.value
-                        )
-                      }
-                      }
+                        if (selectedOption) {
+                          setSelectedFrequency(selectedOption.value);
+                          handleChange("frequencyAssessment", selectedOption.value); // Passez directement le nom et la valeur
+                        }
+                      }}
                     />
                   </Box>
                 </HStack>

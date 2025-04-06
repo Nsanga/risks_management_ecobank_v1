@@ -25,11 +25,6 @@ import RiskPage from "./RiskPage";
 import RiskForm from "./RiskForm";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { AddEntityRiskControl } from "redux/entityRiskControl/action";
-import GeneralForm from "./GeneralForm";
-import RiskControlAssessment from "./RiskControlAssessment";
-import toast from "react-hot-toast";
-import ActionCard from "./ActionCard";
-import { listEntityActions } from "redux/actions/action";
 import { listControlActions } from "redux/actions/action";
 
 const RiskControlInformationView = ({
@@ -49,8 +44,9 @@ const RiskControlInformationView = ({
 }) => {
   const [showTabs, setShowTabs] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // 0 pour "General", 1 pour "Controls"
-  // const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
+  const [activeSubTab, setActiveSubTab] = useState(0); // 0 pour "Details", 1 pour "History"
   const [selectedFrequency, setSelectedFrequency] = useState("");
+  const actions = useSelector(state => state.ActionReducer.actions);
 
   const dispatch = useDispatch();
   const [formDataRiskPage, setFormDataRiskPage] = useState({
@@ -99,7 +95,9 @@ const RiskControlInformationView = ({
     controlSummary: "",
   });
 
-  const actions = useSelector(state => state.ActionReducer.actions);
+  useEffect(() => {
+    dispatch(listControlActions(selectedControl?._id));
+  }, [selectedControl]);
 
   const handleChangeRiskPage = (e) => {
     const { name, value } = e.target;
@@ -132,11 +130,10 @@ const RiskControlInformationView = ({
     }));
   };
 
-  const handleChangeRiskControl = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChangeRiskControl = (name, value) => {
     setFormDataRiskControl((prevState) => ({
       ...prevState,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value, // Pas besoin de vérifier le type ici, car on passe directement la valeur
     }));
   };
 
@@ -148,50 +145,14 @@ const RiskControlInformationView = ({
     return formattedItem;
   };
 
-  const handleSave = () => {
-    const riskKeys = [
-      "activeRisk",
-      "description",
-      "frequency",
-      "nominee",
-      "owner",
-      "ownerEmail",
-      "remindOne",
-      "reviewer",
-    ];
-    const controlKeys = [
-      "activeControl",
-      "controlCategory",
-      "controlRef",
-      "description",
-      "frequency",
-      "lastOperation",
-      "nextOperation",
-      "frequencyAssessment",
-      "nextAssessment",
-      "nominee",
-      "reviewDate",
-      "reviewer",
-      "keyControl",
-      "monitoringMethodology",
-      "controlSummary",
-    ];
-
-    const payload = {
-      ...formDataRiskPage,
-      risks: formatObjectItems(formDataRiskForm, riskKeys),
-      controls: formatObjectItems(formDataRiskControl, controlKeys),
-    };
-    dispatch(AddEntityRiskControl(payload));
-  };
   console.log("currentView", currentView);
   useEffect(() => {
     if (currentView === "Controls") {
       setActiveTab(1);
-      // setActiveSubTab(0);
+      setActiveSubTab(0);
     } else {
       setActiveTab(0);
-      // setActiveSubTab(0);
+      setActiveSubTab(0);
     }
   }, [currentView]);
 
@@ -204,51 +165,20 @@ const RiskControlInformationView = ({
     }
   }, [newItemId]);
 
-  useEffect(() => {
-    dispatch(listControlActions(selectedControl?._id));
-  }, [selectedControl]);
-
   const handleTestControlClick = () => {
-    setActiveTab(3); // Passer à l'onglet "Controls"
-    // setActiveSubTab(1); // Passer au sous-onglet "History"
+    setActiveTab(1); // Passer à l'onglet "Controls"
+    setActiveSubTab(1); // Passer au sous-onglet "History"
   };
 
   const handleTestControlBySubTabClick = (frequency) => {
-    setActiveTab(3); // Passer 0 L4onglet "History"
+    setActiveSubTab(1); // Passer au sous-onglet "History"
     setSelectedFrequency(frequency);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (
-      !formDataRiskControl.controlRef ||
-      !formDataRiskControl.nominee ||
-      !formDataRiskControl.reviewer
-    ) {
-      toast({
-        title: "Error.",
-        description: "Please fill out all required fields.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    // console.log("Form submitted:", riskControlData);
-    toast({
-      title: "Success!",
-      description: "Form submitted successfully.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
   };
 
   const handleClose = () => {
     onClose();
-    setActiveTab(0);
-    // setActiveSubTab(0);
+    // setActiveTab(0);
+    setActiveSubTab(0);
     setFormDataRiskForm({
       ownerRisk: null,
       ownerEmail: false,
@@ -314,12 +244,10 @@ const RiskControlInformationView = ({
                 <Tab fontSize={12}>General</Tab>
                 {/* <Tab fontSize={12} >Goals</Tab> */}
                 <Tab fontSize={12}>Controls</Tab>
-                <Tab fontSize={12}>Details</Tab>
-                <Tab fontSize={12}>History</Tab>
-                <Tab fontSize={12}>Actions</Tab>
+                {/* <Tab fontSize={12}>Actions</Tab>
                 <Tab fontSize={12}>Risk focus</Tab>
                 <Tab fontSize={12}>Risks logs</Tab>
-                <Tab fontSize={12}>Linked items</Tab>
+                <Tab fontSize={12}>Linked items</Tab> */}
               </TabList>
 
               <TabPanels>
@@ -347,42 +275,19 @@ const RiskControlInformationView = ({
                     profiles={profiles}
                     onClose={onClose}
                     selectedControl={selectedControl}
-                    // activeSubTab={activeSubTab} // Passer l'état du sous-onglet
-                    // setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
+                    activeSubTab={activeSubTab} // Passer l'état du sous-onglet
+                    setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
                     handleTestControlBySubTabClick={
                       handleTestControlBySubTabClick
                     }
                     selectedEntityDescription={selectedEntityDescription}
                     selectedFrequency={selectedFrequency} // Passer la fréquence sélectionnée
                     setSelectedFrequency={setSelectedFrequency} // Passer la fonction pour mettre à jour la fréquence
+                    actions={actions}
                   />
                 </TabPanel>
                 <TabPanel>
-                  {/* Import the GeneralForm component */}
-                  <GeneralForm
-                    formData={formDataRiskControl}
-                    handleChange={handleChangeRiskControl}
-                    handleSelectChange={handleSelectChange}
-                    profiles={profiles}
-                    handleSubmit={handleSubmit}
-                    selectedControl={selectedControl}
-                    handleTestControlBySubTabClick={handleTestControlBySubTabClick}
-                    selectedEntityDescription={selectedEntityDescription}
-                    onClose={onClose}
-                  />
-                </TabPanel>
-
-                {/* History Tab Content */}
-                <TabPanel>
-                  <RiskControlAssessment
-                    selectedControl={selectedControl}
-                    selectedEntityDescription={selectedEntityDescription}
-                    handleChange={handleChangeRiskControl}
-                    selectedFrequency={selectedFrequency}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <ActionCard actions={actions} />
+                  <ActionsPanel />
                 </TabPanel>
                 <TabPanel>
                   <TreeSelect />

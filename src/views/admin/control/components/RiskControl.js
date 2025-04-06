@@ -18,6 +18,7 @@ import { CheckCircleIcon } from "@chakra-ui/icons";
 import RiskControlAssessment from "./RiskControlAssessment"; // Importation du composant pour l'historique
 import GeneralForm from "./GeneralForm"; // Importation du composant GeneralForm (à ajuster selon l'emplacement du fichier)
 import { IoCloseCircle } from "react-icons/io5";
+import ActionCard from "./ActionCard";
 
 const RiskControl = ({
   riskControlData,
@@ -29,7 +30,7 @@ const RiskControl = ({
   setActiveSubTab,
   handleTestControlBySubTabClick,
   selectedEntityDescription,
-  selectedRisk,
+  actions,
   selectedFrequency,
   onClose
 }) => {
@@ -122,7 +123,7 @@ const RiskControl = ({
         </Tbody>
       </Table>
 
-      {/* <Tabs
+      <Tabs
         variant="soft-rounded"
         colorScheme="green"
         mt={6}
@@ -137,12 +138,12 @@ const RiskControl = ({
           <Tab>Risk focus</Tab>
           <Tab>Risks logs</Tab>
           <Tab>Linked items</Tab>
-        </TabList> */}
+        </TabList>
 
-        {/* <TabPanels>
-          <TabPanel> */}
+        <TabPanels>
+          <TabPanel>
             {/* Import the GeneralForm component */}
-            {/* <GeneralForm
+            <GeneralForm
               formData={riskControlData}
               handleChange={handleChange}
               handleSelectChange={handleSelectChange}
@@ -153,19 +154,22 @@ const RiskControl = ({
               selectedEntityDescription={selectedEntityDescription}
               onClose={onClose}
             />
-          </TabPanel> */}
+          </TabPanel>
 
           {/* History Tab Content */}
-          {/* <TabPanel>
+          <TabPanel>
             <RiskControlAssessment
               selectedControl={selectedControl}
               selectedEntityDescription={selectedEntityDescription}
               handleChange={handleChange}
               selectedFrequency={selectedFrequency}
             />
-          </TabPanel> */}
-        {/* </TabPanels>
-      </Tabs> */}
+          </TabPanel>
+          <TabPanel>
+            <ActionCard actions={actions} />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Box>
   );
 };

@@ -114,7 +114,7 @@ const RiskControlAssessment = ({
         attested: latestHistory.attested || false,
       }));
     }
-    console.log("actions:", actions) 
+    console.log("actions:", actions)
   }, [dispatch, selectedControl, selectedEntityDescription, userName]);
 
   const controlId = selectedControl._id;
@@ -127,14 +127,14 @@ const RiskControlAssessment = ({
       return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
     } else {
       // Sinon, procéder à l'enregistrement des données
-    await dispatch(
-      AddControlHistory({
-        ...formData,
-        idControl: controlId,
-        frequency: selectedFrequency,
-      })
-    );
-    dispatch(listControlActions({idControl:controlId}));
+      await dispatch(
+        AddControlHistory({
+          ...formData,
+          idControl: controlId,
+          frequency: selectedFrequency,
+        })
+      );
+      dispatch(listControlActions({ idControl: controlId }));
     }
   };
 
@@ -158,78 +158,62 @@ const RiskControlAssessment = ({
 
   return (
     <Box fontSize="12px">
-      <Flex gap={4} alignItems="start">
-        <Box bg="white" width="70%" display="flex" flexDirection="column" justifyContent="space-between" height="100%">
-          <Box flex="1" overflow="auto">
-            <Table variant="simple" width="100%" fontSize="10px">
-              <Thead bg="gray.200">
-                <Tr>
-                  <Th>Ref</Th>
-                  <Th>Ass On</Th>
-                  <Th>Due On</Th>
-                  <Th>Closed date</Th>
-                  <Th>Perf</Th>
-                  <Th>Att</Th>
+      <Flex flexDirection="column" gap={4} alignItems="start">
+        <Table variant="simple" width="100%" fontSize="10px">
+          <Thead bg="gray.200">
+            <Tr>
+              <Th>Ref</Th>
+              <Th>Ass On</Th>
+              <Th>Due On</Th>
+              <Th>Closed date</Th>
+              <Th>Perf</Th>
+              <Th>Att</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {selectedControl.historyControl.length > 0 ? (
+              selectedControl.historyControl.slice(-5).map((controlHistory) => (
+                <Tr
+                  key={controlHistory._id}
+                  onClick={() => {
+                    setFormData({
+                      performance: controlHistory.performance || "Not Assessed",
+                      assessedBy: controlHistory.assessedBy || userName,
+                      assessedOn: controlHistory.assessedOn || new Date().toISOString().split('T')[0],
+                      dueOn: controlHistory.dueOn || "",
+                      closeDate: controlHistory.closeDate || "",
+                      note: controlHistory.note || "",
+                      attested: controlHistory.attested || false,
+                    });
+                  }}
+                  cursor="pointer"
+                  _hover={{ bg: "gray.100" }}
+                >
+                  <Td>{controlHistory.reference}</Td>
+                  <Td>{controlHistory.assessedOn}</Td>
+                  <Td>{controlHistory.dueOn}</Td>
+                  <Td>{controlHistory.closeDate}</Td>
+                  <Td>{controlHistory.performance}</Td>
+                  <Td>
+                    <Checkbox isChecked={controlHistory.attested} isReadOnly />
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {selectedControl.historyControl.length > 0 ? (
-                  selectedControl.historyControl.slice(-5).map((controlHistory) => (
-                    <Tr
-                      key={controlHistory._id}
-                      onClick={() => {
-                        setFormData({
-                          performance: controlHistory.performance || "Not Assessed",
-                          assessedBy: controlHistory.assessedBy || userName,
-                          assessedOn: controlHistory.assessedOn || new Date().toISOString().split('T')[0],
-                          dueOn: controlHistory.dueOn || "",
-                          closeDate: controlHistory.closeDate || "",
-                          note: controlHistory.note || "",
-                          attested: controlHistory.attested || false,
-                        });
-                      }}
-                      cursor="pointer"
-                      _hover={{ bg: "gray.100" }}
-                    >
-                      <Td>{controlHistory.reference}</Td>
-                      <Td>{controlHistory.assessedOn}</Td>
-                      <Td>{controlHistory.dueOn}</Td>
-                      <Td>{controlHistory.closeDate}</Td>
-                      <Td>{controlHistory.performance}</Td>
-                      <Td>
-                        <Checkbox isChecked={controlHistory.attested} isReadOnly />
-                      </Td>
-                    </Tr>
-                  ))
-                ) : (
-                  <Tr>
-                    <Td colSpan={6} textAlign="center">Aucun historique disponible</Td>
-                  </Tr>
-                )}
-              </Tbody>
-            </Table>
-          </Box>
-          <FormControl mt={4}>
-            <FormLabel fontSize="sm">Méthodologie du test :</FormLabel>
-            <Textarea fontSize="sm" textAlign="justify" value={monitoring} readOnly />
-          </FormControl>
-        </Box>
+              ))
+            ) : (
+              <Tr>
+                <Td colSpan={6} textAlign="center">Aucun historique disponible</Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
 
-        <Box bg="white" width="30%" height="100%">
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-            <GridItem colSpan={2}>
-              <FormControl>
-                <FormLabel fontSize="sm">Résultats du test</FormLabel>
-                <Textarea
-                  fontSize="sm"
-                  value={formData.note}
-                  onChange={(e) =>
-                    setFormData({ ...formData, note: e.target.value })
-                  }
-                />
-              </FormControl>
-            </GridItem>
-            <GridItem>
+        <Flex alignItems="start" justifyContent="space-between" gap={2} width="100%">
+          <Box width="50%">
+            <FormControl>
+              <FormLabel fontSize="sm">Méthodologie du test :</FormLabel>
+              <Textarea fontSize="sm" textAlign="justify" value={monitoring} readOnly />
+            </FormControl>
+            <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
               <FormControl>
                 <FormLabel fontSize="sm">Performance</FormLabel>
                 <Select
@@ -248,8 +232,6 @@ const RiskControlAssessment = ({
                   <option value="Unsatisfactory">Non satisfaisant</option>
                 </Select>
               </FormControl>
-            </GridItem>
-            <GridItem>
               <FormControl>
                 <FormLabel fontSize="sm">Assessed By</FormLabel>
                 <Input
@@ -259,49 +241,57 @@ const RiskControlAssessment = ({
                   value={formData.assessedBy}
                 />
               </FormControl>
-            </GridItem>
-            <GridItem>
-              <FormControl>
-                <FormLabel fontSize="sm">Assessed On</FormLabel>
-                <Input
-                  fontSize="sm"
-                  type="date"
-                  placeholder="Enter assessed date"
-                  value={formData.assessedOn}
-                  onChange={(e) =>
-                    setFormData({ ...formData, assessedOn: e.target.value })
-                  }
-                />
-              </FormControl>
-            </GridItem>
-            <GridItem>
-              <FormControl>
-                <FormLabel fontSize="sm">Due On</FormLabel>
-                <Input
-                  fontSize="sm"
-                  type="date"
-                  value={formData.dueOn}
-                  onChange={(e) =>
-                    setFormData({ ...formData, dueOn: e.target.value })
-                  }
-                />
-              </FormControl>
-            </GridItem>
-            <GridItem>
-              <FormControl>
-                <FormLabel fontSize="sm">Closed date</FormLabel>
-                <Input
-                  fontSize="sm"
-                  type="date"
-                  value={formData.closeDate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, closeDate: e.target.value })
-                  }
-                />
-              </FormControl>
-            </GridItem>
-          </Grid>
-        </Box>
+            </Flex>
+          </Box>
+          <Box width="50%">
+            <FormControl>
+              <FormLabel fontSize="sm">Résultats du test</FormLabel>
+              <Textarea
+                fontSize="sm"
+                value={formData.note}
+                onChange={(e) =>
+                  setFormData({ ...formData, note: e.target.value })
+                }
+              />
+            </FormControl>
+            <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
+            <FormControl>
+              <FormLabel fontSize="sm">Assessed On</FormLabel>
+              <Input
+                fontSize="sm"
+                type="date"
+                placeholder="Enter assessed date"
+                value={formData.assessedOn}
+                onChange={(e) =>
+                  setFormData({ ...formData, assessedOn: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm">Due On</FormLabel>
+              <Input
+                fontSize="sm"
+                type="date"
+                value={formData.dueOn}
+                onChange={(e) =>
+                  setFormData({ ...formData, dueOn: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="sm">Closed date</FormLabel>
+              <Input
+                fontSize="sm"
+                type="date"
+                value={formData.closeDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, closeDate: e.target.value })
+                }
+              />
+            </FormControl>
+            </Flex>
+          </Box>
+        </Flex>
       </Flex>
 
       <Flex justifyContent="center" gap={4} mt={6}>
@@ -312,14 +302,14 @@ const RiskControlAssessment = ({
         <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
-      <ActionModal 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      onConfirm={handleSaveAction}
-      actionData={actionData} 
-      setActionData={setActionData} 
-      profileOptions={profileOptions} 
-      entitiesOptions={entitiesOptions} />
+      <ActionModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onConfirm={handleSaveAction}
+        actionData={actionData}
+        setActionData={setActionData}
+        profileOptions={profileOptions}
+        entitiesOptions={entitiesOptions} />
     </Box>
   );
 };
