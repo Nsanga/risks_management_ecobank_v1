@@ -32,6 +32,7 @@ import { updateEvent } from "redux/events/action";
 import toast from "react-hot-toast";
 import Loader from "../../../../assets/img/loader.gif";
 import { listEvents } from "redux/events/action";
+import { useHistory } from "react-router-dom";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -50,6 +51,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const [isLoading, setIsLoading] = useState(null);
   const [totalCurrenciesProps, setTotalCurrenciesProps] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
+  const history = useHistory();
 
   const categories = data.map((item) => item.title);
 
@@ -148,6 +150,9 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     try {
       await dispatch(updateEvent(event._id, payload));
       onClose(); // Ferme la modal après la soumission réussie
+      history.push({
+        pathname: '/admin/events',
+      });
       dispatch(listEvents());
     } catch (error) {
       console.error("Erreur lors de la soumission:", error);
