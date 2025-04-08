@@ -211,8 +211,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
         setViewData({
           Risks: entityRiskControls[0]?.risks || [],
           Controls: entityRiskControls[0]?.controls || [],
-          Events: events,
-          Actions: actions,
+          Events: events || [],
+          Actions: actions || [],
           Kits: [],
           Obligations: [],
         });

@@ -31,6 +31,7 @@ import { AddEvent } from "redux/events/action";
 import { updateEvent } from "redux/events/action";
 import toast from "react-hot-toast";
 import Loader from "../../../../assets/img/loader.gif";
+import { listEvents } from "redux/events/action";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -109,6 +110,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       setIsLoading(true);
       try {
         await dispatch(AddEvent(payload));
+        dispatch(listEvents());
         onClose(); // Ferme la modal après la soumission réussie
       } catch (error) {
         console.error("Erreur lors de la soumission:", error);
@@ -119,29 +121,39 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (event) => {
+    // Créer le payload en combinant les données existantes de l'événement
+    // avec les données modifiées des états locaux
     const payload = {
       details: {
-        ...detailsData,
-        rate: currency || "USD",
+        ...event.details, // données existantes
+        ...detailsData,   // données modifiées
+        rate: currency || event.details.rate || "USD",
         recorded_by: localStorage.getItem("username"),
       },
       commentary: {
-        ...commentaryData,
+        ...event.commentary, // données existantes
+        ...commentaryData,   // données modifiées
       },
-      financials: [...financesData],
-      additionnalInfo: [...additionalInfoData],
+      financials: financesData.length > 0 ? [...financesData] : [...event.financials],
+      additionnalInfo: additionalInfoData.length > 0 
+        ? [...additionalInfoData] 
+        : [...event.additionnalInfo],
       approved: approved,
     };
-
+  
     console.log(payload);
-
+  
+    setIsLoading(true);
     try {
       await dispatch(updateEvent(event._id, payload));
       onClose(); // Ferme la modal après la soumission réussie
+      dispatch(listEvents());
     } catch (error) {
       console.error("Erreur lors de la soumission:", error);
       // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -239,7 +251,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
           <ModalFooter>
             <Button
-              onClick={event ? handleUpdate : handleSubmit}
+              onClick={event ? () => handleUpdate(event) : handleSubmit}
               colorScheme="blue"
               mr={2}
               disabled={activeTab === 2 && totalCurrenciesProps < 1}

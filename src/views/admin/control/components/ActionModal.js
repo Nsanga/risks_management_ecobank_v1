@@ -24,6 +24,13 @@ const ActionModal = ({
   entitiesOptions,
 }) => {
   console.log("profileOptions", profileOptions);
+
+  // Créer les options de pourcentage
+  const percentageOptions = Array.from({ length: 10 }, (_, i) => ({
+    value: (i + 1) * 10, // Valeur de 10 à 100
+    label: `${(i + 1) * 10}%`, // Affichage sous forme de pourcentage
+  }));
+
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -88,6 +95,7 @@ const ActionModal = ({
                 setActionData({
                   ...actionData,
                   proprioAction: selectedOption.label, // Récupérer le label
+                  emailProprio: selectedOption.email, // Récupérer l'email
                 });
               }}
             />
@@ -113,15 +121,20 @@ const ActionModal = ({
 
           <FormControl mb={4}>
             <FormLabel>Évolution</FormLabel>
-            <Input
-              type="text"
-              value={actionData.evolutionAction}
-              onChange={(e) =>
-                setActionData({
-                  ...actionData,
-                  evolutionAction: e.target.value,
-                })
-              }
+            <Select
+              options={percentageOptions}
+              value={percentageOptions.find(option => option.value === actionData.evolutionAction)}
+              onChange={(selectedOption) => {
+                if (selectedOption) {
+                  setActionData({
+                    ...actionData,
+                    evolutionAction: selectedOption.value, // Mettre à jour avec la valeur sélectionnée
+                  });
+                }
+              }}
+              placeholder="Sélectionnez un pourcentage"
+              className="z-10"
+              // styles={customStyles}
             />
           </FormControl>
         </ModalBody>

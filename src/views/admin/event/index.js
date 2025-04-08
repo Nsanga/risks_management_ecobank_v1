@@ -129,17 +129,17 @@ const Event = ({ profiles, entities }) => {
                     <style>
                         /* Include external CSS */
                         ${Array.from(document.styleSheets)
-                          .map((sheet) => {
-                            try {
-                              return Array.from(sheet.cssRules)
-                                .map((rule) => rule.cssText)
-                                .join("");
-                            } catch (e) {
-                              // Handle cross-origin restrictions
-                              return "";
-                            }
-                          })
-                          .join("")}
+        .map((sheet) => {
+          try {
+            return Array.from(sheet.cssRules)
+              .map((rule) => rule.cssText)
+              .join("");
+          } catch (e) {
+            // Handle cross-origin restrictions
+            return "";
+          }
+        })
+        .join("")}
                     </style>
                 </head>
                 <body>
@@ -156,6 +156,16 @@ const Event = ({ profiles, entities }) => {
   const name = event.details.reviewer?.name ? event.details.reviewer?.name : "";
   const surname = event.details.reviewer?.surname
     ? event.details.reviewer?.surname
+    : "";
+
+  const nameOwner = event.details.owner?.name ? event.details.owner?.name : "";
+  const surnameOwner = event.details.owner?.surname
+    ? event.details.owner?.surname
+    : "";
+
+  const nameNominee = event.details.nominee?.name ? event.details.nominee?.name : "";
+  const surnameNominee = event.details.nominee?.surname
+    ? event.details.nominee?.surname
     : "";
 
   return (
@@ -194,9 +204,9 @@ const Event = ({ profiles, entities }) => {
                   totalLosses={
                     totalRow?.values
                       ? totalRow?.values[0] +
-                        totalRow?.values[1] +
-                        totalRow?.values[2] +
-                        totalRow?.values[3]
+                      totalRow?.values[1] +
+                      totalRow?.values[2] +
+                      totalRow?.values[3]
                       : ""
                   }
                   devise={event?.details?.rate}
@@ -246,24 +256,12 @@ const Event = ({ profiles, entities }) => {
                   targetClosure={
                     event.details.targetClosureDate
                       ? moment(event.details.targetClosureDate).format(
-                          "DD/MM/YYYY"
-                        )
+                        "DD/MM/YYYY"
+                      )
                       : ""
                   }
-                  owner={
-                    event.details.owner?.name
-                      ? event.details.owner?.name +
-                        " " +
-                        event.details.owner?.surname
-                      : ""
-                  }
-                  nominee={
-                    event.details.nominee?.name
-                      ? event.details.nominee?.name +
-                        " " +
-                        event.details.nominee?.surname
-                      : ""
-                  }
+                  owner={nameOwner + " " + surnameOwner}
+                  nominee={nameNominee + " " + surnameNominee}
                   reviewer={name + " " + surname}
                   reviewerDate={event.details.reviewer_date}
                 />
@@ -314,7 +312,7 @@ const Event = ({ profiles, entities }) => {
                 </Flex>
                 <Flex>
                   <DeleteModal
-                    event={event}
+                    selectedEntity={event}
                     isDeleteDisabled={isDeleteDisabled}
                   />
                 </Flex>

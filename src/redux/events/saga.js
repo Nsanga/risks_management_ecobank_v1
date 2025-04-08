@@ -8,7 +8,7 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
 
-function* list(action) {
+function* list() {
     try {
         let link = `${url}/api/v1/events/all`;
         const data = yield getRequest(link);
@@ -69,7 +69,6 @@ function* add(action) {
         if (data.message === 'Created') {
             yield put({ type: types.ADD_EVENT_SUCCESS, payload: data });
             toast.success(data.data.message);
-            yield put({ type: types.GET_EVENTS_REQUEST, payload: { type: action.payload.type } });
         } else {
             toast.error("Aucune donnée n'a été ajouté.");
             yield put({ type: types.ADD_EVENT_FAILED, payload: "Échec lors de la creation de l'évenement" });
@@ -91,7 +90,6 @@ function* deleteEvent(action) {
         if (data) {
             yield put({ type: types.DELETE_EVENT_SUCCESS, payload: data });
             toast.success(data.data.message);
-            yield put({ type: types.GET_EVENT_REQUEST, payload: { type: type } });
         } else {
             toast.error("Aucune donnée n'a été supprimé.");
             yield put({ type: types.DELETE_EVENT_FAILED, payload: "Échec lors de la suppression des données" });

@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
 import { useDispatch } from 'react-redux'
-import { deleteEvent } from 'redux/events/action'
+import { deleteEvent, listEvents } from 'redux/events/action'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom'
 
 const DeleteModal = ({ selectedEntity, isDeleteDisabled }) => {
@@ -26,14 +26,15 @@ const DeleteModal = ({ selectedEntity, isDeleteDisabled }) => {
     const dispatch = useDispatch()
     const history = useHistory();
 
-    const handleDelete = () => {
-        // console.log(selectedEntity)
-        dispatch(deleteEvent(selectedEntity._id));
+    const handleDelete = async () => {
+        console.log(selectedEntity)
+        await dispatch(deleteEvent(selectedEntity._id));
         onClose();
         setReason("")
         history.push(
-            '/admin/risks',
+            '/admin/events',
         );
+        dispatch(listEvents());
     }
 
     const handleClose = () => {

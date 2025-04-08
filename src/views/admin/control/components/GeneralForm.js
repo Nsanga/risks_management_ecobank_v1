@@ -41,7 +41,7 @@ const GeneralForm = ({
     return selectedControl?.frequence || '';
   });
   const dispatch = useDispatch();
-
+console.log(selectedControl)
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
     ?.map((profile, index) => {
@@ -186,38 +186,16 @@ const GeneralForm = ({
             selectedControl?.reviewDate,
         },
       });
-      handleChange({
-        target: {
-          name: "lastOperation",
-          value:
-            selectedControl?.lastOperation,
-        },
-      });
+      handleChange("lastOperation", selectedControl?.lastOperation);
       if (selectedControl) {
         const frequency = selectedControl?.frequence;
         if (frequency) {
           handleChange("frequency", frequency); // Mettre à jour la fréquence
         }
       }
-      handleChange({
-        target: {
-          name: "nextOperation",
-          value: selectedControl?.nextOperation,
-        },
-      });
-      handleChange({
-        target: {
-          name: "controlRef",
-          value: selectedControl?.reference,
-        },
-      });
-      handleChange({
-        target: {
-          name: "controlSummary",
-          value:
-            selectedControl?.controlSummary,
-        },
-      });
+      handleChange("nextOperation", selectedControl?.nextOperation);
+      handleChange("controlRef", selectedControl?.reference);
+      handleChange("controlSummary", selectedControl?.controlSummary);
 
       const nomineeOption = profilesOptions.find(
         (option) =>
@@ -253,12 +231,7 @@ const GeneralForm = ({
         const frequency = selectedControl?.frequence;
         if (frequency) {
           setSelectedFrequency(frequency); // Mettre à jour la fréquence sélectionnée
-          handleChange({
-            target: {
-              name: "frequencyAssessment",
-              value: frequency,
-            },
-          });
+          handleChange("frequencyAssessment", frequency);
         }
       }
     }

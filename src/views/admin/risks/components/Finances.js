@@ -57,9 +57,10 @@ const Finances = ({
       setTableData(updatedData);
   
       const totalRow = event.financials.find((f) => f.name === "Total");
-      if (totalRow && totalRow.values[0] != null) {
-        setTotalCurrencies(totalRow.values[0]);
-        setTotalCurrenciesProps(totalRow.values[0]);
+      if (totalRow && totalRow.values) {
+        const total = totalRow?.values[0] + totalRow?.values[1] + totalRow?.values[2] + totalRow?.values[3]
+        setTotalCurrencies(total);
+        setTotalCurrenciesProps(total);
       }
   
       // ✅ Notifie le parent que les données initiales sont prêtes

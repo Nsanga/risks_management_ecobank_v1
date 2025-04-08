@@ -49,6 +49,7 @@ const RiskControlAssessment = ({
         key: `${profile._id}-${index}`, // Unicité assurée
         value: `${name} ${surname}`.trim(),
         label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+        email: profile.email,
       };
     });
 
@@ -92,6 +93,7 @@ const RiskControlAssessment = ({
     descriptionAction: "",
     delaisAction: "",
     proprioAction: "",
+    emailProprio: "",
     idEntity: null,
     evolutionAction: "",
   });
