@@ -9,7 +9,7 @@ const Review = ({ details }) => {
                     <Flex gap={6} alignItems="center">
                         <Text fontSize={12}>Event Date:</Text>
                         <Box width={200}>
-                            <Input value={details.eventDate} size='md' type='date' readOnly />
+                            <Input value={details.eventDate} size='md' type='date' />
                         </Box>
                     </Flex>
                     <Flex gap={5} alignItems="center">
@@ -27,7 +27,7 @@ const Review = ({ details }) => {
                     <Flex gap={5} alignItems="center">
                         <Text fontSize={12}>Event Time:</Text>
                         <Box width={200}>
-                            <Input value={details.eventTime} size='md' type='time' readOnly />
+                            <Input value={details.eventTime} size='md' type='time' />
                         </Box>
                     </Flex>
                 </Flex>

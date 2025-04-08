@@ -49,6 +49,10 @@ const CardDetails = ({ events, loading }) => {
                   </Text>
                   <Text fontWeight="bold" mr={10} fontSize={12}>
                     {truncateText(event?.details.description, 90)}
+                  </Text>
+                </Flex>
+                <Flex direction="row" alignItems="center">
+                  <Text fontWeight="bold" mr={10} fontSize={12}>
                     {totalLoss > 0 && (
                       <span> (Total Loss: {totalLoss} {event?.details.rate})</span>
                     )}
