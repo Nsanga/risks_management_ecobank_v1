@@ -5,7 +5,7 @@ import React from "react";
 
 function SidebarContent(props) {
   const { routes, isCollapsed } = props;
-  const excludedRoutes = ["Login", "Event"];
+  const excludedRoutes = ["Login", "Event", "Action"];
   const filteredRoutes = routes.filter((route) => !excludedRoutes.includes(route.name));
 
   return (
