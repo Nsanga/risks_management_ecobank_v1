@@ -7,6 +7,22 @@ import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
+function* list() {
+    try {
+        let link = `${url}/api/v1/actions/getAction`;
+        const response = yield getRequest(link);
+        console.log(" ===>>>", response); // Vérifiez la structure de la réponse ici
+        if (response.statut === 200) {
+            // Assurez-vous d'extraire le tableau d'actions
+            yield put({ type: types.GET_ALL_ACTIONS_SUCCESS, payload: { data: response.data } });
+        } else {
+            yield put({ type: types.GET_ALL_ACTIONS_FAILED, payload: "echec recuperation des données" });
+        }
+    } catch (error) {
+        console.log(error);
+        yield put({ type: types.GET_ALL_ACTIONS_FAILED, payload: error });
+    }
+}
 
 function* listByControl(action) {
     try {
@@ -106,6 +122,7 @@ function* deleteAction(action) {
 }
 
 export default function* ActionSaga() {
+    yield takeLatest(types.GET_ALL_ACTIONS_REQUEST, list);
     yield takeLatest(types.GET_ACTIONS_REQUEST, listByControl);
     yield takeLatest(types.GET_ENTITY_ACTIONS_REQUEST, listByEntity);
     yield takeLatest(types.UPDATE_ACTION_REQUEST, update);

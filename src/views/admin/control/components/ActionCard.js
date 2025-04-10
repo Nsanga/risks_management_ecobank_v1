@@ -12,6 +12,7 @@ import {
 const ActionCard = ({
     actions
 }) => {
+    console.log("actions::", actions.actions);
     return (
         <>
         {actions.map((action) => (

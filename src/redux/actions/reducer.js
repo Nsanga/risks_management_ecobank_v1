@@ -8,6 +8,24 @@ const INITIAL_STATE = {
 
 function ActionReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
+    case types.GET_ALL_ACTIONS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.GET_ALL_ACTIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        actions: action.payload.data,
+      };
+    case types.GET_ALL_ACTIONS_FAILED:
+      return {
+        ...state,
+        loading: false,
+        actions: [],
+      };
     case types.GET_ACTIONS_REQUEST:
       return {
         ...state,

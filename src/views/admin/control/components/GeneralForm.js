@@ -310,6 +310,20 @@ console.log(selectedControl)
           </FormControl>
 
           <FormControl mb={4}>
+            <HStack spacing={14} alignItems="center">
+              <Text fontSize={12} fontWeight="bold" mb={4}>
+                Description:
+              </Text>
+              <Textarea
+                value={formData?.description}
+                fontSize={12}
+                name="description"
+                onChange={handleChange}
+              />
+            </HStack>
+          </FormControl>
+
+          <FormControl mb={4}>
             <HStack spacing={16} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
                 Nominee:
@@ -360,20 +374,6 @@ console.log(selectedControl)
                 type="date"
                 name="reviewDate"
                 value={formData.reviewDate}
-                onChange={handleChange}
-              />
-            </HStack>
-          </FormControl>
-
-          <FormControl mb={4}>
-            <HStack spacing={14} alignItems="center">
-              <Text fontSize={12} fontWeight="bold" mb={4}>
-                Description:
-              </Text>
-              <Textarea
-                value={formData?.description}
-                fontSize={12}
-                name="description"
                 onChange={handleChange}
               />
             </HStack>

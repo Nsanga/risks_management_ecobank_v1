@@ -31,6 +31,7 @@ export function SearchBar(props) {
   const dispatch = useDispatch();
 
   const events = useSelector(state => state.EventReducer.events);
+  const actions = useSelector(state => state.ActionReducer.actions);
   const loading = useSelector(state => state.EventReducer.loading);
 
   useEffect(() => {
@@ -55,9 +56,25 @@ export function SearchBar(props) {
       } catch (error) {
         console.error("Erreur lors de la récupération des événements :", error);
       }
-    } else {
-      // Logique de recherche pour les autres options si nécessaire
-      console.log('Recherche pour les autres options non implémentée');
+    }
+
+    if (value === '6') {
+      // Si l'option sélectionnée est "Event"
+      try {
+        // Filtrer l'événement correspondant au numéro de référence saisi
+        const action = actions.find(action => action.reference === inputValue);
+        if (action) {
+          // Rediriger vers la vue de l'événement avec les données récupérées
+          history.push({
+            pathname: '/admin/action',
+            state: { action, loading }
+          });
+        } else {
+          toast.error('Aucune action trouvé avec ce numéro de référence.');
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des événements :", error);
+      }
     }
   };
 
@@ -76,44 +93,44 @@ export function SearchBar(props) {
 
   const handleInputChange = (event) => {
     const input = event.target.value;
-      setInputValue(input);
+    setInputValue(input);
   };
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 15, marginRight: 15 }}>
       <RadioGroup onChange={handleRadioChange} value={value}>
         <Stack direction='row'>
-          <Radio value='1'><span style={{ fontSize:12}}>Entity</span></Radio>
-          <Radio value='2'><span style={{ fontSize:12}}>Risk</span></Radio>
-          <Radio value='3'><span style={{ fontSize:12}}>Control</span></Radio>
-          <Radio value='4'><span style={{ fontSize:12}}>Event</span></Radio>
-          <Radio value='5'><span style={{ fontSize:12}}>Key Indicator</span></Radio>
-          <Radio value='6'><span style={{ fontSize:12}}>Action</span></Radio>
+          <Radio value='1'><span style={{ fontSize: 12 }}>Entity</span></Radio>
+          <Radio value='2'><span style={{ fontSize: 12 }}>Risk</span></Radio>
+          <Radio value='3'><span style={{ fontSize: 12 }}>Control</span></Radio>
+          <Radio value='4'><span style={{ fontSize: 12 }}>Event</span></Radio>
+          <Radio value='5'><span style={{ fontSize: 12 }}>Key Indicator</span></Radio>
+          <Radio value='6'><span style={{ fontSize: 12 }}>Action</span></Radio>
         </Stack>
       </RadioGroup>
       <Box style={{ width: 180 }}>
         <InputGroup>
           <InputLeftElement pointerEvents="none">
             <Box fontSize={12}>{placeholder}</Box>
-          </InputLeftElement> 
+          </InputLeftElement>
           <Input
-          fontSize={12}
+            fontSize={12}
             placeholder='ref number'
             value={inputValue}
             onChange={handleInputChange}
-            // pl={placeholder.length * 8} // Adjust the padding to fit the prefix length
+          // pl={placeholder.length * 8} // Adjust the padding to fit the prefix length
           />
           <IconButton
-          ml={4}
+            ml={4}
             aria-label='Search database'
             icon={<SearchIcon />}
             variant='solid'
             size="md"
             onClick={handleSearch}
           />
-        </InputGroup> 
+        </InputGroup>
       </Box>
     </div>
-    
+
   );
 }

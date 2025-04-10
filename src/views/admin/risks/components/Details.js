@@ -34,7 +34,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     event_date: "",
     RAG: "",
     activeEvent: false,
-    event_time: getCurrentTime(),
+    event_time: "",
     excludeFundLosses: false,
     externalEvent: false,
     recorded_by: "",
@@ -105,7 +105,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
       setFormData((prevState) => ({
         ...prevState,
         event_date: moment(event.details.event_date).format("YYYY-MM-DD") || "",
-        event_time: event.details.event_time || getCurrentTime(),
+        event_time: event.details.event_time || "",
         detection_date: event.details.detection_date
           ? new Date(event.details.detection_date).toISOString().split("T")[0]
           : "",
@@ -277,9 +277,8 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
               <Input
                 placeholder="Select Date and Time"
                 size="sm"
-                type="text"
+                type="time"
                 value={formData.event_time}
-                readOnly
               />
             </Box>
           </Flex>

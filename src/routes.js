@@ -27,6 +27,8 @@ import Logout from "views/admin/Logout";
 import { RiSkull2Fill } from "react-icons/ri";
 import Event from "views/admin/event";
 import Control from "views/admin/control";
+import Actions from "views/admin/actions";
+import Action from "views/admin/action";
 
 const routes = [
   {
@@ -49,6 +51,13 @@ const routes = [
     path: "/control",
     icon: <Icon as={MdControlPoint} width='20px' height='20px' color='inherit' />,
     component: Control,
+  },
+  {
+    name: "Actions",
+    layout: "/admin",
+    path: "/actions",
+    icon: <Icon as={MdControlPoint} width='20px' height='20px' color='inherit' />,
+    component: Actions,
   },
   {
     name: "Configuration",
@@ -87,6 +96,13 @@ const routes = [
     path: "/event",
     icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
     component: Event,
+  },
+  {
+    name: "Action",
+    layout: "/admin",
+    path: "/action",
+    icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
+    component: Action,
   },
   // { 
   //   name: "Configuration",
