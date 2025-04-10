@@ -160,32 +160,10 @@ console.log(selectedControl)
 
   useEffect(() => {
     if (selectedControl) {
-      handleChange({
-        target: {
-          name: "description",
-          value:
-            selectedControl?.controlDescription,
-        },
-      });
-      handleChange({
-        target: {
-          name: "activeControl",
-          value: selectedControl?.activeControl,
-        },
-      });
-      handleChange({
-        target: {
-          name: "keyControl",
-          value: selectedControl?.keyControl,
-        },
-      });
-      handleChange({
-        target: {
-          name: "reviewDate",
-          value:
-            selectedControl?.reviewDate,
-        },
-      });
+      handleChange("description", selectedControl?.controlDescription);
+      handleChange("activeControl", selectedControl?.activeControl);
+      handleChange("keyControl", selectedControl?.keyControl);
+      handleChange("reviewDate", selectedControl?.reviewDate);
       handleChange("lastOperation", selectedControl?.lastOperation);
       if (selectedControl) {
         const frequency = selectedControl?.frequence;
