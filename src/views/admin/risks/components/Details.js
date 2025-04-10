@@ -152,7 +152,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
     setFormData((prevValues) => ({
       ...prevValues,
-      event_date: prevValues.event_date || today,
+      event_date: prevValues.event_date,
       recorded_date: prevValues.recorded_date || today,
     }));
   }, [event]);

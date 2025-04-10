@@ -54,7 +54,7 @@ const CardDetails = ({ events, loading }) => {
                 <Flex direction="row" alignItems="center">
                   <Text fontWeight="bold" mr={10} fontSize={12}>
                     {totalLoss > 0 && (
-                      <span> (Total Loss: {totalLoss} {event?.details.rate})</span>
+                      <span> {totalLoss} {event?.details.rate}</span>
                     )}
                   </Text>
                 </Flex>

@@ -18,6 +18,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listEvents } from "redux/events/action";
 import toast from "react-hot-toast";
+import { listActions } from "redux/actions/action";
 
 export function SearchBar(props) {
   const { variant, background, children, borderRadius, ...rest } = props;
@@ -36,6 +37,7 @@ export function SearchBar(props) {
 
   useEffect(() => {
     dispatch(listEvents());
+    dispatch(listActions());
   }, [dispatch]);
 
   const handleSearch = async () => {
@@ -67,7 +69,7 @@ export function SearchBar(props) {
           // Rediriger vers la vue de l'événement avec les données récupérées
           history.push({
             pathname: '/admin/action',
-            state: { action, loading }
+            state: { action }
           });
         } else {
           toast.error('Aucune action trouvé avec ce numéro de référence.');
