@@ -23,7 +23,7 @@ import Finances from "./Finances";
 import { AddIcon } from "@chakra-ui/icons";
 import Additional from "./Additional";
 import GlobalViewEvent from "./globalViewEvent/GlobalViewEvent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from "../Data";
 import { FaFilePen } from "react-icons/fa6";
 import { connect, useDispatch } from "react-redux";
@@ -47,7 +47,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const [commentaryData, setCommentaryData] = useState({});
   const [financesData, setFinancesData] = useState([]);
   const [additionalData, setAdditionalData] = useState({});
-  const [currency, setCurrency] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [isLoading, setIsLoading] = useState(null);
   const [totalCurrenciesProps, setTotalCurrenciesProps] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
@@ -63,15 +63,18 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     setCommentaryData(data);
   };
 
-  const handleFinancesChange = (data, selectedCurrency) => {
+  const handleFinancesChange = (data) => {
     setFinancesData(data);
-    console.log(selectedCurrency)
-    setCurrency(selectedCurrency);
   };
 
   const handleAdditionalChange = (data) => {
     setAdditionalData(data);
   };
+
+  useEffect(() => {
+    console.log("Devise changée:", selectedCurrency);
+    // Faire quelque chose quand la devise change
+  }, [selectedCurrency, financesData]);
 
   const dispatch = useDispatch();
 
@@ -89,14 +92,15 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       !detailsData.entityOfOrigin ||
       !detailsData.owner ||
       !detailsData.nominee ||
-      !detailsData.detection_date
+      !detailsData.detection_date ||
+      !detailsData.event_date
     ) {
       toast.error("Please enter all required fields");
     } else {
       const payload = {
         details: {
           ...detailsData,
-          rate: currency || "USD",
+          rate: selectedCurrency,
           recorded_by: localStorage.getItem("username"),
         },
         commentary: {
@@ -107,13 +111,13 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         approved: approved,
       };
 
-      console.log(payload);
+      // console.log(payload, selectedCurrency);
 
       setIsLoading(true);
       try {
         await dispatch(AddEvent(payload));
-        dispatch(listEvents());
         onClose(); // Ferme la modal après la soumission réussie
+        await dispatch(listEvents());
       } catch (error) {
         console.error("Erreur lors de la soumission:", error);
         // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
@@ -130,7 +134,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       details: {
         ...event.details, // données existantes
         ...detailsData,   // données modifiées
-        rate: currency || event.details.rate || "USD",
+        rate: selectedCurrency || event.details.rate,
         recorded_by: localStorage.getItem("username"),
       },
       commentary: {
@@ -138,14 +142,14 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         ...commentaryData,   // données modifiées
       },
       financials: financesData.length > 0 ? [...financesData] : [...event.financials],
-      additionnalInfo: additionalInfoData.length > 0 
-        ? [...additionalInfoData] 
+      additionnalInfo: additionalInfoData.length > 0
+        ? [...additionalInfoData]
         : [...event.additionnalInfo],
       approved: approved,
     };
-  
+
     console.log(payload);
-  
+
     setIsLoading(true);
     try {
       await dispatch(updateEvent(event._id, payload));
@@ -153,7 +157,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       history.push({
         pathname: '/admin/events',
       });
-      dispatch(listEvents());
+      await dispatch(listEvents());
     } catch (error) {
       console.error("Erreur lors de la soumission:", error);
       // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
@@ -178,11 +182,11 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
             </Button>
           ) : (
             <Button
+              fontSize={12}
+              variant="solid"
+              colorScheme="blue"
               leftIcon={<AddIcon />}
               onClick={onOpen}
-              variant="outline"
-              colorScheme="blue"
-              size="sm"
             >
               Add new event
             </Button>
@@ -201,9 +205,9 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
           <ModalHeader>
             {event
               ? `EVT${event.num_ref} ${truncateText(
-                  event?.details.description,
-                  50
-                )}`
+                event?.details.description,
+                50
+              )}`
               : "New event"}
           </ModalHeader>
           <ModalCloseButton />
@@ -227,6 +231,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                     event={event}
                     entities={entities}
                     profiles={profiles}
+                    setSelectedCurrency={setSelectedCurrency}
                   />
                 </TabPanel>
                 <TabPanel>
@@ -242,6 +247,8 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                     isEdit={isEdit}
                     event={event}
                     setTotalCurrenciesProps={setTotalCurrenciesProps}
+                    selectedCurrency={selectedCurrency}
+                    setSelectedCurrency={setSelectedCurrency}
                   />
                 </TabPanel>
                 <TabPanel>

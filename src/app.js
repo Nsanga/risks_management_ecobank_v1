@@ -31,6 +31,7 @@ const App = ({ userAuth }) => {
                     <Route exact path="/admin/action" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/control" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/actions" render={(props) => <AdminLayout {...props} />} />
+                    <Route exact path="/admin/key-risk-indicator" render={(props) => <AdminLayout {...props} />} />
 
                     <Redirect from='/' to='/admin/dashboard' />
                 </Switch>

@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Grid, Image, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useHistory } from "react-router-dom";
 import Loader from '../../../../assets/img/loader.gif'
@@ -27,42 +27,55 @@ const CardDetails = ({ events, loading }) => {
         </Flex>
       ) : hasEvents ? (
         events.map((event) => {
-          // Calculer le total des pertes
           const totalLoss = event?.financials.find((f) => f.name === "Total")?.values.reduce((acc, val) => acc + val, 0);
-
+          
           return (
-            <Flex
-              direction="column"
-              p={5}
+            <Box
+              p={4}
               shadow="md"
-              borderRadius={15}
+              borderRadius="md"
               borderWidth="1px"
               mt={4}
-              key={event.num_ref} // Utilisez une clé unique
-              cursor='pointer'
+              key={event.num_ref}
+              cursor="pointer"
               onClick={() => handleViewEvent(event)}
             >
-              <Flex direction="row" justifyContent="space-between">
-                <Flex direction="row" alignItems="center">
-                  <Text fontWeight="bold" mr={10} color='blue' fontSize={12}>
-                    EVT{event.num_ref}
-                  </Text>
-                  <Text fontWeight="bold" mr={10} fontSize={12}>
-                    {truncateText(event?.details.description, 90)}
-                  </Text>
-                </Flex>
-                <Flex direction="row" alignItems="center">
-                  <Text fontWeight="bold" mr={10} fontSize={12}>
-                    {totalLoss > 0 && (
-                      <span> {totalLoss} {event?.details.rate}</span>
-                    )}
-                  </Text>
-                </Flex>
-                <Badge variant='solid' colorScheme={event?.approved ? 'blue' : 'red'}>
-                  {event?.approved ? "Approved" : "Unapproved"}
+              <Grid 
+                templateColumns="100px 1fr 120px 120px 120px"
+                gap={4}
+                alignItems="center"
+              >
+                {/* Colonne Référence */}
+                <Text fontWeight="bold" color="blue.500" fontSize="sm">
+                  EVT{event.num_ref}
+                </Text>
+                
+                {/* Colonne Description */}
+                <Text fontSize="sm" noOfLines={1}>
+                  {event?.details.description}
+                </Text>
+                
+                {/* Colonne Montant */}
+                <Text fontWeight="bold" fontSize="sm" textAlign="left">
+                  {totalLoss > 0 ? `${totalLoss.toFixed(2)}` : '-'}
+                </Text>
+                
+                {/* Colonne Taux */}
+                <Text fontSize="sm" textAlign="left">
+                  {event?.details.rate || '-'}
+                </Text>
+                
+                {/* Colonne Statut */}
+                <Badge 
+                  variant="solid" 
+                  colorScheme={event?.approved ? 'green' : 'red'}
+                  justifySelf="flex-end"
+                  fontSize="sm"
+                >
+                  {event?.approved ? "Approuvé" : "Non approuvé"}
                 </Badge>
-              </Flex>
-            </Flex>
+              </Grid>
+            </Box>
           );
         })
       ) : (

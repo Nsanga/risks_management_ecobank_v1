@@ -29,6 +29,7 @@ import Event from "views/admin/event";
 import Control from "views/admin/control";
 import Actions from "views/admin/actions";
 import Action from "views/admin/action";
+import KeyRiskIndicator from "views/admin/KRI";
 
 const routes = [
   {
@@ -51,6 +52,13 @@ const routes = [
     path: "/control",
     icon: <Icon as={MdControlPoint} width='20px' height='20px' color='inherit' />,
     component: Control,
+  },
+  {
+    name: "KRI",
+    layout: "/admin",
+    path: "/key-risk-indicator",
+    icon: <Icon as={MdControlPoint} width='20px' height='20px' color='inherit' />,
+    component: KeyRiskIndicator,
   },
   {
     name: "Actions",

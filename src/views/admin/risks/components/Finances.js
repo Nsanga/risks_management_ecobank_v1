@@ -21,6 +21,8 @@ const Finances = ({
   isEdit,
   event,
   setTotalCurrenciesProps,
+  selectedCurrency,
+  setSelectedCurrency,
 }) => {
   const initialData = [
     { id: 1, name: "Actual Loss", values: [0, 0, 0, 0] },
@@ -35,7 +37,6 @@ const Finances = ({
 
   const [tableData, setTableData] = useState(initialData);
   const [totalCurrencies, setTotalCurrencies] = useState(0);
-  const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [exchangeRates, setExchangeRates] = useState({
     USD: 1,
     USD_to_XAF: 625,
@@ -55,18 +56,18 @@ const Finances = ({
         return financialItem ? { ...item, values: financialItem.values } : item;
       });
       setTableData(updatedData);
-  
+
       const totalRow = event.financials.find((f) => f.name === "Total");
       if (totalRow && totalRow.values) {
         const total = totalRow?.values[0] + totalRow?.values[1] + totalRow?.values[2] + totalRow?.values[3]
         setTotalCurrencies(total);
         setTotalCurrenciesProps(total);
       }
-  
+
       // ✅ Notifie le parent que les données initiales sont prêtes
-      onFinancesChange(updatedData, selectedCurrency); 
+      onFinancesChange(updatedData);
     }
-  }, [event]);  
+  }, [event]);
 
   const handleRateChange = (rate, value) => {
     setExchangeRates((prevRates) => ({
@@ -271,6 +272,7 @@ const Finances = ({
 
     let conversionRate = 1;
 
+    // Calcul du taux de conversion
     if (oldCurrency === "USD" && newCurrency === "XAF") {
       conversionRate = exchangeRates.USD_to_XAF;
     } else if (oldCurrency === "EUR" && newCurrency === "XAF") {
@@ -285,28 +287,60 @@ const Finances = ({
       conversionRate = exchangeRates.EUR_to_USD;
     }
 
+    // Conversion des données
     const convertedData = tableData.map((row) => {
-      const convertedValues = row.values.map((value) => value * conversionRate);
-      return { ...row, values: convertedValues };
+      const convertedValues = row.values.map((value) => {
+        const numValue = Number(value);
+        return isNaN(numValue) ? 0 : numValue * conversionRate;
+      });
+      
+      // Calcul du total pour chaque ligne (si nécessaire)
+      const rowTotal = convertedValues.reduce((sum, val) => sum + val, 0);
+      
+      return { 
+        ...row, 
+        values: convertedValues,
+        total: row.name === "Total" ? rowTotal : row.total 
+      };
     });
 
+    // Calcul du TOTAL GLOBAL
+    const totalValues = convertedData
+      .filter(row => row.name !== "Total")
+      .reduce((acc, row) => {
+        return row.values.map((val, i) => (acc[i] || 0) + val);
+      }, [0, 0, 0, 0]);
+
+    const globalTotal = totalValues.reduce((sum, val) => sum + val, 0);
+
+    // Mise à jour de la ligne Total
+    const finalData = convertedData.map(row => {
+      if (row.name === "Total") {
+        return {
+          ...row,
+          values: totalValues,
+          total: globalTotal
+        };
+      }
+      return row;
+    });
+
+    // Mise à jour des devises disponibles
     let updatedAvailableCurrencies = { USD: true, EUR: true, XAF: true };
-    if (newCurrency === "USD") {
-      updatedAvailableCurrencies = { USD: true, EUR: true, XAF: true };
-    } else if (newCurrency === "EUR") {
+    if (newCurrency === "EUR") {
       updatedAvailableCurrencies = { USD: true, EUR: true, XAF: false };
     } else if (newCurrency === "XAF") {
       updatedAvailableCurrencies = { USD: true, EUR: false, XAF: true };
     }
 
-    const newTotalCurrencies = (totalCurrencies * conversionRate).toFixed(3);
-    setTableData(convertedData);
+    // Mise à jour des états
+    setTableData(finalData);
     setSelectedCurrency(newCurrency);
     setAvailableCurrencies(updatedAvailableCurrencies);
-    setTotalCurrencies(newTotalCurrencies);
-    setTotalCurrenciesProps(newTotalCurrencies);
-    onFinancesChange(convertedData, newCurrency);
-  };
+    setTotalCurrencies(globalTotal);
+    setTotalCurrenciesProps(globalTotal);
+    onFinancesChange(finalData);
+};
 
   return (
     <Box>

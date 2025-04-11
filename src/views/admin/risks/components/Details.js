@@ -16,7 +16,7 @@ import DocumentUploader from "./DocumentUploader";
 import RAG from "../RAG";
 import moment from "moment";
 
-const Details = ({ event, onDetailsChange, entities, profiles }) => {
+const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurrency }) => {
   const [rag, setRag] = useState([]);
 
   function getCurrentTime() {
@@ -32,6 +32,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
 
   const [formData, setFormData] = useState({
     event_date: "",
+    rate: "",
     RAG: "",
     activeEvent: false,
     event_time: "",
@@ -144,6 +145,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
           ? event.details.document
           : [],
       }));
+      setSelectedCurrency(event.details.rate);
     }
   }, [event]);
 
@@ -165,7 +167,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
     menu: (provided) => ({
       ...provided,
       fontSize: "14px",
-      maxHeight: "200px", // Définir la hauteur maximale du menu
+      // maxHeight: "200px", // Définir la hauteur maximale du menu
       overflowY: "auto", // Activer le défilement si le contenu dépasse la hauteur
     }),
     option: (provided) => ({
@@ -228,7 +230,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
       <Flex flexDirection="column" gap={4}>
         <Flex justifyContent="space-between" alignItems="center">
           <Flex gap={6} alignItems="center">
-            <Text fontSize={12}>Event Date :</Text>
+            <Text fontSize={12}>Event Date : <span style={{ color: "red" }}>*</span></Text>
             <Box width={200}>
               <Input
                 placeholder="Select Date"
@@ -279,6 +281,9 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 size="sm"
                 type="time"
                 value={formData.event_time}
+                onChange={(e) =>
+                  handleInputChange("event_time", e.target.value)
+                }
               />
             </Box>
           </Flex>

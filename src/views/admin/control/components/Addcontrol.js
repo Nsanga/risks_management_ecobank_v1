@@ -320,9 +320,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     const selectedIds = selectedRows;
     const targetEntityId = formData.entityCopy;
 
-    await dispatch(
-      copyEntityRiskControl(selectedIds, targetEntityId, itemType)
-    );
+    await dispatch(copyEntityRiskControl(selectedIds, targetEntityId, itemType));
+    await dispatch(listEntityRiskControls(selectedEntityDescription));
 
     closeCopyModal();
     setIsRadioCopyChecked(false);
@@ -339,9 +338,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     const selectedIds = selectedRows;
     const targetEntityId = formData.entityMove;
 
-    await dispatch(
-      moveEntityRiskControl(selectedIds, targetEntityId, itemType)
-    );
+    await dispatch(moveEntityRiskControl(selectedIds, targetEntityId, itemType));
+    await dispatch(listEntityRiskControls(selectedEntityDescription));
 
     closeMoveModal();
     setIsRadioMoveChecked(false);
@@ -403,16 +401,29 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
   };
 
   useEffect(() => {
-    if (selectedEntityDescription) {
-      dispatch(listEntityRiskControls(selectedEntityDescription));
-      dispatch(listEventsByEntity(selectedEntity?._id));
-      dispatch(listEntityActions({ idEntity: selectedEntity?._id }));
-      setFormData({
-        entity: selectedEntityDescription,
-        entityMove: null,
-        entityCopy: null,
-      });
-    }
+    const fetchEntityData = async () => {
+      if (selectedEntityDescription) {
+        try {
+          // Exécute les appels en parallèle pour meilleure performance
+          await Promise.all([
+            dispatch(listEntityRiskControls(selectedEntityDescription)),
+            dispatch(listEventsByEntity(selectedEntity?._id)),
+            dispatch(listEntityActions({ idEntity: selectedEntity?._id })),
+          ]);
+  
+          setFormData({
+            entity: selectedEntityDescription,
+            entityMove: null,
+            entityCopy: null,
+          });
+        } catch (error) {
+          console.error("Error fetching entity data:", error);
+          // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
+        }
+      }
+    };
+  
+    fetchEntityData();
   }, [selectedEntityDescription, dispatch, selectedEntity]);
 
   return (
