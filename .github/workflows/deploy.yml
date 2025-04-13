@@ -2,7 +2,7 @@ name: Déploiement de l'application React
 
 on:
   push:
-    branches: [production]
+    branches: [main]
 
 jobs:
   build-et-deploiement:
