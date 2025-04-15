@@ -1,13 +1,11 @@
-import { Card } from '@chakra-ui/react';
-import React from 'react';
+import React from 'react'
+import KeyIndicatorComponent from './components/KeyIndicatorComponent'
 
 const KeyRiskIndicatorPage = () => {
   return (
-    <Card mt="100px">
-      
-    </Card>
-  );
-};
-
-export default KeyRiskIndicatorPage;
+    <div>
+      <KeyIndicatorComponent />
+    </div>
+  )
+}
 
