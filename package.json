@@ -36,6 +36,7 @@
     "react-custom-scrollbars-2": "^4.2.1",
     "react-dom": "18",
     "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.55.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.3.1",
     "react-is": "^18.0.0",

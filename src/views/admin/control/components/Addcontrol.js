@@ -79,7 +79,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     Controls: [],
     Events: [],
     Actions: [],
-    Kits: [],
+    KIs: [],
     Obligations: [],
   });
   const [owner, setOwner] = React.useState(null);
@@ -213,7 +213,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
           Controls: entityRiskControls[0]?.controls || [],
           Events: events || [],
           Actions: actions || [],
-          Kits: [],
+          KIs: [],
           Obligations: [],
         });
       } else {
@@ -222,7 +222,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
           Controls: [],
           Events: [],
           Actions: [],
-          Kits: [],
+          KIs: [],
           Obligations: [],
         });
       }
@@ -233,7 +233,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
         Controls: [],
         Events: [],
         Actions: [],
-        Kits: [],
+        KIs: [],
         Obligations: [],
       });
     }
