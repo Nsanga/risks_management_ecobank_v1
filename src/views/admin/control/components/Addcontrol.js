@@ -203,6 +203,19 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
       { label: "Nominee", key: "nomineeControl" },
       { label: "Reviewer", key: "reviewerControl" },
     ],
+    KIs: [
+      { label: "Reference Id", key: "reference" },
+      { label: "Description", key: "riskIndicatorDescription" },
+      { label: "Category", key: "preventiveDetectiveControl" },
+      { label: "Type", key: "preventiveDetectiveControl" },
+      { label: "Frequency", key: "frequenceKeyIndicator" },
+      { label: "Trend", key: "preventiveDetectiveControl" },
+      { label: "Status", key: "preventiveDetectiveControl" },
+      { label: "Average", key: "calculMethodKeyIndicator" },
+      { label: "Owner", key: "ownerControl" },
+      { label: "Nominee", key: "nomineeControl" },
+      { label: "Reviewer", key: "reviewerControl" },
+    ],
   };
 
   useEffect(() => {
