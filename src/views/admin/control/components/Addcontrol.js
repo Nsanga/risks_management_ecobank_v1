@@ -49,12 +49,15 @@ import { listEventsByEntity } from "redux/events/action";
 import CardDetails from "views/admin/risks/components/cardDetails";
 import { listEntityActions } from "redux/actions/action";
 import ActionCard from "./ActionCard";
+import { listEntityKeyIndicators } from "redux/kri/action";
+import KeyIndicatorComponent from "views/admin/KRI/components/KeyIndicatorComponent";
 
-function AddControl({ entityRiskControls, loading, entities, profiles, events, actions }) {
-  console.log("actions:", actions);
+function AddControl({ entityRiskControls, loading, entities, profiles, events, actions, keyIndicator }) {
+  console.log("keyIndicator:", keyIndicator);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [selectedControl, setSelectedControl] = useState(null);
+  const [selectedKIs, setSelectedKIs] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentView, setCurrentView] = useState("Risks");
   const [currenChoice, setCurrentChoice] = useState(null);
@@ -226,7 +229,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
           Controls: entityRiskControls[0]?.controls || [],
           Events: events || [],
           Actions: actions || [],
-          KIs: [],
+          KIs: keyIndicator || [],
           Obligations: [],
         });
       } else {
@@ -250,7 +253,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
         Obligations: [],
       });
     }
-  }, [entityRiskControls, formData.entity]);
+  }, [entityRiskControls, events, actions, keyIndicator, formData.entity]);
 
   // Debugging: voir quand viewData est mis à jour
   // useEffect(() => {
@@ -262,10 +265,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     const risk = viewData.Risks[index];
     // console.log("risk:", risk);
     const control = viewData.Controls[index];
+    const KIs = viewData.KIs
     // console.log("control:", control);
     setIndexChoice(index);
     setSelectedRisk(risk);
     setSelectedControl(control)
+    setSelectedKIs(KIs)
     setIsEditMode(true);
     onOpen();
   };
@@ -422,8 +427,9 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             dispatch(listEntityRiskControls(selectedEntityDescription)),
             dispatch(listEventsByEntity(selectedEntity?._id)),
             dispatch(listEntityActions({ idEntity: selectedEntity?._id })),
+            dispatch(listEntityKeyIndicators({ entityId: selectedEntity?._id }))
           ]);
-  
+
           setFormData({
             entity: selectedEntityDescription,
             entityMove: null,
@@ -435,7 +441,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
         }
       }
     };
-  
+
     fetchEntityData();
   }, [selectedEntityDescription, dispatch, selectedEntity]);
 
@@ -507,6 +513,19 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             selectedEntityDescription={selectedEntityDescription}
           />
         )}
+
+        <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Détails du KRI</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {selectedKIs && (
+                <KeyIndicatorComponent kri={selectedKIs} onClose={onClose} />
+              )}
+            </ModalBody>
+          </ModalContent>
+        </Modal>
 
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
           <Flex direction="row" align="center" justify="space-between" mb={4}>
@@ -585,7 +604,8 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             )}
 
             {(currentView === "Risks" && viewData.Risks && viewData.Risks.length > 0) ||
-              (currentView === "Controls" && viewData.Controls && viewData.Controls.length > 0) ? (
+              (currentView === "Controls" && viewData.Controls && viewData.Controls.length > 0) ||
+              (currentView === "KIs" && viewData.KIs && viewData.KIs.length > 0) ? (
               <>
                 <Table variant="simple" mt={4}>
                   <Thead>
@@ -946,11 +966,12 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
   );
 }
 
-const mapStateToProps = ({ EntityRiskControlReducer, EventReducer, ActionReducer }) => ({
+const mapStateToProps = ({ EntityRiskControlReducer, EventReducer, ActionReducer, KeyIndicatorReducer }) => ({
   entityRiskControls: EntityRiskControlReducer.entityRiskControls,
   loading: EntityRiskControlReducer.loading,
   events: EventReducer.events,
   actions: ActionReducer.actions,
+  keyIndicator: KeyIndicatorReducer.keyIndicator,
 });
 
 export default connect(mapStateToProps)(AddControl);
