@@ -13,7 +13,6 @@ function* list() {
         let link = `${url}/api/v1/risks-controls/getKeyIndicator`;
         const response = yield getRequest(link);
         if (response.success === true) {
-            console.log(" ===>>>", response.data[0].dataKeyIndicators); // Vérifiez la structure de la réponse ici
             yield put({ type: types.GET_ALL_KRI_SUCCESS, payload: response.data[0].dataKeyIndicators });
         } else {
             yield put({ type: types.GET_ALL_KRI_FAILED, payload: "echec recuperation des données" });
