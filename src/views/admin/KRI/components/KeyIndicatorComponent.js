@@ -19,6 +19,8 @@ import {
   Button
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import History from "./History";
+import Action from "./action";
 
 const KeyIndicatorComponent = ({kri, onClose}) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -137,11 +139,11 @@ const KeyIndicatorComponent = ({kri, onClose}) => {
             </TabPanel>
 
             <TabPanel>
-              <p>History content here...</p>
+              <History/>
             </TabPanel>
 
             <TabPanel>
-              <p>Actions content here...</p>
+              <Action/>
             </TabPanel>
 
             <TabPanel>
