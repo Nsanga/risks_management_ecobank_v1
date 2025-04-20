@@ -8,18 +8,33 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
 function* list() {
-    console.log("Saga LIST triggered");
     try {
         let link = `${url}/api/v1/risks-controls/getKeyIndicator`;
         const response = yield getRequest(link);
+        console.log("response triggered", response);
+        
         if (response.success === true) {
-            yield put({ type: types.GET_ALL_KRI_SUCCESS, payload: response.data[0].dataKeyIndicators });
+            // Récupérer tous les dataKeyIndicators de toutes les entités
+            const allKeyIndicators = response.data.reduce((acc, entity) => {
+                return [...acc, ...entity.dataKeyIndicators];
+            }, []);
+            
+            yield put({ 
+                type: types.GET_ALL_KRI_SUCCESS, 
+                payload: allKeyIndicators 
+            });
         } else {
-            yield put({ type: types.GET_ALL_KRI_FAILED, payload: "echec recuperation des données" });
+            yield put({ 
+                type: types.GET_ALL_KRI_FAILED, 
+                payload: "echec recuperation des données" 
+            });
         }
     } catch (error) {
         console.log(error);
-        yield put({ type: types.GET_ALL_KRI_FAILED, payload: error });
+        yield put({ 
+            type: types.GET_ALL_KRI_FAILED, 
+            payload: error 
+        });
     }
 }
 

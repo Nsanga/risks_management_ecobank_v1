@@ -1,15 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import KriCard  from './components/KriCard';
-import { Box, Card } from '@chakra-ui/react';
+import { connect, useDispatch } from 'react-redux';
+import { listEntities } from 'redux/entitiy/action';
+import { listProfiles } from 'redux/profile/action';
+import Card from 'components/card/Card';
 
-const KeyRiskIndicatorPage = () => {
+const KeyRiskIndicatorPage = ({ entities, profiles, loading }) => {
+const dispatch = useDispatch()
+
+  useEffect(() => {
+        dispatch(listEntities());
+        dispatch(listProfiles());
+    }, [dispatch]);
+
   return (
-    <Box marginTop={24}>
-      < KriCard />
-    </Box>
+    <Card mt="100px">
+      < KriCard entities={entities} profiles={profiles} loading={loading} />
+    </Card>
   );
 };
 
-export default KeyRiskIndicatorPage;
+const mapStateToProps = ({ EntityReducer, ProfileReducer }) => ({
+  entities: EntityReducer.entities,
+  profiles: ProfileReducer.profiles,
+  loading: EntityReducer.loading,
+});
+
+export default connect(mapStateToProps)(KeyRiskIndicatorPage);
 
 
