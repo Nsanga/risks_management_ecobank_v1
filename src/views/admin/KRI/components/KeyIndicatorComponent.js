@@ -227,7 +227,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
 
                 <FormControl>
                   <FormLabel>Detailed Description</FormLabel>
-                  <Textarea {...register("detailedDescription")} defaultValue={riskIndicatorDescription} /> 
+                  <Textarea {...register("detailedDescription")} defaultValue={kriData.riskIndicatorDescription} /> 
                 </FormControl>
 
                 <FormControl>
