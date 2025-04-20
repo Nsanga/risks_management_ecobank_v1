@@ -209,15 +209,15 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     KIs: [
       { label: "Reference Id", key: "reference" },
       { label: "Description", key: "riskIndicatorDescription" },
-      { label: "Category", key: "preventiveDetectiveControl" },
-      { label: "Type", key: "preventiveDetectiveControl" },
+      { label: "Category", key: "category" },
+      { label: "Type", key: "type" },
       { label: "Frequency", key: "frequenceKeyIndicator" },
       { label: "Trend", key: "preventiveDetectiveControl" },
       { label: "Status", key: "preventiveDetectiveControl" },
       { label: "Average", key: "calculMethodKeyIndicator" },
-      { label: "Owner", key: "ownerControl" },
-      { label: "Nominee", key: "nomineeControl" },
-      { label: "Reviewer", key: "reviewerControl" },
+      { label: "Owner", key: "ownerKeyIndicator" },
+      { label: "Nominee", key: "nomineeKeyIndicator" },
+      { label: "Reviewer", key: "reviewerKeyIndicator" },
     ],
   };
 
@@ -267,11 +267,15 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     const control = viewData.Controls[index];
     const KIs = viewData.KIs
     // console.log("control:", control);
-    setIndexChoice(index);
-    setSelectedRisk(risk);
-    setSelectedControl(control)
-    setSelectedKIs(KIs)
-    setIsEditMode(true);
+    if (currentView === "KIs" && viewData.KIs) {
+      setSelectedKIs(KIs)
+    }
+    if ((currentView === "Risks" && viewData.Risks) || (currentView === "Controls" && viewData.Controls)) {
+      setIndexChoice(index);
+      setSelectedRisk(risk);
+      setSelectedControl(control)
+      setIsEditMode(true);
+    }
     onOpen();
   };
 
@@ -514,18 +518,18 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
           />
         )}
 
-        <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Détails du KRI</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {selectedKIs && (
+        {selectedKIs && (
+          <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Détails du KRI</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
                 <KeyIndicatorComponent kri={selectedKIs} onClose={onClose} />
-              )}
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+        )}
 
         <Box w="100%" p={4} mt={4} borderWidth="1px" borderRadius="lg">
           <Flex direction="row" align="center" justify="space-between" mb={4}>
@@ -604,63 +608,75 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             )}
 
             {(currentView === "Risks" && viewData.Risks && viewData.Risks.length > 0) ||
-              (currentView === "Controls" && viewData.Controls && viewData.Controls.length > 0) ||
-              (currentView === "KIs" && viewData.KIs && viewData.KIs.length > 0) ? (
+              (currentView === "Controls" && viewData.Controls && viewData.Controls.length > 0) ? (
               <>
-                <Table variant="simple" mt={4}>
-                  <Thead>
-                    <Tr>
-                      <div
-                        style={{ position: "relative", left: "25px", top: "15px" }}
-                      >
-                        <Checkbox
-                          onChange={handleSelectAll}
-                          isChecked={
-                            selectedRows.length === viewData[currentView]?.length &&
-                            viewData[currentView]?.length > 0
-                          }
-                        />
-                      </div>
-
-                      {columnsByView[currentView]?.map((col) => (
-                        <Th fontSize={10} key={col.key}>
-                          {col.label}
-                        </Th>
-                      ))}
-                    </Tr>
-                  </Thead>
-                  {loading ? (
-                    <Flex alignItems="center" justifyContent="center" width="100%">
-                      <Image src={Loader} alt="Loading..." height={25} width={25} />
-                    </Flex>
-                  ) : (
-                    <Tbody>
-                      {viewData[currentView]?.map((row, index) => (
-                        <Tr key={index} cursor="pointer">
-                          <Td>
+                <div style={{
+                  width: '100%',
+                  overflowX: 'auto',
+                  position: 'relative',
+                  paddingBottom: '10px' // Espace pour le scrollbar
+                }}>
+                  {/* Conteneur avec scroll horizontal */}
+                  <div style={{
+                    minWidth: 'max-content', // Force le contenu à ne pas se réduire
+                    width: '100%'
+                  }}>
+                    <Table variant="simple" mt={4} minWidth="800px">
+                      <Thead>
+                        <Tr>
+                          <div
+                            style={{ position: "relative", left: "25px", top: "15px" }}
+                          >
                             <Checkbox
-                              onChange={(e) =>
-                                handleCheckboxChange(row, e.target.checked)
+                              onChange={handleSelectAll}
+                              isChecked={
+                                selectedRows.length === viewData[currentView]?.length &&
+                                viewData[currentView]?.length > 0
                               }
-                              isChecked={isRowSelected(row)}
                             />
-                          </Td>
+                          </div>
+
                           {columnsByView[currentView]?.map((col) => (
-                            <Td
-                              fontSize={12}
-                              key={col.key}
-                              onClick={() => handleRowClick(row, index)}
-                            >
-                              {row[col.key]?.length > 20
-                                ? `${row[col.key].substring(0, 16)}...`
-                                : row[col.key]}
-                            </Td>
+                            <Th fontSize={14} key={col.key} textTransform="none">
+                              {col.label}
+                            </Th>
                           ))}
                         </Tr>
-                      ))}
-                    </Tbody>
-                  )}
-                </Table>
+                      </Thead>
+                      {loading ? (
+                        <Flex alignItems="center" justifyContent="center" width="100%">
+                          <Image src={Loader} alt="Loading..." height={25} width={25} />
+                        </Flex>
+                      ) : (
+                        <Tbody>
+                          {viewData[currentView]?.map((row, index) => (
+                            <Tr key={index} cursor="pointer">
+                              <Td>
+                                <Checkbox
+                                  onChange={(e) =>
+                                    handleCheckboxChange(row, e.target.checked)
+                                  }
+                                  isChecked={isRowSelected(row)}
+                                />
+                              </Td>
+                              {columnsByView[currentView]?.map((col) => (
+                                <Td
+                                  fontSize={12}
+                                  key={col.key}
+                                  onClick={() => handleRowClick(row, index)}
+                                >
+                                  {row[col.key]?.length > 20
+                                    ? `${row[col.key].substring(0, 16)}...`
+                                    : row[col.key]}
+                                </Td>
+                              ))}
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      )}
+                    </Table>
+                  </div>
+                </div>
                 {selectedRows.length > 0 && (
                   <HStack mt={4} spacing={4} justifyContent="start">
                     <Button
@@ -698,7 +714,101 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 justifyContent="end"
                 alignItems="center"
               >
-                No data available for {currentView}
+                {/* No data available for {currentView} */}
+              </Flex>
+            )}
+
+            {(currentView === "KIs" && viewData.KIs && viewData.KIs.length > 0) ? (
+              <>
+                <div style={{
+                  width: '100%',
+                  overflowX: 'auto',
+                  position: 'relative',
+                  paddingBottom: '10px' // Espace pour le scrollbar
+                }}>
+                  {/* Conteneur avec scroll horizontal */}
+                  <div style={{
+                    minWidth: 'max-content', // Force le contenu à ne pas se réduire
+                    width: '100%'
+                  }}>
+                    <Table variant="simple" mt={4} minWidth="800px">
+                      <Thead>
+                        <Tr>
+                          <div
+                            style={{ position: "relative", left: "25px", top: "15px" }}
+                          >
+                            <Checkbox
+                              onChange={handleSelectAll}
+                              isChecked={
+                                selectedRows.length === viewData[currentView]?.length &&
+                                viewData[currentView]?.length > 0
+                              }
+                            />
+                          </div>
+
+                          {columnsByView[currentView]?.map((col) => (
+                            <Th fontSize={14} key={col.key} textTransform="none">
+                              {col.label}
+                            </Th>
+                          ))}
+                        </Tr>
+                      </Thead>
+                      {loading ? (
+                        <Flex alignItems="center" justifyContent="center" width="100%">
+                          <Image src={Loader} alt="Loading..." height={25} width={25} />
+                        </Flex>
+                      ) : (
+                        <Tbody>
+                          {viewData[currentView]?.map((row, index) => (
+                            <Tr key={index} cursor="pointer">
+                              <Td>
+                                <Checkbox
+                                  onChange={(e) =>
+                                    handleCheckboxChange(row, e.target.checked)
+                                  }
+                                  isChecked={isRowSelected(row)}
+                                />
+                              </Td>
+                              {columnsByView[currentView]?.map((col) => (
+                                <Td
+                                  fontSize={12}
+                                  key={col.key}
+                                  onClick={() => handleRowClick(row, index)}
+                                >
+                                  {row[col.key]?.length > 20
+                                    ? `${row[col.key].substring(0, 16)}...`
+                                    : row[col.key]}
+                                </Td>
+                              ))}
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      )}
+                    </Table>
+                  </div>
+                </div>
+                {selectedRows.length > 0 && (
+                  <HStack mt={4} spacing={4} justifyContent="start">
+                    <Button
+                      colorScheme="blue"
+                      fontSize={12}
+                      leftIcon={<EditIcon />}
+                      onClick={bulkAmendModalOpen}
+                    >
+                      Bulk Amend
+                    </Button>
+                  </HStack>
+                )}
+              </>
+            ) : (
+              <Flex
+                fontSize={12}
+                mt={4}
+                p={4}
+                justifyContent="end"
+                alignItems="center"
+              >
+                {/* No data available for {currentView} */}
               </Flex>
             )}
           </>
