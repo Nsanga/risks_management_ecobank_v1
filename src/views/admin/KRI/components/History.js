@@ -25,16 +25,16 @@ const History = () => {
       <Table variant="simple" mb={6} size="sm">
         <Thead bg="blue.100">
           <Tr fontSize="10px">
-            <Th>Status</Th>
-            <Th>Trend</Th>
-            <Th>0.00</Th>
-            <Th>0.00</Th>
-            <Th>Average</Th>
-            <Th>R</Th>
-            <Th>A</Th>
-            <Th>Target</Th>
-            <Th>A</Th>
-            <Th>R</Th>
+            <Th textTransform="none">Status</Th>
+            <Th textTransform="none">Trend</Th>
+            <Th textTransform="none">0.00</Th>
+            <Th textTransform="none">0.00</Th>
+            <Th textTransform="none">Average</Th>
+            <Th textTransform="none">R</Th>
+            <Th textTransform="none">A</Th>
+            <Th textTransform="none">Target</Th>
+            <Th textTransform="none">A</Th>
+            <Th textTransform="none">R</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -64,10 +64,10 @@ const History = () => {
           <Table variant="simple" size="sm">
             <Thead bg="gray.100">
               <Tr>
-                <Th>Status</Th>
-                <Th>Period</Th>
-                <Th>Time</Th>
-                <Th>Threshold Value</Th>
+                <Th textTransform="none">Status</Th>
+                <Th textTransform="none">Period</Th>
+                <Th textTransform="none">Time</Th>
+                <Th textTransform="none">Threshold Value</Th>
               </Tr>
             </Thead>
             <Tbody>

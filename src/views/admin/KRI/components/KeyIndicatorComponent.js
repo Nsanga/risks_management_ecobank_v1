@@ -126,7 +126,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
     }),
     singleValue: (provided) => ({
       ...provided,
-      fontSize: "12px",
+      fontSize: "12px", 
     }),
   };
 

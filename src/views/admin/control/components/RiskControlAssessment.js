@@ -164,12 +164,12 @@ const RiskControlAssessment = ({
         <Table variant="simple" width="100%" fontSize="10px">
           <Thead bg="gray.200">
             <Tr>
-              <Th>Ref</Th>
-              <Th>Ass On</Th>
-              <Th>Due On</Th>
-              <Th>Closed date</Th>
-              <Th>Perf</Th>
-              <Th>Att</Th>
+              <Th textTransform="none">Ref</Th>
+              <Th textTransform="none">Ass On</Th>
+              <Th textTransform="none">Due On</Th>
+              <Th textTransform="none">Closed date</Th>
+              <Th textTransform="none">Perf</Th>
+              <Th textTransform="none">Att</Th>
             </Tr>
           </Thead>
           <Tbody>
