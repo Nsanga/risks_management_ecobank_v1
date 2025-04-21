@@ -39,6 +39,8 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
 
   // Préparation des options pour les profils
   const profilesOptions = React.useMemo(() => {
+    if (!Array.isArray(profiles)) return []; // Handle non-array cases
+
     return profiles
       .filter(profile => profile?.activeUser)
       .map(profile => ({
@@ -124,7 +126,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
     }),
     singleValue: (provided) => ({
       ...provided,
-      fontSize: "12px",
+      fontSize: "12px", 
     }),
   };
 
@@ -178,95 +180,99 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
           <TabPanels>
             <TabPanel>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                <FormControl>
-                  <FormLabel>Owner</FormLabel>
-                  <Select
-                    name="owner"
-                    options={profilesOptions}
-                    styles={customStyles}
-                    onChange={(selected) => setValue('owner', selected)}
-                    value={watch('owner')}
-                    placeholder="Select owner"
-                    isClearable
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Nominee</FormLabel>
-                  <Select
-                    name="nominee"
-                    options={profilesOptions}
-                    styles={customStyles}
-                    onChange={(selected) => setValue('nominee', selected)}
-                    value={watch('nominee')}
-                    placeholder="Select nominee"
-                    isClearable
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Reviewer</FormLabel>
-                  <Select
-                    name="reviewer"
-                    options={profilesOptions}
-                    styles={customStyles}
-                    onChange={(selected) => setValue('reviewer', selected)}
-                    value={watch('reviewer')}
-                    placeholder="Select reviewer"
-                    isClearable
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Review Date</FormLabel>
-                  <Input {...register("reviewDate")} type="date" />
-                </FormControl>
-
-                <FormControl display="flex" alignItems="center">
-                  <Checkbox {...register("isActive")} defaultChecked mr={2} />
-                  <FormLabel mb="0">Active Key Indicator</FormLabel>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Detailed Description</FormLabel>
-                  <Textarea {...register("detailedDescription")} defaultValue={kriData.riskIndicatorDescription} /> 
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Type of KI</FormLabel>
-                  <Input {...register("typeOfKi")} defaultValue={kriData.type} />
-                </FormControl>
-
-                <Box borderWidth="1px" borderRadius="md" p={4} mt={4}>
-                  <Heading size="sm" mb={2}>Thresholds</Heading>
-                  <FormControl>
-                    <FormLabel>Threshold</FormLabel>
+                <Box>
+                  <FormControl display="flex" alignItems="center" gap={8} marginBottom={4}>
+                    <FormLabel>Owner:</FormLabel>
                     <Select
-                      name="thresholdType"
-                      options={thresholdOptions}
+                      name="owner"
+                      options={profilesOptions}
                       styles={customStyles}
-                      onChange={(selected) => setValue('thresholdType', selected)}
-                      value={watch('thresholdType')}
+                      onChange={(selected) => setValue('owner', selected)}
+                      value={watch('owner')}
+                      placeholder="Select owner"
+                      isClearable
                     />
                   </FormControl>
-                  <FormControl mt={2}>
-                    <FormLabel>Target</FormLabel>
-                    <Input {...register("target")} defaultValue="0" />
+
+                  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                    <FormLabel>Nominee:</FormLabel>
+                    <Select
+                      name="nominee"
+                      options={profilesOptions}
+                      styles={customStyles}
+                      onChange={(selected) => setValue('nominee', selected)}
+                      value={watch('nominee')}
+                      placeholder="Select nominee"
+                      isClearable
+                    />
                   </FormControl>
-                  <FormControl display="flex" alignItems="center" mt={2}>
-                    <Checkbox {...register("isPercentage")} mr={2} />
-                    <FormLabel mb="0">Thresholds are percentages</FormLabel>
+
+                  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                    <FormLabel>Reviewer:</FormLabel>
+                    <Select
+                      name="reviewer"
+                      options={profilesOptions}
+                      styles={customStyles}
+                      onChange={(selected) => setValue('reviewer', selected)}
+                      value={watch('reviewer')}
+                      placeholder="Select reviewer"
+                      isClearable
+                    />
                   </FormControl>
+
+                  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                    <FormLabel>Review Date:</FormLabel>
+                    <Input {...register("reviewDate")} type="date" />
+                  </FormControl>
+
+                  <FormControl display="flex" alignItems="center" marginBottom={4}>
+                    <Checkbox {...register("isActive")} defaultChecked mr={2} />
+                    <FormLabel mb="0">Active Key Indicator</FormLabel>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Detailed Description</FormLabel>
+                    <Textarea {...register("detailedDescription")} defaultValue={kriData.riskIndicatorDescription} />
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                    <FormLabel>Type of KI</FormLabel>
+                    <Input {...register("typeOfKi")} defaultValue={kriData.type} />
+                  </FormControl>
+
+                  <Box borderWidth="1px" borderRadius="md" p={4} mt={4}>
+                    <Heading size="sm" mb={2}>Thresholds</Heading>
+                    <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                      <FormLabel>Threshold</FormLabel>
+                      <Select
+                        name="thresholdType"
+                        options={thresholdOptions}
+                        styles={customStyles}
+                        onChange={(selected) => setValue('thresholdType', selected)}
+                        value={watch('thresholdType')}
+                      />
+                    </FormControl>
+                    <FormControl display="flex" alignItems="center" gap={10} marginBottom={4}>
+                      <FormLabel>Target</FormLabel>
+                      <Input {...register("target")} defaultValue="0" />
+                    </FormControl>
+                    <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                      <Checkbox {...register("isPercentage")} mr={2} />
+                      <FormLabel mb="0">Thresholds are percentages</FormLabel>
+                    </FormControl>
+                  </Box>
                 </Box>
               </SimpleGrid>
             </TabPanel>
 
             <TabPanel>
-              <History/>
+              <History />
             </TabPanel>
 
             <TabPanel>
-              <Action/>
+              <Action />
             </TabPanel>
 
             <TabPanel>
