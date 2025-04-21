@@ -41,7 +41,7 @@ const GeneralForm = ({
     return selectedControl?.frequence || '';
   });
   const dispatch = useDispatch();
-console.log(selectedControl)
+
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
     ?.map((profile, index) => {
