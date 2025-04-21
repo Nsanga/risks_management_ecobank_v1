@@ -19,6 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
+import History from "./History";
+import Action from "./action";
 
 const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
