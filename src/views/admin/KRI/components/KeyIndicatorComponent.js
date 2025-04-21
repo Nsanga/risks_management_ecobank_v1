@@ -37,6 +37,8 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
 
   // Préparation des options pour les profils
   const profilesOptions = React.useMemo(() => {
+    if (!Array.isArray(profiles)) return []; // Handle non-array cases
+    
     return profiles
       .filter(profile => profile?.activeUser)
       .map(profile => ({
