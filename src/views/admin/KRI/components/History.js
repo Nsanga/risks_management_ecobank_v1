@@ -86,13 +86,13 @@ const History = () => {
         {/* Formulaire de modification */}
         <Box flex="1" bg="gray.50" p={4} borderRadius="md" boxShadow="md">
           <VStack align="start" spacing={3}>
-            <HStack>
-              <Text>Period :</Text>
+            <HStack spacing={2}>
+              <Text  mb="0" whiteSpace="nowrap">Period :</Text>
               <Input size="sm" value="28/01/2025" readOnly />
             </HStack>
 
-            <HStack>
-              <Text>Value :</Text>
+            <HStack spacing={2}>
+              <Text  mb="0" whiteSpace="nowrap">Value :</Text>
               <Input size="sm" placeholder="Enter value..." />
             </HStack>
 

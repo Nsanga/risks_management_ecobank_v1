@@ -124,21 +124,21 @@ const Action = () => {
             <Flex gap={4} flexWrap="wrap" w="100%">
   <HStack spacing={2}>
     <Checkbox />
-    <Text>Target Date:</Text>
+    <Text mb="0" whiteSpace="nowrap">Target Date:</Text>
     <Input size="sm" type="date" />
   </HStack>
-  <Box>
-    <Text>Cost:</Text>
+  <HStack spacing={2}>
+    <Text mb="0" whiteSpace="nowrap">Cost:</Text>
     <Input size="sm" />
-  </Box>
-  <Box>
-    <Text>Currency:</Text>
+    </HStack>
+    <HStack spacing={2}>
+    <Text mb="0" whiteSpace="nowrap">Currency:</Text>
     <Select size="sm" defaultValue="USD">
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
       <option value="XAF">XAF</option>
     </Select>
-  </Box>
+    </HStack>
 </Flex>
 
           </VStack>

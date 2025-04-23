@@ -15,7 +15,10 @@ import {
   Heading,
   Divider,
   SimpleGrid,
-  Button
+  Button,
+  HStack,
+  Text,
+  Flex
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
@@ -181,7 +184,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
             <TabPanel>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                 <Box>
-                  <FormControl display="flex" alignItems="center" gap={8} marginBottom={4}>
+                  <FormControl display="flex" bg="gray.100" alignItems="center" gap={8} marginBottom={4}>
                     <FormLabel>Owner:</FormLabel>
                     <Select
                       name="owner"
@@ -221,7 +224,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                   </FormControl>
 
                   <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
-                    <FormLabel>Review Date:</FormLabel>
+                    <FormLabel mb="0" whiteSpace="nowrap">Review Date:</FormLabel>
                     <Input {...register("reviewDate")} type="date" />
                   </FormControl>
 
@@ -237,8 +240,9 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                 </Box>
 
                 <Box>
-                  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
-                    <FormLabel>Type of KI</FormLabel>
+                <FormControl display="flex" alignItems="center" gap={4} mb={4}>
+                    <FormLabel mb="0" whiteSpace="nowrap">
+                      Type of KI</FormLabel>
                     <Input {...register("typeOfKi")} defaultValue={kriData.type} />
                   </FormControl>
 
@@ -258,10 +262,61 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                       <FormLabel>Target</FormLabel>
                       <Input {...register("target")} defaultValue="0" />
                     </FormControl>
-                    <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
-                      <Checkbox {...register("isPercentage")} mr={2} />
-                      <FormLabel mb="0">Thresholds are percentages</FormLabel>
-                    </FormControl>
+                    <Box mt={4} borderRadius="md" overflow="hidden">
+  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+    <Checkbox {...register("isPercentage")} mr={2} />
+    <FormLabel mb="0">Thresholds are percentages</FormLabel>
+  </FormControl>
+  
+  <Box w="100%">
+              <HStack spacing={4} mb={2}>
+                <Text fontWeight="bold" w="30px">R :</Text>
+                <Input bg="red.400" color="white" size="sm" value="6.00" readOnly />
+              </HStack>
+
+              <HStack spacing={4} mb={2}>
+                <Text fontWeight="bold" w="30px">A :</Text>
+                <Input bg="orange.300" size="sm" value="5.00" readOnly />
+              </HStack>
+
+              <HStack spacing={4}>
+                <Text fontWeight="bold" w="30px">G :</Text>
+                <Input bg="green.400" size="sm" value="0" readOnly />
+              </HStack>
+            </Box>
+
+            <HStack spacing={4} mt={4} flexWrap="wrap">
+            <Box width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg" mt={4}>
+  <FormControl mb={4}>
+    <HStack spacing={2} alignItems="center">
+      <Text fontWeight="bold" fontSize={12} mb={2}>Frequency:</Text>
+      <Select size="sm" defaultValue="Monthly" w="150px">
+    <option value="Monthly">Monthly</option>
+    <option value="Quarterly">Quarterly</option>
+    <option value="Yearly">Yearly</option>
+    <option value="Weekly">Weekly</option>
+  </Select>
+    </HStack>
+  </FormControl>
+  <FormControl>
+    <HStack spacing={2} alignItems="center">
+      <Text fontWeight="bold" fontSize={12} mb="0" whiteSpace="nowrap">Remind On:</Text>
+      <Input value="28/01/2025" />
+    </HStack>
+  </FormControl>
+</Box>
+</HStack>
+
+<Flex justifyContent="flex-end" mt={6}>
+  <Button mt={4} colorScheme="blue" fontSize={12}
+              variant="solid"
+              width="auto"
+              minWidth="120px">
+    Sign Off/Add Next
+  </Button>
+</Flex>
+</Box>
+
                   </Box>
                 </Box>
               </SimpleGrid>
