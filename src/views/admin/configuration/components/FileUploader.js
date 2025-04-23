@@ -47,7 +47,7 @@ const FileUploader = () => {
         formData.append('file', file); // 'file' est le nom du champ attendu par l'API
       
         try {
-          const response = await axios.post(`${url}/api/v1/upload`, formData, {
+          const response = await axios.post(`${url}/api/v1/risks-controls/upload`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
               // Ajoutez ici les headers d'authentification si nécessaire
