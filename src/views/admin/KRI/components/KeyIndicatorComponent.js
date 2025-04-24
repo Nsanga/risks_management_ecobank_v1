@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Tabs,
@@ -26,6 +26,7 @@ import History from "./History";
 import Action from "./action";
 
 const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
+  const [tabIndex, setTabIndex] = useState(0);
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
 
   // Options pour les catégories KRI
@@ -129,7 +130,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
     }),
     singleValue: (provided) => ({
       ...provided,
-      fontSize: "12px", 
+      fontSize: "12px",
     }),
   };
 
@@ -172,7 +173,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
         <Divider mb={4} />
 
         {/* Tabs Section */}
-        <Tabs variant="enclosed">
+        <Tabs variant="enclosed" index={tabIndex} onChange={setTabIndex}>
           <TabList>
             <Tab>General</Tab>
             <Tab>History</Tab>
@@ -240,7 +241,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                 </Box>
 
                 <Box>
-                <FormControl display="flex" alignItems="center" gap={4} mb={4}>
+                  <FormControl display="flex" alignItems="center" gap={4} mb={4}>
                     <FormLabel mb="0" whiteSpace="nowrap">
                       Type of KI</FormLabel>
                     <Input {...register("typeOfKi")} defaultValue={kriData.type} />
@@ -263,59 +264,60 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                       <Input {...register("target")} defaultValue="0" />
                     </FormControl>
                     <Box mt={4} borderRadius="md" overflow="hidden">
-  <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
-    <Checkbox {...register("isPercentage")} mr={2} />
-    <FormLabel mb="0">Thresholds are percentages</FormLabel>
-  </FormControl>
-  
-  <Box w="100%">
-              <HStack spacing={4} mb={2}>
-                <Text fontWeight="bold" w="30px">R :</Text>
-                <Input bg="red.400" color="white" size="sm" value="6.00" readOnly />
-              </HStack>
+                      <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                        <Checkbox {...register("isPercentage")} mr={2} />
+                        <FormLabel mb="0">Thresholds are percentages</FormLabel>
+                      </FormControl>
 
-              <HStack spacing={4} mb={2}>
-                <Text fontWeight="bold" w="30px">A :</Text>
-                <Input bg="orange.300" size="sm" value="5.00" readOnly />
-              </HStack>
+                      <Box w="100%">
+                        <HStack spacing={4} mb={2}>
+                          <Text fontWeight="bold" w="30px">R :</Text>
+                          <Input bg="red.400" color="white" size="sm" value="6.00" readOnly />
+                        </HStack>
 
-              <HStack spacing={4}>
-                <Text fontWeight="bold" w="30px">G :</Text>
-                <Input bg="green.400" size="sm" value="0" readOnly />
-              </HStack>
-            </Box>
+                        <HStack spacing={4} mb={2}>
+                          <Text fontWeight="bold" w="30px">A :</Text>
+                          <Input bg="orange.300" size="sm" value="5.00" readOnly />
+                        </HStack>
 
-            <HStack spacing={4} mt={4} flexWrap="wrap">
-            <Box width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg" mt={4}>
-  <FormControl mb={4}>
-    <HStack spacing={2} alignItems="center">
-      <Text fontWeight="bold" fontSize={12} mb={2}>Frequency:</Text>
-      <Select size="sm" defaultValue="Monthly" w="150px">
-    <option value="Monthly">Monthly</option>
-    <option value="Quarterly">Quarterly</option>
-    <option value="Yearly">Yearly</option>
-    <option value="Weekly">Weekly</option>
-  </Select>
-    </HStack>
-  </FormControl>
-  <FormControl>
-    <HStack spacing={2} alignItems="center">
-      <Text fontWeight="bold" fontSize={12} mb="0" whiteSpace="nowrap">Remind On:</Text>
-      <Input value="28/01/2025" />
-    </HStack>
-  </FormControl>
-</Box>
-</HStack>
+                        <HStack spacing={4}>
+                          <Text fontWeight="bold" w="30px">G :</Text>
+                          <Input bg="green.400" size="sm" value="0" readOnly />
+                        </HStack>
+                      </Box>
 
-<Flex justifyContent="flex-end" mt={6}>
-  <Button mt={4} colorScheme="blue" fontSize={12}
-              variant="solid"
-              width="auto"
-              minWidth="120px">
-    Sign Off/Add Next
-  </Button>
-</Flex>
-</Box>
+                      <HStack spacing={4} mt={4} flexWrap="wrap">
+                        <Box width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg" mt={4}>
+                          <FormControl mb={4}>
+                            <HStack spacing={2} alignItems="center">
+                              <Text fontWeight="bold" fontSize={12} mb={2}>Frequency:</Text>
+                              <Select size="sm" defaultValue="Monthly" w="150px">
+                                <option value="Monthly">Monthly</option>
+                                <option value="Quarterly">Quarterly</option>
+                                <option value="Yearly">Yearly</option>
+                                <option value="Weekly">Weekly</option>
+                              </Select>
+                            </HStack>
+                          </FormControl>
+                          <FormControl>
+                            <HStack spacing={2} alignItems="center">
+                              <Text fontWeight="bold" fontSize={12} mb="0" whiteSpace="nowrap">Remind On:</Text>
+                              <Input value="28/01/2025" />
+                            </HStack>
+                          </FormControl>
+                        </Box>
+                      </HStack>
+
+                      <Flex justifyContent="flex-end" mt={6}>
+                        <Button mt={4} colorScheme="blue" fontSize={12}
+                          variant="solid"
+                          width="auto"
+                          minWidth="120px"
+                          onClick={() => setTabIndex(1)}>
+                          Sign Off/Add Next
+                        </Button>
+                      </Flex>
+                    </Box>
 
                   </Box>
                 </Box>
