@@ -57,7 +57,7 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
       { label: "Type", key: "type" },
       { label: "Frequency", key: "frequenceKeyIndicator" },
       { label: "Trend", key: "trend" },
-      { label: "Status", key: "status" }, 
+      { label: "Status", key: "status" },
       { label: "Average", key: "calculMethodKeyIndicator" },
       { label: "Owner", key: "ownerKeyIndicator" },
       { label: "Nominee", key: "nomineeKeyIndicator" },
@@ -251,9 +251,13 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
                           key={col.key}
                           onClick={() => handleRowClick(row, index)}
                         >
-                          {row[col.key]?.length > 20
-                            ? `${row[col.key].substring(0, 16)}...`
-                            : row[col.key]}
+                          {col.key === "reference"
+                            ? `KI${row[col.key]}`
+                            : (row[col.key]?.length > 20
+                              ? `${row[col.key].substring(0, 16)}...`
+                              : row[col.key]
+                            )
+                          }
                         </Td>
                       ))}
                     </Tr>

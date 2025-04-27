@@ -149,7 +149,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
 
           <FormControl>
             <FormLabel>Key Indicator Reference</FormLabel>
-            <Input {...register("reference")} defaultValue={kriData.reference} isReadOnly />
+            <Input {...register("reference")} defaultValue={`KI${kriData.reference}`} isReadOnly />
           </FormControl>
 
           <FormControl>
@@ -272,17 +272,17 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                       <Box w="100%">
                         <HStack spacing={4} mb={2}>
                           <Text fontWeight="bold" w="30px">R :</Text>
-                          <Input bg="red.400" color="white" size="sm" value="6.00" readOnly />
+                          <Input bg="red.400" color="white" size="sm" value={kriData.escaladeKeyIndicator} readOnly />
                         </HStack>
 
                         <HStack spacing={4} mb={2}>
                           <Text fontWeight="bold" w="30px">A :</Text>
-                          <Input bg="orange.300" size="sm" value="5.00" readOnly />
+                          <Input bg="orange.300" color="white" size="sm" value={kriData.seuilKeyIndicator} readOnly />
                         </HStack>
 
                         <HStack spacing={4}>
                           <Text fontWeight="bold" w="30px">G :</Text>
-                          <Input bg="green.400" size="sm" value="0" readOnly />
+                          <Input bg="green.400" color="white" size="sm" value={kriData.toleranceKeyIndicator} readOnly />
                         </HStack>
                       </Box>
 
@@ -314,7 +314,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                           width="auto"
                           minWidth="120px"
                           onClick={() => setTabIndex(1)}>
-                          Sign Off/Add Next
+                          Capture de valeur
                         </Button>
                       </Flex>
                     </Box>
@@ -325,7 +325,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
             </TabPanel>
 
             <TabPanel>
-              <History />
+              <History kriData={kriData} />
             </TabPanel>
 
             <TabPanel>

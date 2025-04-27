@@ -775,9 +775,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                                   key={col.key}
                                   onClick={() => handleRowClick(row, index)}
                                 >
-                                  {row[col.key]?.length > 20
-                                    ? `${row[col.key].substring(0, 16)}...`
-                                    : row[col.key]}
+                                  {col.key === "reference"
+                                    ? `KI${row[col.key]}`
+                                    : (row[col.key]?.length > 20
+                                      ? `${row[col.key].substring(0, 16)}...`
+                                      : row[col.key]
+                                    )
+                                  }
                                 </Td>
                               ))}
                             </Tr>

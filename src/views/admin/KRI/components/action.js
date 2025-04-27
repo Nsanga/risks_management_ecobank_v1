@@ -32,9 +32,9 @@ const Action = () => {
           <Table variant="simple" size="sm">
             <Thead bg="blue.100">
               <Tr>
-                <Th>Action Ref.</Th>
-                <Th>Description</Th>
-                <Th>Target / Completion Date</Th>
+                <Th textTransform="none">Action Ref.</Th>
+                <Th textTransform="none">Description</Th>
+                <Th textTransform="none">Target / Completion Date</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -122,31 +122,31 @@ const Action = () => {
             </Flex>
 
             <Flex gap={4} flexWrap="wrap" w="100%">
-  <HStack spacing={2}>
-    <Checkbox />
-    <Text mb="0" whiteSpace="nowrap">Target Date:</Text>
-    <Input size="sm" type="date" />
-  </HStack>
-  <HStack spacing={2}>
-    <Text mb="0" whiteSpace="nowrap">Cost:</Text>
-    <Input size="sm" />
-    </HStack>
-    <HStack spacing={2}>
-    <Text mb="0" whiteSpace="nowrap">Currency:</Text>
-    <Select size="sm" defaultValue="USD">
-      <option value="USD">USD</option>
-      <option value="EUR">EUR</option>
-      <option value="XAF">XAF</option>
-    </Select>
-    </HStack>
-</Flex>
+              <HStack spacing={2}>
+                <Checkbox />
+                <Text mb="0" whiteSpace="nowrap">Target Date:</Text>
+                <Input size="sm" type="date" />
+              </HStack>
+              <HStack spacing={2}>
+                <Text mb="0" whiteSpace="nowrap">Cost:</Text>
+                <Input size="sm" />
+              </HStack>
+              <HStack spacing={2}>
+                <Text mb="0" whiteSpace="nowrap">Currency:</Text>
+                <Select size="sm" defaultValue="USD">
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="XAF">XAF</option>
+                </Select>
+              </HStack>
+            </Flex>
 
           </VStack>
         </Box>
       </Flex>
 
       {/* BOUTONS ACTIONS */}
-      <Flex justify="center" gap={3} mt={6} wrap="wrap">
+      {/* <Flex justify="center" gap={3} mt={6} wrap="wrap">
         <Button fontSize="sm" colorScheme="blue" variant="outline">+ Add Action</Button>
         <Button fontSize="sm" colorScheme="blue" variant="outline">✎ Amend Action</Button>
         <Button fontSize="sm" colorScheme="blue" variant="outline">📅 Amend Action Target Date</Button>
@@ -156,7 +156,7 @@ const Action = () => {
         <Button fontSize="sm" colorScheme="green" variant="outline">🔄 Reopen Voided</Button>
         <Button fontSize="sm" colorScheme="blue" variant="outline">💾 Save</Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">✖ Cancel</Button>
-      </Flex>
+      </Flex> */}
     </Box>
   );
 };

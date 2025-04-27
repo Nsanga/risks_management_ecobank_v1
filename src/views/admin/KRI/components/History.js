@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { CheckCircleIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 
-const History = () => {
+const History = ({ kriData }) => {
   return (
     <Box className="container" fontSize="12px" p={4}>
       {/* TABLE PRINCIPALE */}
@@ -27,8 +27,8 @@ const History = () => {
           <Tr fontSize="10px">
             <Th textTransform="none">Status</Th>
             <Th textTransform="none">Trend</Th>
-            <Th textTransform="none">0.00</Th>
-            <Th textTransform="none">0.00</Th>
+            <Th textTransform="none"></Th>
+            <Th textTransform="none"></Th>
             <Th textTransform="none">Average</Th>
             <Th textTransform="none">R</Th>
             <Th textTransform="none">A</Th>
@@ -50,9 +50,9 @@ const History = () => {
             <Td>0.00</Td>
             <Td>N/A</Td>
             <Td>N/A</Td>
-            <Td color="green.600">0.00</Td>
-            <Td color="orange.500">5.00</Td>
-            <Td color="red.500">6.00</Td>
+            <Td color="green.600">{kriData.toleranceKeyIndicator}</Td>
+            <Td color="orange.500">{kriData.seuilKeyIndicator}</Td>
+            <Td color="red.500">{kriData.escaladeKeyIndicator}</Td>
           </Tr>
         </Tbody>
       </Table>
@@ -87,12 +87,12 @@ const History = () => {
         <Box flex="1" bg="gray.50" p={4} borderRadius="md" boxShadow="md">
           <VStack align="start" spacing={3}>
             <HStack spacing={2}>
-              <Text  mb="0" whiteSpace="nowrap">Period :</Text>
-              <Input size="sm" value="28/01/2025" readOnly />
+              <Text mb="0" whiteSpace="nowrap">Period :</Text>
+              <Input size="sm" type="date" />
             </HStack>
 
             <HStack spacing={2}>
-              <Text  mb="0" whiteSpace="nowrap">Value :</Text>
+              <Text mb="0" whiteSpace="nowrap">Value :</Text>
               <Input size="sm" placeholder="Enter value..." />
             </HStack>
 
@@ -119,18 +119,18 @@ const History = () => {
             </Box>
 
             <HStack>
-            <Button fontSize="sm" colorScheme="blue" variant="outline">
-          Document
-        </Button>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">
-          Amend
-        </Button>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">
-          Save
-        </Button>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">
-          Cancel
-        </Button>
+              {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
+                Document
+              </Button>
+              <Button fontSize="sm" colorScheme="blue" variant="outline">
+                Amend
+              </Button> */}
+              <Button fontSize="sm" colorScheme="blue" variant="outline">
+                Save
+              </Button>
+              {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
+                Cancel
+              </Button> */}
             </HStack>
           </VStack>
         </Box>
