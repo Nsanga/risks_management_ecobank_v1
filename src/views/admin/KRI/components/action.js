@@ -8,7 +8,6 @@ import {
   Th,
   Td,
   Input,
-  Select,
   Textarea,
   Tabs,
   TabList,
@@ -22,8 +21,29 @@ import {
   Text,
   Checkbox,
 } from '@chakra-ui/react';
+import Select from "react-select";
+import { useForm } from 'react-hook-form';
 
-const Action = () => {
+const Action = ({profilesOptions}) => {
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+  };
   return (
     <Box className="container" fontSize="12px" p={4}>
       <Flex gap={6} flexWrap="wrap">
@@ -102,18 +122,42 @@ const Action = () => {
             </Tabs>
 
             {/* Bas du formulaire */}
-            <Flex gap={4} flexWrap="wrap" w="100%">
+            <Flex gap={4} flexWrap="wrap" w="100%" flexDirection='column'>
               <Box flex="1">
                 <Text>Owner:</Text>
-                <Input size="sm" />
+                <Select
+                  name="owner"
+                  options={profilesOptions}
+                  styles={customStyles}
+                  onChange={(selected) => setValue('owner', selected)}
+                  value={watch('owner')}
+                  placeholder="Select owner"
+                  isClearable
+                />
               </Box>
               <Box flex="1">
                 <Text>Nominee:</Text>
-                <Input size="sm" />
+                <Select
+                  name="nominee"
+                  options={profilesOptions}
+                  styles={customStyles}
+                  onChange={(selected) => setValue('nominee', selected)}
+                  value={watch('nominee')}
+                  placeholder="Select nominee"
+                  isClearable
+                />
               </Box>
               <Box flex="1">
                 <Text>Reviewer:</Text>
-                <Input size="sm" />
+                <Select
+                  name="reviewer"
+                  options={profilesOptions}
+                  styles={customStyles}
+                  onChange={(selected) => setValue('reviewer', selected)}
+                  value={watch('reviewer')}
+                  placeholder="Select reviewer"
+                  isClearable
+                />
               </Box>
               <Box flex="1">
                 <Text>Review Date:</Text>

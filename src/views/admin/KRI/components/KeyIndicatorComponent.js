@@ -325,11 +325,11 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
             </TabPanel>
 
             <TabPanel>
-              <History kriData={kriData} />
+              <History kriData={kriData} profilesOptions={profilesOptions} />
             </TabPanel>
 
             <TabPanel>
-              <Action />
+              <Action kriData={kriData} profilesOptions={profilesOptions}/>
             </TabPanel>
 
             <TabPanel>
