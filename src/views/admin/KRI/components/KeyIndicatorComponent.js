@@ -289,20 +289,28 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                       <HStack spacing={4} mt={4} flexWrap="wrap">
                         <Box width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg" mt={4}>
                           <FormControl mb={4}>
-                            <HStack spacing={2} alignItems="center">
-                              <Text fontWeight="bold" fontSize={12} mb={2}>Frequency:</Text>
-                              <Select size="sm" defaultValue="Monthly" w="150px">
-                                <option value="Monthly">Monthly</option>
-                                <option value="Quarterly">Quarterly</option>
-                                <option value="Yearly">Yearly</option>
-                                <option value="Weekly">Weekly</option>
-                              </Select>
-                            </HStack>
+                          <HStack spacing={2} alignItems="center">
+    <Text fontWeight="bold" fontSize={12} mb={2}>Frequency:</Text>
+    <Box width="100%">
+      <Select
+        name="frequency"
+        placeholder="Select frequency"
+        size="sm"
+      >
+        <option value="Daily">Daily</option>
+        <option value="Weekly">Weekly</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Quarterly">Quarterly</option>
+        <option value="Semi-annually">Semi-annually</option>
+        <option value="Annually">Annually</option>
+      </Select>
+    </Box>
+  </HStack>
                           </FormControl>
                           <FormControl>
                             <HStack spacing={2} alignItems="center">
                               <Text fontWeight="bold" fontSize={12} mb="0" whiteSpace="nowrap">Remind On:</Text>
-                              <Input value="28/01/2025" />
+                               <Input size="sm" type="date" />
                             </HStack>
                           </FormControl>
                         </Box>
