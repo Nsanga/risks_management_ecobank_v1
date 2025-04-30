@@ -30,7 +30,7 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/risks-controls/update`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityRiskControlData));
-        console.log("data:::/", data)
+        // console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_SUCCESS, payload: { data: data.data } });
             yield put({ type: types.GET_ENTITYRISKCONTROLS_SUCCESS, payload: { data: data.data } });

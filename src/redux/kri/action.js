@@ -9,9 +9,9 @@ export const listEntityKeyIndicators = (entityId) => ({
   payload: entityId
 });
 
-export const updateKeyIndicator = (id, keyIndicatorData) => ({
+export const updateKeyIndicator = (keyIndicatorData) => ({
   type: types.UPDATE_KRI_REQUEST,
-  payload: { id, keyIndicatorData }
+  payload: { keyIndicatorData }
 });
 
 export const AddKeyIndicator = (keyIndicatorData) => ({
