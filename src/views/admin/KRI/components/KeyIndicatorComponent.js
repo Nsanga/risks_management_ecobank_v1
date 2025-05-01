@@ -24,12 +24,18 @@ import { useForm } from "react-hook-form";
 import Select from "react-select";
 import History from "./History";
 import Action from "./action";
+import { updateKeyIndicator } from "redux/kri/action";
+import { useDispatch } from "react-redux";
+import { listEntityKeyIndicators } from "redux/kri/action";
+import { listKeyIndicator } from "redux/kri/action";
 
-const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
+const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [formDataToSubmit, setFormDataToSubmit] = React.useState(null);
+
+  const dispatch = useDispatch();
 
   // Options pour les catégories KRI
   const categoryOptions = [
@@ -53,22 +59,9 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({
-    value: frequency.label,
+    value: frequency.label.toLowerCase(), // Conversion en minuscules pour comparaison insensible à la casse
     label: frequency.label,
   }));
-
-  // Préparation des options pour les profils
-  const profilesOptions = React.useMemo(() => {
-    if (!Array.isArray(profiles)) return []; // Handle non-array cases
-
-    return profiles
-      .filter(profile => profile?.activeUser)
-      .map(profile => ({
-        value: profile?._id,
-        label: [profile?.name, profile?.surname].filter(Boolean).join(' ') || 'Unnamed Profile',
-        profile
-      }));
-  }, [profiles]);
 
   // Normalisation des données KRI
   const kriData = React.useMemo(() => {
@@ -115,22 +108,42 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
         }
       });
 
-      setValue('frequenceKeyIndicator', frequenciesOptions.find(opt =>
-        opt.value === (kriData.frequenceKeyIndicator)
-      ))
+      // Normalisation de la valeur pour comparaison insensible à la casse
+      const normalizedValue = kriData.frequenceKeyIndicator.toLowerCase().trim();
+
+      const foundOption = frequenciesOptions.find(opt =>
+        opt.value.toLowerCase() === normalizedValue
+      );
+
+      if (foundOption) {
+        setValue('frequenceKeyIndicator', foundOption);
+      } else {
+        // Si la valeur n'existe pas dans les options, on l'ajoute comme option temporaire
+        setValue('frequenceKeyIndicator', {
+          value: kriData.frequenceKeyIndicator,
+          label: kriData.frequenceKeyIndicator
+        });
+
+        // Optionnel: ajouter cette valeur aux options disponibles
+        frequenciesOptions.push({
+          value: kriData.frequenceKeyIndicator,
+          label: kriData.frequenceKeyIndicator
+        });
+      }
     }
   }, [kriData, setValue, profilesOptions]);
 
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
     // Transformation des données avant soumission
     const formData = {
       ...data,
       category: data.category.value,
       thresholdType: data.thresholdType.value,
-      owner: data.owner?.value,
-      nominee: data.nominee?.value,
-      reviewer: data.reviewer?.value
+      ownerKeyIndicator: data.owner?.label,
+      nomineeKeyIndicator: data.nominee?.label,
+      reviewerKeyIndicator: data.reviewer?.label,
+      frequenceKeyIndicator: data.frequenceKeyIndicator.label
     };
     // Convertir les valeurs en nombres pour comparaison
     const targetValue = parseFloat(data.target) || 0;
@@ -145,6 +158,23 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
       // Soumettre directement si la condition n'est pas remplie
       console.log("Form Submitted:", formData);
       // Ici vous ajouteriez votre logique de soumission réelle
+    }
+    const postData = {
+      itemIds: [kriData?._id],
+      updates: formData,
+    };
+    // console.log("postData:", postData);
+    await dispatch(updateKeyIndicator(postData));
+    if (selectedEntity) {
+      try {
+        // Exécute les appels en parallèle pour meilleure performance
+          dispatch(listEntityKeyIndicators({ entityId: selectedEntity?._id }))
+      } catch (error) {
+        console.error("Error fetching entity data:", error);
+        // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
+      }
+    } else {
+      dispatch(listKeyIndicator());
     }
   };
 
@@ -344,8 +374,11 @@ const KeyIndicatorComponent = ({ kri, onClose, profiles }) => {
                                   placeholder='Select frequency'
                                   styles={customStyles}
                                   options={frequenciesOptions}
-                                  value={frequenciesOptions?.find(option => option.value === kriData.frequenceKeyIndicator)}
+                                  value={watch('frequenceKeyIndicator')}
                                   onChange={(selected) => setValue('frequenceKeyIndicator', selected)}
+                                  isOptionDisabled={(option) =>
+                                    !frequencies.some(f => f.label.toLowerCase() === option.value.toLowerCase())
+                                  }
                                 />
                               </Box>
                             </HStack>
