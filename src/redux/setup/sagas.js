@@ -6,6 +6,7 @@ import ControlHistorySaga from 'redux/controlHistory/saga';
 import EntitySaga from 'redux/entitiy/saga';
 import EntityRiskControlSaga from 'redux/entityRiskControl/saga';
 import EventSaga from 'redux/events/saga';
+import HistoryKRISaga from 'redux/historyKri/saga';
 import KeyIndicatorSaga from 'redux/kri/saga';
 import LoginSaga from 'redux/login/saga';
 import PlateformeSaga from 'redux/plateforme/saga';
@@ -35,5 +36,6 @@ export default function* Sagas() {
     ControlHistorySaga(),
     ActionSaga(),
     KeyIndicatorSaga(),
+    HistoryKRISaga(),
   ]);
 }

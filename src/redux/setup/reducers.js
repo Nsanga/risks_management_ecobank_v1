@@ -6,6 +6,7 @@ import ControlHistoryReducer from 'redux/controlHistory/reducer';
 import EntityReducer from 'redux/entitiy/reducer';
 import EntityRiskControlReducer from 'redux/entityRiskControl/reducer';
 import EventReducer from 'redux/events/reducer';
+import HistoryKRIReducer from 'redux/historyKri/reducer';
 import KeyIndicatorReducer from 'redux/kri/reducer';
 import LoginReducer from 'redux/login/reducer';
 import PlateformeReducer from 'redux/plateforme/reducer';
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   ControlHistoryReducer,
   ActionReducer,
   KeyIndicatorReducer,
+  HistoryKRIReducer
 });
 
 export default rootReducer;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Table,
@@ -17,8 +17,45 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddHistoryKRI } from 'redux/historyKri/action';
+import { listHistoriesKRI } from 'redux/historyKri/action';
 
 const History = ({ kriData }) => {
+  const dispatch = useDispatch()
+  const { loading, historiesKRI, error } = useSelector((state) => state.HistoryKRIReducer);
+  const [formData, setFormData] = useState({
+    period: "",
+    value: "",
+    comments: "",
+  });
+
+  // Gestionnaire de changement pour les inputs
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSave = async () => {
+    console.log("formData:", formData);
+    await dispatch(AddHistoryKRI(formData));
+    dispatch(listHistoriesKRI({idKeyIndicator: kriData._id}))
+    setFormData({
+      period: "",
+      value: "",
+      comments: "",
+    })
+  }
+
+  useEffect(() => {
+    if (kriData) {
+      dispatch(listHistoriesKRI({idKeyIndicator: kriData._id}))
+    }
+  }, [dispatch, kriData]);
+  console.log("historiesKRI:", historiesKRI);
   return (
     <Box className="container" fontSize="12px" p={4}>
       {/* TABLE PRINCIPALE */}
@@ -71,10 +108,10 @@ const History = ({ kriData }) => {
               </Tr>
             </Thead>
             <Tbody>
-              {["29/12/2024", "29/11/2024", "30/10/2024", "30/09/2024"].map((date, idx) => (
-                <Tr key={idx}>
+              {historiesKRI?.map((history, index) => (
+                <Tr key={index}>
                   <Td><CheckCircleIcon color="green.400" /></Td>
-                  <Td>{date}</Td>
+                  <Td>{history.period}</Td>
                   <Td></Td>
                   <Td>0.00</Td>
                 </Tr>
@@ -88,12 +125,24 @@ const History = ({ kriData }) => {
           <VStack align="start" spacing={3}>
             <HStack spacing={2}>
               <Text mb="0" whiteSpace="nowrap">Period :</Text>
-              <Input size="sm" type="date" />
+              <Input
+                size="sm"
+                type="date"
+                name="period"
+                value={formData.period}
+                onChange={handleInputChange}
+              />
             </HStack>
 
             <HStack spacing={2}>
               <Text mb="0" whiteSpace="nowrap">Value :</Text>
-              <Input size="sm" placeholder="Enter value..." />
+              <Input
+                size="sm"
+                placeholder="Enter value..."
+                name="value"
+                value={formData.value}
+                onChange={handleInputChange}
+              />
             </HStack>
 
             <Box w="100%">
@@ -115,7 +164,13 @@ const History = ({ kriData }) => {
 
             <Box w="100%">
               <Text>Comments :</Text>
-              <Textarea size="sm" placeholder="Write a comment..." />
+              <Textarea
+                size="sm"
+                placeholder="Write a comment..."
+                name="comments"
+                value={formData.comments}
+                onChange={handleInputChange}
+              />
             </Box>
 
             <HStack>
@@ -125,7 +180,7 @@ const History = ({ kriData }) => {
               <Button fontSize="sm" colorScheme="blue" variant="outline">
                 Amend
               </Button> */}
-              <Button fontSize="sm" colorScheme="blue" variant="outline">
+              <Button fontSize="sm" colorScheme="blue" variant="outline" onClick={handleSave}>
                 Save
               </Button>
               {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
