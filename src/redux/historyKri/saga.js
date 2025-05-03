@@ -8,10 +8,10 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
 
-function* list() {
+function* list(action) {
     try {
         let link = `${url}/api/v1/historiqueKRI/getHistoriqueKRIByIdKeyIndicator`;
-        const data = yield getRequest(link);
+        const data = yield postRequest(link, JSON.stringify(action.payload));
         console.log(data)
         if (data.statut === 200) {
             yield put({ type: types.GET_HISTORIESKRI_SUCCESS, payload: data });

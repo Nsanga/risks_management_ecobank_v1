@@ -7,10 +7,10 @@ import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
-function* list(action) {
+function* list() {
     try {
         let link = `${url}/api/v1/risks-controls/getKeyIndicator`;
-        const response = yield postRequest(link, JSON.stringify(action.payload));
+        const response = yield getRequest(link);
         console.log("response triggered", response);
         
         if (response.success === true) {
