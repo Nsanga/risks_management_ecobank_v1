@@ -1,7 +1,8 @@
 import * as types from './types';
 
-export const listHistoriesKRI = () => ({
+export const listHistoriesKRI = (idKeyIndicator) => ({
   type: types.GET_HISTORIESKRI_REQUEST,
+  payload: {idKeyIndicator}
 });
 
 export const updateHistoryKRI = (id, historyKRIData) => ({

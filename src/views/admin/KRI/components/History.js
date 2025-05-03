@@ -15,15 +15,27 @@ import {
   VStack,
   Text,
   Badge,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { AddHistoryKRI } from 'redux/historyKri/action';
 import { listHistoriesKRI } from 'redux/historyKri/action';
+import ActionForm from './ActionForm';
 
 const History = ({ kriData }) => {
   const dispatch = useDispatch()
   const { loading, historiesKRI, error } = useSelector((state) => state.HistoryKRIReducer);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [shouldSave, setShouldSave] = useState(false);
+
   const [formData, setFormData] = useState({
     period: "",
     value: "",
@@ -39,20 +51,93 @@ const History = ({ kriData }) => {
     });
   };
 
+  const compareValues = (enteredValue, threshold) => {
+    if (!threshold) return false;
+
+    // Si le seuil commence par ">", on extrait le nombre et on compare
+    if (threshold.startsWith(">")) {
+      const thresholdValue = parseFloat(threshold.substring(1));
+      const enteredNum = parseFloat(enteredValue);
+      return !isNaN(enteredNum) && !isNaN(thresholdValue) && enteredNum > thresholdValue;
+    }
+
+    // Si c'est une simple valeur numérique
+    const thresholdValue = parseFloat(threshold);
+    const enteredNum = parseFloat(enteredValue);
+    return !isNaN(enteredNum) && !isNaN(thresholdValue) && enteredNum > thresholdValue;
+  };
+
   const handleSave = async () => {
+    if (compareValues(formData.value, kriData.escaladeKeyIndicator)) {
+      onOpen(); // Affiche la modal de confirmation
+      setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
+    } else {
+      await performSave(); // Sauvegarde directement si la valeur est OK
+    }
+  };
+
+  const performSave = async () => {
     console.log("formData:", formData);
     await dispatch(AddHistoryKRI(formData));
-    dispatch(listHistoriesKRI({idKeyIndicator: kriData._id}))
+    dispatch(listHistoriesKRI(kriData._id));
     setFormData({
       period: "",
       value: "",
       comments: "",
-    })
-  }
+    });
+    setShouldSave(false);
+  };
+
+  const handleConfirmSave = async () => {
+    onClose();
+    if (shouldSave) {
+      await performSave();
+    }
+  };
+
+  const getValueColor = (value, thresholds) => {
+    const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } = thresholds;
+
+    // Fonction pour comparer une valeur avec un seuil (qui peut être ">x", "<x" ou juste un nombre)
+    const compareWithThreshold = (val, threshold) => {
+      if (!threshold) return false;
+
+      if (threshold.startsWith(">")) {
+        const thresholdValue = parseFloat(threshold.substring(1));
+        const numVal = parseFloat(val);
+        return !isNaN(numVal) && !isNaN(thresholdValue) && numVal > thresholdValue;
+      }
+
+      if (threshold.startsWith("<")) {
+        const thresholdValue = parseFloat(threshold.substring(1));
+        const numVal = parseFloat(val);
+        return !isNaN(numVal) && !isNaN(thresholdValue) && numVal < thresholdValue;
+      }
+
+      const thresholdValue = parseFloat(threshold);
+      const numVal = parseFloat(val);
+      return !isNaN(numVal) && !isNaN(thresholdValue) && numVal === thresholdValue;
+    };
+
+    // Vérification dans l'ordre de priorité (R > A > G)
+    if (compareWithThreshold(value, escaladeKeyIndicator)) {
+      return "red.400"; // Rouge pour le seuil d'escalade (R)
+    }
+
+    if (compareWithThreshold(value, seuilKeyIndicator)) {
+      return "orange.300"; // Orange pour le seuil d'alerte (A)
+    }
+
+    if (compareWithThreshold(value, toleranceKeyIndicator)) {
+      return "green.400"; // Vert pour le seuil de tolérance (G)
+    }
+
+    return "gray.600"; // Couleur par défaut si aucun seuil n'est atteint
+  };
 
   useEffect(() => {
     if (kriData) {
-      dispatch(listHistoriesKRI({idKeyIndicator: kriData._id}))
+      dispatch(listHistoriesKRI(kriData._id))
     }
   }, [dispatch, kriData]);
   console.log("historiesKRI:", historiesKRI);
@@ -110,10 +195,14 @@ const History = ({ kriData }) => {
             <Tbody>
               {historiesKRI?.map((history, index) => (
                 <Tr key={index}>
-                  <Td><CheckCircleIcon color="green.400" /></Td>
+                  <Td><CheckCircleIcon color={getValueColor(history.value, {
+                    escaladeKeyIndicator: kriData.escaladeKeyIndicator,
+                    seuilKeyIndicator: kriData.seuilKeyIndicator,
+                    toleranceKeyIndicator: kriData.toleranceKeyIndicator
+                  })} /></Td>
                   <Td>{history.period}</Td>
-                  <Td></Td>
-                  <Td>0.00</Td>
+                  <Td>{history.time}</Td>
+                  <Td>{history.value}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -137,6 +226,7 @@ const History = ({ kriData }) => {
             <HStack spacing={2}>
               <Text mb="0" whiteSpace="nowrap">Value :</Text>
               <Input
+                type='number'
                 size="sm"
                 placeholder="Enter value..."
                 name="value"
@@ -190,6 +280,17 @@ const History = ({ kriData }) => {
           </VStack>
         </Box>
       </Flex>
+      {/* Modal d'action */}
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Ajouter une action</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ActionForm onClose={onClose} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

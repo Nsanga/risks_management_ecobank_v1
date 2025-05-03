@@ -265,7 +265,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     const risk = viewData.Risks[index];
     // console.log("risk:", risk);
     const control = viewData.Controls[index];
-    const KIs = viewData.KIs
+    const KIs = viewData.KIs[index]
     // console.log("control:", control);
     if (currentView === "KIs" && viewData.KIs) {
       setSelectedKIs(KIs)

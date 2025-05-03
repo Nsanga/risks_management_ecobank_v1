@@ -130,8 +130,8 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
   };
 
   const handleRowClick = (item, index) => {
-    const KIs = viewData.KIs
-    // console.log("control:", control);
+    const KIs = viewData.KIs[index]
+    // console.log("KIs:", KIs);
     setSelectedKri(KIs)
     onOpen();
   };
