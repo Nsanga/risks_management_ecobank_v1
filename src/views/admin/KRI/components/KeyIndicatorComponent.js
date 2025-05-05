@@ -28,12 +28,14 @@ import { updateKeyIndicator } from "redux/kri/action";
 import { useDispatch } from "react-redux";
 import { listEntityKeyIndicators } from "redux/kri/action";
 import { listKeyIndicator } from "redux/kri/action";
+import ActionForm from "./ActionForm";
 
 const KeyIndicatorComponent = ({
   kri,
   onClose,
   profilesOptions,
   selectedEntity,
+  search = false
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [dataHostorie, setDataHostorie] = useState([]);
@@ -134,7 +136,7 @@ const KeyIndicatorComponent = ({
         setValue(
           "category",
           categoryOptions.find((opt) => opt.value === kriData.category) ||
-            categoryOptions[0]
+          categoryOptions[0]
         );
       }
 
@@ -616,7 +618,8 @@ const KeyIndicatorComponent = ({
             </TabPanel>
 
             <TabPanel>
-              <Action kriData={kriData} profilesOptions={profilesOptions} />
+              {/* <Action kriData={kriData} profilesOptions={profilesOptions} /> */}
+              <ActionForm isActionTab={true} profilesOptions={profilesOptions}/>
             </TabPanel>
 
             <TabPanel>
@@ -629,14 +632,17 @@ const KeyIndicatorComponent = ({
           <Button colorScheme="blue" type="submit" fontSize="12px">
             Save
           </Button>
-          <Button
-            onClick={onClose}
-            colorScheme="red"
-            type="reset"
-            fontSize="12px"
-          >
-            Cancel
-          </Button>
+          {!search && (
+            <Button
+              onClick={onClose}
+              colorScheme="red"
+              type="reset"
+              fontSize="12px"
+            >
+              Cancel
+            </Button>
+          )}
+
         </Stack>
       </form>
     </Box>

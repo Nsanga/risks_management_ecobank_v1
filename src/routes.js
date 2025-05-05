@@ -30,6 +30,7 @@ import Control from "views/admin/control";
 import Actions from "views/admin/actions";
 import Action from "views/admin/action";
 import KeyRiskIndicator from "views/admin/KRI";
+import Indicator from "views/admin/kri-search-result";
 
 const routes = [
   {
@@ -111,6 +112,13 @@ const routes = [
     path: "/action",
     icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
     component: Action,
+  },
+  {
+    name: "KeyIndicator",
+    layout: "/admin",
+    path: "/kri-search-result",
+    icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
+    component: Indicator,
   },
   // { 
   //   name: "Configuration",

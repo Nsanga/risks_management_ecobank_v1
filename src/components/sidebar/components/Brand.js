@@ -7,7 +7,7 @@ export function SidebarBrand() {
   return (
     <Flex align='center' direction='column'>
       <div style={{ marginBottom: 12 }}>
-        {/* <Image src={LogoMakeda} alt='Logo Makeda' width="200px" /> */}
+        <Image src={LogoMakeda} alt='Logo Makeda' width="200px" />
       </div>
       <HSeparator mb='20px' />
     </Flex>

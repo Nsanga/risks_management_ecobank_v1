@@ -30,7 +30,7 @@ import { AddHistoryKRI } from "redux/historyKri/action";
 import { listHistoriesKRI } from "redux/historyKri/action";
 import ActionForm from "./ActionForm";
 
-const History = ({ kriData, setDataHostorie, dateFormatee }) => {
+const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) => {
   const dispatch = useDispatch();
   const { loading, historiesKRI, error } = useSelector(
     (state) => state.HistoryKRIReducer
@@ -341,14 +341,14 @@ const History = ({ kriData, setDataHostorie, dateFormatee }) => {
         isOpen={isOpen}
         onClose={onClose}
         scrollBehavior="inside"
-        size="6xl"
+        size="2xl"
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Ajouter une action</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ActionForm onClose={onClose} />
+            <ActionForm onClose={onClose} kriData={kriData} profilesOptions={profilesOptions} formDataHistory={formData} />
           </ModalBody>
         </ModalContent>
       </Modal>

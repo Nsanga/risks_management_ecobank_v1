@@ -12,11 +12,11 @@ const EmptyData = () => {
             align="center"
             height={{ sm: "10rem", lg: "30rem" }}
         >
-            {/* <Image
+            <Image
                 src={logo}
                 width={90}
                 mb={4}
-            /> */}
+            />
             <Text color={dataColor} fontSize="sm">
                 Aucune donnée disponible.
             </Text>
