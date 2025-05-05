@@ -29,7 +29,7 @@ import { AddActionKRI } from 'redux/actionKRI/action';
 import { listActionsKRI } from 'redux/actionKRI/action';
 import { AddHistoryKRI } from 'redux/historyKri/action';
 
-const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, formDataHistory }) => {
+const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, formDataHistory, dateFormatee }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({
@@ -124,7 +124,7 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
     }
     console.log('Form data:', dataToSave);
     await dispatch(AddActionKRI(dataToSave));
-    await dispatch(AddHistoryKRI(formDataHistory));
+    await dispatch(AddHistoryKRI({...formDataHistory, periode: dateFormatee}));
     dispatch(listActionsKRI(kriData._id));
     resetFields()
     onClose();

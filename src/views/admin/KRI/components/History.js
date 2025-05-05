@@ -348,7 +348,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) =>
           <ModalHeader>Ajouter une action</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ActionForm onClose={onClose} kriData={kriData} profilesOptions={profilesOptions} formDataHistory={formData} />
+            <ActionForm onClose={onClose} kriData={kriData} profilesOptions={profilesOptions} formDataHistory={formData} dateFormatee={dateFormatee} />
           </ModalBody>
         </ModalContent>
       </Modal>
