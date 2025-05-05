@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Tabs,
@@ -18,7 +18,7 @@ import {
   Button,
   HStack,
   Text,
-  Flex
+  Flex,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
@@ -29,24 +29,71 @@ import { useDispatch } from "react-redux";
 import { listEntityKeyIndicators } from "redux/kri/action";
 import { listKeyIndicator } from "redux/kri/action";
 
-const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }) => {
+const KeyIndicatorComponent = ({
+  kri,
+  onClose,
+  profilesOptions,
+  selectedEntity,
+}) => {
   const [tabIndex, setTabIndex] = useState(0);
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
+  const [dataHostorie, setDataHostorie] = useState([]);
+
+  const [dateFormatee, setDateFormatee] = useState("");
+
+  // Fonction pour formater une Date en JJ/MM/AAAA
+  const formatDate = (dateObj) => {
+    const jour = dateObj.getDate().toString().padStart(2, "0");
+    const mois = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const annee = dateObj.getFullYear();
+    return `${jour}/${mois}/${annee}`;
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [formDataToSubmit, setFormDataToSubmit] = React.useState(null);
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (dataHostorie.length === 0) {
+      setDateFormatee("01/01/2025");
+    } else {
+      let baseDate;
+
+      if (dateFormatee === "") {
+        baseDate = new Date();
+      } else {
+        const [jour, mois, annee] = dateFormatee.split("/");
+        baseDate = new Date(`${annee}-${mois}-${jour}`);
+      }
+
+      baseDate.setMonth(baseDate.getMonth() + 3);
+      setDateFormatee(formatDate(baseDate));
+    }
+  }, [dataHostorie]);
+
   // Options pour les catégories KRI
   const categoryOptions = [
-    { value: 'Key Risk Indicator', label: 'Key Risk Indicator' },
-    { value: 'Key Performance Indicator', label: 'Key Performance Indicator' }
+    { value: "Key Risk Indicator", label: "Key Risk Indicator" },
+    { value: "Key Performance Indicator", label: "Key Performance Indicator" },
   ];
 
   // Options pour les seuils
   const thresholdOptions = [
-    { value: 'Target - higher value is worse', label: 'Target - higher value is worse' },
-    { value: 'Target - lower value is worse', label: 'Target - lower value is worse' }
+    {
+      value: "Target - higher value is worse",
+      label: "Target - higher value is worse",
+    },
+    {
+      value: "Target - lower value is worse",
+      label: "Target - lower value is worse",
+    },
   ];
 
   const frequencies = [
@@ -75,7 +122,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
     return {
       value,
       label: value,
-      isCustom: true
+      isCustom: true,
     };
   };
 
@@ -84,24 +131,35 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
     if (kriData) {
       // Catégorie
       if (kriData.category) {
-        setValue('category', categoryOptions.find(opt =>
-          opt.value === kriData.category
-        ) || categoryOptions[0]);
+        setValue(
+          "category",
+          categoryOptions.find((opt) => opt.value === kriData.category) ||
+            categoryOptions[0]
+        );
       }
 
       // Threshold
-      setValue('thresholdType', thresholdOptions.find(opt =>
-        opt.value === (kriData.thresholdType || 'Target - higher value is worse')
-      ) || thresholdOptions[0]);
+      setValue(
+        "thresholdType",
+        thresholdOptions.find(
+          (opt) =>
+            opt.value ===
+            (kriData.thresholdType || "Target - higher value is worse")
+        ) || thresholdOptions[0]
+      );
 
       // Owner, Nominee, Reviewer avec gestion des valeurs non trouvées
-      ['ownerKeyIndicator', 'nomineeKeyIndicator', 'reviewerKeyIndicator'].forEach(field => {
-        const fieldName = field.replace('KeyIndicator', '').toLowerCase();
+      [
+        "ownerKeyIndicator",
+        "nomineeKeyIndicator",
+        "reviewerKeyIndicator",
+      ].forEach((field) => {
+        const fieldName = field.replace("KeyIndicator", "").toLowerCase();
         const fieldValue = kriData[field];
 
         if (fieldValue) {
-          const foundOption = profilesOptions.find(opt =>
-            opt.value === fieldValue || opt.label === fieldValue
+          const foundOption = profilesOptions.find(
+            (opt) => opt.value === fieldValue || opt.label === fieldValue
           );
 
           setValue(fieldName, foundOption || createCustomOption(fieldValue));
@@ -109,32 +167,33 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
       });
 
       // Normalisation de la valeur pour comparaison insensible à la casse
-      const normalizedValue = kriData.frequenceKeyIndicator.toLowerCase().trim();
+      const normalizedValue = kriData.frequenceKeyIndicator
+        .toLowerCase()
+        .trim();
 
-      const foundOption = frequenciesOptions.find(opt =>
-        opt.value.toLowerCase() === normalizedValue
+      const foundOption = frequenciesOptions.find(
+        (opt) => opt.value.toLowerCase() === normalizedValue
       );
 
       if (foundOption) {
-        setValue('frequenceKeyIndicator', foundOption);
+        setValue("frequenceKeyIndicator", foundOption);
       } else {
         // Si la valeur n'existe pas dans les options, on l'ajoute comme option temporaire
-        setValue('frequenceKeyIndicator', {
+        setValue("frequenceKeyIndicator", {
           value: kriData.frequenceKeyIndicator,
-          label: kriData.frequenceKeyIndicator
+          label: kriData.frequenceKeyIndicator,
         });
 
         // Optionnel: ajouter cette valeur aux options disponibles
         frequenciesOptions.push({
           value: kriData.frequenceKeyIndicator,
-          label: kriData.frequenceKeyIndicator
+          label: kriData.frequenceKeyIndicator,
         });
       }
     }
   }, [kriData, setValue, profilesOptions]);
 
-
-  const onSubmit = async(data) => {
+  const onSubmit = async (data) => {
     // Transformation des données avant soumission
     const formData = {
       ...data,
@@ -143,7 +202,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
       ownerKeyIndicator: data.owner?.label,
       nomineeKeyIndicator: data.nominee?.label,
       reviewerKeyIndicator: data.reviewer?.label,
-      frequenceKeyIndicator: data.frequenceKeyIndicator.label
+      frequenceKeyIndicator: data.frequenceKeyIndicator.label,
     };
     // Convertir les valeurs en nombres pour comparaison
     const targetValue = parseFloat(data.target) || 0;
@@ -168,7 +227,7 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
     if (selectedEntity) {
       try {
         // Exécute les appels en parallèle pour meilleure performance
-          dispatch(listEntityKeyIndicators({ entityId: selectedEntity?._id }))
+        dispatch(listEntityKeyIndicators({ entityId: selectedEntity?._id }));
       } catch (error) {
         console.error("Error fetching entity data:", error);
         // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
@@ -214,17 +273,30 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={6}>
           <FormControl isRequired>
             <FormLabel fontSize="12px">Entity</FormLabel>
-            <Input {...register("entity")} defaultValue={kriData.departmentFunction} fontSize="12px" />
+            <Input
+              {...register("entity")}
+              defaultValue={kriData.departmentFunction}
+              fontSize="12px"
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel fontSize="12px">Key Indicator Reference</FormLabel>
-            <Input {...register("reference")} defaultValue={`KI${kriData.reference}`} isReadOnly fontSize="12px" />
+            <Input
+              {...register("reference")}
+              defaultValue={`KI${kriData.reference}`}
+              isReadOnly
+              fontSize="12px"
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel fontSize="12px">Description</FormLabel>
-            <Textarea fontSize="12px" {...register("description")} defaultValue={kriData.riskIndicatorDescription} />
+            <Textarea
+              fontSize="12px"
+              {...register("description")}
+              defaultValue={kriData.riskIndicatorDescription}
+            />
           </FormControl>
 
           <FormControl>
@@ -233,11 +305,10 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
               name="category"
               options={categoryOptions}
               styles={customStyles}
-              onChange={(selected) => setValue('category', selected)}
-              value={watch('category')}
+              onChange={(selected) => setValue("category", selected)}
+              value={watch("category")}
             />
           </FormControl>
-
         </SimpleGrid>
 
         <Divider mb={4} />
@@ -255,129 +326,246 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
             <TabPanel>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                 <Box>
-                  <FormControl display="flex" alignItems="center" gap={16} marginBottom={4}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    gap={16}
+                    marginBottom={4}
+                  >
                     <FormLabel fontSize="12px">Owner:</FormLabel>
-                    <Box width="100%" >
+                    <Box width="100%">
                       <Select
                         name="owner"
                         options={profilesOptions}
                         styles={customStyles}
-                        onChange={(selected) => setValue('owner', selected)}
-                        value={watch('owner')}
+                        onChange={(selected) => setValue("owner", selected)}
+                        value={watch("owner")}
                         placeholder="Select owner"
                         isClearable
                       />
                     </Box>
                   </FormControl>
 
-                  <FormControl display="flex" alignItems="center" gap={12} marginBottom={4}>
-                    <FormLabel fontSize="12px" marginRight={4}>Nominee:</FormLabel>
-                    <Box width="100%" >
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    gap={12}
+                    marginBottom={4}
+                  >
+                    <FormLabel fontSize="12px" marginRight={4}>
+                      Nominee:
+                    </FormLabel>
+                    <Box width="100%">
                       <Select
                         name="nominee"
                         options={profilesOptions}
                         styles={customStyles}
-                        onChange={(selected) => setValue('nominee', selected)}
-                        value={watch('nominee')}
+                        onChange={(selected) => setValue("nominee", selected)}
+                        value={watch("nominee")}
                         placeholder="Select nominee"
                         isClearable
                       />
                     </Box>
                   </FormControl>
 
-                  <FormControl display="flex" alignItems="center" gap={12} marginBottom={4}>
-                    <FormLabel fontSize="12px" marginRight={4}>Reviewer:</FormLabel>
-                    <Box width="100%" >
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    gap={12}
+                    marginBottom={4}
+                  >
+                    <FormLabel fontSize="12px" marginRight={4}>
+                      Reviewer:
+                    </FormLabel>
+                    <Box width="100%">
                       <Select
                         name="reviewer"
                         options={profilesOptions}
                         styles={customStyles}
-                        onChange={(selected) => setValue('reviewer', selected)}
-                        value={watch('reviewer')}
+                        onChange={(selected) => setValue("reviewer", selected)}
+                        value={watch("reviewer")}
                         placeholder="Select reviewer"
                         isClearable
                       />
                     </Box>
                   </FormControl>
 
-                  <FormControl display="flex" alignItems="center" gap={8} marginBottom={4}>
-                    <FormLabel mb="0" whiteSpace="nowrap" fontSize="12px">Review Date:</FormLabel>
-                    <Input fontSize="12px" {...register("reviewDate")} type="date" />
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    gap={8}
+                    marginBottom={4}
+                  >
+                    <FormLabel mb="0" whiteSpace="nowrap" fontSize="12px">
+                      Review Date:
+                    </FormLabel>
+                    <Input
+                      fontSize="12px"
+                      {...register("reviewDate")}
+                      type="date"
+                    />
                   </FormControl>
 
-                  <FormControl display="flex" alignItems="center" marginBottom={4}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    marginBottom={4}
+                  >
                     <Checkbox {...register("isActive")} defaultChecked mr={2} />
                     <FormLabel mb="0">Active Key Indicator</FormLabel>
                   </FormControl>
 
                   <FormControl>
                     <FormLabel fontSize="12px">Detailed Description</FormLabel>
-                    <Textarea fontSize="12px" {...register("detailedDescription")} defaultValue={kriData.riskIndicatorDescription} />
+                    <Textarea
+                      fontSize="12px"
+                      {...register("detailedDescription")}
+                      defaultValue={kriData.riskIndicatorDescription}
+                    />
                   </FormControl>
                 </Box>
 
                 <Box>
-                  <FormControl display="flex" alignItems="center" gap={4} mb={4}>
-                    <FormLabel mb="0" whiteSpace="nowrap" fontSize="12px"> Type of KI</FormLabel>
-                    <Input fontSize="12px" {...register("typeOfKi")} defaultValue={kriData.type} />
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    gap={4}
+                    mb={4}
+                  >
+                    <FormLabel mb="0" whiteSpace="nowrap" fontSize="12px">
+                      {" "}
+                      Type of KI
+                    </FormLabel>
+                    <Input
+                      fontSize="12px"
+                      {...register("typeOfKi")}
+                      defaultValue={kriData.type}
+                    />
                   </FormControl>
 
                   <Box borderWidth="1px" borderRadius="md" p={4} mt={4}>
-                    <Heading size="sm" mb={2}>Thresholds</Heading>
-                    <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                    <Heading size="sm" mb={2}>
+                      Thresholds
+                    </Heading>
+                    <FormControl
+                      display="flex"
+                      alignItems="center"
+                      gap={4}
+                      marginBottom={4}
+                    >
                       <FormLabel fontSize="12px">Threshold</FormLabel>
-                      <Box width="100%" >
+                      <Box width="100%">
                         <Select
                           name="thresholdType"
                           options={thresholdOptions}
                           styles={customStyles}
-                          onChange={(selected) => setValue('thresholdType', selected)}
-                          value={watch('thresholdType')}
+                          onChange={(selected) =>
+                            setValue("thresholdType", selected)
+                          }
+                          value={watch("thresholdType")}
                         />
                       </Box>
                     </FormControl>
-                    <FormControl display="flex" alignItems="center" gap={10} marginBottom={4}>
+                    <FormControl
+                      display="flex"
+                      alignItems="center"
+                      gap={10}
+                      marginBottom={4}
+                    >
                       <FormLabel fontSize="12px">Target</FormLabel>
-                      <Input fontSize="12px" {...register("target")} defaultValue="0" />
+                      <Input
+                        fontSize="12px"
+                        {...register("target")}
+                        defaultValue="0"
+                      />
                     </FormControl>
                     <Box mt={4} borderRadius="md" overflow="hidden">
-                      <FormControl display="flex" alignItems="center" gap={4} marginBottom={4}>
+                      <FormControl
+                        display="flex"
+                        alignItems="center"
+                        gap={4}
+                        marginBottom={4}
+                      >
                         <Checkbox {...register("isPercentage")} mr={2} />
-                        <FormLabel mb="0" fontSize="12px">Thresholds are percentages</FormLabel>
+                        <FormLabel mb="0" fontSize="12px">
+                          Thresholds are percentages
+                        </FormLabel>
                       </FormControl>
 
                       <Box w="100%">
                         <HStack spacing={4} mb={2}>
-                          <Text fontWeight="bold" w="30px">R :</Text>
-                          <Input fontSize="12px" bg="red.400" color="white" size="sm" value={kriData.escaladeKeyIndicator} readOnly />
+                          <Text fontWeight="bold" w="30px">
+                            R :
+                          </Text>
+                          <Input
+                            fontSize="12px"
+                            bg="red.400"
+                            color="white"
+                            size="sm"
+                            value={kriData.escaladeKeyIndicator}
+                            readOnly
+                          />
                         </HStack>
 
                         <HStack spacing={4} mb={2}>
-                          <Text fontWeight="bold" w="30px">A :</Text>
-                          <Input fontSize="12px" bg="orange.300" color="white" size="sm" value={kriData.seuilKeyIndicator} readOnly />
+                          <Text fontWeight="bold" w="30px">
+                            A :
+                          </Text>
+                          <Input
+                            fontSize="12px"
+                            bg="orange.300"
+                            color="white"
+                            size="sm"
+                            value={kriData.seuilKeyIndicator}
+                            readOnly
+                          />
                         </HStack>
 
                         <HStack spacing={4}>
-                          <Text fontWeight="bold" w="30px">G :</Text>
-                          <Input fontSize="12px" bg="green.400" color="white" size="sm" value={kriData.toleranceKeyIndicator} readOnly />
+                          <Text fontWeight="bold" w="30px">
+                            G :
+                          </Text>
+                          <Input
+                            fontSize="12px"
+                            bg="green.400"
+                            color="white"
+                            size="sm"
+                            value={kriData.toleranceKeyIndicator}
+                            readOnly
+                          />
                         </HStack>
                       </Box>
 
                       <HStack spacing={4} mt={4} flexWrap="wrap">
-                        <Box width={{ base: "100%", md: "100%" }} p={4} borderWidth="1px" borderRadius="md" boxShadow="lg" mt={4}>
+                        <Box
+                          width={{ base: "100%", md: "100%" }}
+                          p={4}
+                          borderWidth="1px"
+                          borderRadius="md"
+                          boxShadow="lg"
+                          mt={4}
+                        >
                           <FormControl mb={4}>
                             <HStack spacing={2} alignItems="center">
-                              <Text fontWeight="bold" fontSize={12} mb={2}>Frequency:</Text>
-                              <Box width="100%" >
+                              <Text fontWeight="bold" fontSize={12} mb={2}>
+                                Frequency:
+                              </Text>
+                              <Box width="100%">
                                 <Select
                                   name="frequenceKeyIndicator"
-                                  placeholder='Select frequency'
+                                  placeholder="Select frequency"
                                   styles={customStyles}
                                   options={frequenciesOptions}
-                                  value={watch('frequenceKeyIndicator')}
-                                  onChange={(selected) => setValue('frequenceKeyIndicator', selected)}
+                                  value={watch("frequenceKeyIndicator")}
+                                  onChange={(selected) =>
+                                    setValue("frequenceKeyIndicator", selected)
+                                  }
                                   isOptionDisabled={(option) =>
-                                    !frequencies.some(f => f.label.toLowerCase() === option.value.toLowerCase())
+                                    !frequencies.some(
+                                      (f) =>
+                                        f.label.toLowerCase() ===
+                                        option.value.toLowerCase()
+                                    )
                                   }
                                 />
                               </Box>
@@ -385,31 +573,46 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
                           </FormControl>
                           <FormControl>
                             <HStack spacing={2} alignItems="center">
-                              <Text fontWeight="bold" fontSize={12} mb="0" whiteSpace="nowrap">Remind On:</Text>
-                              <Input fontSize="12px" value="28/01/2025" />
+                              <Text
+                                fontWeight="bold"
+                                fontSize={12}
+                                mb="0"
+                                whiteSpace="nowrap"
+                              >
+                                Remind On:
+                              </Text>
+                              <Input fontSize="12px" value={dateFormatee} />
                             </HStack>
                           </FormControl>
                         </Box>
                       </HStack>
 
                       <Flex justifyContent="flex-end" mt={6}>
-                        <Button mt={4} colorScheme="blue" fontSize={12}
+                        <Button
+                          mt={4}
+                          colorScheme="blue"
+                          fontSize={12}
                           variant="solid"
                           width="auto"
                           minWidth="120px"
-                          onClick={() => setTabIndex(1)}>
+                          onClick={() => setTabIndex(1)}
+                        >
                           Capture de valeur
                         </Button>
                       </Flex>
                     </Box>
-
                   </Box>
                 </Box>
               </SimpleGrid>
             </TabPanel>
 
             <TabPanel>
-              <History kriData={kriData} profilesOptions={profilesOptions} />
+              <History
+                kriData={kriData}
+                profilesOptions={profilesOptions}
+                setDataHostorie={setDataHostorie}
+                dateFormatee={dateFormatee}
+              />
             </TabPanel>
 
             <TabPanel>
@@ -423,8 +626,17 @@ const KeyIndicatorComponent = ({ kri, onClose, profilesOptions, selectedEntity }
         </Tabs>
 
         <Stack direction="row" spacing={4} mt={6} justify="flex-end">
-          <Button colorScheme="blue" type="submit" fontSize="12px">Save</Button>
-          <Button onClick={onClose} colorScheme="red" type="reset" fontSize="12px">Cancel</Button>
+          <Button colorScheme="blue" type="submit" fontSize="12px">
+            Save
+          </Button>
+          <Button
+            onClick={onClose}
+            colorScheme="red"
+            type="reset"
+            fontSize="12px"
+          >
+            Cancel
+          </Button>
         </Stack>
       </form>
     </Box>
