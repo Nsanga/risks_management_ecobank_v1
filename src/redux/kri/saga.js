@@ -56,15 +56,13 @@ function* listByEntity(action) {
 }
 
 function* update(action) {
-    const { id } = action.payload;
     try {
-        let link = `${url}/api/v1/actions/update/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.actionData));
+        let link = `${url}/api/v1/risks-controls/updateKri`;
+        const data = yield putRequest(link, JSON.stringify(action.payload.keyIndicatorData));
         console.log("data:::/", data)
-        if (data.message === "Success") {
-            yield put({ type: types.UPDATE_KRI_SUCCESS, payload: data.data.action});
-            toast.success("Action updated successfully");
-            yield put({ type: types.GET_KRI_REQUEST});
+        if (data.message === "Mise à jour réussie") {
+            yield put({ type: types.UPDATE_KRI_SUCCESS, payload: data.data});
+            toast.success("Risk indicator updated successfully");
         } else {
             yield put({ type: types.UPDATE_KRI_FAILED, payload: "Échec lors de la modification de l'action" });
             toast.error(data.message);

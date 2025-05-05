@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Table,
@@ -15,10 +15,132 @@ import {
   VStack,
   Text,
   Badge,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddHistoryKRI } from 'redux/historyKri/action';
+import { listHistoriesKRI } from 'redux/historyKri/action';
+import ActionForm from './ActionForm';
 
 const History = ({ kriData }) => {
+  const dispatch = useDispatch()
+  const { loading, historiesKRI, error } = useSelector((state) => state.HistoryKRIReducer);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [shouldSave, setShouldSave] = useState(false);
+
+  const [formData, setFormData] = useState({
+    period: "",
+    value: "",
+    comments: "",
+  });
+
+  // Gestionnaire de changement pour les inputs
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const compareValues = (enteredValue, threshold) => {
+    if (!threshold) return false;
+
+    // Si le seuil commence par ">", on extrait le nombre et on compare
+    if (threshold.startsWith(">")) {
+      const thresholdValue = parseFloat(threshold.substring(1));
+      const enteredNum = parseFloat(enteredValue);
+      return !isNaN(enteredNum) && !isNaN(thresholdValue) && enteredNum > thresholdValue;
+    }
+
+    // Si c'est une simple valeur numérique
+    const thresholdValue = parseFloat(threshold);
+    const enteredNum = parseFloat(enteredValue);
+    return !isNaN(enteredNum) && !isNaN(thresholdValue) && enteredNum > thresholdValue;
+  };
+
+  const handleSave = async () => {
+    if (compareValues(formData.value, kriData.escaladeKeyIndicator)) {
+      onOpen(); // Affiche la modal de confirmation
+      setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
+    } else {
+      await performSave(); // Sauvegarde directement si la valeur est OK
+    }
+  };
+
+  const performSave = async () => {
+    console.log("formData:", formData);
+    await dispatch(AddHistoryKRI(formData));
+    dispatch(listHistoriesKRI(kriData._id));
+    setFormData({
+      period: "",
+      value: "",
+      comments: "",
+    });
+    setShouldSave(false);
+  };
+
+  const handleConfirmSave = async () => {
+    onClose();
+    if (shouldSave) {
+      await performSave();
+    }
+  };
+
+  const getValueColor = (value, thresholds) => {
+    const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } = thresholds;
+
+    // Fonction pour comparer une valeur avec un seuil (qui peut être ">x", "<x" ou juste un nombre)
+    const compareWithThreshold = (val, threshold) => {
+      if (!threshold) return false;
+
+      if (threshold.startsWith(">")) {
+        const thresholdValue = parseFloat(threshold.substring(1));
+        const numVal = parseFloat(val);
+        return !isNaN(numVal) && !isNaN(thresholdValue) && numVal > thresholdValue;
+      }
+
+      if (threshold.startsWith("<")) {
+        const thresholdValue = parseFloat(threshold.substring(1));
+        const numVal = parseFloat(val);
+        return !isNaN(numVal) && !isNaN(thresholdValue) && numVal < thresholdValue;
+      }
+
+      const thresholdValue = parseFloat(threshold);
+      const numVal = parseFloat(val);
+      return !isNaN(numVal) && !isNaN(thresholdValue) && numVal === thresholdValue;
+    };
+
+    // Vérification dans l'ordre de priorité (R > A > G)
+    if (compareWithThreshold(value, escaladeKeyIndicator)) {
+      return "red.400"; // Rouge pour le seuil d'escalade (R)
+    }
+
+    if (compareWithThreshold(value, seuilKeyIndicator)) {
+      return "orange.300"; // Orange pour le seuil d'alerte (A)
+    }
+
+    if (compareWithThreshold(value, toleranceKeyIndicator)) {
+      return "green.400"; // Vert pour le seuil de tolérance (G)
+    }
+
+    return "gray.600"; // Couleur par défaut si aucun seuil n'est atteint
+  };
+
+  useEffect(() => {
+    if (kriData) {
+      dispatch(listHistoriesKRI(kriData._id))
+    }
+  }, [dispatch, kriData]);
+  console.log("historiesKRI:", historiesKRI);
   return (
     <Box className="container" fontSize="12px" p={4}>
       {/* TABLE PRINCIPALE */}
@@ -71,12 +193,16 @@ const History = ({ kriData }) => {
               </Tr>
             </Thead>
             <Tbody>
-              {["29/12/2024", "29/11/2024", "30/10/2024", "30/09/2024"].map((date, idx) => (
-                <Tr key={idx}>
-                  <Td><CheckCircleIcon color="green.400" /></Td>
-                  <Td>{date}</Td>
-                  <Td></Td>
-                  <Td>0.00</Td>
+              {historiesKRI?.map((history, index) => (
+                <Tr key={index}>
+                  <Td><CheckCircleIcon color={getValueColor(history.value, {
+                    escaladeKeyIndicator: kriData.escaladeKeyIndicator,
+                    seuilKeyIndicator: kriData.seuilKeyIndicator,
+                    toleranceKeyIndicator: kriData.toleranceKeyIndicator
+                  })} /></Td>
+                  <Td>{history.period}</Td>
+                  <Td>{history.time}</Td>
+                  <Td>{history.value}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -88,34 +214,53 @@ const History = ({ kriData }) => {
           <VStack align="start" spacing={3}>
             <HStack spacing={2}>
               <Text mb="0" whiteSpace="nowrap">Period :</Text>
-              <Input size="sm" type="date" />
+              <Input
+                size="sm"
+                type="date"
+                name="period"
+                value={formData.period}
+                onChange={handleInputChange}
+              />
             </HStack>
 
             <HStack spacing={2}>
               <Text mb="0" whiteSpace="nowrap">Value :</Text>
-              <Input size="sm" placeholder="Enter value..." />
+              <Input
+                type='number'
+                size="sm"
+                placeholder="Enter value..."
+                name="value"
+                value={formData.value}
+                onChange={handleInputChange}
+              />
             </HStack>
 
             <Box w="100%">
               <HStack spacing={4} mb={2}>
                 <Text fontWeight="bold" w="30px">R :</Text>
-                <Input bg="red.400" color="white" size="sm" value="6.00" readOnly />
+                <Input bg="red.400" color="white" size="sm" value={kriData.escaladeKeyIndicator} readOnly />
               </HStack>
 
               <HStack spacing={4} mb={2}>
                 <Text fontWeight="bold" w="30px">A :</Text>
-                <Input bg="orange.300" size="sm" value="5.00" readOnly />
+                <Input bg="orange.300" size="sm" value={kriData.seuilKeyIndicator} readOnly />
               </HStack>
 
               <HStack spacing={4}>
                 <Text fontWeight="bold" w="30px">G :</Text>
-                <Input bg="green.400" size="sm" value="0" readOnly />
+                <Input bg="green.400" size="sm" value={kriData.toleranceKeyIndicator} readOnly />
               </HStack>
             </Box>
 
             <Box w="100%">
               <Text>Comments :</Text>
-              <Textarea size="sm" placeholder="Write a comment..." />
+              <Textarea
+                size="sm"
+                placeholder="Write a comment..."
+                name="comments"
+                value={formData.comments}
+                onChange={handleInputChange}
+              />
             </Box>
 
             <HStack>
@@ -125,7 +270,7 @@ const History = ({ kriData }) => {
               <Button fontSize="sm" colorScheme="blue" variant="outline">
                 Amend
               </Button> */}
-              <Button fontSize="sm" colorScheme="blue" variant="outline">
+              <Button fontSize="sm" colorScheme="blue" variant="outline" onClick={handleSave}>
                 Save
               </Button>
               {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
@@ -135,6 +280,17 @@ const History = ({ kriData }) => {
           </VStack>
         </Box>
       </Flex>
+      {/* Modal d'action */}
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Ajouter une action</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ActionForm onClose={onClose} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
