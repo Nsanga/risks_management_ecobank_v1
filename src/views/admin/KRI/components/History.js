@@ -88,7 +88,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) =>
 
   const performSave = async () => {
     console.log("formData:", formData);
-    await dispatch(AddHistoryKRI(formData));
+    await dispatch(AddHistoryKRI({...formData, period: dateFormatee}));
     dispatch(listHistoriesKRI(kriData._id));
     setFormData({
       period: "",
