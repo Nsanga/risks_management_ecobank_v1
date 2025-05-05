@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -23,16 +23,18 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-} from '@chakra-ui/react';
-import { CheckCircleIcon, ArrowForwardIcon } from '@chakra-ui/icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { AddHistoryKRI } from 'redux/historyKri/action';
-import { listHistoriesKRI } from 'redux/historyKri/action';
-import ActionForm from './ActionForm';
+} from "@chakra-ui/react";
+import { CheckCircleIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { AddHistoryKRI } from "redux/historyKri/action";
+import { listHistoriesKRI } from "redux/historyKri/action";
+import ActionForm from "./ActionForm";
 
-const History = ({ kriData }) => {
-  const dispatch = useDispatch()
-  const { loading, historiesKRI, error } = useSelector((state) => state.HistoryKRIReducer);
+const History = ({ kriData, setDataHostorie, dateFormatee }) => {
+  const dispatch = useDispatch();
+  const { loading, historiesKRI, error } = useSelector(
+    (state) => state.HistoryKRIReducer
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldSave, setShouldSave] = useState(false);
 
@@ -58,13 +60,21 @@ const History = ({ kriData }) => {
     if (threshold.startsWith(">")) {
       const thresholdValue = parseFloat(threshold.substring(1));
       const enteredNum = parseFloat(enteredValue);
-      return !isNaN(enteredNum) && !isNaN(thresholdValue) && enteredNum > thresholdValue;
+      return (
+        !isNaN(enteredNum) &&
+        !isNaN(thresholdValue) &&
+        enteredNum > thresholdValue
+      );
     }
 
     // Si c'est une simple valeur numérique
     const thresholdValue = parseFloat(threshold);
     const enteredNum = parseFloat(enteredValue);
-    return !isNaN(enteredNum) && !isNaN(thresholdValue) && enteredNum > thresholdValue;
+    return (
+      !isNaN(enteredNum) &&
+      !isNaN(thresholdValue) &&
+      enteredNum > thresholdValue
+    );
   };
 
   const handleSave = async () => {
@@ -96,7 +106,8 @@ const History = ({ kriData }) => {
   };
 
   const getValueColor = (value, thresholds) => {
-    const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } = thresholds;
+    const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } =
+      thresholds;
 
     // Fonction pour comparer une valeur avec un seuil (qui peut être ">x", "<x" ou juste un nombre)
     const compareWithThreshold = (val, threshold) => {
@@ -105,18 +116,24 @@ const History = ({ kriData }) => {
       if (threshold.startsWith(">")) {
         const thresholdValue = parseFloat(threshold.substring(1));
         const numVal = parseFloat(val);
-        return !isNaN(numVal) && !isNaN(thresholdValue) && numVal > thresholdValue;
+        return (
+          !isNaN(numVal) && !isNaN(thresholdValue) && numVal > thresholdValue
+        );
       }
 
       if (threshold.startsWith("<")) {
         const thresholdValue = parseFloat(threshold.substring(1));
         const numVal = parseFloat(val);
-        return !isNaN(numVal) && !isNaN(thresholdValue) && numVal < thresholdValue;
+        return (
+          !isNaN(numVal) && !isNaN(thresholdValue) && numVal < thresholdValue
+        );
       }
 
       const thresholdValue = parseFloat(threshold);
       const numVal = parseFloat(val);
-      return !isNaN(numVal) && !isNaN(thresholdValue) && numVal === thresholdValue;
+      return (
+        !isNaN(numVal) && !isNaN(thresholdValue) && numVal === thresholdValue
+      );
     };
 
     // Vérification dans l'ordre de priorité (R > A > G)
@@ -137,9 +154,14 @@ const History = ({ kriData }) => {
 
   useEffect(() => {
     if (kriData) {
-      dispatch(listHistoriesKRI(kriData._id))
+      dispatch(listHistoriesKRI(kriData._id));
     }
   }, [dispatch, kriData]);
+
+  useEffect(() => {
+    setDataHostorie(historiesKRI);
+  }, [historiesKRI]);
+
   console.log("historiesKRI:", historiesKRI);
   return (
     <Box className="container" fontSize="12px" p={4}>
@@ -195,11 +217,15 @@ const History = ({ kriData }) => {
             <Tbody>
               {historiesKRI?.map((history, index) => (
                 <Tr key={index}>
-                  <Td><CheckCircleIcon color={getValueColor(history.value, {
-                    escaladeKeyIndicator: kriData.escaladeKeyIndicator,
-                    seuilKeyIndicator: kriData.seuilKeyIndicator,
-                    toleranceKeyIndicator: kriData.toleranceKeyIndicator
-                  })} /></Td>
+                  <Td>
+                    <CheckCircleIcon
+                      color={getValueColor(history.value, {
+                        escaladeKeyIndicator: kriData.escaladeKeyIndicator,
+                        seuilKeyIndicator: kriData.seuilKeyIndicator,
+                        toleranceKeyIndicator: kriData.toleranceKeyIndicator,
+                      })}
+                    />
+                  </Td>
                   <Td>{history.period}</Td>
                   <Td>{history.time}</Td>
                   <Td>{history.value}</Td>
@@ -213,20 +239,23 @@ const History = ({ kriData }) => {
         <Box flex="1" bg="gray.50" p={4} borderRadius="md" boxShadow="md">
           <VStack align="start" spacing={3}>
             <HStack spacing={2}>
-              <Text mb="0" whiteSpace="nowrap">Period :</Text>
+              <Text mb="0" whiteSpace="nowrap">
+                Period :
+              </Text>
               <Input
                 size="sm"
-                type="date"
                 name="period"
-                value={formData.period}
-                onChange={handleInputChange}
+                value={dateFormatee}
+                // onChange={handleInputChange}
               />
             </HStack>
 
             <HStack spacing={2}>
-              <Text mb="0" whiteSpace="nowrap">Value :</Text>
+              <Text mb="0" whiteSpace="nowrap">
+                Value :
+              </Text>
               <Input
-                type='number'
+                type="number"
                 size="sm"
                 placeholder="Enter value..."
                 name="value"
@@ -237,18 +266,40 @@ const History = ({ kriData }) => {
 
             <Box w="100%">
               <HStack spacing={4} mb={2}>
-                <Text fontWeight="bold" w="30px">R :</Text>
-                <Input bg="red.400" color="white" size="sm" value={kriData.escaladeKeyIndicator} readOnly />
+                <Text fontWeight="bold" w="30px">
+                  R :
+                </Text>
+                <Input
+                  bg="red.400"
+                  color="white"
+                  size="sm"
+                  value={kriData.escaladeKeyIndicator}
+                  readOnly
+                />
               </HStack>
 
               <HStack spacing={4} mb={2}>
-                <Text fontWeight="bold" w="30px">A :</Text>
-                <Input bg="orange.300" size="sm" value={kriData.seuilKeyIndicator} readOnly />
+                <Text fontWeight="bold" w="30px">
+                  A :
+                </Text>
+                <Input
+                  bg="orange.300"
+                  size="sm"
+                  value={kriData.seuilKeyIndicator}
+                  readOnly
+                />
               </HStack>
 
               <HStack spacing={4}>
-                <Text fontWeight="bold" w="30px">G :</Text>
-                <Input bg="green.400" size="sm" value={kriData.toleranceKeyIndicator} readOnly />
+                <Text fontWeight="bold" w="30px">
+                  G :
+                </Text>
+                <Input
+                  bg="green.400"
+                  size="sm"
+                  value={kriData.toleranceKeyIndicator}
+                  readOnly
+                />
               </HStack>
             </Box>
 
@@ -270,7 +321,12 @@ const History = ({ kriData }) => {
               <Button fontSize="sm" colorScheme="blue" variant="outline">
                 Amend
               </Button> */}
-              <Button fontSize="sm" colorScheme="blue" variant="outline" onClick={handleSave}>
+              <Button
+                fontSize="sm"
+                colorScheme="blue"
+                variant="outline"
+                onClick={handleSave}
+              >
                 Save
               </Button>
               {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
@@ -281,7 +337,12 @@ const History = ({ kriData }) => {
         </Box>
       </Flex>
       {/* Modal d'action */}
-      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="6xl">
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+        size="6xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Ajouter une action</ModalHeader>
