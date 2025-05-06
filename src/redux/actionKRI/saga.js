@@ -10,7 +10,7 @@ import { deleteRequest } from 'helper/api';
 
 function* list(action) {
     try {
-        let link = `${url}/api/v1/actionKRI/getActionKRIByIdKeyIndicator`;
+        let link = `${url}/api/v1/actionKRI/getActionByIdKeyIndicator`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
         console.log(data)
         if (data.statut === 200) {

@@ -39,7 +39,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
   const [formData, setFormData] = useState({
     period: "",
     value: "",
-    comments: "",
+    comment: "",
   });
 
   // Gestionnaire de changement pour les inputs
@@ -93,7 +93,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
       setFormData({
         period: "",
         value: "",
-        comments: "",
+        comment: "",
       });
       setShouldSave(false);
     } catch (error) {
@@ -307,8 +307,8 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
               <Textarea
                 size="sm"
                 placeholder="Write a comment..."
-                name="comments"
-                value={formData.comments}
+                name="comment"
+                value={formData.comment}
                 onChange={handleInputChange}
               />
             </Box>
