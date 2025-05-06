@@ -30,13 +30,11 @@ import { AddHistoryKRI } from "redux/historyKri/action";
 import { listHistoriesKRI } from "redux/historyKri/action";
 import ActionForm from "./ActionForm";
 
-const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) => {
+const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, historiesKRI }) => {
   const dispatch = useDispatch();
-  const { loading, historiesKRI, error } = useSelector(
-    (state) => state.HistoryKRIReducer
-  );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldSave, setShouldSave] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     period: "",
@@ -88,14 +86,21 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) =>
 
   const performSave = async () => {
     console.log("formData:", formData);
-    await dispatch(AddHistoryKRI({...formData, period: dateFormatee}));
-    dispatch(listHistoriesKRI(kriData._id));
-    setFormData({
-      period: "",
-      value: "",
-      comments: "",
-    });
-    setShouldSave(false);
+    setIsLoading(true);
+    try {
+      await dispatch(AddHistoryKRI({ ...formData, period: dateFormatee, idKeyIndicator: kriData._id, idEntity: kriData.entityReference }));
+      dispatch(listHistoriesKRI(kriData._id));
+      setFormData({
+        period: "",
+        value: "",
+        comments: "",
+      });
+      setShouldSave(false);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleConfirmSave = async () => {
@@ -151,12 +156,6 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) =>
 
     return "gray.600"; // Couleur par défaut si aucun seuil n'est atteint
   };
-
-  useEffect(() => {
-    if (kriData) {
-      dispatch(listHistoriesKRI(kriData._id));
-    }
-  }, [dispatch, kriData]);
 
   useEffect(() => {
     setDataHostorie(historiesKRI);
@@ -246,7 +245,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) =>
                 size="sm"
                 name="period"
                 value={dateFormatee}
-                // onChange={handleInputChange}
+              // onChange={handleInputChange}
               />
             </HStack>
 
@@ -327,7 +326,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions }) =>
                 variant="outline"
                 onClick={handleSave}
               >
-                Save
+                {isLoading ? 'Save in progress ...' : 'Save'}
               </Button>
               {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
                 Cancel

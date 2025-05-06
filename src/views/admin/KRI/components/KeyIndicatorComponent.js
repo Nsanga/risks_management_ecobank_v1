@@ -25,10 +25,11 @@ import Select from "react-select";
 import History from "./History";
 import Action from "./action";
 import { updateKeyIndicator } from "redux/kri/action";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { listEntityKeyIndicators } from "redux/kri/action";
 import { listKeyIndicator } from "redux/kri/action";
 import ActionForm from "./ActionForm";
+import { listHistoriesKRI } from "redux/historyKri/action";
 
 const KeyIndicatorComponent = ({
   kri,
@@ -41,6 +42,8 @@ const KeyIndicatorComponent = ({
   const [dataHostorie, setDataHostorie] = useState([]);
 
   const [dateFormatee, setDateFormatee] = useState("");
+
+  const { historiesKRI } = useSelector((state) => state.HistoryKRIReducer);
 
   // Fonction pour formater une Date en JJ/MM/AAAA
   const formatDate = (dateObj) => {
@@ -127,6 +130,25 @@ const KeyIndicatorComponent = ({
       isCustom: true,
     };
   };
+
+  useEffect(() => {
+    const fetchHistoriesData = async () => {
+      if (kriData) {
+        try {
+          // Exécute les appels en parallèle pour meilleure performance
+          await Promise.all([
+            dispatch(listHistoriesKRI(kriData._id))
+          ]);
+
+        } catch (error) {
+          console.error("Error fetching entity data:", error);
+          // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
+        }
+      }
+    };
+
+    fetchHistoriesData();
+  }, [kriData, dispatch]);
 
   // Pré-remplissage des valeurs initiales
   React.useEffect(() => {
@@ -256,13 +278,6 @@ const KeyIndicatorComponent = ({
       ...provided,
       fontSize: "12px",
     }),
-  };
-
-  const handleConfirmSubmit = () => {
-    // Soumettre après confirmation dans la modal
-    console.log("Form Submitted after confirmation:", formDataToSubmit);
-    // Ici vous ajouteriez votre logique de soumission réelle
-    setIsModalOpen(false);
   };
 
   return (
@@ -614,6 +629,7 @@ const KeyIndicatorComponent = ({
                 profilesOptions={profilesOptions}
                 setDataHostorie={setDataHostorie}
                 dateFormatee={dateFormatee}
+                historiesKRI={historiesKRI}
               />
             </TabPanel>
 

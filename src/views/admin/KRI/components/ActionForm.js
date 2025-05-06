@@ -124,7 +124,7 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
     }
     console.log('Form data:', dataToSave);
     await dispatch(AddActionKRI(dataToSave));
-    await dispatch(AddHistoryKRI({...formDataHistory, periode: dateFormatee}));
+    await dispatch(AddHistoryKRI({...formDataHistory, periode: dateFormatee, idKeyIndicator: kriData._id, idEntity: kriData.entityReference}));
     dispatch(listActionsKRI(kriData._id));
     resetFields()
     onClose();
