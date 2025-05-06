@@ -19,7 +19,7 @@ function* list(action) {
             yield put({ type: types.GET_ACTIONSKRI_FAILED, payload: "echec recuperation des données" });
         }
     } catch (error) {
-        console.log(error);
+        console.log(error); 
         yield put({ type: types.GET_ACTIONSKRI_FAILED, payload: error });
     }
 }
