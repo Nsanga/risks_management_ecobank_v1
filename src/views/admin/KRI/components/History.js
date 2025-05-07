@@ -42,7 +42,13 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
     (sum, item) => sum + parseFloat(item.value),
     0
   );
-  const average = total / historiesKRI.length;
+  const average = historiesKRI?.length > 0 
+  ? ([...historiesKRI]
+      .sort((a,b) => new Date(`${b.period} ${b.time}`) - new Date(`${a.period} ${a.time}`))
+      .slice(0,5)
+      .reduce((sum, h, _, arr) => sum + (parseFloat(h.value) || 0)/arr.length, 0)
+      .toFixed(2))
+  : 'N/A';
 
   const [formData, setFormData] = useState({
     period: "",
