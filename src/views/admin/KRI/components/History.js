@@ -31,24 +31,12 @@ import { AddHistoryKRI } from "redux/historyKri/action";
 import { listHistoriesKRI } from "redux/historyKri/action";
 import ActionForm from "./ActionForm";
 
-const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, historiesKRI, onCancel }) => {
+const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, historiesKRI, onCancel, average }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldSave, setShouldSave] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
-
-  const total = historiesKRI.reduce(
-    (sum, item) => sum + parseFloat(item.value),
-    0
-  );
-  const average = historiesKRI?.length > 0 
-  ? ([...historiesKRI]
-      .sort((a,b) => new Date(`${b.period} ${b.time}`) - new Date(`${a.period} ${a.time}`))
-      .slice(0,5)
-      .reduce((sum, h, _, arr) => sum + (parseFloat(h.value) || 0)/arr.length, 0)
-      .toFixed(2))
-  : 'N/A';
 
   const [formData, setFormData] = useState({
     period: "",
@@ -267,10 +255,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
               </Thead>
               <Tbody>
                 {
-                  historiesKRI
-                    ?.sort((a, b) => new Date(b.period + ' ' + b.time) - new Date(a.period + ' ' + a.time)) // Tri par date+time
-                    ?.slice(0, 5) // Prendre les 5 premiers
-                    ?.map((history, index) => (
+                  historiesKRI?.map((history, index) => (
                       <Tr key={index}>
                         <Td>
                           <CheckCircleIcon

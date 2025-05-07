@@ -1,7 +1,8 @@
 import * as types from './types';
 
 const INITIAL_STATE = {
-  historiesKRI: [],
+  histories: [],
+  average: 0,
   loading: false,
   error: null,
 };
@@ -18,13 +19,15 @@ function HistoryKRIReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        historiesKRI: action.payload.data,
+        histories: action.payload.data.histories,
+        average: action.payload.data.average,
       };
     case types.GET_HISTORIESKRI_FAILED:
       return {
         ...state,
         loading: false,
-        historiesKRI: [],
+        histories: [],
+        average: 0
       };
     case types.UPDATE_HISTORYKRI_REQUEST:
       return {

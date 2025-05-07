@@ -44,7 +44,8 @@ const KeyIndicatorComponent = ({
 
   const [dateFormatee, setDateFormatee] = useState("");
 
-  const { historiesKRI } = useSelector((state) => state.HistoryKRIReducer);
+  const { histories } = useSelector((state) => state.HistoryKRIReducer);
+  const { average } = useSelector((state) => state.HistoryKRIReducer);
   const { actionsKRI } = useSelector((state) => state.ActionKRIReducer);
 
   // Fonction pour formater une Date en JJ/MM/AAAA
@@ -653,7 +654,8 @@ const KeyIndicatorComponent = ({
                 profilesOptions={profilesOptions}
                 setDataHostorie={setDataHostorie}
                 dateFormatee={dateFormatee}
-                historiesKRI={historiesKRI}
+                historiesKRI={histories}
+                average={average}
                 onCancel = {() => setTabIndex(0)}
               />
             </TabPanel>
