@@ -91,7 +91,8 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
       .map(profile => ({
         value: profile?._id,
         label: [profile?.name, profile?.surname].filter(Boolean).join(' ') || 'Unnamed Profile',
-        profile
+        profile,
+        email: profile?.email
       }));
   }, [profiles]);
 

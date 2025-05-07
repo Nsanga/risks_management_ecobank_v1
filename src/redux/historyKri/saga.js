@@ -53,7 +53,6 @@ function* add(action) {
         if (data.statut === 201) { 
             yield put({ type: types.ADD_HISTORYKRI_SUCCESS, payload: data });
             toast.success(data.message);
-            yield put({ type: types.GET_HISTORIESKRI_REQUEST, payload: { type: action.payload.type } });
         } else {
             toast.error("Aucune donnée n'a été ajouté."); 
             yield put({ type: types.ADD_HISTORYKRI_FAILED, payload: "Échec lors de la creation de l'évenement" });

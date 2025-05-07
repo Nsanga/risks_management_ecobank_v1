@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-function HistoryKRIReducer(state = INITIAL_STATE, action) {
+function ActionKRIReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case types.GET_ACTIONSKRI_REQUEST:
       return {
@@ -84,4 +84,4 @@ function HistoryKRIReducer(state = INITIAL_STATE, action) {
       return state;
   }
 }
-export default HistoryKRIReducer;
+export default ActionKRIReducer;

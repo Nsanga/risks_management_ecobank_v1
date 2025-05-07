@@ -53,7 +53,6 @@ function* add(action) {
         if (data.statut === 200) { 
             yield put({ type: types.ADD_ACTIONKRI_SUCCESS, payload: data });
             toast.success(data.message);
-            yield put({ type: types.GET_ACTIONSKRI_REQUEST, payload: { type: action.payload.type } });
         } else {
             toast.error("Aucune donnée n'a été ajouté."); 
             yield put({ type: types.ADD_ACTIONKRI_FAILED, payload: "Échec lors de la creation de l'évenement" });
@@ -66,7 +65,7 @@ function* add(action) {
     }
 }
 
-function* deleteHistoryKRI(action) {
+function* deleteActionKRI(action) {
     const { id } = action.payload;
     try {
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
@@ -88,9 +87,9 @@ function* deleteHistoryKRI(action) {
     }
 }
 
-export default function* HistoryKRISaga() {
+export default function* ActionKRISaga() {
     yield takeLatest(types.GET_ACTIONSKRI_REQUEST, list);
     yield takeLatest(types.UPDATE_ACTIONKRI_REQUEST, update);
     yield takeLatest(types.ADD_ACTIONKRI_REQUEST, add);
-    yield takeLatest(types.DELETE_ACTIONKRI_REQUEST, deleteHistoryKRI);
+    yield takeLatest(types.DELETE_ACTIONKRI_REQUEST, deleteActionKRI);
 }

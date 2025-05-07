@@ -1,5 +1,6 @@
 import { all } from 'redux-saga/effects';
 import AccountSaga from 'redux/accountManagement/saga';
+import ActionKRISaga from 'redux/actionKRI/saga';
 import ActionSaga from 'redux/actions/saga';
 import CampaignSaga from 'redux/campagne/saga';
 import ControlHistorySaga from 'redux/controlHistory/saga';
@@ -37,5 +38,6 @@ export default function* Sagas() {
     ActionSaga(),
     KeyIndicatorSaga(),
     HistoryKRISaga(),
+    ActionKRISaga(),
   ]);
 }

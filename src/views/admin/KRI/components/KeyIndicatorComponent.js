@@ -30,6 +30,7 @@ import { listEntityKeyIndicators } from "redux/kri/action";
 import { listKeyIndicator } from "redux/kri/action";
 import ActionForm from "./ActionForm";
 import { listHistoriesKRI } from "redux/historyKri/action";
+import { listActionsKRI } from "redux/actionKRI/action";
 
 const KeyIndicatorComponent = ({
   kri,
@@ -44,6 +45,7 @@ const KeyIndicatorComponent = ({
   const [dateFormatee, setDateFormatee] = useState("");
 
   const { historiesKRI } = useSelector((state) => state.HistoryKRIReducer);
+  const { actionsKRI } = useSelector((state) => state.ActionKRIReducer);
 
   // Fonction pour formater une Date en JJ/MM/AAAA
   const formatDate = (dateObj) => {
@@ -137,7 +139,8 @@ const KeyIndicatorComponent = ({
         try {
           // Exécute les appels en parallèle pour meilleure performance
           await Promise.all([
-            dispatch(listHistoriesKRI(kriData._id))
+            dispatch(listHistoriesKRI(kriData._id)),
+            dispatch(listActionsKRI(kriData._id))
           ]);
 
         } catch (error) {
@@ -270,9 +273,12 @@ const KeyIndicatorComponent = ({
       ...provided,
       fontSize: "12px",
     }),
-    option: (provided) => ({
+    option: (provided, state) => ({
       ...provided,
       fontSize: "12px",
+      color: state.isDisabled ? "#999" : "#333",
+      backgroundColor: state.isDisabled ? "#eee" : "white",
+      cursor: state.isDisabled ? "not-allowed" : "default",
     }),
     singleValue: (provided) => ({
       ...provided,
@@ -492,8 +498,9 @@ const KeyIndicatorComponent = ({
                       <FormLabel fontSize="12px">Target</FormLabel>
                       <Input
                         fontSize="12px"
-                        {...register("target")}
+                        // {...register("target")}
                         defaultValue="0"
+                        readOnly
                       />
                     </FormControl>
                     <Box mt={4} borderRadius="md" overflow="hidden">
@@ -583,6 +590,7 @@ const KeyIndicatorComponent = ({
                                         f.label.toLowerCase() ===
                                         option.value.toLowerCase()
                                     )
+                                    ["daily", "weekly"].includes(option.value)
                                   }
                                 />
                               </Box>
@@ -614,13 +622,29 @@ const KeyIndicatorComponent = ({
                           minWidth="120px"
                           onClick={() => setTabIndex(1)}
                         >
-                          Capture de valeur
+                          Capture de la valeur
                         </Button>
                       </Flex>
                     </Box>
                   </Box>
                 </Box>
               </SimpleGrid>
+              <Stack direction="row" spacing={4} mt={6} justify="flex-end">
+                <Button colorScheme="blue" type="submit" fontSize="12px">
+                  Save
+                </Button>
+                {!search && (
+                  <Button
+                    onClick={onClose}
+                    colorScheme="red"
+                    type="reset"
+                    fontSize="12px"
+                  >
+                    Cancel
+                  </Button>
+                )}
+
+              </Stack>
             </TabPanel>
 
             <TabPanel>
@@ -630,12 +654,13 @@ const KeyIndicatorComponent = ({
                 setDataHostorie={setDataHostorie}
                 dateFormatee={dateFormatee}
                 historiesKRI={historiesKRI}
+                onCancel = {() => setTabIndex(0)}
               />
             </TabPanel>
 
             <TabPanel>
               {/* <Action kriData={kriData} profilesOptions={profilesOptions} /> */}
-              <ActionForm isActionTab={true} profilesOptions={profilesOptions}/>
+              <ActionForm isActionTab={true} profilesOptions={profilesOptions} actionsKRI={actionsKRI} />
             </TabPanel>
 
             <TabPanel>
@@ -643,23 +668,6 @@ const KeyIndicatorComponent = ({
             </TabPanel>
           </TabPanels>
         </Tabs>
-
-        <Stack direction="row" spacing={4} mt={6} justify="flex-end">
-          <Button colorScheme="blue" type="submit" fontSize="12px">
-            Save
-          </Button>
-          {!search && (
-            <Button
-              onClick={onClose}
-              colorScheme="red"
-              type="reset"
-              fontSize="12px"
-            >
-              Cancel
-            </Button>
-          )}
-
-        </Stack>
       </form>
     </Box>
   );
