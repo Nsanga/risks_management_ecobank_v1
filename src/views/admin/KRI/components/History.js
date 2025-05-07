@@ -30,11 +30,23 @@ import { AddHistoryKRI } from "redux/historyKri/action";
 import { listHistoriesKRI } from "redux/historyKri/action";
 import ActionForm from "./ActionForm";
 
-const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, historiesKRI }) => {
+const History = ({
+  kriData,
+  setDataHostorie,
+  dateFormatee,
+  profilesOptions,
+  historiesKRI,
+}) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldSave, setShouldSave] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const total = historiesKRI.reduce(
+    (sum, item) => sum + parseFloat(item.value),
+    0
+  );
+  const average = total / historiesKRI.length;
 
   const [formData, setFormData] = useState({
     period: "",
@@ -88,7 +100,14 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
     console.log("formData:", formData);
     setIsLoading(true);
     try {
-      await dispatch(AddHistoryKRI({ ...formData, period: dateFormatee, idKeyIndicator: kriData._id, idEntity: kriData.entityReference }));
+      await dispatch(
+        AddHistoryKRI({
+          ...formData,
+          period: dateFormatee,
+          idKeyIndicator: kriData._id,
+          idEntity: kriData.entityReference,
+        })
+      );
       dispatch(listHistoriesKRI(kriData._id));
       setFormData({
         period: "",
@@ -97,7 +116,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
       });
       setShouldSave(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -183,14 +202,21 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
         <Tbody>
           <Tr>
             <Td>
-              <CheckCircleIcon color="green.400" />
+              <CheckCircleIcon
+                color={getValueColor(average, {
+                  escaladeKeyIndicator: kriData.escaladeKeyIndicator,
+                  seuilKeyIndicator: kriData.seuilKeyIndicator,
+                  toleranceKeyIndicator: kriData.toleranceKeyIndicator,
+                })}
+              />
+              {/* <CheckCircleIcon color="green.400" /> */}
             </Td>
             <Td>
               <ArrowForwardIcon />
             </Td>
             <Td>0.00</Td>
             <Td>0.00</Td>
-            <Td>0.00</Td>
+            <Td>{average ? average : 0.0}</Td>
             <Td>N/A</Td>
             <Td>N/A</Td>
             <Td color="green.600">{kriData.toleranceKeyIndicator}</Td>
@@ -245,7 +271,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
                 size="sm"
                 name="period"
                 value={dateFormatee}
-              // onChange={handleInputChange}
+                // onChange={handleInputChange}
               />
             </HStack>
 
@@ -326,7 +352,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
                 variant="outline"
                 onClick={handleSave}
               >
-                {isLoading ? 'Save in progress ...' : 'Save'}
+                {isLoading ? "Save in progress ..." : "Save"}
               </Button>
               {/* <Button fontSize="sm" colorScheme="blue" variant="outline">
                 Cancel
@@ -347,7 +373,13 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
           <ModalHeader>Ajouter une action</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ActionForm onClose={onClose} kriData={kriData} profilesOptions={profilesOptions} formDataHistory={formData} dateFormatee={dateFormatee} />
+            <ActionForm
+              onClose={onClose}
+              kriData={kriData}
+              profilesOptions={profilesOptions}
+              formDataHistory={formData}
+              dateFormatee={dateFormatee}
+            />
           </ModalBody>
         </ModalContent>
       </Modal>
