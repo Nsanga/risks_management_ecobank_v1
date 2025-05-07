@@ -38,6 +38,12 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
+  const total = historiesKRI.reduce(
+    (sum, item) => sum + parseFloat(item.value),
+    0
+  );
+  const average = total / historiesKRI.length;
+
   const [formData, setFormData] = useState({
     period: "",
     value: "",
@@ -215,14 +221,21 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
         <Tbody>
           <Tr>
             <Td>
-              <CheckCircleIcon color="green.400" />
+              <CheckCircleIcon
+                color={getValueColor(average, {
+                  escaladeKeyIndicator: kriData.escaladeKeyIndicator,
+                  seuilKeyIndicator: kriData.seuilKeyIndicator,
+                  toleranceKeyIndicator: kriData.toleranceKeyIndicator,
+                })}
+              />
+              {/* <CheckCircleIcon color="green.400" /> */}
             </Td>
             <Td>
               <ArrowForwardIcon />
             </Td>
             <Td>0.00</Td>
             <Td>0.00</Td>
-            <Td>0.00</Td>
+            <Td>{average ? average : 0.0}</Td>
             <Td>N/A</Td>
             <Td>N/A</Td>
             <Td color="green.600">{kriData.toleranceKeyIndicator}</Td>
