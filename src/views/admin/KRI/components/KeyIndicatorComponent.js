@@ -108,9 +108,7 @@ const KeyIndicatorComponent = ({
     { id: 1, label: "Daily" },
     { id: 2, label: "Weekly" },
     { id: 3, label: "Monthly" },
-    { id: 4, label: "Quarterly" },
-    { id: 5, label: "Semi-Annually" },
-    { id: 6, label: "Annually" },
+    { id: 4, label: "Quarterly" }
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({
@@ -280,12 +278,15 @@ const KeyIndicatorComponent = ({
       color: state.isDisabled ? "#999" : "#333",
       backgroundColor: state.isDisabled ? "#eee" : "white",
       cursor: state.isDisabled ? "not-allowed" : "default",
+      zIndex: 50
     }),
     singleValue: (provided) => ({
       ...provided,
       fontSize: "12px",
     }),
   };
+
+  const disabledOptions = ["daily", "weekly"];
 
   return (
     <Box p={5}>
@@ -585,13 +586,9 @@ const KeyIndicatorComponent = ({
                                   onChange={(selected) =>
                                     setValue("frequenceKeyIndicator", selected)
                                   }
-                                  isOptionDisabled={(option) =>
-                                    !frequencies.some(
-                                      (f) =>
-                                        f.label.toLowerCase() ===
-                                        option.value.toLowerCase()
-                                    )
-                                    ["daily", "weekly"].includes(option.value)
+                                  isOptionDisabled={(option) => 
+                                    !frequencies.some(f => f.label.toLowerCase() === option.value.toLowerCase()) ||
+                                    disabledOptions.includes(option.value.toLowerCase())
                                   }
                                 />
                               </Box>

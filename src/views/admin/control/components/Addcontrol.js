@@ -269,11 +269,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     // console.log("control:", control);
     if (currentView === "KIs" && viewData.KIs) {
       setSelectedKIs(KIs)
+      setSelectedRisk(null);
+      setSelectedControl(null)
     }
     if ((currentView === "Risks" && viewData.Risks) || (currentView === "Controls" && viewData.Controls)) {
       setIndexChoice(index);
       setSelectedRisk(risk);
       setSelectedControl(control)
+      setSelectedKIs(null);
       setIsEditMode(true);
     }
     onOpen();
@@ -525,7 +528,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
               <ModalHeader>Détails du KRI</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <KeyIndicatorComponent kri={selectedKIs} onClose={onClose} />
+                <KeyIndicatorComponent kri={selectedKIs} onClose={onClose} profilesOptions={profileOptions}/>
               </ModalBody>
             </ModalContent>
           </Modal>
