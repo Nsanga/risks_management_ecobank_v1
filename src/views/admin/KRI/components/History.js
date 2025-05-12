@@ -116,6 +116,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
           idKeyIndicator,
           idEntity: kriData.entityReference,
           time: currentTime,
+          author: localStorage.getItem("username"),
         })
       );
       console.log("Save response:", saveResponse); // Debug

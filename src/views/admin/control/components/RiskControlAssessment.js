@@ -134,6 +134,7 @@ const RiskControlAssessment = ({
           ...formData,
           idControl: controlId,
           frequency: selectedFrequency,
+          author: localStorage.getItem("username"),
         })
       );
       dispatch(listControlActions({ idControl: controlId }));
@@ -144,6 +145,7 @@ const RiskControlAssessment = ({
     const postData = {
       ...actionData,
       idControl: controlId,
+      author: localStorage.getItem("username"),
     }
     console.log("postData:", postData)
     await dispatch((AddAction(postData)));
