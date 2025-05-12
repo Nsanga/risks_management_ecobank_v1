@@ -31,18 +31,28 @@ import { AddHistoryKRI } from "redux/historyKri/action";
 import { listHistoriesKRI } from "redux/historyKri/action";
 import ActionForm from "./ActionForm";
 
-const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, historiesKRI, onCancel, average }) => {
+const History = ({
+  kriData,
+  setDataHostorie,
+  dateFormatee,
+  profilesOptions,
+  historiesKRI,
+  onCancel,
+  average,
+  isHistory,
+}) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldSave, setShouldSave] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
+
   const [formData, setFormData] = useState({
     period: "",
     value: "",
     comment: "",
-    time: ""
+    time: "",
   });
 
   // Gestionnaire de changement pour les inputs
@@ -101,11 +111,13 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
   const performSave = async () => {
     setIsLoading(true);
     try {
-      const currentTime = new Date().toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }).replace(':', ':'); // Format garanti HH:mm (ex: "09:05" ou "14:30")
+      const currentTime = new Date()
+        .toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
+        .replace(":", ":"); // Format garanti HH:mm (ex: "09:05" ou "14:30")
       const idKeyIndicator = kriData._id; // Référence stable
 
       // 1. Sauvegarde de l'historique
@@ -119,7 +131,6 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
           author: localStorage.getItem("username"),
         })
       );
-      console.log("Save response:", saveResponse); // Debug
 
       // 2. Réinitialisation du formulaire
       setFormData({ period: "", value: "", comment: "" });
@@ -138,11 +149,12 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
   };
 
   const getValueColor = (value, thresholds) => {
-    const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } = thresholds;
+    const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } =
+      thresholds;
 
     // Fonction pour comparer une valeur avec un seuil (supporte >x, <x, <=x>y, etc.)
     const compareWithThreshold = (val, threshold) => {
-      if (!threshold || typeof val === 'undefined') return false;
+      if (!threshold || typeof val === "undefined") return false;
 
       const numVal = parseFloat(val);
       if (isNaN(numVal)) return false;
@@ -150,12 +162,14 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
       // Cas 1: Intervalle (ex: "<=5>0" signifie "0 < valeur ≤ 5")
       if (/<=?[0-9.]+>?[0-9.]+/g.test(threshold)) {
         const parts = threshold.split(/>|</).filter(Boolean);
-        const upperBound = parseFloat(parts[0].replace('=', ''));
+        const upperBound = parseFloat(parts[0].replace("=", ""));
         const lowerBound = parseFloat(parts[1]);
 
         return (
-          (threshold.includes('<=') ? numVal <= upperBound : numVal < upperBound) &&
-          (threshold.includes('>') ? numVal > lowerBound : numVal >= lowerBound)
+          (threshold.includes("<=")
+            ? numVal <= upperBound
+            : numVal < upperBound) &&
+          (threshold.includes(">") ? numVal > lowerBound : numVal >= lowerBound)
         );
       }
 
@@ -194,7 +208,6 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
     setDataHostorie(historiesKRI);
   }, [historiesKRI]);
 
-  console.log("historiesKRI:", historiesKRI);
   return (
     <Box className="container" fontSize="12px" p={4}>
       {/* TABLE PRINCIPALE */}
@@ -255,24 +268,22 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
                 </Tr>
               </Thead>
               <Tbody>
-                {
-                  historiesKRI?.map((history, index) => (
-                      <Tr key={index}>
-                        <Td>
-                          <CheckCircleIcon
-                            color={getValueColor(history.value, {
-                              escaladeKeyIndicator: kriData.escaladeKeyIndicator,
-                              seuilKeyIndicator: kriData.seuilKeyIndicator,
-                              toleranceKeyIndicator: kriData.toleranceKeyIndicator,
-                            })}
-                          />
-                        </Td>
-                        <Td>{history.period}</Td>
-                        <Td>{history.time}</Td>
-                        <Td>{history.value}</Td>
-                      </Tr>
-                    ))
-                }
+                {historiesKRI?.map((history, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <CheckCircleIcon
+                        color={getValueColor(history.value, {
+                          escaladeKeyIndicator: kriData.escaladeKeyIndicator,
+                          seuilKeyIndicator: kriData.seuilKeyIndicator,
+                          toleranceKeyIndicator: kriData.toleranceKeyIndicator,
+                        })}
+                      />
+                    </Td>
+                    <Td>{history.period}</Td>
+                    <Td>{history.time}</Td>
+                    <Td>{history.value}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </Box>
@@ -288,7 +299,8 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
                   size="sm"
                   name="period"
                   value={dateFormatee}
-                // onChange={handleInputChange}
+                  disabled={isHistory}
+                  // onChange={handleInputChange}
                 />
               </HStack>
 
@@ -303,6 +315,7 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
                   name="value"
                   value={formData.value}
                   onChange={handleInputChange}
+                  disabled={isHistory}
                 />
               </HStack>
 
@@ -353,20 +366,25 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
                   name="comment"
                   value={formData.comment}
                   onChange={handleInputChange}
+                  disabled={isHistory}
                 />
               </Box>
-
-
             </VStack>
           </Box>
         </Flex>
-        <Flex flexDirection="row" justifyContent="flex-end" marginTop={8} gap={4}>
+        <Flex
+          flexDirection="row"
+          justifyContent="flex-end"
+          marginTop={8}
+          gap={4}
+        >
           <Button
             fontSize="12px"
             colorScheme="blue"
             onClick={handleSave}
+            disabled={isHistory}
           >
-            {isLoading ? 'Save in progress ...' : 'Save'}
+            {isLoading ? "Save in progress ..." : "Save"}
           </Button>
           <Button
             // onClick={onClose}
@@ -397,7 +415,8 @@ const History = ({ kriData, setDataHostorie, dateFormatee, profilesOptions, hist
               profilesOptions={profilesOptions}
               formDataHistory={formData}
               dateFormatee={dateFormatee}
-              setFormDataHistory={setFormData} />
+              setFormDataHistory={setFormData}
+            />
           </ModalBody>
         </ModalContent>
       </Modal>

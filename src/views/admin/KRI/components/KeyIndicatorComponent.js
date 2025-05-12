@@ -37,16 +37,28 @@ const KeyIndicatorComponent = ({
   onClose,
   profilesOptions,
   selectedEntity,
-  search = false
+  search = false,
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [dataHostorie, setDataHostorie] = useState([]);
 
   const [dateFormatee, setDateFormatee] = useState("");
+  const [isHistory, setIsHistory] = useState(false);
 
   const { histories } = useSelector((state) => state.HistoryKRIReducer);
   const { average } = useSelector((state) => state.HistoryKRIReducer);
   const { actionsKRI } = useSelector((state) => state.ActionKRIReducer);
+
+
+
+  const changeHistory = () => {
+    setIsHistory(true);
+  };
+
+  const changeCapture = () => {
+    setTabIndex(1);
+    setIsHistory(false);
+  };
 
   // Fonction pour formater une Date en JJ/MM/AAAA
   const formatDate = (dateObj) => {
@@ -108,7 +120,7 @@ const KeyIndicatorComponent = ({
     { id: 1, label: "Daily" },
     { id: 2, label: "Weekly" },
     { id: 3, label: "Monthly" },
-    { id: 4, label: "Quarterly" }
+    { id: 4, label: "Quarterly" },
   ];
 
   const frequenciesOptions = frequencies.map((frequency) => ({
@@ -139,9 +151,8 @@ const KeyIndicatorComponent = ({
           // Exécute les appels en parallèle pour meilleure performance
           await Promise.all([
             dispatch(listHistoriesKRI(kriData._id)),
-            dispatch(listActionsKRI(kriData._id))
+            dispatch(listActionsKRI(kriData._id)),
           ]);
-
         } catch (error) {
           console.error("Error fetching entity data:", error);
           // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
@@ -160,7 +171,7 @@ const KeyIndicatorComponent = ({
         setValue(
           "category",
           categoryOptions.find((opt) => opt.value === kriData.category) ||
-          categoryOptions[0]
+            categoryOptions[0]
         );
       }
 
@@ -278,7 +289,7 @@ const KeyIndicatorComponent = ({
       color: state.isDisabled ? "#999" : "#333",
       backgroundColor: state.isDisabled ? "#eee" : "white",
       cursor: state.isDisabled ? "not-allowed" : "default",
-      zIndex: 50
+      zIndex: 50,
     }),
     singleValue: (provided) => ({
       ...provided,
@@ -342,7 +353,9 @@ const KeyIndicatorComponent = ({
         <Tabs variant="enclosed" index={tabIndex} onChange={setTabIndex}>
           <TabList>
             <Tab fontSize="12px">General</Tab>
-            <Tab fontSize="12px">History</Tab>
+            <Tab fontSize="12px" onClick={changeHistory}>
+              History
+            </Tab>
             <Tab fontSize="12px">Actions</Tab>
             <Tab fontSize="12px">Linked Items</Tab>
           </TabList>
@@ -586,9 +599,15 @@ const KeyIndicatorComponent = ({
                                   onChange={(selected) =>
                                     setValue("frequenceKeyIndicator", selected)
                                   }
-                                  isOptionDisabled={(option) => 
-                                    !frequencies.some(f => f.label.toLowerCase() === option.value.toLowerCase()) ||
-                                    disabledOptions.includes(option.value.toLowerCase())
+                                  isOptionDisabled={(option) =>
+                                    !frequencies.some(
+                                      (f) =>
+                                        f.label.toLowerCase() ===
+                                        option.value.toLowerCase()
+                                    ) ||
+                                    disabledOptions.includes(
+                                      option.value.toLowerCase()
+                                    )
                                   }
                                 />
                               </Box>
@@ -618,7 +637,8 @@ const KeyIndicatorComponent = ({
                           variant="solid"
                           width="auto"
                           minWidth="120px"
-                          onClick={() => setTabIndex(1)}
+                          // onClick={() => setTabIndex(1)}
+                          onClick={changeCapture}
                         >
                           Capture de la valeur
                         </Button>
@@ -641,7 +661,6 @@ const KeyIndicatorComponent = ({
                     Cancel
                   </Button>
                 )}
-
               </Stack>
             </TabPanel>
 
@@ -653,13 +672,18 @@ const KeyIndicatorComponent = ({
                 dateFormatee={dateFormatee}
                 historiesKRI={histories}
                 average={average}
-                onCancel = {() => setTabIndex(0)}
+                isHistory={isHistory}
+                onCancel={() => setTabIndex(0)}
               />
             </TabPanel>
 
             <TabPanel>
               {/* <Action kriData={kriData} profilesOptions={profilesOptions} /> */}
-              <ActionForm isActionTab={true} profilesOptions={profilesOptions} actionsKRI={actionsKRI} />
+              <ActionForm
+                isActionTab={true}
+                profilesOptions={profilesOptions}
+                actionsKRI={actionsKRI}
+              />
             </TabPanel>
 
             <TabPanel>
