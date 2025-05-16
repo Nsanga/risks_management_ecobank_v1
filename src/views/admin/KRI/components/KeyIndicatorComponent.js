@@ -42,14 +42,14 @@ const KeyIndicatorComponent = ({
   const [tabIndex, setTabIndex] = useState(0);
   const [dataHostorie, setDataHostorie] = useState([]);
 
-  const [dateFormatee, setDateFormatee] = useState("");
   const [isHistory, setIsHistory] = useState(false);
 
   const { histories } = useSelector((state) => state.HistoryKRIReducer);
   const { average } = useSelector((state) => state.HistoryKRIReducer);
   const { actionsKRI } = useSelector((state) => state.ActionKRIReducer);
 
-
+  const [valuePeriod, setValuePeriod] = useState("");
+  const [valueRemindOne, setValueRemindOne] = useState("");
 
   const changeHistory = () => {
     setIsHistory(true);
@@ -82,19 +82,41 @@ const KeyIndicatorComponent = ({
 
   useEffect(() => {
     if (dataHostorie.length === 0) {
-      setDateFormatee("01/01/2025");
+      setValuePeriod("01/01/2025");
+      setValueRemindOne("01/01/2025");
+    } else if (dataHostorie.length) {
+      setValuePeriod(dataHostorie[0]?.period);
     } else {
       let baseDate;
 
-      if (dateFormatee === "") {
+      if (valuePeriod === "") {
         baseDate = new Date();
       } else {
-        const [jour, mois, annee] = dateFormatee.split("/");
+        const [jour, mois, annee] = valuePeriod.split("/");
         baseDate = new Date(`${annee}-${mois}-${jour}`);
       }
 
       baseDate.setMonth(baseDate.getMonth() + 3);
-      setDateFormatee(formatDate(baseDate));
+      setValuePeriod(formatDate(baseDate));
+    }
+  }, [dataHostorie]);
+
+  useEffect(() => {
+    if (dataHostorie.length === 0) {
+      setValueRemindOne("01/01/2025");
+    } else if (dataHostorie.length) {
+      // const dateString = dataHostorie[0]?.period;
+      const dateString = "01/01/2025";
+      const [day, month, year] = dateString.split("/").map(Number);
+      const date = new Date(year, month - 1, day); // JS months are 0-based
+      date.setMonth(date.getMonth() + 3); // Ajouter 3 mois
+
+      const newDay = String(date.getDate()).padStart(2, "0");
+      const newMonth = String(date.getMonth() + 1).padStart(2, "0");
+      const newYear = date.getFullYear();
+
+      const newDateString = `${newDay}/${newMonth}/${newYear}`;
+      setValueRemindOne(newDateString);
     }
   }, [dataHostorie]);
 
@@ -623,7 +645,7 @@ const KeyIndicatorComponent = ({
                               >
                                 Remind On:
                               </Text>
-                              <Input fontSize="12px" value={dateFormatee} />
+                              <Input fontSize="12px" value={valueRemindOne} />
                             </HStack>
                           </FormControl>
                         </Box>
@@ -669,7 +691,8 @@ const KeyIndicatorComponent = ({
                 kriData={kriData}
                 profilesOptions={profilesOptions}
                 setDataHostorie={setDataHostorie}
-                dateFormatee={dateFormatee}
+                valuePeriod={valuePeriod}
+                valueRemindOne={valueRemindOne}
                 historiesKRI={histories}
                 average={average}
                 isHistory={isHistory}

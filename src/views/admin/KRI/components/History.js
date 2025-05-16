@@ -34,7 +34,8 @@ import ActionForm from "./ActionForm";
 const History = ({
   kriData,
   setDataHostorie,
-  dateFormatee,
+  valuePeriod,
+  valueRemindOne,
   profilesOptions,
   historiesKRI,
   onCancel,
@@ -46,7 +47,6 @@ const History = ({
   const [shouldSave, setShouldSave] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
-
 
   const [formData, setFormData] = useState({
     period: "",
@@ -124,7 +124,7 @@ const History = ({
       const saveResponse = await dispatch(
         AddHistoryKRI({
           ...formData,
-          period: dateFormatee,
+          period: valuePeriod,
           idKeyIndicator,
           idEntity: kriData.entityReference,
           time: currentTime,
@@ -298,7 +298,7 @@ const History = ({
                 <Input
                   size="sm"
                   name="period"
-                  value={dateFormatee}
+                  value={isHistory ? valuePeriod : valueRemindOne}
                   disabled={isHistory}
                   // onChange={handleInputChange}
                 />
@@ -414,7 +414,7 @@ const History = ({
               kriData={kriData}
               profilesOptions={profilesOptions}
               formDataHistory={formData}
-              dateFormatee={dateFormatee}
+              valuePeriod={valuePeriod}
               setFormDataHistory={setFormData}
             />
           </ModalBody>
