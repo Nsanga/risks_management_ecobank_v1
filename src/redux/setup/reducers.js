@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import AccountReducer from 'redux/accountManagement/reducer';
+import ActionKRIReducer from 'redux/actionKRI/reducer';
 import ActionReducer from 'redux/actions/reducer';
 import CampaignReducer from 'redux/campagne/reducer';
 import ControlHistoryReducer from 'redux/controlHistory/reducer';
@@ -35,7 +36,8 @@ const rootReducer = combineReducers({
   ControlHistoryReducer,
   ActionReducer,
   KeyIndicatorReducer,
-  HistoryKRIReducer
+  HistoryKRIReducer,
+  ActionKRIReducer
 });
 
 export default rootReducer;

@@ -31,7 +31,7 @@ const CardDetails = ({ events, loading }) => {
           
           return (
             <Box
-              p={4}
+              p={2}
               shadow="md"
               borderRadius="md"
               borderWidth="1px"

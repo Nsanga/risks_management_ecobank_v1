@@ -488,7 +488,7 @@ const GeneralForm = ({
                   />
                 </HStack>
               </FormControl>
-              <Box>
+              <Flex gap={2}>
                 <Button
                   fontSize={12}
                   colorScheme="blue"
@@ -501,7 +501,15 @@ const GeneralForm = ({
                 >
                   Test du contrôle
                 </Button>
-              </Box>
+                <Button
+                  fontSize={12}
+                  colorScheme="red"
+                  variant="solid"
+                  disabled
+                >
+                  Valider le Test
+                </Button>
+              </Flex>
             </Flex>
           </Box>
         </Box>

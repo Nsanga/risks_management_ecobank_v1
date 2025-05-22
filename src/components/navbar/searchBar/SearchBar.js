@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { listEvents } from "redux/events/action";
 import toast from "react-hot-toast";
 import { listActions } from "redux/actions/action";
+import { listKeyIndicator } from "redux/kri/action";
 
 export function SearchBar(props) {
   const { variant, background, children, borderRadius, ...rest } = props;
@@ -32,11 +33,13 @@ export function SearchBar(props) {
   const dispatch = useDispatch();
 
   const events = useSelector(state => state.EventReducer.events);
+  const kIs = useSelector(state => state.KeyIndicatorReducer.keyIndicator);
   const actions = useSelector(state => state.ActionReducer.actions);
   const loading = useSelector(state => state.EventReducer.loading);
 
   useEffect(() => {
     dispatch(listEvents());
+    dispatch(listKeyIndicator());
     dispatch(listActions());
   }, [dispatch]);
 
@@ -57,6 +60,25 @@ export function SearchBar(props) {
         }
       } catch (error) {
         console.error("Erreur lors de la récupération des événements :", error);
+      }
+    }
+
+    if (value === '5') {
+      // Si l'option sélectionnée est "Event"
+      try {
+        // Filtrer l'événement correspondant au numéro de référence saisi
+        const kri = kIs.find(ki => ki.reference === inputValue);
+        if (kri) {
+          // Rediriger vers la vue de l'événement avec les données récupérées
+          history.push({
+            pathname: '/admin/kri-search-result',
+            state: { kri }
+          });
+        } else {
+          toast.error('Aucun indicateur de clé trouvé avec ce numéro de référence.');
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des indicateurs de clé :", error);
       }
     }
 
@@ -87,7 +109,7 @@ export function SearchBar(props) {
       '2': 'RSK',
       '3': 'CTL',
       '4': 'EVT',
-      '5': 'KRI',
+      '5': 'KI',
       '6': 'ACT',
     };
     setPlaceholder(placeholders[nextValue]);

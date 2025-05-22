@@ -26,6 +26,7 @@ import {
   ModalFooter,
   Image,
   useToast,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -51,6 +52,7 @@ import { listEntityActions } from "redux/actions/action";
 import ActionCard from "./ActionCard";
 import { listEntityKeyIndicators } from "redux/kri/action";
 import KeyIndicatorComponent from "views/admin/KRI/components/KeyIndicatorComponent";
+import KriCard from "views/admin/KRI/components/KriCard";
 
 function AddControl({ entityRiskControls, loading, entities, profiles, events, actions, keyIndicator }) {
   console.log("keyIndicator:", keyIndicator);
@@ -269,11 +271,14 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     // console.log("control:", control);
     if (currentView === "KIs" && viewData.KIs) {
       setSelectedKIs(KIs)
+      setSelectedRisk(null);
+      setSelectedControl(null)
     }
     if ((currentView === "Risks" && viewData.Risks) || (currentView === "Controls" && viewData.Controls)) {
       setIndexChoice(index);
       setSelectedRisk(risk);
       setSelectedControl(control)
+      setSelectedKIs(null);
       setIsEditMode(true);
     }
     onOpen();
@@ -449,6 +454,60 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
     fetchEntityData();
   }, [selectedEntityDescription, dispatch, selectedEntity]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Calcul des données à afficher
+  const currentItems = viewData[currentView]?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  ) || [];
+
+  const totalItems = viewData[currentView]?.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // Fonction de changement de page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Fonction pour générer les boutons de page
+  const renderPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage, endPage;
+
+    if (totalPages <= maxVisiblePages) {
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      const half = Math.floor(maxVisiblePages / 2);
+      if (currentPage <= half) {
+        startPage = 1;
+        endPage = maxVisiblePages;
+      } else if (currentPage + half >= totalPages) {
+        startPage = totalPages - maxVisiblePages + 1;
+        endPage = totalPages;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <Button
+          key={i}
+          onClick={() => paginate(i)}
+          colorScheme={currentPage === i ? 'blue' : 'gray'}
+          size="sm"
+        >
+          {i}
+        </Button>
+      );
+    }
+
+    return pages;
+  };
+
   return (
     <>
       {/* <Flex
@@ -525,7 +584,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
               <ModalHeader>Détails du KRI</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <KeyIndicatorComponent kri={selectedKIs} onClose={onClose} />
+                <KeyIndicatorComponent kri={selectedKIs} onClose={onClose} profilesOptions={profileOptions} />
               </ModalBody>
             </ModalContent>
           </Modal>
@@ -621,60 +680,56 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                     minWidth: 'max-content', // Force le contenu à ne pas se réduire
                     width: '100%'
                   }}>
-                    <Table variant="simple" mt={4} minWidth="800px">
-                      <Thead>
-                        <Tr>
-                          <div
-                            style={{ position: "relative", left: "25px", top: "15px" }}
-                          >
-                            <Checkbox
-                              onChange={handleSelectAll}
-                              isChecked={
-                                selectedRows.length === viewData[currentView]?.length &&
-                                viewData[currentView]?.length > 0
-                              }
-                            />
-                          </div>
-
-                          {columnsByView[currentView]?.map((col) => (
-                            <Th fontSize={14} key={col.key} textTransform="none">
-                              {col.label}
-                            </Th>
-                          ))}
-                        </Tr>
-                      </Thead>
-                      {loading ? (
-                        <Flex alignItems="center" justifyContent="center" width="100%">
-                          <Image src={Loader} alt="Loading..." height={25} width={25} />
-                        </Flex>
-                      ) : (
-                        <Tbody>
-                          {viewData[currentView]?.map((row, index) => (
-                            <Tr key={index} cursor="pointer">
-                              <Td>
-                                <Checkbox
-                                  onChange={(e) =>
-                                    handleCheckboxChange(row, e.target.checked)
-                                  }
-                                  isChecked={isRowSelected(row)}
-                                />
-                              </Td>
-                              {columnsByView[currentView]?.map((col) => (
-                                <Td
-                                  fontSize={12}
-                                  key={col.key}
-                                  onClick={() => handleRowClick(row, index)}
-                                >
-                                  {row[col.key]?.length > 20
-                                    ? `${row[col.key].substring(0, 16)}...`
-                                    : row[col.key]}
+                    <>
+                      <Table variant="simple" mt={4} minWidth="800px">
+                        <Thead>
+                          <Tr>
+                            <div style={{ position: "relative", left: "25px", top: "15px" }}>
+                              <Checkbox
+                                onChange={handleSelectAll}
+                                isChecked={
+                                  selectedRows.length === totalItems && totalItems > 0
+                                }
+                              />
+                            </div>
+                            {columnsByView[currentView]?.map((col) => (
+                              <Th fontSize={14} key={col.key} textTransform="none">
+                                {col.label}
+                              </Th>
+                            ))}
+                          </Tr>
+                        </Thead>
+                        {loading ? (
+                          <Flex alignItems="center" justifyContent="center" width="100%">
+                            <Image src={Loader} alt="Loading..." height={25} width={25} />
+                          </Flex>
+                        ) : (
+                          <Tbody>
+                            {currentItems.map((row, index) => (
+                              <Tr key={index} cursor="pointer">
+                                <Td>
+                                  <Checkbox
+                                    onChange={(e) => handleCheckboxChange(row, e.target.checked)}
+                                    isChecked={isRowSelected(row)}
+                                  />
                                 </Td>
-                              ))}
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      )}
-                    </Table>
+                                {columnsByView[currentView]?.map((col) => (
+                                  <Td
+                                    fontSize={12}
+                                    key={col.key}
+                                    onClick={() => handleRowClick(row, index)}
+                                  >
+                                    {row[col.key]?.length > 20
+                                      ? `${row[col.key].substring(0, 16)}...`
+                                      : row[col.key]}
+                                  </Td>
+                                ))}
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        )}
+                      </Table>
+                    </>
                   </div>
                 </div>
                 {selectedRows.length > 0 && (
@@ -705,6 +760,49 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                     </Button>
                   </HStack>
                 )}
+                {/* Pagination */}
+                {!loading && totalItems > itemsPerPage && (
+                  <Flex justifyContent="space-between" alignItems="center" mt={4}>
+                    <Text fontSize="sm">
+                      Affichage de {(currentPage - 1) * itemsPerPage + 1} à{' '}
+                      {Math.min(currentPage * itemsPerPage, totalItems)} sur {totalItems} éléments
+                    </Text>
+
+                    <ButtonGroup>
+                      <Button
+                        onClick={() => paginate(1)}
+                        disabled={currentPage === 1}
+                        size="sm"
+                      >
+                        «
+                      </Button>
+                      <Button
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        size="sm"
+                      >
+                        ‹
+                      </Button>
+
+                      {renderPageNumbers()}
+
+                      <Button
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        size="sm"
+                      >
+                        ›
+                      </Button>
+                      <Button
+                        onClick={() => paginate(totalPages)}
+                        disabled={currentPage === totalPages}
+                        size="sm"
+                      >
+                        »
+                      </Button>
+                    </ButtonGroup>
+                  </Flex>
+                )}
               </>
             ) : (
               <Flex
@@ -720,89 +818,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
 
             {(currentView === "KIs" && viewData.KIs && viewData.KIs.length > 0) ? (
               <>
-                <div style={{
-                  width: '100%',
-                  overflowX: 'auto',
-                  position: 'relative',
-                  paddingBottom: '10px' // Espace pour le scrollbar
-                }}>
-                  {/* Conteneur avec scroll horizontal */}
-                  <div style={{
-                    minWidth: 'max-content', // Force le contenu à ne pas se réduire
-                    width: '100%'
-                  }}>
-                    <Table variant="simple" mt={4} minWidth="800px">
-                      <Thead>
-                        <Tr>
-                          <div
-                            style={{ position: "relative", left: "25px", top: "15px" }}
-                          >
-                            <Checkbox
-                              onChange={handleSelectAll}
-                              isChecked={
-                                selectedRows.length === viewData[currentView]?.length &&
-                                viewData[currentView]?.length > 0
-                              }
-                            />
-                          </div>
-
-                          {columnsByView[currentView]?.map((col) => (
-                            <Th fontSize={14} key={col.key} textTransform="none">
-                              {col.label}
-                            </Th>
-                          ))}
-                        </Tr>
-                      </Thead>
-                      {loading ? (
-                        <Flex alignItems="center" justifyContent="center" width="100%">
-                          <Image src={Loader} alt="Loading..." height={25} width={25} />
-                        </Flex>
-                      ) : (
-                        <Tbody>
-                          {viewData[currentView]?.map((row, index) => (
-                            <Tr key={index} cursor="pointer">
-                              <Td>
-                                <Checkbox
-                                  onChange={(e) =>
-                                    handleCheckboxChange(row, e.target.checked)
-                                  }
-                                  isChecked={isRowSelected(row)}
-                                />
-                              </Td>
-                              {columnsByView[currentView]?.map((col) => (
-                                <Td
-                                  fontSize={12}
-                                  key={col.key}
-                                  onClick={() => handleRowClick(row, index)}
-                                >
-                                  {col.key === "reference"
-                                    ? `KI${row[col.key]}`
-                                    : (row[col.key]?.length > 20
-                                      ? `${row[col.key].substring(0, 16)}...`
-                                      : row[col.key]
-                                    )
-                                  }
-                                </Td>
-                              ))}
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      )}
-                    </Table>
-                  </div>
-                </div>
-                {selectedRows.length > 0 && (
-                  <HStack mt={4} spacing={4} justifyContent="start">
-                    <Button
-                      colorScheme="blue"
-                      fontSize={12}
-                      leftIcon={<EditIcon />}
-                      onClick={bulkAmendModalOpen}
-                    >
-                      Bulk Amend
-                    </Button>
-                  </HStack>
-                )}
+                <KriCard entities={entities} profiles={profiles} loading={loading} selectedEntity={selectedEntity} setSelectedEntity={setSelectedEntity} isRCSA={true} />
               </>
             ) : (
               <Flex

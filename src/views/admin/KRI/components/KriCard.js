@@ -24,6 +24,7 @@ import {
   ModalFooter,
   HStack,
   useToast,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { connect, useDispatch } from "react-redux";
 import { listKeyIndicator } from "redux/kri/action";
@@ -40,10 +41,10 @@ const truncateWords = (text = "", limit = 40) => {
   return words.length > limit ? words.slice(0, limit).join(" ") + "..." : text;
 };
 
-const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
+const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, setSelectedEntity, isRCSA=false }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedEntity, setSelectedEntity] = useState(null);
+  // const [selectedEntity, setSelectedEntity] = useState(null);
   const [selectedKri, setSelectedKri] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [owner, setOwner] = React.useState(null);
@@ -91,7 +92,8 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
       .map(profile => ({
         value: profile?._id,
         label: [profile?.name, profile?.surname].filter(Boolean).join(' ') || 'Unnamed Profile',
-        profile
+        profile,
+        email: profile?.email
       }));
   }, [profiles]);
 
@@ -231,7 +233,7 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
     setReviewer(null);
   };
 
-  
+
   const bulkAmendModalOpen = () => {
     setIsModalBulkAmendOpen(true);
   };
@@ -251,9 +253,22 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
 
   const hasKIs = keyIndicator?.length > 0;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Calcul des données à afficher
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = viewData.KIs?.slice(indexOfFirstItem, indexOfLastItem) || [];
+  const totalPages = Math.ceil((viewData.KIs?.length || 0) / itemsPerPage);
+
+  // Fonction de changement de page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <Box>
-      <div>
+      {!isRCSA && (
+        <div>
         <FormControl mr={4} maxW="250px">
           <FormLabel fontSize={18}>Entity</FormLabel>
           <Select
@@ -269,94 +284,157 @@ const KriCard = ({ keyIndicator, loading, entities, profiles }) => {
           />
         </FormControl>
       </div>
+      )}
+      
       {loading ? (
         <Flex alignItems='center' justifyContent='center'>
           <Image src={Loader} alt="Loading..." height={50} width={50} />
         </Flex>
       ) : hasKIs ? (
-        <div style={{
-          width: '100%',
-          overflowX: 'auto',
-          position: 'relative',
-          paddingBottom: '10px' // Espace pour le scrollbar
-        }}>
-          {/* Conteneur avec scroll horizontal */}
+        <>
           <div style={{
-            minWidth: 'max-content', // Force le contenu à ne pas se réduire
-            width: '100%'
+            width: '100%',
+            overflowX: 'auto',
+            position: 'relative',
+            paddingBottom: '10px' // Espace pour le scrollbar
           }}>
-            <Table variant="simple" mt={4} minWidth="800px">
-              <Thead>
-                <Tr>
-                  <div
-                    style={{ position: "relative", left: "25px", top: "15px" }}
-                  >
-                    <Checkbox
-                      onChange={handleSelectAll}
-                      isChecked={
-                        selectedRows.length === viewData.KIs?.length &&
-                        viewData.KIs?.length > 0
-                      }
-                    />
-                  </div>
-
-                  {columnsByView.KIs?.map((col) => (
-                    <Th fontSize={14} key={col.key} textTransform="none">
-                      {col.label}
-                    </Th>
-                  ))}
-                </Tr>
-              </Thead>
-              {loading ? (
-                <Flex alignItems="center" justifyContent="center" width="100%">
-                  <Image src={Loader} alt="Loading..." height={25} width={25} />
-                </Flex>
-              ) : (
-                <Tbody>
-                  {viewData.KIs?.map((row, index) => (
-                    <Tr key={index} cursor="pointer">
-                      <Td>
-                        <Checkbox
-                          onChange={(e) =>
-                            handleCheckboxChange(row, e.target.checked)
-                          }
-                          isChecked={isRowSelected(row)}
-                        />
-                      </Td>
-                      {columnsByView.KIs?.map((col) => (
-                        <Td
-                          fontSize={12}
-                          key={col.key}
-                          onClick={() => handleRowClick(row, index)}
-                        >
-                          {col.key === "reference"
-                            ? `KI${row[col.key]}`
-                            : (row[col.key]?.length > 20
-                              ? `${row[col.key].substring(0, 16)}...`
-                              : row[col.key]
-                            )
-                          }
+            {/* Conteneur avec scroll horizontal */}
+            <div style={{
+              minWidth: 'max-content', // Force le contenu à ne pas se réduire
+              width: '100%'
+            }}>
+              <Table variant="simple" mt={isRCSA ? 0 : 4} minWidth="800px">
+                <Thead>
+                  <Tr>
+                    <div style={{ position: "relative", left: "25px", top: "15px" }}>
+                      <Checkbox
+                        onChange={handleSelectAll}
+                        isChecked={
+                          selectedRows.length === viewData.KIs?.length &&
+                          viewData.KIs?.length > 0
+                        }
+                      />
+                    </div>
+                    {columnsByView.KIs?.map((col) => (
+                      <Th fontSize={14} key={col.key} textTransform="none">
+                        {col.label}
+                      </Th>
+                    ))}
+                  </Tr>
+                </Thead>
+                {loading ? (
+                  <Flex alignItems="center" justifyContent="center" width="100%">
+                    <Image src={Loader} alt="Loading..." height={25} width={25} />
+                  </Flex>
+                ) : (
+                  <Tbody>
+                    {currentItems.map((row, index) => (
+                      <Tr key={index} cursor="pointer">
+                        <Td>
+                          <Checkbox
+                            onChange={(e) => handleCheckboxChange(row, e.target.checked)}
+                            isChecked={isRowSelected(row)}
+                          />
                         </Td>
-                      ))}
-                    </Tr>
-                  ))}
-                </Tbody>
-              )}
-            </Table>
-            {selectedRows.length > 0 && (
-                  <HStack mt={4} spacing={4} justifyContent="start">
-                    <Button
-                      colorScheme="blue"
-                      fontSize={12}
-                      leftIcon={<EditIcon />}
-                      onClick={bulkAmendModalOpen}
-                    >
-                      Bulk Amend
-                    </Button>
-                  </HStack>
+                        {columnsByView.KIs?.map((col) => (
+                          <Td
+                            fontSize={12}
+                            key={col.key}
+                            onClick={() => handleRowClick(row, index)}
+                          >
+                            {col.key === "reference"
+                              ? `KI${row[col.key]}`
+                              : (row[col.key]?.length > 20
+                                ? `${row[col.key].substring(0, 16)}...`
+                                : row[col.key]
+                              )
+                            }
+                          </Td>
+                        ))}
+                      </Tr>
+                    ))}
+                  </Tbody>
                 )}
+              </Table>
+            </div>
           </div>
-        </div>
+          <Box>
+            {selectedRows.length > 0 && (
+              <HStack mt={4} spacing={4} justifyContent="start">
+                <Button
+                  colorScheme="blue"
+                  fontSize={12}
+                  leftIcon={<EditIcon />}
+                  onClick={bulkAmendModalOpen}
+                >
+                  Bulk Amend
+                </Button>
+              </HStack>
+            )}
+            <Flex justifyContent='space-between'>
+              {/* Affichage du nombre d'éléments */}
+              <Text textAlign="center" mt={8} fontSize="sm" color="gray.500">
+                Affichage de {indexOfFirstItem + 1} à {Math.min(indexOfLastItem, viewData.KIs?.length || 0)} sur {viewData.KIs?.length || 0} éléments
+              </Text>
+
+              {/* Pagination */}
+              {!loading && viewData.KIs?.length > itemsPerPage && (
+                <Flex justifyContent="center" mt={4}>
+                  <ButtonGroup spacing={2}>
+                    <Button
+                      onClick={() => paginate(1)}
+                      disabled={currentPage === 1}
+                    >
+                      «
+                    </Button>
+                    <Button
+                      onClick={() => paginate(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      ‹
+                    </Button>
+
+                    {/* Affichage des numéros de page */}
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      return (
+                        <Button
+                          key={pageNum}
+                          onClick={() => paginate(pageNum)}
+                          colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+
+                    <Button
+                      onClick={() => paginate(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      ›
+                    </Button>
+                    <Button
+                      onClick={() => paginate(totalPages)}
+                      disabled={currentPage === totalPages}
+                    >
+                      »
+                    </Button>
+                  </ButtonGroup>
+                </Flex>
+              )}
+            </Flex>
+          </Box>
+        </>
       ) : (
         <Flex alignItems='center' justifyContent='center'>
           <Text fontSize='12px'>No Key Indicator found</Text>

@@ -1,83 +1,80 @@
 import * as types from './types';
 
 const INITIAL_STATE = {
-  histories: [],
-  average: 0,
+  actionsKRI: [],
   loading: false,
   error: null,
 };
 
-function HistoryKRIReducer(state = INITIAL_STATE, action) {
+function ActionKRIReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case types.GET_HISTORIESKRI_REQUEST:
+    case types.GET_ACTIONSKRI_REQUEST:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case types.GET_HISTORIESKRI_SUCCESS:
+    case types.GET_ACTIONSKRI_SUCCESS:
       return {
         ...state,
         loading: false,
-        histories: action.payload.data.histories,
-        average: action.payload.data.average,
+        actionsKRI: action.payload.data,
       };
-    case types.GET_HISTORIESKRI_FAILED:
+    case types.GET_ACTIONSKRI_FAILED:
       return {
         ...state,
         loading: false,
-        histories: [],
-        average: 0
+        actionsKRI: [],
       };
-    case types.UPDATE_HISTORYKRI_REQUEST:
+    case types.UPDATE_ACTIONKRI_REQUEST:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case types.UPDATE_HISTORYKRI_SUCCESS:
+    case types.UPDATE_ACTIONKRI_SUCCESS:
       return {
         ...state,
         loading: false,
         error: null,
       };
-    case types.UPDATE_HISTORYKRI_FAILED:
+    case types.UPDATE_ACTIONKRI_FAILED:
       return {
         ...state,
         loading: false,
         error: action.payload,
       };
-    case types.ADD_HISTORYKRI_REQUEST:
+    case types.ADD_ACTIONKRI_REQUEST:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case types.ADD_HISTORYKRI_SUCCESS:
+    case types.ADD_ACTIONKRI_SUCCESS:
       return {
         ...state,
         loading: false,
         error: null,
       };
-    case types.ADD_HISTORYKRI_FAILED:
+    case types.ADD_ACTIONKRI_FAILED:
       return {
         ...state,
         loading: false,
         error: action.payload,
       };
-    case types.DELETE_HISTORYKRI_REQUEST:
+    case types.DELETE_ACTIONKRI_REQUEST:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case types.DELETE_HISTORYKRI_SUCCESS:
+    case types.DELETE_ACTIONKRI_SUCCESS:
       return {
         ...state,
         loading: false,
         error: null,
       };
-    case types.DELETE_HISTORYKRI_FAILED:
+    case types.DELETE_ACTIONKRI_FAILED:
       return {
         ...state,
         loading: false,
@@ -87,4 +84,4 @@ function HistoryKRIReducer(state = INITIAL_STATE, action) {
       return state;
   }
 }
-export default HistoryKRIReducer;
+export default ActionKRIReducer;
