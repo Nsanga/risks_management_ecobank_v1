@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 
 // Composant pour le formulaire Control List
-const ControlListForm = () => {
+const ControlListForm = ({handleOpenView}) => {
   const [formData, setFormData] = useState({
     controlName: "",
     description: "",
@@ -105,8 +105,8 @@ const ControlListForm = () => {
         </Checkbox>
       </FormControl>
 
-      <Button colorScheme="blue" size="lg">
-        Save Control
+      <Button onClick={handleOpenView} colorScheme="blue" size="lg">
+        View report
       </Button>
     </VStack>
   );
