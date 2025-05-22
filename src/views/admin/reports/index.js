@@ -65,7 +65,7 @@ const Reports = () => {
         <Box>
           <Flex alignItems="center" mb={4} onClick={() => setControlListTable(false)} cursor="pointer">
             <ChevronLeftIcon />
-            Back to KRI Page
+            Back to Report's list
           </Flex>
           <ControlTable />
         </Box>
