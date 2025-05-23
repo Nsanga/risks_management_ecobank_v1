@@ -15,94 +15,46 @@ import {
 
 // Composant pour le formulaire Key Indicator Analysis
 const KeyIndicatorAnalysisForm = () => {
-  const [formData, setFormData] = useState({
-    indicatorName: '',
-    targetValue: '',
-    currentValue: '',
-    unit: '',
-    trend: '',
-    analysisDate: '',
-    comments: ''
-  });
+   const [formData, setFormData] = useState({
+    
+    session: "", // ✅ ajout
+      entity: "",  // ✅ ajout
+    });
 
   return (
-    <VStack spacing={4} align="stretch">
-      <Heading size="md" color="green.600">Key Indicator Analysis Form</Heading>
-      
-      <FormControl>
-        <FormLabel>Indicator Name</FormLabel>
-        <Input 
-          value={formData.indicatorName}
-          onChange={(e) => setFormData({...formData, indicatorName: e.target.value})}
-          placeholder="Enter indicator name"
-        />
-      </FormControl>
-
-      <HStack spacing={4}>
-        <FormControl>
-          <FormLabel>Target Value</FormLabel>
-          <NumberInput>
-            <NumberInputField 
-              value={formData.targetValue}
-              onChange={(e) => setFormData({...formData, targetValue: e.target.value})}
-              placeholder="Target"
-            />
-          </NumberInput>
-        </FormControl>
-
-        <FormControl>
-          <FormLabel>Current Value</FormLabel>
-          <NumberInput>
-            <NumberInputField 
-              value={formData.currentValue}
-              onChange={(e) => setFormData({...formData, currentValue: e.target.value})}
-              placeholder="Current"
-            />
-          </NumberInput>
-        </FormControl>
-      </HStack>
-
-      <FormControl>
-        <FormLabel>Unit of Measurement</FormLabel>
-        <Input 
-          value={formData.unit}
-          onChange={(e) => setFormData({...formData, unit: e.target.value})}
-          placeholder="e.g., %, $, units"
-        />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Trend</FormLabel>
-        <Select 
-          value={formData.trend}
-          onChange={(e) => setFormData({...formData, trend: e.target.value})}
-          placeholder="Select trend"
-        >
-          <option value="improving">Improving</option>
-          <option value="stable">Stable</option>
-          <option value="declining">Declining</option>
-          <option value="volatile">Volatile</option>
-        </Select>
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Analysis Date</FormLabel>
-        <Input 
-          type="date"
-          value={formData.analysisDate}
-          onChange={(e) => setFormData({...formData, analysisDate: e.target.value})}
-        />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Analysis Comments</FormLabel>
-        <Textarea 
-          value={formData.comments}
-          onChange={(e) => setFormData({...formData, comments: e.target.value})}
-          placeholder="Enter your analysis and recommendations"
-          rows={4}
-        />
-      </FormControl>
+     <VStack spacing={4} align="stretch">
+       <Heading size="md" color="blue.600">
+         key indicator List Form
+       </Heading>
+ 
+       <FormControl>
+         <FormLabel>Session </FormLabel>
+         <Select
+           value={formData.session}
+           onChange={(e) =>
+             setFormData({ ...formData, session: e.target.value })
+           }
+           placeholder="session"
+         >
+           <option value="entity">1: Data for selected Entity</option>
+           <option value="owner">2: Data for selected Owner</option>
+           <option value="all">3: All Data</option>
+         </Select>
+       </FormControl>
+ 
+       <FormControl>
+         <FormLabel>Select Entity</FormLabel>
+         <Select
+           value={formData.entity}
+           onChange={(e) =>
+             setFormData({ ...formData, entity: e.target.value })
+           }
+           placeholder="Select Entity"
+         >
+           <option value="ENT00409">ENT00409 ECM-FICC</option>
+           <option value="ENT00510">ENT00510 ECM-EUR</option>
+         </Select>
+       </FormControl>
 
       <Button colorScheme="green" size="lg">
         Save Analysis

@@ -300,16 +300,20 @@ const Reports = () => {
             </Accordion>
           </Box>
 
-          <Box
-            flex="1"
-            bg={cardBg}
-            borderRadius="lg"
-            p={6}
-            shadow="md"
-            overflowY="auto"
-          >
-            {renderForm()}
-          </Box>
+        <Box
+  flex="1"
+  bg={cardBg}
+  borderRadius="lg"
+  p={6}
+  shadow="md"
+  display="flex"
+  flexDirection="column"
+  maxH="calc(100vh - 120px)"
+  overflowY="auto"
+>
+  {renderForm()}
+
+</Box>
         </HStack>
       )}
     </Box>
