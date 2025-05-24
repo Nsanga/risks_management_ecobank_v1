@@ -27,10 +27,12 @@ import ControlListForm from "./components/ControlListForm";
 import KeyIndicatorAnalysisForm from "./components/KeyIndicatorAnalysisForm";
 import ControlTable from "./listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import KITable from "./components/KITable";
 
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
   const [openControlListTable, setControlListTable] = useState(false);
+  const [openKIListTable, setKIListTable] = useState(false);
   const cardBg = useColorModeValue("white", "gray.700");
 
   const handleFormSelection = (formType) => {
@@ -41,12 +43,16 @@ const Reports = () => {
     setControlListTable(true);
   }
 
+  const handleOpenKIReport = () => {
+    setKIListTable(true);
+  }
+
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
         return <ControlListForm handleOpenView={handleOpenView} />;
       case "key-indicator-analysis":
-        return <KeyIndicatorAnalysisForm />;
+        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} />;
       default:
         return (
           <Box textAlign="center" py={10}>
@@ -70,7 +76,16 @@ const Reports = () => {
           <ControlTable />
         </Box>
       )}
-      {!openControlListTable && (
+      {openKIListTable && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setKIListTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <KITable />
+        </Box>
+      )}
+      {!openControlListTable && !openKIListTable && (
         <HStack spacing={6} align="stretch" flex="1">
           <Box w="350px" bg={cardBg} borderRadius="lg" p={4} shadow="md">
             <Heading size="md" mb={4} color="gray.700">
@@ -300,20 +315,20 @@ const Reports = () => {
             </Accordion>
           </Box>
 
-        <Box
-  flex="1"
-  bg={cardBg}
-  borderRadius="lg"
-  p={6}
-  shadow="md"
-  display="flex"
-  flexDirection="column"
-  maxH="calc(100vh - 120px)"
-  overflowY="auto"
->
-  {renderForm()}
+          <Box
+            flex="1"
+            bg={cardBg}
+            borderRadius="lg"
+            p={6}
+            shadow="md"
+            display="flex"
+            flexDirection="column"
+            maxH="calc(100vh - 120px)"
+            overflowY="auto"
+          >
+            {renderForm()}
 
-</Box>
+          </Box>
         </HStack>
       )}
     </Box>
