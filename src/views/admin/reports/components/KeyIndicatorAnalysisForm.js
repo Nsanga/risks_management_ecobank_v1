@@ -7,6 +7,7 @@ import {
   Heading,
 } from '@chakra-ui/react';
 import Select from "react-select";
+import { useSelector } from 'react-redux';
 
 // Composant pour le formulaire Key Indicator Analysis
 const KeyIndicatorAnalysisForm = ({ handleViewReport }) => {
