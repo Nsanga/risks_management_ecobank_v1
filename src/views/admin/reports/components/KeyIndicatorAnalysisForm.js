@@ -5,19 +5,19 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  Box,
 } from '@chakra-ui/react';
 import Select from "react-select";
 import { useSelector } from 'react-redux';
 
 // Composant pour le formulaire Key Indicator Analysis
-const KeyIndicatorAnalysisForm = ({ handleViewReport }) => {
+const KeyIndicatorAnalysisForm = ({ handleViewReport, entities }) => {
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
     entity: "",  // ✅ ajout
   });
   const [selectedEntity, setSelectedEntity] = useState(null);
 
-  const entities = useSelector(state => state.EntityReducer.entities);
 
   const handleSelectChange = (name, selectedOption) => {
     setFormData((prevState) => ({
@@ -31,7 +31,7 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport }) => {
   };
 
   const entitiesOptions = entities?.map((entity, index) => ({
-    key: `${entity._id}-${index}`,
+    key: `${entity._id}-${index}`, 
     value: entity._id,
     label: `ENT${entity.referenceId} CAM - ${entity.description}`,
     description: entity.description,
@@ -67,6 +67,7 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport }) => {
 
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
+        <Box w="100%">
         <Select
           options={entitiesOptions}
           styles={customStyles}
@@ -78,6 +79,7 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport }) => {
             handleSelectChange("entity", selectedOption)
           }
         />
+        </Box>
       </FormControl>
 
       <Button colorScheme="green" size="lg" onClick={handleViewReport} >

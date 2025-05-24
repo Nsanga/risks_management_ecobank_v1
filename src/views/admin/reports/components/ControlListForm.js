@@ -5,19 +5,18 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  Box,
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import Select from "react-select";
 
 // Composant pour le formulaire Control List
-const ControlListForm = ({ handleOpenView }) => {
+const ControlListForm = ({ handleOpenView, entities }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
     entity: "",  // ✅ ajout
   });
-
-  const entities = useSelector(state => state.EntityReducer.entities);
 
   const sessionOptions = [
     { value: "mensuel", label: "Mensuelle" },

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   VStack,
@@ -28,12 +28,22 @@ import KeyIndicatorAnalysisForm from "./components/KeyIndicatorAnalysisForm";
 import ControlTable from "./listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import KITable from "./components/KITable";
+import { useDispatch, useSelector } from "react-redux";
+import { listEntities } from "redux/entitiy/action";
+import { listProfiles } from "redux/profile/action";
 
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
   const [openControlListTable, setControlListTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
   const cardBg = useColorModeValue("white", "gray.700");
+  const entities = useSelector(state => state.EntityReducer.entities);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(listEntities());
+    dispatch(listProfiles());
+  }, [dispatch]);
 
   const handleFormSelection = (formType) => {
     setSelectedForm(formType);
@@ -50,9 +60,9 @@ const Reports = () => {
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
-        return <ControlListForm handleOpenView={handleOpenView} />;
+        return <ControlListForm handleOpenView={handleOpenView} entities={entities} />;
       case "key-indicator-analysis":
-        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} />;
+        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} entities={entities} />;
       default:
         return (
           <Box textAlign="center" py={10}>
