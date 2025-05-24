@@ -12,14 +12,11 @@ import {
 } from "@chakra-ui/react";
 
 // Composant pour le formulaire Control List
-const ControlListForm = ({handleOpenView}) => {
+const ControlListForm = ({ handleOpenView }) => {
   const [formData, setFormData] = useState({
-    controlName: "",
-    description: "",
-    riskLevel: "",
-    frequency: "",
-    responsible: "",
-    status: false,
+  
+  session: "", // ✅ ajout
+    entity: "",  // ✅ ajout
   });
 
   return (
@@ -29,80 +26,32 @@ const ControlListForm = ({handleOpenView}) => {
       </Heading>
 
       <FormControl>
-        <FormLabel>Control Name</FormLabel>
-        <Input
-          value={formData.controlName}
-          onChange={(e) =>
-            setFormData({ ...formData, controlName: e.target.value })
-          }
-          placeholder="Enter control name"
-        />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Description</FormLabel>
-        <Textarea
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          placeholder="Describe the control"
-          rows={4}
-        />
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Risk Level</FormLabel>
+        <FormLabel>Session </FormLabel>
         <Select
-          value={formData.riskLevel}
+          value={formData.session}
           onChange={(e) =>
-            setFormData({ ...formData, riskLevel: e.target.value })
+            setFormData({ ...formData, session: e.target.value })
           }
-          placeholder="Select risk level"
+          placeholder="session"
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="critical">Critical</option>
+          <option value="entity">1: Data for selected Entity</option>
+          <option value="owner">2: Data for selected Owner</option>
+          <option value="all">3: All Data</option>
         </Select>
       </FormControl>
 
       <FormControl>
-        <FormLabel>Frequency</FormLabel>
+        <FormLabel>Select Entity</FormLabel>
         <Select
-          value={formData.frequency}
+          value={formData.entity}
           onChange={(e) =>
-            setFormData({ ...formData, frequency: e.target.value })
+            setFormData({ ...formData, entity: e.target.value })
           }
-          placeholder="Select frequency"
+          placeholder="Select Entity"
         >
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="quarterly">Quarterly</option>
+          <option value="ENT00409">ENT00409 ECM-FICC</option>
+          <option value="ENT00510">ENT00510 ECM-EUR</option>
         </Select>
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Responsible Person</FormLabel>
-        <Input
-          value={formData.responsible}
-          onChange={(e) =>
-            setFormData({ ...formData, responsible: e.target.value })
-          }
-          placeholder="Enter responsible person"
-        />
-      </FormControl>
-
-      <FormControl>
-        <Checkbox
-          isChecked={formData.status}
-          onChange={(e) =>
-            setFormData({ ...formData, status: e.target.checked })
-          }
-        >
-          Control is Active
-        </Checkbox>
       </FormControl>
 
       <Button onClick={handleOpenView} colorScheme="blue" size="lg">
