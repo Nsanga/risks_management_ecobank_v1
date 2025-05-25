@@ -14,24 +14,35 @@ import { useSelector } from 'react-redux';
 const KeyIndicatorAnalysisForm = ({ handleViewReport, entities }) => {
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
-    entity: "",  // ✅ ajout
+    entity: [],  // ✅ ajout
   });
   const [selectedEntity, setSelectedEntity] = useState(null);
 
 
   const handleSelectChange = (name, selectedOption) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: selectedOption ? selectedOption.value : null,
-    }));
+    if (name === "entity") {
+      // Gestion spéciale pour la sélection multiple d'entités
+      const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
+      const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
 
-    if (selectedOption) {
-      setSelectedEntity(selectedOption.fullEntity);
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: selectedValues,
+      }));
+
+      // Mettre à jour avec toutes les entités sélectionnées
+      setSelectedEntity(selectedEntities);
+    } else {
+      // Gestion normale pour les autres champs
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: selectedOption ? selectedOption.value : null,
+      }));
     }
   };
 
   const entitiesOptions = entities?.map((entity, index) => ({
-    key: `${entity._id}-${index}`, 
+    key: `${entity._id}-${index}`,
     value: entity._id,
     label: `ENT${entity.referenceId} CAM - ${entity.description}`,
     description: entity.description,
@@ -68,17 +79,18 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities }) => {
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-        <Select
-          options={entitiesOptions}
-          styles={customStyles}
-          placeholder="Select Entity"
-          value={entitiesOptions?.find(
-            (ent) => ent.value === formData.entity
-          )}
-          onChange={(selectedOption) =>
-            handleSelectChange("entity", selectedOption)
-          }
-        />
+          <Select
+            options={entitiesOptions}
+            styles={customStyles}
+            placeholder="Select Entity"
+            isMulti={true} // ✅ Active la sélection multiple
+            value={entitiesOptions?.filter(
+              (ent) => formData.entity.includes(ent.value)
+            )}
+            onChange={(selectedOption) =>
+              handleSelectChange("entity", selectedOption)
+            }
+          />
         </Box>
       </FormControl>
 
