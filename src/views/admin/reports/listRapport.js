@@ -121,7 +121,7 @@ export default function ControlTable() {
             <th style={{ border: "1px solid gray" }}>Last Assessment Date</th>
             <th style={{ border: "1px solid gray" }}>Assessed By</th>
             <th style={{ border: "1px solid gray" }}>Active</th>
-            <th style={{ border: "1px solid gray" }}>Attested</th>
+            <th style={{ border: "1px solid gray" }}>Validated</th>
           </tr>
         </thead>
         <tbody>
