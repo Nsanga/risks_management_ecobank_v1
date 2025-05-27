@@ -83,7 +83,7 @@ const controlData = [
   },
 ];
 
-export default function ControlTable() {
+export default function ControlTable({reports}) {
   return (
     <div style={{ overflowX: "auto" }}>
       <table
@@ -125,31 +125,31 @@ export default function ControlTable() {
           </tr>
         </thead>
         <tbody>
-          {controlData.map((item, index) => (
+          {reports.map((item, index) => (
             <tr key={index}>
-              <td style={{ border: "1px solid gray" }}>{item.control}</td>
-              <td style={{ border: "1px solid gray" }}>{item.risk}</td>
-              <td style={{ border: "1px solid gray" }}>{item.keyControl}</td>
-              <td style={{ border: "1px solid gray" }}>{item.refType}</td>
-              <td style={{ border: "1px solid gray" }}>{item.owner}</td>
-              <td style={{ border: "1px solid gray" }}>{item.nominee}</td>
-              <td style={{ border: "1px solid gray" }}>{item.reviewDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.opFreq}</td>
-              <td style={{ border: "1px solid gray" }}>{item.lastOp}</td>
-              <td style={{ border: "1px solid gray" }}>{item.opSignedOffBy}</td>
-              <td style={{ border: "1px solid gray" }}>{item.nextOp}</td>
+              <td style={{ border: "1px solid gray" }}>{item.reference}: {item.controlSummary}</td>
+              <td style={{ border: "1px solid gray" }}>{item.risk || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.keyControl === false ? 'N' : 'Y'}</td>
+              <td style={{ border: "1px solid gray" }}>{item.preventiveDetectiveControl}</td>
+              <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
+              <td style={{ border: "1px solid gray" }}>{item.nomineeControl}</td>
+              <td style={{ border: "1px solid gray" }}>{item.reviewDate || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.opFreq || "N/A"}</td>
+              <td style={{ border: "1px solid gray" }}>{item.lastOp || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.opSignedOffBy || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.nextOp || ""}</td>
               <td style={{ border: "1px solid gray" }}>
-                {item.assessmentFreq}
+                {item.frequence}
               </td>
               <td style={{ color: "red", border: "1px solid gray" }}>
-                {item.nextAssessmentDue}
+                {item.nextAssessMent || ""}
               </td>
               <td style={{ border: "1px solid gray" }}>
-                {item.lastAssessmentDate}
+                {item.lastAssessmentDate || ""}
               </td>
-              <td style={{ border: "1px solid gray" }}>{item.assessedBy}</td>
-              <td style={{ border: "1px solid gray" }}>{item.active}</td>
-              <td style={{ border: "1px solid gray" }}>{item.attested}</td>
+              <td style={{ border: "1px solid gray" }}>{item.assessedBy || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.active || "No"}</td>
+              <td style={{ border: "1px solid gray" }}>{item.attested || "No"}</td>
             </tr>
           ))}
         </tbody>

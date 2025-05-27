@@ -31,13 +31,21 @@ import KITable from "./components/KITable";
 import { useDispatch, useSelector } from "react-redux";
 import { listEntities } from "redux/entitiy/action";
 import { listProfiles } from "redux/profile/action";
+import { listEntityReports } from "redux/reports/action";
 
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
   const [openControlListTable, setControlListTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
+  const [selectedData, setSelectedData] = useState({
+    entities: [],
+    session: ""
+  });
+
   const cardBg = useColorModeValue("white", "gray.700");
   const entities = useSelector(state => state.EntityReducer.entities);
+  const reports = useSelector(state => state.ReportReducer.reports);
+  const loading = useSelector(state => state.ReportReducer.loading);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -49,9 +57,24 @@ const Reports = () => {
     setSelectedForm(formType);
   };
 
+  const handleSelectionChange = ({ selectedEntities, selectedSession }) => {
+    setSelectedData({
+      entities: selectedEntities,
+      session: selectedSession
+    });
+    console.log("Entités sélectionnées:", selectedEntities);
+    console.log("Session sélectionnée:", selectedSession);
+  };
+
   const handleOpenView = () => {
+    dispatch(listEntityReports(
+      {sesion:'Quarterly', targetEntityId:selectedData.entities, type:"riskControl"}
+    ));
+    
     setControlListTable(true);
   }
+
+  console.log("reports", reports)
 
   const handleOpenKIReport = () => {
     setKIListTable(true);
@@ -60,7 +83,7 @@ const Reports = () => {
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
-        return <ControlListForm handleOpenView={handleOpenView} entities={entities} />;
+        return <ControlListForm handleOpenView={handleOpenView} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "key-indicator-analysis":
         return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} entities={entities} />;
       default:
@@ -83,7 +106,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <ControlTable />
+          <ControlTable reports={reports} />
         </Box>
       )}
       {openKIListTable && (

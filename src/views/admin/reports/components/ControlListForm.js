@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import Select from "react-select";
 
 // Composant pour le formulaire Control List
-const ControlListForm = ({ handleOpenView, entities }) => {
+const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
@@ -24,24 +24,31 @@ const ControlListForm = ({ handleOpenView, entities }) => {
   ];
 
   const handleSelectChange = (name, selectedOption) => {
+    let newValue;
+    
     if (name === "entity") {
-      // Gestion spéciale pour la sélection multiple d'entités
       const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
       const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
 
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: selectedValues,
-      }));
-
-      // Mettre à jour avec toutes les entités sélectionnées
+      newValue = selectedValues;
       setSelectedEntity(selectedEntities);
     } else {
-      // Gestion normale pour les autres champs
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: selectedOption ? selectedOption.value : null,
-      }));
+      newValue = selectedOption ? selectedOption.value : null;
+    }
+
+    const updatedFormData = {
+      ...formData,
+      [name]: newValue,
+    };
+
+    setFormData(updatedFormData);
+    
+    // Notifier le parent des nouvelles sélections
+    if (onSelectionChange) {
+      onSelectionChange({
+        selectedEntities: updatedFormData.entity,
+        selectedSession: updatedFormData.session
+      });
     }
   };
 
@@ -116,7 +123,7 @@ const ControlListForm = ({ handleOpenView, entities }) => {
       </FormControl>
 
       <Button onClick={handleOpenView} colorScheme="blue" size="lg">
-        View report
+        {loading ? 'Loading...' : 'View report' } 
       </Button>
     </VStack>
   );
