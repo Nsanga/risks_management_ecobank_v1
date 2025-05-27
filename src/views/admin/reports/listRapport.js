@@ -107,15 +107,10 @@ export default function ControlTable({reports}) {
           <tr>
             <th style={{ border: "1px solid gray" }}>Control</th>
             <th style={{ border: "1px solid gray" }}>Risk</th>
-            <th style={{ border: "1px solid gray" }}>Key Control</th>
             <th style={{ border: "1px solid gray" }}>Library Ref Type</th>
             <th style={{ border: "1px solid gray" }}>Control Owner</th>
             <th style={{ border: "1px solid gray" }}>Control Nominee</th>
             <th style={{ border: "1px solid gray" }}>Review Date</th>
-            <th style={{ border: "1px solid gray" }}>Op Freq</th>
-            <th style={{ border: "1px solid gray" }}>Last Op</th>
-            <th style={{ border: "1px solid gray" }}>Op Signed off by</th>
-            <th style={{ border: "1px solid gray" }}>Next Op</th>
             <th style={{ border: "1px solid gray" }}>Assessment Frequency</th>
             <th style={{ border: "1px solid gray" }}>Next Assessment Due On</th>
             <th style={{ border: "1px solid gray" }}>Last Assessment Date</th>
@@ -129,15 +124,10 @@ export default function ControlTable({reports}) {
             <tr key={index}>
               <td style={{ border: "1px solid gray" }}>{item.reference}: {item.controlSummary}</td>
               <td style={{ border: "1px solid gray" }}>{item.risk || ""}</td>
-              <td style={{ border: "1px solid gray" }}>{item.keyControl === false ? 'N' : 'Y'}</td>
               <td style={{ border: "1px solid gray" }}>{item.preventiveDetectiveControl}</td>
               <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
               <td style={{ border: "1px solid gray" }}>{item.nomineeControl}</td>
               <td style={{ border: "1px solid gray" }}>{item.reviewDate || ""}</td>
-              <td style={{ border: "1px solid gray" }}>{item.opFreq || "N/A"}</td>
-              <td style={{ border: "1px solid gray" }}>{item.lastOp || ""}</td>
-              <td style={{ border: "1px solid gray" }}>{item.opSignedOffBy || ""}</td>
-              <td style={{ border: "1px solid gray" }}>{item.nextOp || ""}</td>
               <td style={{ border: "1px solid gray" }}>
                 {item.frequence}
               </td>
