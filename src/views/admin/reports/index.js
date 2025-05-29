@@ -312,7 +312,6 @@ const Reports = () => {
   overflowY="auto"
 >
   {renderForm()}
-
 </Box>
         </HStack>
       )}
