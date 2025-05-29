@@ -68,6 +68,7 @@ const GeneralForm = ({
   const frequenciesOptions = frequencies.map((frequency) => ({
     value: frequency.label,
     label: frequency.label,
+    isDisabled: frequency.label !== "Quarterly",
   }));
 
   const calculateRemindOnDate = (frequency, lastOperationDate) => {

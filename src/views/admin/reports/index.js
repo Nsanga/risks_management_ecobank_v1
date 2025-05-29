@@ -140,7 +140,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <RiskControlTable reports={reports} />
+          <RiskAssessmentTable reports={reports} />
         </Box>
       )}
       
