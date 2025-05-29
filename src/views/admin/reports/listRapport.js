@@ -83,7 +83,7 @@ const controlData = [
   },
 ];
 
-export default function ControlTable() {
+export default function ControlTable({reports}) {
   return (
     <div style={{ overflowX: "auto" }}>
       <table
@@ -107,49 +107,39 @@ export default function ControlTable() {
           <tr>
             <th style={{ border: "1px solid gray" }}>Control</th>
             <th style={{ border: "1px solid gray" }}>Risk</th>
-            <th style={{ border: "1px solid gray" }}>Key Control</th>
             <th style={{ border: "1px solid gray" }}>Library Ref Type</th>
             <th style={{ border: "1px solid gray" }}>Control Owner</th>
             <th style={{ border: "1px solid gray" }}>Control Nominee</th>
             <th style={{ border: "1px solid gray" }}>Review Date</th>
-            <th style={{ border: "1px solid gray" }}>Op Freq</th>
-            <th style={{ border: "1px solid gray" }}>Last Op</th>
-            <th style={{ border: "1px solid gray" }}>Op Signed off by</th>
-            <th style={{ border: "1px solid gray" }}>Next Op</th>
             <th style={{ border: "1px solid gray" }}>Assessment Frequency</th>
             <th style={{ border: "1px solid gray" }}>Next Assessment Due On</th>
             <th style={{ border: "1px solid gray" }}>Last Assessment Date</th>
             <th style={{ border: "1px solid gray" }}>Assessed By</th>
-            <th style={{ border: "1px solid gray" }}>Active</th>
-            <th style={{ border: "1px solid gray" }}>Attested</th>
+            <th style={{ border: "1px solid gray" }}>Tested</th>
+            <th style={{ border: "1px solid gray" }}>Validated</th>
           </tr>
         </thead>
         <tbody>
-          {controlData.map((item, index) => (
+          {reports.map((item, index) => (
             <tr key={index}>
-              <td style={{ border: "1px solid gray" }}>{item.control}</td>
-              <td style={{ border: "1px solid gray" }}>{item.risk}</td>
-              <td style={{ border: "1px solid gray" }}>{item.keyControl}</td>
-              <td style={{ border: "1px solid gray" }}>{item.refType}</td>
-              <td style={{ border: "1px solid gray" }}>{item.owner}</td>
-              <td style={{ border: "1px solid gray" }}>{item.nominee}</td>
-              <td style={{ border: "1px solid gray" }}>{item.reviewDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.opFreq}</td>
-              <td style={{ border: "1px solid gray" }}>{item.lastOp}</td>
-              <td style={{ border: "1px solid gray" }}>{item.opSignedOffBy}</td>
-              <td style={{ border: "1px solid gray" }}>{item.nextOp}</td>
+              <td style={{ border: "1px solid gray" }}>{item.reference}: {item.controlSummary}</td>
+              <td style={{ border: "1px solid gray" }}>{item.risk || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.preventiveDetectiveControl}</td>
+              <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
+              <td style={{ border: "1px solid gray" }}>{item.nomineeControl}</td>
+              <td style={{ border: "1px solid gray" }}>{item.reviewDate || ""}</td>
               <td style={{ border: "1px solid gray" }}>
-                {item.assessmentFreq}
+                {item.frequence}
               </td>
               <td style={{ color: "red", border: "1px solid gray" }}>
-                {item.nextAssessmentDue}
+                {item.nextAssessMent || ""}
               </td>
               <td style={{ border: "1px solid gray" }}>
-                {item.lastAssessmentDate}
+                {item.lastAssessmentDate || ""}
               </td>
-              <td style={{ border: "1px solid gray" }}>{item.assessedBy}</td>
-              <td style={{ border: "1px solid gray" }}>{item.active}</td>
-              <td style={{ border: "1px solid gray" }}>{item.attested}</td>
+              <td style={{ border: "1px solid gray" }}>{item.assessedBy || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{item.active || "No"}</td>
+              <td style={{ border: "1px solid gray" }}>{item.attested || "No"}</td>
             </tr>
           ))}
         </tbody>

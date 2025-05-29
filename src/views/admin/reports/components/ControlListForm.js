@@ -4,20 +4,82 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
-  Textarea,
-  Select,
-  Checkbox,
   Heading,
+  Box,
 } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import Select from "react-select";
 
 // Composant pour le formulaire Control List
-const ControlListForm = ({ handleOpenView }) => {
+const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
+  const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
-  
-  session: "", // ✅ ajout
-    entity: "",  // ✅ ajout
+    session: "", // ✅ ajout
+    entity: [],  // ✅ ajout
   });
+
+  const sessionOptions = [
+    { value: "mensuel", label: "Mensuelle" },
+    { value: "trimestrielle", label: "Trimestrielle" },
+  ];
+
+  const handleSelectChange = (name, selectedOption) => {
+    let newValue;
+    
+    if (name === "entity") {
+      const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
+      const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+
+      newValue = selectedValues;
+      setSelectedEntity(selectedEntities);
+    } else {
+      newValue = selectedOption ? selectedOption.value : null;
+    }
+
+    const updatedFormData = {
+      ...formData,
+      [name]: newValue,
+    };
+
+    setFormData(updatedFormData);
+    
+    // Notifier le parent des nouvelles sélections
+    if (onSelectionChange) {
+      onSelectionChange({
+        selectedEntities: updatedFormData.entity,
+        selectedSession: updatedFormData.session
+      });
+    }
+  };
+
+  const entitiesOptions = entities?.map((entity, index) => ({
+    key: `${entity._id}-${index}`,
+    value: entity._id,
+    label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    description: entity.description,
+    fullEntity: entity,
+  }));
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+      maxHeight: "200px", // Définir une hauteur maximale pour le menu
+      overflowY: "auto", // Activer le défilement vertical
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+  };
 
   return (
     <VStack spacing={4} align="stretch">
@@ -27,35 +89,41 @@ const ControlListForm = ({ handleOpenView }) => {
 
       <FormControl>
         <FormLabel>Session </FormLabel>
-        <Select
-          value={formData.session}
-          onChange={(e) =>
-            setFormData({ ...formData, session: e.target.value })
-          }
-          placeholder="session"
-        >
-          <option value="entity">1: Data for selected Entity</option>
-          <option value="owner">2: Data for selected Owner</option>
-          <option value="all">3: All Data</option>
-        </Select>
+        <Box w="100%">
+          <Select
+            options={sessionOptions}
+            styles={customStyles}
+            placeholder="Select session"
+            value={sessionOptions?.find(
+              (option) => option.value === formData.session
+            )}
+            onChange={(selectedOption) =>
+              handleSelectChange("session", selectedOption)
+            }
+          />
+        </Box>
       </FormControl>
 
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
-        <Select
-          value={formData.entity}
-          onChange={(e) =>
-            setFormData({ ...formData, entity: e.target.value })
-          }
-          placeholder="Select Entity"
-        >
-          <option value="ENT00409">ENT00409 ECM-FICC</option>
-          <option value="ENT00510">ENT00510 ECM-EUR</option>
-        </Select>
+        <Box w="100%">
+          <Select
+            options={entitiesOptions}
+            styles={customStyles}
+            placeholder="Select Entity"
+            isMulti={true} // ✅ Active la sélection multiple
+            value={entitiesOptions?.filter(
+              (ent) => formData.entity.includes(ent.value)
+            )}
+            onChange={(selectedOption) =>
+              handleSelectChange("entity", selectedOption)
+            }
+          />
+        </Box>
       </FormControl>
 
       <Button onClick={handleOpenView} colorScheme="blue" size="lg">
-        View report
+        {loading ? 'Loading...' : 'View report' } 
       </Button>
     </VStack>
   );

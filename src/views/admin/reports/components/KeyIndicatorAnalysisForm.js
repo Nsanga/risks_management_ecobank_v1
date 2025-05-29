@@ -1,63 +1,101 @@
 import React, { useState } from 'react';
 import {
   VStack,
-  HStack,
   Button,
   FormControl,
   FormLabel,
-  Input,
-  Textarea,
-  Select,
-  NumberInput,
-  NumberInputField,
   Heading,
+  Box,
 } from '@chakra-ui/react';
+import Select from "react-select";
+import { useSelector } from 'react-redux';
 
 // Composant pour le formulaire Key Indicator Analysis
-const KeyIndicatorAnalysisForm = () => {
-   const [formData, setFormData] = useState({
-    
+const KeyIndicatorAnalysisForm = ({ handleViewReport, entities }) => {
+  const [formData, setFormData] = useState({
     session: "", // ✅ ajout
-      entity: "",  // ✅ ajout
-    });
+    entity: [],  // ✅ ajout
+  });
+  const [selectedEntity, setSelectedEntity] = useState(null);
+
+
+  const handleSelectChange = (name, selectedOption) => {
+    if (name === "entity") {
+      // Gestion spéciale pour la sélection multiple d'entités
+      const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
+      const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: selectedValues,
+      }));
+
+      // Mettre à jour avec toutes les entités sélectionnées
+      setSelectedEntity(selectedEntities);
+    } else {
+      // Gestion normale pour les autres champs
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: selectedOption ? selectedOption.value : null,
+      }));
+    }
+  };
+
+  const entitiesOptions = entities?.map((entity, index) => ({
+    key: `${entity._id}-${index}`,
+    value: entity._id,
+    label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+    description: entity.description,
+    fullEntity: entity,
+  }));
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+      maxHeight: "200px", // Définir une hauteur maximale pour le menu
+      overflowY: "auto", // Activer le défilement vertical
+    }),
+    option: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: "12px",
+    }),
+  };
 
   return (
-     <VStack spacing={4} align="stretch">
-       <Heading size="md" color="blue.600">
-         key indicator List Form
-       </Heading>
- 
-       <FormControl>
-         <FormLabel>Session </FormLabel>
-         <Select
-           value={formData.session}
-           onChange={(e) =>
-             setFormData({ ...formData, session: e.target.value })
-           }
-           placeholder="session"
-         >
-           <option value="entity">1: Data for selected Entity</option>
-           <option value="owner">2: Data for selected Owner</option>
-           <option value="all">3: All Data</option>
-         </Select>
-       </FormControl>
- 
-       <FormControl>
-         <FormLabel>Select Entity</FormLabel>
-         <Select
-           value={formData.entity}
-           onChange={(e) =>
-             setFormData({ ...formData, entity: e.target.value })
-           }
-           placeholder="Select Entity"
-         >
-           <option value="ENT00409">ENT00409 ECM-FICC</option>
-           <option value="ENT00510">ENT00510 ECM-EUR</option>
-         </Select>
-       </FormControl>
+    <VStack spacing={4} align="stretch">
+      <Heading size="md" color="blue.600">
+        key indicator List Form
+      </Heading>
 
-      <Button colorScheme="green" size="lg">
-        Save Analysis
+      <FormControl>
+        <FormLabel>Select Entity</FormLabel>
+        <Box w="100%">
+          <Select
+            options={entitiesOptions}
+            styles={customStyles}
+            placeholder="Select Entity"
+            isMulti={true} // ✅ Active la sélection multiple
+            value={entitiesOptions?.filter(
+              (ent) => formData.entity.includes(ent.value)
+            )}
+            onChange={(selectedOption) =>
+              handleSelectChange("entity", selectedOption)
+            }
+          />
+        </Box>
+      </FormControl>
+
+      <Button colorScheme="green" size="lg" onClick={handleViewReport} >
+        View report
       </Button>
     </VStack>
   );

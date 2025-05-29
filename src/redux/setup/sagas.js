@@ -12,6 +12,7 @@ import KeyIndicatorSaga from 'redux/kri/saga';
 import LoginSaga from 'redux/login/saga';
 import PlateformeSaga from 'redux/plateforme/saga';
 import ProfileSaga from 'redux/profile/saga';
+import ReportSaga from 'redux/reports/saga';
 import RiskControlSaga from 'redux/riskControl/saga';
 import ServiceSaga from 'redux/service/saga';
 import UserSaga from 'redux/user/saga';
@@ -39,5 +40,6 @@ export default function* Sagas() {
     KeyIndicatorSaga(),
     HistoryKRISaga(),
     ActionKRISaga(),
+    ReportSaga(),
   ]);
 }
