@@ -24,7 +24,11 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import ControlListForm from "./components/ControlListForm";
+import RiskRegisterForm from "./components/RiskRegisterForm";
 import KeyIndicatorAnalysisForm from "./components/KeyIndicatorAnalysisForm";
+import RiskAndControlAssessmentDetails from "./components/RiskAndControlAssessmentDetails";
+import RiskAssessmentTable from "./components/RiskAssessmentTable ";
+import RiskControlTable from "./components/RiskControlTable";
 import ControlTable from "./listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import KITable from "./components/KITable";
@@ -36,6 +40,8 @@ import { listEntityReports } from "redux/reports/action";
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
   const [openControlListTable, setControlListTable] = useState(false);
+  const [openRiskControlTable, setRiskControlTable] = useState(false);
+  const [openRiskAssessmentTable, setRiskAssessmentTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
   const [selectedData, setSelectedData] = useState({
     entities: [],
@@ -79,11 +85,21 @@ const Reports = () => {
   const handleOpenKIReport = () => {
     setKIListTable(true);
   }
+  const handleOpenRiskControlTable = () => {
+    setRiskControlTable(true);
+  }
+  const handleOpenRiskAssessmentTable = () => {
+    setRiskAssessmentTable(true);
+  }
 
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
         return <ControlListForm handleOpenView={handleOpenView} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        case "risk-register-report":
+        return <RiskRegisterForm handleOpenView={handleOpenRiskControlTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        case "risk-control-assessment":
+        return <RiskAndControlAssessmentDetails handleOpenView={handleOpenRiskAssessmentTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "key-indicator-analysis":
         return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} entities={entities} />;
       default:
@@ -109,6 +125,25 @@ const Reports = () => {
           <ControlTable reports={reports} />
         </Box>
       )}
+      {openRiskControlTable && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setRiskControlTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <RiskControlTable reports={reports} />
+        </Box>
+      )}
+      {openRiskAssessmentTable && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setRiskAssessmentTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <RiskControlTable reports={reports} />
+        </Box>
+      )}
+      
       {openKIListTable && (
         <Box>
           <Flex alignItems="center" mb={4} onClick={() => setKIListTable(false)} cursor="pointer">
@@ -118,7 +153,7 @@ const Reports = () => {
           <KITable />
         </Box>
       )}
-      {!openControlListTable && !openKIListTable && (
+      {!openControlListTable && !openRiskAssessmentTable && !openRiskControlTable && !openKIListTable && (
         <HStack spacing={6} align="stretch" flex="1">
           <Box w="350px" bg={cardBg} borderRadius="lg" p={4} shadow="md">
             <Heading size="md" mb={4} color="gray.700">
@@ -149,6 +184,34 @@ const Reports = () => {
                         }
                       >
                         Control List
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        w="full"
+                        justifyContent="flex-start"
+                        colorScheme="blue"
+                        onClick={() => handleFormSelection("risk-register-report")}
+                        bg={
+                          selectedForm === "risk-register-report"
+                            ? "blue.100"
+                            : "transparent"
+                        }
+                      >
+                        Risk register report
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        w="full"
+                        justifyContent="flex-start"
+                        colorScheme="blue"
+                        onClick={() => handleFormSelection("risk-control-assessment")}
+                        bg={
+                          selectedForm === "risk-control-assessment"
+                            ? "blue.100"
+                            : "transparent"
+                        }
+                      >
+                        Risk Control assessment
                       </Button>
                     </ListItem>
                   </List>
