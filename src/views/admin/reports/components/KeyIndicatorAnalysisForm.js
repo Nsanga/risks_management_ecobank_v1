@@ -11,33 +11,39 @@ import Select from "react-select";
 import { useSelector } from 'react-redux';
 
 // Composant pour le formulaire Key Indicator Analysis
-const KeyIndicatorAnalysisForm = ({ handleViewReport, entities }) => {
+const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelectionChange }) => {
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
     entity: [],  // ✅ ajout
   });
   const [selectedEntity, setSelectedEntity] = useState(null);
 
-
   const handleSelectChange = (name, selectedOption) => {
+    let newValue;
+    
     if (name === "entity") {
-      // Gestion spéciale pour la sélection multiple d'entités
       const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
       const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
 
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: selectedValues,
-      }));
-
-      // Mettre à jour avec toutes les entités sélectionnées
+      newValue = selectedValues;
       setSelectedEntity(selectedEntities);
     } else {
-      // Gestion normale pour les autres champs
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: selectedOption ? selectedOption.value : null,
-      }));
+      newValue = selectedOption ? selectedOption.value : null;
+    }
+
+    const updatedFormData = {
+      ...formData,
+      [name]: newValue,
+    };
+
+    setFormData(updatedFormData);
+    
+    // Notifier le parent des nouvelles sélections
+    if (onSelectionChange) {
+      onSelectionChange({
+        selectedEntities: updatedFormData.entity,
+        selectedSession: updatedFormData.session
+      });
     }
   };
 
@@ -95,7 +101,7 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities }) => {
       </FormControl>
 
       <Button colorScheme="green" size="lg" onClick={handleViewReport} >
-        View report
+      {loading ? 'Loading...' : 'View report' } 
       </Button>
     </VStack>
   );

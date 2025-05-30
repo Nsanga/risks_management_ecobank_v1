@@ -171,7 +171,8 @@ const groupedData = [
   },
 ];
 
-export default function KITable() {
+export default function KITable({reports}) {
+  console.log("reports:", reports)
   return (
     <div style={{ overflowX: "auto", maxWidth: "100%" }}>
       <table
@@ -214,22 +215,22 @@ export default function KITable() {
                   </span>
                 </td>
               </tr>
-              {group.items.map((item, j) => (
+              {reports.map((item, j) => (
                 <tr key={j}>
-                  <td style={cellStyle}>{item.entity}</td>
-                  <td style={cellStyle}>{item.keyIndicator}</td>
-                  <td style={cellStyle}>{item.kiType}</td>
+                  <td style={cellStyle}>ENT{item.entityReference} CAM - {item.departmentFunction}</td>
+                  <td style={cellStyle}>KI{item.reference} {item.riskIndicatorDescription}</td>
+                  <td style={cellStyle}>{item.type}</td>
                   <td style={cellStyle}>{item.thresholdType}</td>
-                  <td style={cellStyle}>{item.frequency}</td>
-                  <td style={cellStyle}>{item.i}</td>
-                  <td style={cellStyle}>{item.ii}</td>
-                  <td style={cellStyle}>{item.iii}</td>
-                  <td style={cellStyle}>{item.avg.toFixed(2)}</td>
-                  <td style={cellStyle}>{item.Rm}</td>
-                  <td style={cellStyle}>{item.Am}</td>
-                  <td style={cellStyle}>{item.target}</td>
-                  <td style={cellStyle}>{item.Ap}</td>
-                  <td style={cellStyle}>{item.Rp}</td>
+                  <td style={cellStyle}>{item.frequenceKeyIndicator}</td>
+                  <td style={cellStyle}>{item?.i || ''}</td>
+                  <td style={cellStyle}>{item?.ii || ''}</td>
+                  <td style={cellStyle}>{item?.iii || ''}</td>
+                  <td style={cellStyle}>{item?.avg ? item?.avg.toFixed(2) : ''}</td>
+                  <td style={cellStyle}>{item?.Rm || ''}</td>
+                  <td style={cellStyle}>{item?.Am || ''}</td>
+                  <td style={cellStyle}>{item?.target || ''}</td>
+                  <td style={cellStyle}>{item?.Ap || ''}</td>
+                  <td style={cellStyle}>{item?.Rp || ''}</td>
                 </tr>
               ))}
             </React.Fragment>

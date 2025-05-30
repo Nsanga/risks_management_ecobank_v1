@@ -29,7 +29,7 @@ import KeyIndicatorAnalysisForm from "./components/KeyIndicatorAnalysisForm";
 import RiskAndControlAssessmentDetails from "./components/RiskAndControlAssessmentDetails";
 import RiskAssessmentTable from "./components/RiskAssessmentTable ";
 import RiskControlTable from "./components/RiskControlTable";
-import ControlTable from "./listRapport";
+import ControlTable from "./components/listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import KITable from "./components/KITable";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +40,7 @@ import { listEntityReports } from "redux/reports/action";
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
   const [openControlListTable, setControlListTable] = useState(false);
-  const [openRiskControlTable, setRiskControlTable] = useState(false);
+  const [openRiskRegisterTable, setRiskRegisterTable] = useState(false);
   const [openRiskAssessmentTable, setRiskAssessmentTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
   const [selectedData, setSelectedData] = useState({
@@ -83,10 +83,13 @@ const Reports = () => {
   console.log("reports", reports)
 
   const handleOpenKIReport = () => {
+    dispatch(listEntityReports(
+      {sesion:'Quarterly', targetEntityId:selectedData.entities, type:"keyIndicator"}
+    ));
     setKIListTable(true);
   }
-  const handleOpenRiskControlTable = () => {
-    setRiskControlTable(true);
+  const handleOpenRiskRegisterTable = () => {
+    setRiskRegisterTable(true);
   }
   const handleOpenRiskAssessmentTable = () => {
     setRiskAssessmentTable(true);
@@ -97,11 +100,11 @@ const Reports = () => {
       case "control-list":
         return <ControlListForm handleOpenView={handleOpenView} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
         case "risk-register-report":
-        return <RiskRegisterForm handleOpenView={handleOpenRiskControlTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        return <RiskRegisterForm handleOpenView={handleOpenRiskRegisterTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
         case "risk-control-assessment":
         return <RiskAndControlAssessmentDetails handleOpenView={handleOpenRiskAssessmentTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "key-indicator-analysis":
-        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} entities={entities} />;
+        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading}  />;
       default:
         return (
           <Box textAlign="center" py={10}>
@@ -125,9 +128,9 @@ const Reports = () => {
           <ControlTable reports={reports} />
         </Box>
       )}
-      {openRiskControlTable && (
+      {openRiskRegisterTable && (
         <Box>
-          <Flex alignItems="center" mb={4} onClick={() => setRiskControlTable(false)} cursor="pointer">
+          <Flex alignItems="center" mb={4} onClick={() => setRiskRegisterTable(false)} cursor="pointer">
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
@@ -150,10 +153,10 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <KITable />
+          <KITable reports={reports}/>
         </Box>
       )}
-      {!openControlListTable && !openRiskAssessmentTable && !openRiskControlTable && !openKIListTable && (
+      {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openKIListTable && (
         <HStack spacing={6} align="stretch" flex="1">
           <Box w="350px" bg={cardBg} borderRadius="lg" p={4} shadow="md">
             <Heading size="md" mb={4} color="gray.700">
