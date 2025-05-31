@@ -217,7 +217,7 @@ export default function KITable({reports}) {
               </tr>
               {reports.map((item, j) => (
                 <tr key={j}>
-                  <td style={cellStyle}>ENT{item.entityReference.referenceId} CAM - {item.departmentFunction}</td>
+                  <td style={cellStyle}>ENT{item.entity.referenceId} CAM - {item.departmentFunction}</td>
                   <td style={cellStyle}>KI{item.reference} {item.riskIndicatorDescription}</td>
                   <td style={cellStyle}>{item.type}</td>
                   <td style={cellStyle}>{item.thresholdType}</td>
