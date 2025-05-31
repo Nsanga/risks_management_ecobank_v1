@@ -9,24 +9,16 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 
-const RiskAndControlAssessmentDetails = ({
-  handleOpenView,
-  entities,
-  loading,
-  onSelectionChange,
-}) => {
+// Composant pour le formulaire Risk Details
+const RiskDetailsForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
     entity: [],
   });
 
   const handleSelectChange = (name, selectedOption) => {
-    const selectedValues = selectedOption
-      ? selectedOption.map((option) => option.value)
-      : [];
-    const selectedEntities = selectedOption
-      ? selectedOption.map((option) => option.fullEntity)
-      : [];
+    const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
+    const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
 
     setSelectedEntity(selectedEntities);
 
@@ -37,6 +29,7 @@ const RiskAndControlAssessmentDetails = ({
 
     setFormData(updatedFormData);
 
+    // Notifier le parent des nouvelles sélections
     if (onSelectionChange) {
       onSelectionChange({
         selectedEntities: updatedFormData.entity,
@@ -76,7 +69,7 @@ const RiskAndControlAssessmentDetails = ({
   return (
     <VStack spacing={4} align="stretch">
       <Heading size="md" color="blue.600">
-        Risk and Control Assessment Details
+        Risk Details Form
       </Heading>
 
       <FormControl>
@@ -87,9 +80,7 @@ const RiskAndControlAssessmentDetails = ({
             styles={customStyles}
             placeholder="Select Entity"
             isMulti={true}
-            value={entitiesOptions?.filter((ent) =>
-              formData.entity.includes(ent.value)
-            )}
+            value={entitiesOptions?.filter(ent => formData.entity.includes(ent.value))}
             onChange={(selectedOption) =>
               handleSelectChange("entity", selectedOption)
             }
@@ -98,10 +89,10 @@ const RiskAndControlAssessmentDetails = ({
       </FormControl>
 
       <Button onClick={handleOpenView} colorScheme="blue" size="lg">
-        {loading ? "Loading..." : "View report"}
+        {loading ? "Loading..." : "View Details"}
       </Button>
     </VStack>
   );
 };
 
-export default RiskAndControlAssessmentDetails;
+export default RiskDetailsForm;

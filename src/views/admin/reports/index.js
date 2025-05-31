@@ -11,13 +11,6 @@ import {
   List,
   ListItem,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Select,
-  NumberInput,
-  NumberInputField,
   Heading,
   Text,
   useColorModeValue,
@@ -28,7 +21,10 @@ import RiskRegisterForm from "./components/RiskRegisterForm";
 import KeyIndicatorAnalysisForm from "./components/KeyIndicatorAnalysisForm";
 import RiskAndControlAssessmentDetails from "./components/RiskAndControlAssessmentDetails";
 import RiskAssessmentTable from "./components/RiskAssessmentTable ";
+import RiskDetailsForm from "./components/RiskDetailsForm";
 import RiskControlTable from "./components/RiskControlTable";
+import IncidentTrendsAnalysisForm from "./components/IncidentTrendsAnalysisForm";
+import IncidentTrendsAnalysisTable from "./components/IncidentTrendsAnalysisTable";
 import ControlTable from "./components/listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import KITable from "./components/KITable";
@@ -42,11 +38,9 @@ const Reports = () => {
   const [openControlListTable, setControlListTable] = useState(false);
   const [openRiskRegisterTable, setRiskRegisterTable] = useState(false);
   const [openRiskAssessmentTable, setRiskAssessmentTable] = useState(false);
+  const [openIncidentTrendsAnalysisTable, setIncidentTrendsAnalysisTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
-  const [selectedData, setSelectedData] = useState({
-    entities: [],
-    session: ""
-  });
+  const [selectedData, setSelectedData] = useState({ entities: [], session: "" });
 
   const cardBg = useColorModeValue("white", "gray.700");
   const entities = useSelector(state => state.EntityReducer.entities);
@@ -64,53 +58,51 @@ const Reports = () => {
   };
 
   const handleSelectionChange = ({ selectedEntities, selectedSession }) => {
-    setSelectedData({
-      entities: selectedEntities,
-      session: selectedSession
-    });
-    console.log("Entités sélectionnées:", selectedEntities);
-    console.log("Session sélectionnée:", selectedSession);
+    setSelectedData({ entities: selectedEntities, session: selectedSession });
   };
 
   const handleOpenView = () => {
-    dispatch(listEntityReports(
-      {sesion:'Quarterly', targetEntityId:selectedData.entities, type:"riskControl"}
-    ));
-    
+    dispatch(listEntityReports({ sesion: selectedData.session, targetEntityId: selectedData.entities, type: "riskControl" }));
     setControlListTable(true);
-  }
-
-  console.log("reports", reports)
+  };
 
   const handleOpenKIReport = () => {
-    dispatch(listEntityReports(
-      {sesion:'Quarterly', targetEntityId:selectedData.entities, type:"keyIndicator"}
-    ));
+    dispatch(listEntityReports({ sesion: selectedData.session, targetEntityId: selectedData.entities, type: "keyIndicator" }));
     setKIListTable(true);
-  }
+  };
+
   const handleOpenRiskRegisterTable = () => {
     setRiskRegisterTable(true);
-  }
+  };
+
   const handleOpenRiskAssessmentTable = () => {
     setRiskAssessmentTable(true);
-  }
+  };
+
+  const handleOpenIncidentTrendsAnalysisTable = () => {
+    console.log('ok')
+    setIncidentTrendsAnalysisTable (true);
+  };
 
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
         return <ControlListForm handleOpenView={handleOpenView} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
-        case "risk-register-report":
+      case "risk-register-report":
         return <RiskRegisterForm handleOpenView={handleOpenRiskRegisterTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
-        case "risk-control-assessment":
+      case "risk-control-assessment":
         return <RiskAndControlAssessmentDetails handleOpenView={handleOpenRiskAssessmentTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+      case "risk-details-by-entity":
+        return <RiskDetailsForm handleOpenView={handleOpenRiskAssessmentTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "key-indicator-analysis":
-        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading}  />;
+        return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+      case "incident-trends-analysis":
+        return <IncidentTrendsAnalysisForm handleViewReport={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       default:
         return (
           <Box textAlign="center" py={10}>
             <Text fontSize="lg" color="gray.500">
-              Select an item from the left menu to display the corresponding
-              form
+              Select an item from the left menu to display the corresponding form
             </Text>
           </Box>
         );
@@ -156,7 +148,16 @@ const Reports = () => {
           <KITable reports={reports}/>
         </Box>
       )}
-      {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openKIListTable && (
+      {openIncidentTrendsAnalysisTable && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setIncidentTrendsAnalysisTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <IncidentTrendsAnalysisTable reports={reports}/>
+        </Box>
+      )}
+      {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openIncidentTrendsAnalysisTable && !openKIListTable && (
         <HStack spacing={6} align="stretch" flex="1">
           <Box w="350px" bg={cardBg} borderRadius="lg" p={4} shadow="md">
             <Heading size="md" mb={4} color="gray.700">
@@ -215,6 +216,20 @@ const Reports = () => {
                         }
                       >
                         Risk Control assessment
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        w="full"
+                        justifyContent="flex-start"
+                        colorScheme="blue"
+                        onClick={() => handleFormSelection("risk-details-by-entity")}
+                        bg={
+                          selectedForm === "risk-details-by-entity"
+                            ? "blue.100"
+                            : "transparent"
+                        }
+                      >
+                        Risk Details by Entity
                       </Button>
                     </ListItem>
                   </List>
@@ -281,6 +296,22 @@ const Reports = () => {
                         }
                       >
                         Incident with funds
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        w="full"
+                        justifyContent="flex-start"
+                        colorScheme="purple"
+                        onClick={() =>
+                          handleFormSelection("incident-trends-analysis")
+                        }
+                        bg={
+                          selectedForm === "incident-trends-analysis"
+                            ? "purple.100"
+                            : "transparent"
+                        }
+                      >
+                        Incident Trends Analysis
                       </Button>
                     </ListItem>
                   </List>
