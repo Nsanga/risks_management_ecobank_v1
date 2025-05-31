@@ -97,7 +97,7 @@ const Reports = () => {
       case "key-indicator-analysis":
         return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "incident-trends-analysis":
-        return <IncidentTrendsAnalysisForm handleViewReport={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        return <IncidentTrendsAnalysisForm handleOpenView={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       default:
         return (
           <Box textAlign="center" py={10}>
