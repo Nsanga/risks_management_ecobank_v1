@@ -120,7 +120,7 @@ const RiskAssessmentTable = () => {
   return (
     <Box p={4} overflowX="auto">
       <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Risk and Control Assessment Details
+        Risk  Details table
       </Text>
       <div style={{ overflowX: "auto" }}>
         <table

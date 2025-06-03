@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  VStack,
   HStack,
   Accordion,
   AccordionItem,
@@ -25,6 +24,10 @@ import RiskDetailsForm from "./components/RiskDetailsForm";
 import RiskControlTable from "./components/RiskControlTable";
 import IncidentTrendsAnalysisForm from "./components/IncidentTrendsAnalysisForm";
 import IncidentTrendsAnalysisTable from "./components/IncidentTrendsAnalysisTable";
+import IncidentLossReportForm from "./components/IncidentLossReportForm";
+import IncidentLossReportTable from "./components/IncidentLossReportTable";
+import IncidentEventReportForm from "./components/IncidentEventReportForm";
+import EventRecoveriesTable from "./components/EventRecoveriesTable";
 import ControlTable from "./components/listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import KITable from "./components/KITable";
@@ -39,6 +42,8 @@ const Reports = () => {
   const [openRiskRegisterTable, setRiskRegisterTable] = useState(false);
   const [openRiskAssessmentTable, setRiskAssessmentTable] = useState(false);
   const [openIncidentTrendsAnalysisTable, setIncidentTrendsAnalysisTable] = useState(false);
+  const [openIncidentLossReportTable, setIncidentLossReportTable] = useState(false);
+  const [openEventRecoveriesTable, setEventRecoveriesTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
   const [selectedData, setSelectedData] = useState({ entities: [], session: "" });
 
@@ -83,7 +88,12 @@ const Reports = () => {
     console.log('ok')
     setIncidentTrendsAnalysisTable (true);
   };
-
+  const handleOpenIncidentLossReportTable = () => {
+    setIncidentLossReportTable(true);
+  };
+   const handleOpenEventRecoveriesTable= () => {
+    setEventRecoveriesTable(true);
+  };
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
@@ -98,6 +108,10 @@ const Reports = () => {
         return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "incident-trends-analysis":
         return <IncidentTrendsAnalysisForm handleOpenView={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+      case "incident-loss-report":
+        return <IncidentLossReportForm handleOpenView={handleOpenIncidentLossReportTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+      case "incident-event-report":
+        return <IncidentEventReportForm handleOpenView={handleOpenEventRecoveriesTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;    
       default:
         return (
           <Box textAlign="center" py={10}>
@@ -157,7 +171,25 @@ const Reports = () => {
           <IncidentTrendsAnalysisTable reports={reports}/>
         </Box>
       )}
-      {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openIncidentTrendsAnalysisTable && !openKIListTable && (
+      {openIncidentLossReportTable && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setIncidentLossReportTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <IncidentLossReportTable reports={reports}/>
+        </Box>
+      )}
+      {openEventRecoveriesTable && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setEventRecoveriesTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <EventRecoveriesTable reports={reports}/>
+        </Box>
+      )}
+      {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openIncidentTrendsAnalysisTable && !openIncidentLossReportTable && !openEventRecoveriesTable && !openKIListTable && (
         <HStack spacing={6} align="stretch" flex="1">
           <Box w="350px" bg={cardBg} borderRadius="lg" p={4} shadow="md">
             <Heading size="md" mb={4} color="gray.700">
@@ -312,6 +344,38 @@ const Reports = () => {
                         }
                       >
                         Incident Trends Analysis
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        w="full"
+                        justifyContent="flex-start"
+                        colorScheme="purple"
+                        onClick={() =>
+                          handleFormSelection("incident-loss-report")
+                        }
+                        bg={
+                          selectedForm === "incident-loss-report"
+                            ? "purple.100"
+                            : "transparent"
+                        }
+                      >
+                        Incident Loss Report
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        w="full"
+                        justifyContent="flex-start"
+                        colorScheme="purple"
+                        onClick={() =>
+                          handleFormSelection("incident-event-report")
+                        }
+                        bg={
+                          selectedForm === "incident-event-report"
+                            ? "purple.100"
+                            : "transparent"
+                        }
+                      >
+                        Incident Event Report
                       </Button>
                     </ListItem>
                   </List>

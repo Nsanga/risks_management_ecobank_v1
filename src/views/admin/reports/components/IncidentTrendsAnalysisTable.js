@@ -17,11 +17,6 @@ const IncidentTrendsAnalysisTable = () => {
       <Heading as="h3" size="md" mb={2} bg="gray.100" p={2}>
         Incident Trends Analysis Table
       </Heading>
-
-      <Text fontSize="sm" mb={4}>
-        Reporting Period: 01-May-2023 to 27-May-2025 by Raised Date
-      </Text>
-
       <Table variant="simple" size="sm" border="1px solid #ccc">
         <Thead bg="blue.500">
           <Tr>
