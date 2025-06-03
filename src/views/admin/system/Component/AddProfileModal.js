@@ -11,7 +11,7 @@ import { AddProfile } from 'redux/profile/action';
 import { connect, useDispatch } from 'react-redux';
 import { updateProfile } from 'redux/profile/action';
 
-const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles }) => {
+const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles, entities }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true);
   const [formData, setFormData] = useState({
@@ -215,7 +215,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                 fontSize={12}
                 size="sm"
               >
-                User Entities
+                User
               </Button>
             </Flex>
             <Box mt={4}>
@@ -234,7 +234,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
                 />
               </Collapse>
               <Collapse in={!isDetailsVisible}>
-                <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />
+                <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} entities={entities} />
               </Collapse>
             </Box>
           </Box>

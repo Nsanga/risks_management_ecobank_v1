@@ -41,6 +41,7 @@ const Reports = () => {
   const [openControlListTable, setControlListTable] = useState(false);
   const [openRiskRegisterTable, setRiskRegisterTable] = useState(false);
   const [openRiskAssessmentTable, setRiskAssessmentTable] = useState(false);
+  const [openRiskDetails, setRiskDetails] = useState(false);
   const [openIncidentTrendsAnalysisTable, setIncidentTrendsAnalysisTable] = useState(false);
   const [openIncidentLossReportTable, setIncidentLossReportTable] = useState(false);
   const [openEventRecoveriesTable, setEventRecoveriesTable] = useState(false);
@@ -72,26 +73,33 @@ const Reports = () => {
   };
 
   const handleOpenKIReport = () => {
-    dispatch(listEntityReports({ sesion: selectedData.session, targetEntityId: selectedData.entities, type: "keyIndicator" }));
+    dispatch(listEntityReports({ targetEntityId: selectedData.entities, type: "keyIndicator" }));
     setKIListTable(true);
   };
 
   const handleOpenRiskRegisterTable = () => {
+    dispatch(listEntityReports({ targetEntityId: selectedData.entities, type: "riskControl" }));
     setRiskRegisterTable(true);
   };
 
   const handleOpenRiskAssessmentTable = () => {
+    dispatch(listEntityReports({ targetEntityId: selectedData.entities, type: "riskControl" }));
     setRiskAssessmentTable(true);
+  };
+
+  const handleOpenRiskDetails = () => {
+    dispatch(listEntityReports({ sesion: selectedData.session, targetEntityId: selectedData.entities, type: "riskControl" }));
+    setRiskDetails(true);
   };
 
   const handleOpenIncidentTrendsAnalysisTable = () => {
     console.log('ok')
-    setIncidentTrendsAnalysisTable (true);
+    setIncidentTrendsAnalysisTable(true);
   };
   const handleOpenIncidentLossReportTable = () => {
     setIncidentLossReportTable(true);
   };
-   const handleOpenEventRecoveriesTable= () => {
+  const handleOpenEventRecoveriesTable = () => {
     setEventRecoveriesTable(true);
   };
   const renderForm = () => {
@@ -103,7 +111,7 @@ const Reports = () => {
       case "risk-control-assessment":
         return <RiskAndControlAssessmentDetails handleOpenView={handleOpenRiskAssessmentTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "risk-details-by-entity":
-        return <RiskDetailsForm handleOpenView={handleOpenRiskAssessmentTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        return <RiskDetailsForm handleOpenView={handleOpenRiskDetails} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "key-indicator-analysis":
         return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "incident-trends-analysis":
@@ -111,7 +119,7 @@ const Reports = () => {
       case "incident-loss-report":
         return <IncidentLossReportForm handleOpenView={handleOpenIncidentLossReportTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "incident-event-report":
-        return <IncidentEventReportForm handleOpenView={handleOpenEventRecoveriesTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;    
+        return <IncidentEventReportForm handleOpenView={handleOpenEventRecoveriesTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       default:
         return (
           <Box textAlign="center" py={10}>
@@ -143,6 +151,7 @@ const Reports = () => {
           <RiskControlTable reports={reports} />
         </Box>
       )}
+
       {openRiskAssessmentTable && (
         <Box>
           <Flex alignItems="center" mb={4} onClick={() => setRiskAssessmentTable(false)} cursor="pointer">
@@ -152,14 +161,24 @@ const Reports = () => {
           <RiskAssessmentTable reports={reports} />
         </Box>
       )}
-      
+
+      {openRiskDetails && (
+        <Box>
+          <Flex alignItems="center" mb={4} onClick={() => setRiskAssessmentTable(false)} cursor="pointer">
+            <ChevronLeftIcon />
+            Back to Report's list
+          </Flex>
+          <RiskAssessmentTable reports={reports} />
+        </Box>
+      )}
+
       {openKIListTable && (
         <Box>
           <Flex alignItems="center" mb={4} onClick={() => setKIListTable(false)} cursor="pointer">
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <KITable reports={reports}/>
+          <KITable reports={reports} />
         </Box>
       )}
       {openIncidentTrendsAnalysisTable && (
@@ -168,7 +187,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <IncidentTrendsAnalysisTable reports={reports}/>
+          <IncidentTrendsAnalysisTable reports={reports} />
         </Box>
       )}
       {openIncidentLossReportTable && (
@@ -177,7 +196,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <IncidentLossReportTable reports={reports}/>
+          <IncidentLossReportTable reports={reports} />
         </Box>
       )}
       {openEventRecoveriesTable && (
@@ -186,7 +205,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <EventRecoveriesTable reports={reports}/>
+          <EventRecoveriesTable reports={reports} />
         </Box>
       )}
       {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openIncidentTrendsAnalysisTable && !openIncidentLossReportTable && !openEventRecoveriesTable && !openKIListTable && (

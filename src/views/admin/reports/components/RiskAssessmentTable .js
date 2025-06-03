@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
 
-const RiskAssessmentTable = () => {
+const RiskAssessmentTable = ({reports}) => {
   const data = [
     {
-      risk: "RSK67231",
+      risk: "RSK67231", 
       entity: "ENT00409",
       entityDescription: "ECM-FICC",
       crrReference: "CRR1231",
@@ -159,13 +159,13 @@ const RiskAssessmentTable = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => (
+            {reports.map((item, index) => (
               <tr key={index}>
-                <td style={{ border: "1px solid gray" }}>{item.risk}</td>
+                <td style={{ border: "1px solid gray" }}>{item.referenceRisk}</td>
                 <td style={{ border: "1px solid gray" }}>{item.entity}</td>
                 <td style={{ border: "1px solid gray" }}>{item.entityDescription}</td>
                 <td style={{ border: "1px solid gray" }}>{item.crrReference}</td>
-                <td style={{ border: "1px solid gray" }}>{item.riskDescription}</td>
+                <td style={{ border: "1px solid gray" }}>{item.descriptionRisk}</td>
                 <td style={{ border: "1px solid gray" }}>{item.riskCategory}</td>
                 <td style={{ border: "1px solid gray" }}>{item.causalCategory}</td>
                 <td style={{ border: "1px solid gray" }}>{item.residualSeverity}</td>
@@ -173,8 +173,8 @@ const RiskAssessmentTable = () => {
                 <td style={{ border: "1px solid gray" }}>{item.actionDescription}</td>
                 <td style={{ border: "1px solid gray" }}>{item.actionOwner}</td>
                 <td style={{ border: "1px solid gray" }}>{item.actionNominee}</td>
-                <td style={{ border: "1px solid gray" }}>{item.assessmentFrequency}</td>
-                <td style={{ border: "1px solid gray" }}>{item.nextAssessmentDate}</td>
+                <td style={{ border: "1px solid gray" }}>{item.frequence}</td>
+                <td style={{ border: "1px solid gray" }}>{item.nextAssessMent}</td>
               </tr>
             ))}
           </tbody>
