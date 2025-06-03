@@ -30,7 +30,8 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     lockedOutReason: '',
     administrator: false,
     canAuthorize: false,
-    activeUser: false
+    activeUser: false,
+    entity: [],
   });
 
   useEffect(() => {

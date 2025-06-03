@@ -3,7 +3,7 @@ import { Box, Button, FormControl, FormLabel, Flex, Text } from '@chakra-ui/reac
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import Select from "react-select";
 
-const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectAll, onUnselectAll, onCopyViews, entities }) => {
+const OperationalModelOptions = ({ formData, onSelectAll, onUnselectAll, onCopyViews, entities }) => {
 
     const entitiesOptions = entities?.map((entity, index) => ({
         key: `${entity._id}-${index}`,
@@ -33,6 +33,24 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
             fontSize: "12px",
         }),
     };
+
+    const handleSelectChange = (name, selectedOption) => {
+        let newValue;
+        
+        if (name === "entity") {
+          const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
+          const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+    
+          newValue = selectedValues;
+        } else {
+          newValue = selectedOption ? selectedOption.value : null;
+        }
+    
+        const updatedFormData = {
+          ...formData,
+          [name]: newValue,
+        };
+      };
 
     return (
         <Box p={6} >
@@ -84,7 +102,7 @@ const OperationalModelOptions = ({ businessLines = [], locations = [], onSelectA
                                 placeholder="Select Entity"
                                 isMulti={true} // ✅ Active la sélection multiple
                                 value={entitiesOptions?.filter(
-                                    (ent) => formData.entity.includes(ent.value)
+                                    (ent) => (formData.entity || []).includes(ent.value)
                                 )}
                                 onChange={(selectedOption) =>
                                     handleSelectChange("entity", selectedOption)
