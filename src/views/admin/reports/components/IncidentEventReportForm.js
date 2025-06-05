@@ -8,6 +8,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import Select from "react-select";
+import MultiSelectCheckbox from "./MultipleSelectCustom";
 
 // Composant pour le formulaire Incident Event Report
 const IncidentEventReportForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
@@ -75,15 +76,12 @@ const IncidentEventReportForm = ({ handleOpenView, entities, loading, onSelectio
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-          <Select
+        <MultiSelectCheckbox
+            name="entity"
             options={entitiesOptions}
-            styles={customStyles}
+            value={formData.entity}
+            onChange={handleSelectChange}
             placeholder="Select Entity"
-            isMulti={true}
-            value={entitiesOptions?.filter(ent => formData.entity.includes(ent.value))}
-            onChange={(selectedOption) =>
-              handleSelectChange("entity", selectedOption)
-            }
           />
         </Box>
       </FormControl>

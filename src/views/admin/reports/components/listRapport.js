@@ -40,7 +40,7 @@ export default function ControlTable({ reports, selectedData }) {
           {reports.map((item, index) => (
             <tr key={index}>
               <td style={{ border: "1px solid gray" }}>{`${item.reference}: ${item.controlSummary}` || ""}</td>
-              <td style={{ border: "1px solid gray" }}>{`${item.referenceRisk} : ${item.descriptionRisk}` || ""}</td>
+              <td style={{ border: "1px solid gray" }}>{`${item.riskAssociate.reference} : ${item.riskAssociate.description}` || ""}</td>
               <td style={{ border: "1px solid gray" }}>{item.preventiveDetectiveControl}</td>
               <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
               <td style={{ border: "1px solid gray" }}>{item.nomineeControl}</td>
