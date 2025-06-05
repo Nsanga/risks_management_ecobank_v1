@@ -50,9 +50,9 @@ const RiskControlTable = ({reports}) => {
                 <td style={{ border: "1px solid gray" }}>{item.referenceRisk}</td>
                 <td style={{ border: "1px solid gray" }}>{item.location ?? "CAMEROUN"}</td>
                 <td style={{ border: "1px solid gray" }}>{item.line}</td>
-                <td style={{ border: "1px solid gray" }}>{item.entity}</td>
-                <td style={{ border: "1px solid gray" }}>{item.category}</td>
-                <td style={{ border: "1px solid gray" }}>{item.causal}</td>
+                <td style={{ border: "1px solid gray" }}>ENT{item.entitie.referenceId}</td>
+                <td style={{ border: "1px solid gray" }}>{item.riskAssociate.riskEventCategory}</td>
+                <td style={{ border: "1px solid gray" }}>{item.riskAssociate.causalCategory}</td>
                 <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
                 <td style={{ border: "1px solid gray" }}>{item.nomineeControl}</td>
                 <td style={{ border: "1px solid gray" }}>{item.controlDescription}</td>

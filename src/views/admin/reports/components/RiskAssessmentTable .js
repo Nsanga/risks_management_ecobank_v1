@@ -162,12 +162,12 @@ const RiskAssessmentTable = ({reports}) => {
             {reports.map((item, index) => (
               <tr key={index}>
                 <td style={{ border: "1px solid gray" }}>{item.referenceRisk}</td>
-                <td style={{ border: "1px solid gray" }}>{item.entity}</td>
-                <td style={{ border: "1px solid gray" }}>{item.entityDescription}</td>
+                <td style={{ border: "1px solid gray" }}>ENT{item.entitie.referenceId}</td>
+                <td style={{ border: "1px solid gray" }}>{item.entitie.description}</td>
                 <td style={{ border: "1px solid gray" }}>{item.crrReference}</td>
-                <td style={{ border: "1px solid gray" }}>{item.descriptionRisk}</td>
-                <td style={{ border: "1px solid gray" }}>{item.riskCategory}</td>
-                <td style={{ border: "1px solid gray" }}>{item.causalCategory}</td>
+                <td style={{ border: "1px solid gray" }}>{item.riskAssociate.description}</td>
+                <td style={{ border: "1px solid gray" }}>{item.riskAssociate.riskEventCategory}</td>
+                <td style={{ border: "1px solid gray" }}>{item.riskAssociate.causalCategory}</td>
                 <td style={{ border: "1px solid gray" }}>{item.residualSeverity}</td>
                 <td style={{ border: "1px solid gray" }}>{item.actionReference}</td>
                 <td style={{ border: "1px solid gray" }}>{item.actionDescription}</td>
