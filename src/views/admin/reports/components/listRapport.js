@@ -58,7 +58,7 @@ export default function ControlTable({ reports, selectedData }) {
               <td style={{ border: "1px solid gray" }}>
                 {item.history.length === 0
                   ? "No"
-                  : item.history.some(historyItem => historyItem.costAnnually === selectedData.session)
+                  : item.history.some(historyItem => historyItem.coutAnnually === selectedData.session)
                     ? "Yes"
                     : "No"
                 }
