@@ -10,7 +10,6 @@ import {
 import { useSelector } from "react-redux";
 import Select from "react-select";
 
-// Composant pour le formulaire Control List
 const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
@@ -19,8 +18,10 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
   });
 
   const sessionOptions = [
-    { value: "mensuel", label: "Mensuelle" },
-    { value: "trimestrielle", label: "Trimestrielle" },
+    { value: "q1", label: "Q1" },
+    { value: "q2", label: "Q2" },
+    { value: "q3", label: "Q3" },
+    { value: "q4", label: "Q4" },
   ];
 
   const handleSelectChange = (name, selectedOption) => {

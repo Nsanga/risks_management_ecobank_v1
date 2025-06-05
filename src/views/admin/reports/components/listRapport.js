@@ -1,89 +1,6 @@
 import React from "react";
 
-const controlData = [
-  {
-    control:
-      "CTR69807: Cancelling of a trade must follow a procedure put in place by the Treasury and FICC team",
-    risk: "RSK67231: The cancellation of an FI buy trade may result in financial loss to the bank",
-    keyControl: "Y",
-    refType: "Preventive",
-    owner: "DBA Database Administrator",
-    nominee: "DBA Database Administrator",
-    reviewDate: "N/A",
-    opFreq: "N/A",
-    lastOp: "",
-    opSignedOffBy: "",
-    nextOp: "",
-    assessmentFreq: "Quarterly",
-    nextAssessmentDue: "13/04/2025",
-    lastAssessmentDate: "21/01/2025",
-    assessedBy: "Rémy NDZIE",
-    active: "Y",
-    attested: "Y",
-  },
-  {
-    control:
-      "CTR69808: Mitigating this risk will involve a daily publication of XAF Blotter",
-    risk: "RSK67232: Non respect of mandatory reserve level may result in regulatory penalties leading to financial loss",
-    keyControl: "Y",
-    refType: "Preventive",
-    owner: "DBA Database Administrator",
-    nominee: "DBA Database Administrator",
-    reviewDate: "N/A",
-    opFreq: "N/A",
-    lastOp: "",
-    opSignedOffBy: "",
-    nextOp: "",
-    assessmentFreq: "Quarterly",
-    nextAssessmentDue: "13/04/2025",
-    lastAssessmentDate: "21/01/2025",
-    assessedBy: "Rémy NDZIE",
-    active: "Y",
-    attested: "Y",
-  },
-  {
-    control:
-      "CTR69809: This will consist of ensuring sure all PPs are approved",
-    risk: "RSK67233: breach of limit regarding commercialization of Treasury products may result in the financial risk",
-    keyControl: "Y",
-    refType: "Preventive",
-    owner: "DBA Database Administrator",
-    nominee: "DBA Database Administrator",
-    reviewDate: "N/A",
-    opFreq: "N/A",
-    lastOp: "",
-    opSignedOffBy: "",
-    nextOp: "",
-    assessmentFreq: "Quarterly",
-    nextAssessmentDue: "13/04/2025",
-    lastAssessmentDate: "21/01/2025",
-    assessedBy: "Rémy NDZIE",
-    active: "Y",
-    attested: "Y",
-  },
-  {
-    control:
-      "CTR69810: This will involve all ALCO Minutes for each month meeting are duly published",
-    risk: "RSK67234: Non compliance on regulatory requirement as ALCO committee whereby may lead to financial risk",
-    keyControl: "Y",
-    refType: "Preventive",
-    owner: "DBA Database Administrator",
-    nominee: "DBA Database Administrator",
-    reviewDate: "N/A",
-    opFreq: "N/A",
-    lastOp: "",
-    opSignedOffBy: "",
-    nextOp: "",
-    assessmentFreq: "Quarterly",
-    nextAssessmentDue: "13/04/2025",
-    lastAssessmentDate: "21/01/2025",
-    assessedBy: "Rémy NDZIE",
-    active: "Y",
-    attested: "Y",
-  },
-];
-
-export default function ControlTable({reports}) {
+export default function ControlTable({ reports, selectedData }) {
   return (
     <div style={{ overflowX: "auto" }}>
       <table
@@ -138,7 +55,14 @@ export default function ControlTable({reports}) {
                 {item.lastAssessmentDate || ""}
               </td>
               <td style={{ border: "1px solid gray" }}>{item.assessedBy || ""}</td>
-              <td style={{ border: "1px solid gray" }}>{item.active || "No"}</td>
+              <td style={{ border: "1px solid gray" }}>
+                {item.history.length === 0
+                  ? "No"
+                  : item.history.some(historyItem => historyItem.costAnnually === selectedData.session)
+                    ? "Yes"
+                    : "No"
+                }
+              </td>
               <td style={{ border: "1px solid gray" }}>{item.attested || "No"}</td>
             </tr>
           ))}

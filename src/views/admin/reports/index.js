@@ -139,7 +139,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <ControlTable reports={reports} />
+          <ControlTable reports={reports} selectedData={selectedData} />
         </Box>
       )}
       {openRiskRegisterTable && (
