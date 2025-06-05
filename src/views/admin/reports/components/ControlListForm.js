@@ -18,10 +18,10 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
   });
 
   const sessionOptions = [
-    { value: "q1", label: "Q1" },
-    { value: "q2", label: "Q2" },
-    { value: "q3", label: "Q3" },
-    { value: "q4", label: "Q4" },
+    { value: "Q1", label: "Q1" },
+    { value: "Q2", label: "Q2" },
+    { value: "Q3", label: "Q3" },
+    { value: "Q4", label: "Q4" },
   ];
 
   const handleSelectChange = (name, selectedOption) => {
