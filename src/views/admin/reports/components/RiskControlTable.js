@@ -29,7 +29,6 @@ const RiskControlTable = ({reports}) => {
             <tr>
               <th style={{ border: "1px solid gray" }}>Référence Risque</th>
               <th style={{ border: "1px solid gray" }}>Pays</th>
-              <th style={{ border: "1px solid gray" }}>Ligne Métier</th>
               <th style={{ border: "1px solid gray" }}>Entité</th>
               <th style={{ border: "1px solid gray" }}>Catégorie du Risque</th>
               <th style={{ border: "1px solid gray" }}>Catégorie Causale</th>
@@ -37,11 +36,10 @@ const RiskControlTable = ({reports}) => {
               <th style={{ border: "1px solid gray" }}>Nominee</th>
               <th style={{ border: "1px solid gray" }}>Description</th>
               <th style={{ border: "1px solid gray" }}>Description Détaillée</th>
-              <th style={{ border: "1px solid gray" }}>Commentaires de l'Évaluation</th>
               <th style={{ border: "1px solid gray" }}>Date d'Évaluation</th>
-              <th style={{ border: "1px solid gray" }}>Vraisemblance</th>
-              <th style={{ border: "1px solid gray" }}>Impact</th>
-              <th style={{ border: "1px solid gray" }}>Criticité</th>
+              <th style={{ border: "1px solid gray" }}>Probabilité d'occurence</th>
+              <th style={{ border: "1px solid gray" }}>Impact du risque</th>
+              <th style={{ border: "1px solid gray" }}>Total</th>
             </tr>
           </thead>
           <tbody>
@@ -49,15 +47,13 @@ const RiskControlTable = ({reports}) => {
               <tr key={index}>
                 <td style={{ border: "1px solid gray" }}>{item.referenceRisk}</td>
                 <td style={{ border: "1px solid gray" }}>{item.location ?? "CAMEROUN"}</td>
-                <td style={{ border: "1px solid gray" }}>{item.line}</td>
                 <td style={{ border: "1px solid gray" }}>ENT{item.entitie.referenceId}</td>
                 <td style={{ border: "1px solid gray" }}>{item.riskAssociate.riskEventCategory}</td>
                 <td style={{ border: "1px solid gray" }}>{item.riskAssociate.causalCategory}</td>
                 <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
                 <td style={{ border: "1px solid gray" }}>{item.nomineeControl}</td>
+                <td style={{ border: "1px solid gray" }}>{item.summaryRisk}</td>
                 <td style={{ border: "1px solid gray" }}>{item.controlDescription}</td>
-                <td style={{ border: "1px solid gray" }}>{item.detailedDescription}</td>
-                <td style={{ border: "1px solid gray" }}>{item.assessmentCommentary}</td>
                 <td style={{ border: "1px solid gray" }}>{item.assessmentDate}</td>
                 <td style={{ border: "1px solid gray" }}>{item.likelihood}</td>
                 <td style={{ border: "1px solid gray" }}>{item.impact}</td>
