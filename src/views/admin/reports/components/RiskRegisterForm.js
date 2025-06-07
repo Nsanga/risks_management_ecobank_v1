@@ -46,27 +46,6 @@ const RiskRegisterForm = ({ handleOpenView, entities, loading, onSelectionChange
     fullEntity: entity,
   }));
 
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-    }),
-    menu: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-      maxHeight: "200px",
-      overflowY: "auto",
-    }),
-    option: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-    }),
-  };
-
   return (
     <VStack spacing={4} align="stretch">
       <Heading size="md" color="blue.600">
@@ -76,7 +55,7 @@ const RiskRegisterForm = ({ handleOpenView, entities, loading, onSelectionChange
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-        <MultiSelectCheckbox
+          <MultiSelectCheckbox
             name="entity"
             options={entitiesOptions}
             value={formData.entity}

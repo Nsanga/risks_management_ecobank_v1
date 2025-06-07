@@ -6,7 +6,7 @@ const RiskControlTable = ({ reports, loading }) => {
   return (
     <Box p={4} overflowX="auto">
       <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Risk Register Form
+        Risk Register Table
       </Text>
       <div style={{ overflowX: "auto" }}>
         {loading ? (
@@ -33,9 +33,8 @@ const RiskControlTable = ({ reports, loading }) => {
               }}
             >
               <tr>
+              <th style={{ border: "1px solid gray" }}>Référence Entité</th>
                 <th style={{ border: "1px solid gray" }}>Référence Risque</th>
-                <th style={{ border: "1px solid gray" }}>Pays</th>
-                <th style={{ border: "1px solid gray" }}>Entité</th>
                 <th style={{ border: "1px solid gray" }}>Catégorie du Risque</th>
                 <th style={{ border: "1px solid gray" }}>Catégorie Causale</th>
                 <th style={{ border: "1px solid gray" }}>Responsable du Risque</th>
@@ -46,14 +45,14 @@ const RiskControlTable = ({ reports, loading }) => {
                 <th style={{ border: "1px solid gray" }}>Probabilité d'occurence</th>
                 <th style={{ border: "1px solid gray" }}>Impact du risque</th>
                 <th style={{ border: "1px solid gray" }}>Total</th>
+                <th style={{ border: "1px solid gray" }}>Niveau du risque</th>
               </tr>
             </thead>
             <tbody>
               {reports.map((item, index) => (
                 <tr key={index}>
-                  <td style={{ border: "1px solid gray" }}>{item.referenceRisk}</td>
-                  <td style={{ border: "1px solid gray" }}>{item.location ?? "CAMEROUN"}</td>
                   <td style={{ border: "1px solid gray" }}>ENT{item.entitie.referenceId}</td>
+                  <td style={{ border: "1px solid gray" }}>{item.referenceRisk}</td>
                   <td style={{ border: "1px solid gray" }}>{item.riskAssociate.riskEventCategory}</td>
                   <td style={{ border: "1px solid gray" }}>{item.riskAssociate.causalCategory}</td>
                   <td style={{ border: "1px solid gray" }}>{item.ownerControl}</td>
