@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import Loader from '../../../../assets/img/loader.gif'
 
-const RiskAssessmentTable = ({reports}) => {
+const RiskAssessmentTable = ({reports, loading}) => {
 
   return (
     <Box p={4} overflowX="auto">
@@ -9,6 +10,11 @@ const RiskAssessmentTable = ({reports}) => {
         Risk  Details table
       </Text>
       <div style={{ overflowX: "auto" }}>
+        {loading ? (
+        <Flex alignItems='center' justifyContent='center'>
+          <Image src={Loader} alt="Loading..." height={50} width={50} />
+        </Flex>
+      ) : (
         <table
           border="1"
           cellPadding="8"
@@ -63,6 +69,7 @@ const RiskAssessmentTable = ({reports}) => {
             ))}
           </tbody>
         </table>
+        )}
       </div>
     </Box>
   );

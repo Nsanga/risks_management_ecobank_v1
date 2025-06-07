@@ -139,7 +139,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <ControlTable reports={reports} selectedData={selectedData} />
+          <ControlTable reports={reports} loading={loading} selectedData={selectedData} />
         </Box>
       )}
       {openRiskRegisterTable && (
@@ -148,7 +148,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <RiskControlTable reports={reports} />
+          <RiskControlTable reports={reports} loading={loading} />
         </Box>
       )}
 
@@ -158,7 +158,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <RiskAssessmentTable reports={reports} />
+          <RiskAssessmentTable reports={reports} loading={loading} />
         </Box>
       )}
 
@@ -168,7 +168,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <RiskAssessmentTable reports={reports} />
+          <RiskAssessmentTable reports={reports} loading={loading} />
         </Box>
       )}
 
@@ -178,7 +178,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <KITable reports={reports} />
+          <KITable reports={reports} loading={loading} />
         </Box>
       )}
       {openIncidentTrendsAnalysisTable && (
@@ -187,7 +187,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <IncidentTrendsAnalysisTable reports={reports} />
+          <IncidentTrendsAnalysisTable reports={reports} loading={loading} />
         </Box>
       )}
       {openIncidentLossReportTable && (
@@ -196,7 +196,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <IncidentLossReportTable reports={reports} />
+          <IncidentLossReportTable reports={reports} loading={loading} />
         </Box>
       )}
       {openEventRecoveriesTable && (
@@ -205,7 +205,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <EventRecoveriesTable reports={reports} />
+          <EventRecoveriesTable reports={reports} loading={loading} />
         </Box>
       )}
       {!openControlListTable && !openRiskAssessmentTable && !openRiskRegisterTable && !openIncidentTrendsAnalysisTable && !openIncidentLossReportTable && !openEventRecoveriesTable && !openKIListTable && (

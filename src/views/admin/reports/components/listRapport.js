@@ -1,8 +1,15 @@
+import { Flex, Image } from "@chakra-ui/react";
 import React from "react";
+import Loader from '../../../../assets/img/loader.gif'
 
-export default function ControlTable({ reports, selectedData }) {
+export default function ControlTable({ reports, selectedData, loading }) {
   return (
     <div style={{ overflowX: "auto" }}>
+      {loading ? (
+        <Flex alignItems='center' justifyContent='center'>
+          <Image src={Loader} alt="Loading..." height={50} width={50} />
+        </Flex>
+      ) : (
       <table
         border="1"
         cellPadding="8"
@@ -68,6 +75,7 @@ export default function ControlTable({ reports, selectedData }) {
           ))}
         </tbody>
       </table>
+  )}
     </div>
   );
 }
