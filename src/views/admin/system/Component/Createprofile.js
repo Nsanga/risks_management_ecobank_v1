@@ -30,8 +30,8 @@ const CreateProfile = ({ userGroups, profiles, entities }) => {
                 <Button variant="solid" color='green' leftIcon={<IoRefresh />} onClick={handleRefresh} fontSize={12}>
                     Refresh List
                 </Button>
-                <Button variant="outline" color='blue' leftIcon={<AddIcon />} onClick={openModal} fontSize={12}>
-                    Add New Profile
+                <Button colorScheme='blue' style={{ fontSize: 14 }} leftIcon={<AddIcon />} onClick={openModal} fontSize={12}>
+                    Add New user
                 </Button>
             </Flex>
             {/* Render the modal and pass isOpen and onClose props */}

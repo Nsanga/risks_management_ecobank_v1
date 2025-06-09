@@ -4,7 +4,7 @@ import ActionKRISaga from 'redux/actionKRI/saga';
 import ActionSaga from 'redux/actions/saga';
 import CampaignSaga from 'redux/campagne/saga';
 import ControlHistorySaga from 'redux/controlHistory/saga';
-import EntitySaga from 'redux/entitiy/saga';
+import EntitySaga from 'redux/entity/saga';
 import EntityRiskControlSaga from 'redux/entityRiskControl/saga';
 import EventSaga from 'redux/events/saga';
 import HistoryKRISaga from 'redux/historyKri/saga';

@@ -80,7 +80,7 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelec
   return (
     <VStack spacing={4} align="stretch">
       <Heading size="md" color="blue.600">
-        key indicator List Form
+        Key indicator Form
       </Heading>
 
       <FormControl>

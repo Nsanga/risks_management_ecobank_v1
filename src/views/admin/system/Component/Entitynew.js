@@ -5,7 +5,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { connect, useDispatch } from 'react-redux';
 import AddEntityModal from './AddEntityModal';
-import { listEntities } from 'redux/entitiy/action';
+import { listEntities } from 'redux/entity/action';
 import Loader from '../../../../assets/img/loader.gif';
 
 const Entitynew = ({ entities, loading, profiles }) => {
@@ -29,7 +29,7 @@ const Entitynew = ({ entities, loading, profiles }) => {
       {/* Button aligned to the right with AddIcon and "Add Entity" text */}
       <Flex direction="row" justifyContent="flex-end" align="center" mb={4}>
         <Button
-          variant="outline" color='blue'
+          colorScheme='blue' style={{ fontSize: 14 }}
           leftIcon={<AddIcon />}
           onClick={openModal}
         >

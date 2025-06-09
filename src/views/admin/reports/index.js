@@ -32,7 +32,7 @@ import ControlTable from "./components/listRapport";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import KITable from "./components/KITable";
 import { useDispatch, useSelector } from "react-redux";
-import { listEntities } from "redux/entitiy/action";
+import { listEntities } from "redux/entity/action";
 import { listProfiles } from "redux/profile/action";
 import { listEntityReports } from "redux/reports/action";
 
@@ -266,7 +266,7 @@ const Reports = () => {
                             : "transparent"
                         }
                       >
-                        Risk Control assessment
+                        Risk & Control assessment
                       </Button>
                       <Button
                         variant="ghost"

@@ -4,7 +4,7 @@ import Card from 'components/card/Card';
 import ExcelReader from './components/ControlFileReader';
 import { connect, useDispatch } from 'react-redux';
 import { listRiskControls } from 'redux/riskControl/action';
-import { listEntities } from 'redux/entitiy/action';
+import { listEntities } from 'redux/entity/action';
 import { listProfiles } from 'redux/profile/action';
 
 

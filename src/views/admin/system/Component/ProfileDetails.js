@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { FormControl, FormLabel, Input, SimpleGrid, Heading, Box, Checkbox, Textarea, Text, Button, Flex } from '@chakra-ui/react';
 import Select from 'react-select';
 import { EditIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
-import DeleteModal from 'views/admin/event/components/DeleteModal';
+import DeleteModal from './deleteModal';
 
-const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, username, onClose }) => {
-
+const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly, handleAmendClick, userGroups, handleLockedUser, profiles, username, onClose, entities }) => {
+    
     const userGroupOptions = userGroups.map(group => ({
         value: group._id,
         label: group.groupName
@@ -24,6 +24,62 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
 
     const toggleLockStatus = () => {
         handleLockedUser();
+    };
+
+    const entitiesOptions = entities?.map((entity, index) => ({
+        key: `${entity._id}-${index}`,
+        value: entity._id,
+        label: `ENT${entity.referenceId} CAM - ${entity.description}`,
+        description: entity.description,
+        fullEntity: entity,
+    }));
+
+    const selectedEntity = entitiesOptions.find(
+        option => option.value === (formData.entity?._id || formData.entity)
+    );
+
+    const roleOptions = [
+        {
+            value: "inputeur",
+            label: "Inputeur (Nominé)",
+            description: "Initie les tests",
+        },
+        {
+            value: "validateur",
+            label: "Validateur (Owner)",
+            description: "Valide les tests",
+        },
+        {
+            value: "admin1",
+            label: "Admin1 (Chef de Société)",
+            description: "Crée les entités, valide les tests, gère les opérations (buld-amend, copy, remove...)",
+        },
+        {
+            value: "superadmin",
+            label: "Super Admin",
+            description: "Accès complet (base de données + tous les droits)",
+        },
+    ];
+
+    const customStyles = {
+        control: (provided) => ({
+            ...provided,
+            fontSize: "12px",
+        }),
+        menu: (provided) => ({
+            ...provided,
+            fontSize: "12px",
+            maxHeight: "200px", // Définir une hauteur maximale pour le menu
+            overflowY: "auto", // Activer le défilement vertical
+        }),
+        option: (provided) => ({
+            ...provided,
+            fontSize: "12px",
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            fontSize: "12px",
+        }),
     };
 
     return (
@@ -232,6 +288,45 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
                         onChange={(e) => handleInputChange({ target: { name: 'canAuthorize', value: e.target.checked } })}
                         isReadOnly={isReadOnly}
                     />
+                </Box>
+
+                <Box border="1px solid #E2E8F0" borderRadius="md" p={4} mt={4} backgroundColor="white">
+                    <Heading as="h3" size="sm" mb={4} textAlign="left">Entity</Heading>
+                    <FormControl>
+                        <FormLabel>Select Entity</FormLabel>
+                        <Box w="100%">
+                            <Select
+                                name="entity"
+                                isDisabled={isReadOnly}
+                                options={entitiesOptions}
+                                styles={customStyles}
+                                placeholder="Select Entity"
+                                value={selectedEntity ? {
+                                    ...selectedEntity,
+                                    label: selectedEntity.label, // Même format que les options
+                                } : null}
+                                onChange={(entitiesOptions) => handleSelectChange('entity', entitiesOptions)}
+                            />
+                        </Box>
+                    </FormControl>
+                </Box>
+
+                <Box border="1px solid #E2E8F0" borderRadius="md" p={4} mt={4} backgroundColor="white">
+                    <Heading as="h3" size="sm" mb={4} textAlign="left">Role</Heading>
+                    <FormControl>
+                        <FormLabel>Select user role</FormLabel>
+                        <Box w="100%">
+                            <Select
+                                name="role"
+                                isDisabled={isReadOnly}
+                                options={roleOptions}
+                                styles={customStyles}
+                                placeholder="Select role"
+                                value={roleOptions.find(option => option.value === formData.role)}
+                                onChange={(roleOptions) => handleSelectChange('role', roleOptions)}
+                            />
+                        </Box>
+                    </FormControl>
                 </Box>
 
                 <Box gridColumn="span 2">

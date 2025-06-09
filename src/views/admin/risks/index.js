@@ -5,7 +5,7 @@ import CardDetails from './components/cardDetails';
 import { connect, useDispatch } from 'react-redux';
 import { listEvents } from 'redux/events/action';
 import AddEventForm from './components/AddEventForm';
-import { listEntities } from 'redux/entitiy/action';
+import { listEntities } from 'redux/entity/action';
 import { listProfiles } from 'redux/profile/action';
 
 const Risks = ({ events, loading, entities, profiles }) => {

@@ -6,9 +6,9 @@ import {
   InputLeftElement,
   Text
 } from '@chakra-ui/react';
-import { AddEntity } from 'redux/entitiy/action';
+import { AddEntity } from 'redux/entity/action';
 import { useDispatch } from 'react-redux';
-import { updateEntity } from 'redux/entitiy/action';
+import { updateEntity } from 'redux/entity/action';
 import { EditIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import DeleteModal from 'views/admin/event/components/DeleteModal';
