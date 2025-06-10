@@ -178,7 +178,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
               colorScheme="blue"
               disabled={isAmendDisabled}
             >
-              Amend{" "}
+              Modifier{" "}
             </Button>
           ) : (
             <Button
@@ -188,7 +188,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
               leftIcon={<AddIcon />}
               onClick={onOpen}
             >
-              Add new event
+              Ajouter un nouvel événement
             </Button>
           )}
         </Box>
@@ -214,13 +214,13 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
           <ModalBody>
             <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
               <TabList>
-                <Tab>Details</Tab>
-                <Tab>Commentary</Tab>
+                <Tab>Détails</Tab>
+                <Tab>Commentaire</Tab>
                 <Tab>
-                  Financials <span style={{ color: "red" }}>*</span>
+                  Finances <span style={{ color: "red" }}>*</span>
                 </Tab>
                 <Tab>
-                  Additional info <span style={{ color: "red" }}>*</span>
+                  Informations supplémentaires <span style={{ color: "red" }}>*</span>
                 </Tab>
               </TabList>
 
@@ -273,12 +273,12 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                   <Image src={Loader} alt="Loading..." height={25} width={25} />
                 </Flex>
               ) : (
-                <>{event ? "Amend and Approuve" : "Save and Approuve"}</>
+                <>{event ? " Modifier et approuver" : "Enregistrer et approuver"}</>
               )}
             </Button>
             {/* <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} /> */}
             <Button colorScheme="red" mr={2} onClick={onClose}>
-              Cancel
+              Annuler
             </Button>
           </ModalFooter>
         </ModalContent>

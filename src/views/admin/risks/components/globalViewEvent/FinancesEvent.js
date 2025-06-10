@@ -10,9 +10,9 @@ const FinancesEvent = ({ financesData }) => {
             <Th textAlign="start"></Th>
             <Th textAlign="start" fontSize={10}>Total</Th>
             <Th textAlign="start" fontSize={10}>Direct</Th>
-            <Th textAlign="start" fontSize={10}>Regulatory fines</Th>
-            <Th textAlign="start" fontSize={10}>Asset write-down</Th>
-            <Th textAlign="start" fontSize={10}>Other</Th>
+            <Th textAlign="start" fontSize={10}>Amendes réglementaires</Th>
+            <Th textAlign="start" fontSize={10}>Réduction de valeur d’actif</Th>
+            <Th textAlign="start" fontSize={10}>Autre</Th>
           </Tr>
         </Thead>
         <Tbody>

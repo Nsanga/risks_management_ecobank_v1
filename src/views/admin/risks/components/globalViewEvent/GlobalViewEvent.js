@@ -80,7 +80,7 @@ const GlobalViewEvent = ({ detailsData, commentaryData, financesData, additional
             <Button
                 disabled={!detailsData.owner || !detailsData.nominee || !detailsData.entityOfOrigin}
                 onClick={onOpen} colorScheme="blue" mr={2}>
-                Save
+                Enregistrer
             </Button>
 
             <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size='5xl'>
@@ -91,10 +91,10 @@ const GlobalViewEvent = ({ detailsData, commentaryData, financesData, additional
                     <ModalBody pb={6}>
                         <Tabs>
                             <TabList>
-                                <Tab>Details</Tab>
-                                <Tab>Commentary</Tab>
-                                <Tab >Financials</Tab>
-                                <Tab>Additional info</Tab>
+                                <Tab>Détails</Tab>
+                                <Tab>Commentaire</Tab>
+                                <Tab >Finances</Tab>
+                                <Tab>Informations supplémentaires</Tab>
                             </TabList>
 
                             <TabPanels>
@@ -116,9 +116,9 @@ const GlobalViewEvent = ({ detailsData, commentaryData, financesData, additional
 
                     <ModalFooter>
                         <Button colorScheme='green' mr={3} onClick={handleSubmit} isLoading={loading}>
-                            Save and Approved
+                            Enregistrer et approuvé
                         </Button>
-                        <Button onClick={onClose} colorScheme='red'>Cancel</Button>
+                        <Button onClick={onClose} colorScheme='red'>Annuler</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

@@ -173,7 +173,7 @@ const Event = ({ profiles, entities }) => {
       <ChakraLink as={ReactRouterLink} to="/admin/events" color="blue">
         <Flex alignItems="center" mb={4}>
           <ChevronLeftIcon />
-          Back to Events Page
+          Retour à la page des événements
         </Flex>
       </ChakraLink>
       {loading ? (
@@ -185,7 +185,7 @@ const Event = ({ profiles, entities }) => {
           {!event ? (
             <Flex alignItems="center" justifyContent="center">
               <Text fontSize="12px">
-                This event do not exist.
+                Cet événement n’existe pas.
               </Text>
             </Flex>
           ) : (
@@ -298,7 +298,7 @@ const Event = ({ profiles, entities }) => {
                     onClick={handleUnapprovedClick}
                     isDisabled={isUnapprovedDisabled}
                   >
-                    Unapproved
+                    Non approuvé
                   </Button>
                 </Flex>
                 <Flex>

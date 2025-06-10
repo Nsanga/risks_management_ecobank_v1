@@ -66,7 +66,7 @@ const DetailsEvent = (
             <Flex flexDirection='column' gap={4}>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={6} alignItems="center">
-                        <Text fontSize={12}>Event Date:</Text>
+                        <Text fontSize={12}>Date de l’événement:</Text>
                         <Box width={200}>
                             <Text color='blue' fontSize={12}>{detailsData.event_date}</Text>
                         </Box>
@@ -83,7 +83,7 @@ const DetailsEvent = (
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={12}>Event Time:</Text>
+                        <Text fontSize={12}>Heure de l’événement:</Text>
                         <Box width={200}>
                             <Text color='blue' fontSize={12}>{detailsData.event_time}</Text>
                         </Box>
@@ -91,49 +91,49 @@ const DetailsEvent = (
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={12}>Recorded by:</Text>
+                        <Text fontSize={12}>Enregistré par:</Text>
                         <Text color='blue' fontSize={12}>{recordedName}</Text>
                     </Flex>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={12}>On:</Text>
+                        <Text fontSize={12}>le:</Text>
                         <Text color='blue' fontSize={12}>{currentDate}</Text>
                     </Flex>
                     <Flex width={155}>
-                        <Checkbox size='sm' isChecked={detailsData.excludeFundLosses} readOnly>Exclude Fund Losses</Checkbox>
+                        <Checkbox size='sm' isChecked={detailsData.excludeFundLosses} readOnly>Exclure les pertes de fonds</Checkbox>
                     </Flex>
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
-                    <Checkbox size='sm' isChecked={detailsData.externalEvent} readOnly>External Event</Checkbox>
+                    <Checkbox size='sm' isChecked={detailsData.externalEvent} readOnly>Événement externe</Checkbox>
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={12}>External Ref:</Text>
+                        <Text fontSize={12}>Réf externe:</Text>
                         <Box >
                             <Text color='blue' fontSize={12}>{detailsData.externalRef}</Text>
                         </Box>
                     </Flex>
                     <Flex width={155}>
-                        <Checkbox size='sm' isChecked={detailsData.notify} readOnly>Notify</Checkbox>
+                        <Checkbox size='sm' isChecked={detailsData.notify} readOnly>Notifier</Checkbox>
                     </Flex>
                 </Flex>
                 <Flex justifyContent='space-between'>
                     <Box p={5} shadow='md' borderWidth='1px' width='49%'>
                         <Box bg='blue.400' color='#FFF' mb={6} padding={2}>
-                            Area of Detection
+                            Zone de détection
                         </Box>
                         <Flex flexDirection='column' gap={4}>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={12}>Entity:</Text>
+                                <Text fontSize={12}>Entité:</Text>
                                 <Box width={200}>
                                     <Text color='blue' fontSize={12}>{detailsData.entityOfDetection}</Text>
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={12}>Sub Entity:</Text>
+                                <Text fontSize={12}>Sous-entité:</Text>
                                 <Box width={200}>
                                     <Text color='blue' fontSize={12}>{detailsData.subentityOfDetection}</Text>
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={12}>Detection Date:</Text>
+                                <Text fontSize={12}>Date de détection:</Text>
                                 <Box width={200}>
                                     <Text color='blue' fontSize={12}>{detailsData.detection_date}</Text>
                                 </Box>
@@ -142,17 +142,17 @@ const DetailsEvent = (
                     </Box>
                     <Box p={5} shadow='md' borderWidth='1px' width='49%'>
                         <Box bg='blue.400' color='#FFF' mb={6} padding={2}>
-                            Area of Origin
+                            Zone d’origine
                         </Box>
                         <Flex flexDirection='column' gap={4}>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={12}>Entity:</Text>
+                                <Text fontSize={12}>Entité:</Text>
                                 <Box width={200}>
                                     <Text color='blue' fontSize={12}>{detailsData.entityOfOrigin}</Text>
                                 </Box>
                             </Flex>
                             <Flex justifyContent='space-between' alignItems="center">
-                                <Text fontSize={12}>Sub Entity:</Text>
+                                <Text fontSize={12}>Sous-entité:</Text>
                                 <Box width={200}>
                                     <Text color='blue' fontSize={12}>{detailsData.subentityOfOrigin}</Text>
                                 </Box>
@@ -168,26 +168,26 @@ const DetailsEvent = (
                 </Box>
                 <Box p={5} shadow='md' borderWidth='1px'>
                     <Box bg='blue.400' color='#FFF' mb={6} padding={2}>
-                        Detailed Description
+                        Description détaillée
                     </Box>
                     <Text color='blue' fontSize={12}>{detailsData.descriptionDetailled}</Text>
                 </Box>
                 <Flex justifyContent='space-between' pt={5}>
                     <Flex flexDirection='column' gap={2}>
                         <Flex gap={12} alignItems="center">
-                            <Text fontSize={12}>Approved Date:</Text>
+                            <Text fontSize={12}>Date d’approbation:</Text>
                             <Box width={200} marginLeft={1}>
                                 <Text color='blue' fontSize={12}>{detailsData.approved_date}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={14} alignItems="center">
-                            <Text fontSize={12}>Closed Date:</Text>
+                            <Text fontSize={12}>Date de clôture:</Text>
                             <Box width={200} marginLeft={3}>
                                 <Text color='blue' fontSize={12}>{detailsData.closed_date}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
-                            <Text fontSize={12}>Target Closure Date:</Text>
+                            <Text fontSize={12}>Date cible de clôture:</Text>
                             <Box width={200}>
                                 <Text color='blue' fontSize={12}>{detailsData.targetClosureDate}</Text>
                             </Box>
@@ -195,25 +195,25 @@ const DetailsEvent = (
                     </Flex>
                     <Flex flexDirection='column' gap={2}>
                         <Flex gap={14} alignItems="center">
-                            <Text fontSize={12}>Owner:</Text>
+                            <Text fontSize={12}>Propriétaire:</Text>
                             <Box width={200} marginLeft={1}>
                                 <Text color='blue' fontSize={12}>{detailsData.owner}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={10} alignItems="center">
-                            <Text fontSize={12}>Nominee:</Text>
+                            <Text fontSize={12}>Désigné:</Text>
                             <Box width={200} marginLeft={1}>
                                 <Text color='blue' fontSize={12}>{detailsData.nominee}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={10} alignItems="center">
-                            <Text fontSize={12}>Reviewer:</Text>
+                            <Text fontSize={12}>Réviseur:</Text>
                             <Box width={200} marginLeft={1}>
                                 <Text color='blue' fontSize={12}>{detailsData.reviewer}</Text>
                             </Box>
                         </Flex>
                         <Flex gap={6} alignItems="center">
-                            <Text fontSize={12}>Review Date:</Text>
+                            <Text fontSize={12}>Date de révision:</Text>
                             <Box width={200}>
                                 <Text color='blue' fontSize={12}>{detailsData.reviewer_date}</Text>
                             </Box>

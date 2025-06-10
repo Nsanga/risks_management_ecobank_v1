@@ -80,7 +80,7 @@ const Additional = ({ onAdditionalChange, event }) => {
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th fontSize={12}>Category</Th>
+            <Th fontSize={12}>Catégorie</Th>
             <Th fontSize={12}>Select</Th>
             <Th fontSize={12}>Description</Th>
           </Tr>
@@ -114,7 +114,7 @@ const Additional = ({ onAdditionalChange, event }) => {
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={closeModal}>
-              Close
+              Fermer
             </Button>
           </ModalFooter>
         </ModalContent>
