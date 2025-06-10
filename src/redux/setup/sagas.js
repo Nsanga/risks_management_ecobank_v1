@@ -15,6 +15,7 @@ import ProfileSaga from 'redux/profile/saga';
 import ReportSaga from 'redux/reports/saga';
 import RiskControlSaga from 'redux/riskControl/saga';
 import ServiceSaga from 'redux/service/saga';
+import StatSaga from 'redux/stats/saga';
 import UserSaga from 'redux/user/saga';
 import UserGroupSaga from 'redux/userGroup/saga';
 
@@ -41,5 +42,6 @@ export default function* Sagas() {
     HistoryKRISaga(),
     ActionKRISaga(),
     ReportSaga(),
+    StatSaga(),
   ]);
 }

@@ -15,6 +15,7 @@ import ProfileReducer from 'redux/profile/reducer';
 import ReportReducer from 'redux/reports/reducer';
 import RiskControlReducer from 'redux/riskControl/reducer';
 import ServiceReducer from 'redux/service/reducer';
+import StatReducer from 'redux/stats/reducer';
 import UserReducer from 'redux/user/reducer';
 import UserGroupReducer from 'redux/userGroup/reducer';
 
@@ -39,7 +40,8 @@ const rootReducer = combineReducers({
   KeyIndicatorReducer,
   HistoryKRIReducer,
   ActionKRIReducer,
-  ReportReducer
+  ReportReducer,
+  StatReducer
 });
 
 export default rootReducer;
