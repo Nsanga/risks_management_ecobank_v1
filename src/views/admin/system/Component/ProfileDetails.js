@@ -40,22 +40,22 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
 
     const roleOptions = [
         {
-            value: "inputeur",
+            value: "inputeurs",
             label: "Inputeur (Nominé)",
             description: "Initie les tests",
         },
         {
-            value: "validateur",
+            value: "validated",
             label: "Validateur (Owner)",
             description: "Valide les tests",
         },
         {
-            value: "admin1",
-            label: "Admin1 (Chef de Société)",
+            value: "admin",
+            label: "Admin (Chef de Société)",
             description: "Crée les entités, valide les tests, gère les opérations (buld-amend, copy, remove...)",
         },
         {
-            value: "superadmin",
+            value: "superAdmin",
             label: "Super Admin",
             description: "Accès complet (base de données + tous les droits)",
         },
