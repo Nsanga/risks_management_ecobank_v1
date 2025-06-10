@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import Select from "react-select";
 import { useSelector } from 'react-redux';
+import MultiSelectCheckbox from './MultipleSelectCustom';
 
 // Composant pour le formulaire Key Indicator Analysis
 const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelectionChange }) => {
@@ -79,23 +80,18 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelec
   return (
     <VStack spacing={4} align="stretch">
       <Heading size="md" color="blue.600">
-        key indicator List Form
+        Key indicator Form
       </Heading>
 
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-          <Select
+        <MultiSelectCheckbox
+            name="entity"
             options={entitiesOptions}
-            styles={customStyles}
+            value={formData.entity}
+            onChange={handleSelectChange}
             placeholder="Select Entity"
-            isMulti={true} // ✅ Active la sélection multiple
-            value={entitiesOptions?.filter(
-              (ent) => formData.entity.includes(ent.value)
-            )}
-            onChange={(selectedOption) =>
-              handleSelectChange("entity", selectedOption)
-            }
           />
         </Box>
       </FormControl>

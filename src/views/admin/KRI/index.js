@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import KriCard from "./components/KriCard";
 import { connect, useDispatch } from "react-redux";
-import { listEntities } from "redux/entitiy/action";
+import { listEntities } from "redux/entity/action";
 import { listProfiles } from "redux/profile/action";
 import Card from "components/card/Card";
 

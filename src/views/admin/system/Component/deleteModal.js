@@ -18,36 +18,26 @@ import {
 import { DeleteIcon } from '@chakra-ui/icons'
 import { useDispatch } from 'react-redux'
 import { deleteProfile } from 'redux/profile/action'
-import { deleteEntity } from 'redux/entitiy/action'
+import { deleteEntity } from 'redux/entity/action'
 import { deleteUserGroup } from 'redux/userGroup/action'
 
 const DeleteModal = ({ selectedUser, selectedEntity, selectedUserGroup, disabled, onCloseAddUserGroupModal, onCloseAddEntityModal, onCloseAddProfileModal }) => {
     const { onOpen, isOpen, onClose } = useDisclosure()
     const [reason, setReason] = useState('')
     const dispatch = useDispatch()
-
+    
     const handleDelete = () => {
-                dispatch(deleteProfile(selectedUser._id));
-        onClose();
-        if (onCloseAddProfileModal) {
-            onCloseAddProfileModal(); // Fermer la modal AddUserGroupModal
+        if (selectedUser) {
+            dispatch(deleteProfile(selectedUser._id));
+            onCloseAddProfileModal?.();
+        } else if (selectedEntity) {
+            dispatch(deleteEntity(selectedEntity._id));
+            onCloseAddEntityModal?.();
+        } else if (selectedUserGroup) {
+            dispatch(deleteUserGroup(selectedUserGroup._id));
+            onCloseAddUserGroupModal?.();
         }
-    };
-
-    const handleDeleteEntity = () => {
-                dispatch(deleteEntity(selectedEntity?._id));
         onClose();
-        if (onCloseAddEntityModal) {
-            onCloseAddEntityModal(); // Fermer la modal AddUserGroupModal
-        }
-    };
-
-    const handleDeleteUserGroup = () => {
-                dispatch(deleteUserGroup(selectedUserGroup?._id));
-        onClose();
-        if (onCloseAddUserGroupModal) {
-            onCloseAddUserGroupModal(); // Fermer la modal AddUserGroupModal
-        }
     };
 
     return (
@@ -66,7 +56,7 @@ const DeleteModal = ({ selectedUser, selectedEntity, selectedUserGroup, disabled
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader fontSize={12}>
-                        Delete {selectedEntity?._id ? 'Entity' : (selectedUserGroup?._id ? 'user group' : 'Profile')}
+                        Delete {selectedEntity?._id ? 'Entity' : selectedUserGroup?._id ? 'user group' : 'Profile'}
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
@@ -89,8 +79,8 @@ const DeleteModal = ({ selectedUser, selectedEntity, selectedUserGroup, disabled
                         <Button
                             variant="ghost"
                             colorScheme="red"
-                            onClick={selectedEntity?._id ? handleDeleteEntity : (selectedUserGroup?._id ? handleDeleteUserGroup : handleDelete)}
-                            isDisabled={!reason.trim()} 
+                            onClick={handleDelete}
+                            isDisabled={!reason.trim()}
                             fontSize={12}
                         >
                             Delete

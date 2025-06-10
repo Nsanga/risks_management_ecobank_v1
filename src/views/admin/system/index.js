@@ -4,37 +4,44 @@ import React, { useEffect } from 'react'
 import Entitynew from './Component/Entitynew'
 import CreateProfile from './Component/Createprofile'
 import UserGroup from './Component/UserGroup'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { listUserGroups } from 'redux/userGroup/action'
 import { listProfiles } from 'redux/profile/action'
+import { listEntities } from 'redux/entity/action'
 
-const System = ({ userGroups, loading, profiles }) => {
-
+const System = ({ userGroups, loading, profiles, entities }) => {
   const dispatch = useDispatch()
 
-    useEffect(() => {
-        dispatch(listUserGroups());
-        dispatch(listProfiles());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(listUserGroups());
+    dispatch(listProfiles());
+    dispatch(listEntities());
+  }, [dispatch]);
 
   return (
     <div>
       <Card mt="100px">
         <Tabs variant='soft-rounded' colorScheme='green'>
           <TabList>
+<<<<<<< HEAD
            <Tab> GROUPE D’UTILISATEURS</Tab>
             <Tab>ENTITÉ</Tab>
             <Tab>PROFIL UTILISATEUR</Tab>
+=======
+            <Tab>USER GROUP</Tab>
+            <Tab>ENTITY</Tab>
+            <Tab>USER</Tab>
+>>>>>>> c26b46ad27e370cded7d6b7ec6bc76132a6c5c99
           </TabList>
           <TabPanels>
-          <TabPanel>
-              <UserGroup userGroups={userGroups} loading={loading}/>
+            <TabPanel>
+              <UserGroup userGroups={userGroups} loading={loading} />
             </TabPanel>
             <TabPanel>
-              <Entitynew profiles={profiles}/>
+              <Entitynew profiles={profiles} />
             </TabPanel>
             <TabPanel>
-              <CreateProfile userGroups={userGroups} profiles={profiles} />
+              <CreateProfile userGroups={userGroups} profiles={profiles} entities={entities} />
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -43,9 +50,10 @@ const System = ({ userGroups, loading, profiles }) => {
   )
 }
 
-const mapStateToProps = ({ UserGroupReducer, ProfileReducer }) => ({
+const mapStateToProps = ({ UserGroupReducer, ProfileReducer, EntityReducer }) => ({
   profiles: ProfileReducer.profiles,
   userGroups: UserGroupReducer.userGroups,
+  entities: EntityReducer.entities,
   loading: UserGroupReducer.loading,
 });
 

@@ -11,7 +11,8 @@ import { AddProfile } from 'redux/profile/action';
 import { connect, useDispatch } from 'react-redux';
 import { updateProfile } from 'redux/profile/action';
 
-const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles }) => {
+const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles, entities }) => {
+  console.log("entities:", entities)
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(true);
   const [formData, setFormData] = useState({
@@ -30,7 +31,9 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     lockedOutReason: '',
     administrator: false,
     canAuthorize: false,
-    activeUser: false
+    activeUser: false,
+    role: '',
+    entity: '',
   });
 
   useEffect(() => {
@@ -91,7 +94,9 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
       lockedOutReason: '',
       administrator: false,
       canAuthorize: false,
-      activeUser: false
+      activeUser: false,
+      role: '',
+      entity: '',
     });
     onClose();
   };
@@ -129,6 +134,8 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
       administrator: false,
       canAuthorize: false,
       activeUser: false,
+      role: '',
+      entity: '',
       lockedUser: false
     });
     onClose();
@@ -149,6 +156,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
   const handleClose = () => {
     onClose();
     setIsEditMode(true);
+    console.log(entities);
   }
 
   useEffect(() => {
@@ -178,69 +186,32 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
   const username = selectedUser?.surname + " " + selectedUser?.name;
 
   const isSaveDisabled = !formData.userId || !formData.name || !formData.surname || !formData.telephone || !formData.email;
-  
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered scrollBehavior='inside'>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{!selectedUser?.userId ? "Add New Profile" : "Amend Profile"}</ModalHeader>
+        <ModalHeader>{!selectedUser?.userId ? "Add New User" : "Amend User"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box flex="1">
-            <Flex gap={4}>
-              <Button
-                onClick={() => setIsDetailsVisible(true)}
-                colorScheme={isDetailsVisible ? 'blue' : 'gray'}
-                variant={isDetailsVisible ? 'solid' : 'outline'}
-                leftIcon={<AddIcon />}
-                fontSize={12}
-                size="sm"
-              >
-                User Details
-              </Button>
-              <Button
-                onClick={() => setIsDetailsVisible(false)}
-                colorScheme={!isDetailsVisible ? 'blue' : 'gray'}
-                variant={!isDetailsVisible ? 'solid' : 'outline'}
-                leftIcon={<AddIcon />}
-                fontSize={12}
-                size="sm"
-              >
-                User Entity Views
-              </Button>
-              <Button
-                colorScheme="blue"
-                variant="outline"
-                leftIcon={<AddIcon />}
-                fontSize={12}
-                size="sm"
-              >
-                User Entities
-              </Button>
-            </Flex>
-            <Box mt={4}>
-              <Collapse in={isDetailsVisible}>
-                <ProfileDetails
-                  formData={formData}
-                  handleInputChange={handleInputChange}
-                  isReadOnly={isEditMode}
-                  handleAmendClick={handleAmendClick}
-                  handleLockedUser={handleLockedUser}
-                  profiles={profiles}
-                  userGroups={userGroups}
-                  onClose={onClose} 
-                  username={username}
-                  selectedUser={selectedUser}
-                />
-              </Collapse>
-              <Collapse in={!isDetailsVisible}>
-                <OperationalModelOptions formData={formData} handleInputChange={handleInputChange} />
-              </Collapse>
-            </Box>
+            <ProfileDetails
+              formData={formData}
+              handleInputChange={handleInputChange}
+              isReadOnly={isEditMode}
+              handleAmendClick={handleAmendClick}
+              handleLockedUser={handleLockedUser}
+              profiles={profiles}
+              userGroups={userGroups}
+              onClose={onClose}
+              username={username}
+              selectedUser={selectedUser}
+              entities={entities}
+            />
           </Box>
         </ModalBody>
         <ModalFooter>
-        <Button colorScheme="red"  mr={3} onClick={handleClose}>Cancel</Button>
+          <Button colorScheme="red" mr={3} onClick={handleClose}>Cancel</Button>
           {
             !selectedUser?.userId ?
               (
@@ -262,8 +233,9 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
   );
 };
 
-const mapStateToProps = ({ ProfileReducer }) => ({
+const mapStateToProps = ({ ProfileReducer, EntityReducer }) => ({
   profiles: ProfileReducer.profiles,
+  entities: EntityReducer.entities,
   loading: ProfileReducer.loading,
 });
 

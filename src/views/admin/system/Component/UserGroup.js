@@ -30,7 +30,7 @@ const UserGroup = ({ userGroups, loading }) => {
             <Box mb={4}>
                 <Flex justifyContent="flex-end" mb={4}>
                     <Button
-                        variant="outline" color='blue'
+                        colorScheme='blue' style={{ fontSize: 14 }}
                         leftIcon={<AddIcon />}
                         onClick={() => openModal()}
                         fontSize={12}

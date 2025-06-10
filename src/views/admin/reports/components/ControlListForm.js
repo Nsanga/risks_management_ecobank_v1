@@ -9,8 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import Select from "react-select";
+import MultiSelectCheckbox from "./MultipleSelectCustom";
 
-// Composant pour le formulaire Control List
 const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
@@ -19,13 +19,15 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
   });
 
   const sessionOptions = [
-    { value: "mensuel", label: "Mensuelle" },
-    { value: "trimestrielle", label: "Trimestrielle" },
+    { value: "Q1", label: "Q1" },
+    { value: "Q2", label: "Q2" },
+    { value: "Q3", label: "Q3" },
+    { value: "Q4", label: "Q4" },
   ];
 
   const handleSelectChange = (name, selectedOption) => {
     let newValue;
-    
+
     if (name === "entity") {
       const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
       const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
@@ -42,7 +44,7 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
     };
 
     setFormData(updatedFormData);
-    
+
     // Notifier le parent des nouvelles sélections
     if (onSelectionChange) {
       onSelectionChange({
@@ -107,7 +109,14 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-          <Select
+          <MultiSelectCheckbox
+            name="entity"
+            options={entitiesOptions}
+            value={formData.entity}
+            onChange={handleSelectChange}
+            placeholder="Select Entity"
+          />
+          {/* <Select
             options={entitiesOptions}
             styles={customStyles}
             placeholder="Select Entity"
@@ -118,12 +127,12 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
             onChange={(selectedOption) =>
               handleSelectChange("entity", selectedOption)
             }
-          />
+          /> */}
         </Box>
       </FormControl>
 
       <Button onClick={handleOpenView} colorScheme="blue" size="lg">
-        {loading ? 'Loading...' : 'View report' } 
+        {loading ? 'Loading...' : 'View report'}
       </Button>
     </VStack>
   );

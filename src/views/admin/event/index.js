@@ -34,7 +34,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import { Link as ReactRouterLink } from "react-router-dom";
 import { Link as ChakraLink, LinkProps } from "@chakra-ui/react";
 import { connect, useDispatch } from "react-redux";
-import { listEntities } from "redux/entitiy/action";
+import { listEntities } from "redux/entity/action";
 import { listProfiles } from "redux/profile/action";
 import { url } from "urlLoader";
 import moment from "moment";

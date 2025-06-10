@@ -7,7 +7,7 @@ import { IoRefresh } from 'react-icons/io5';
 import { connect, useDispatch } from 'react-redux';
 import { listProfiles } from 'redux/profile/action';
 
-const CreateProfile = ({ userGroups, profiles }) => {
+const CreateProfile = ({ userGroups, profiles, entities }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
@@ -30,12 +30,12 @@ const CreateProfile = ({ userGroups, profiles }) => {
                 <Button variant="solid" color='green' leftIcon={<IoRefresh />} onClick={handleRefresh} fontSize={12}>
                     Refresh List
                 </Button>
-                <Button variant="outline" color='blue' leftIcon={<AddIcon />} onClick={openModal} fontSize={12}>
-                    Add New Profile
+                <Button colorScheme='blue' style={{ fontSize: 14 }} leftIcon={<AddIcon />} onClick={openModal} fontSize={12}>
+                    Add New user
                 </Button>
             </Flex>
             {/* Render the modal and pass isOpen and onClose props */}
-            <AddProfileModal isOpen={isModalOpen} onClose={closeModal} userGroups={userGroups} profiles={profiles} />
+            <AddProfileModal isOpen={isModalOpen} onClose={closeModal} userGroups={userGroups} profiles={profiles} entities={entities} />
             <BoardContentProfile userGroups={userGroups} profiles={profiles} />
         </>
     );
