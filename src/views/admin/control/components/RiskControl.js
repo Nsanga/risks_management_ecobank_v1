@@ -35,7 +35,7 @@ const RiskControl = ({
   onClose
 }) => {
   const toast = useToast();
-
+  const userRole = localStorage.getItem('role');
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
@@ -132,7 +132,7 @@ const RiskControl = ({
       >
         <TabList>
           <Tab>Details</Tab>
-          <Tab>History</Tab>
+          <Tab isDisabled ={userRole === "inputeurs"} _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}>History</Tab>
           <Tab>Documents</Tab>
           <Tab>Actions</Tab>
           <Tab>Risk focus</Tab>

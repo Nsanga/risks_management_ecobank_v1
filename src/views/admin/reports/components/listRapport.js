@@ -2,109 +2,92 @@ import { Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import Loader from "../../../../assets/img/loader.gif";
 import { Button } from "@chakra-ui/react";
-import * as Excel from "exceljs";
-import * as fs from "file-saver";
 
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { exportToExcel } from "utils/exportToExcel";
 
 export default function ControlTable({ reports, selectedData, loading }) {
+  // Exemple d'utilisation avec votre structure de données
   const generateExcel = async () => {
-    let workbook = new Excel.Workbook();
-    let worksheet = workbook.addWorksheet("Report Data");
-    worksheet.getColumn(1).width = 10;
-    worksheet.getColumn(2).width = 10;
-    worksheet.getColumn(3).width = 10;
-    worksheet.getColumn(4).width = 20;
-    worksheet.getColumn(5).width = 30;
-    worksheet.getColumn(6).width = 30;
-    worksheet.getColumn(7).width = 10;
-    worksheet.getColumn(8).width = 20;
-    worksheet.getColumn(9).width = 20;
-    worksheet.getColumn(10).width = 20;
-    worksheet.getColumn(11).width = 20;
-
-    const headerRow = worksheet.addRow([
-      "Entity",
-      "Control",
-      "Risk",
-      "Library Ref Type",
-      "Control Owner	",
-      "Control Nominee",
-      "Review Date",
-      "Assessment Frequency",
-      "Next Assessment Due On",
-      "Last Assessment Date",
-      "Assessed By",
-    ]);
-    const maxLength = 30;
-    const wrapText = (text, maxLength) => {
-      if (text.length <= maxLength) return text;
-      let lines = [];
-      while (text.length > maxLength) {
-        let index = text.lastIndexOf(" ", maxLength);
-        if (index === -1) index = maxLength;
-        lines.push(text.substring(0, index));
-        text = text.substring(index + 1);
-      }
-      lines.push(text);
-      return lines.join("\n");
-    };
-
-    reports?.forEach((item) => {
-      const row = worksheet.addRow([
-        wrapText(`ENT${item.entitie.referenceId}`, maxLength),
-        item.reference,
-        item.riskAssociate.reference,
-        item.preventiveDetectiveControl,
-        item.ownerControl,
-        item.nomineeControl,
-        item.reviewDate ? new Date(item.reviewDate).toLocaleDateString() : "-",
-        item.frequence,
-        item.nextAssessMent
-          ? new Date(item.nextAssessMent).toLocaleDateString()
-          : "-",
-        item.lastAssessmentDate
-          ? new Date(item.lastAssessmentDate).toLocaleDateString()
-          : "-",
-        item.assessedBy,
-      ]);
-
-      row.getCell(1).alignment = { wrapText: true };
-    });
-
-    headerRow.eachCell((cell) => {
-      cell.fill = {
-        type: "pattern",
-        pattern: "solid",
-        fgColor: { argb: "2193B3" },
-        bgColor: { argb: "2193B3" },
-      };
-      cell.border = {
-        top: { style: "thin" },
-        left: { style: "thin" },
-        bottom: { style: "thin" },
-        right: { style: "thin" },
-      };
-      cell.font = {
-        color: { argb: "FFFFFF" },
-        bold: true,
-      };
-    });
-
-    workbook.xlsx.writeBuffer().then((data) => {
-      let blob = new Blob([data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      fs.saveAs(blob, "Rapport.xlsx");
+    await exportToExcel({
+      data: reports,
+      filename: "Control_List_Report",
+      worksheetName: "Risk Data",
+      columns: [
+        {
+          header: "Entity",
+          key: "entitie",
+          width: 20,
+          format: (ent) => `ENT${ent.referenceId}`
+        },
+        { header: "Control", key: "reference", width: 15 },
+        {
+          header: "Risk",
+          key: "riskAssociate",
+          format: (risk) => risk?.reference || "-"
+        },
+        { header: "Library Ref Type", key: "preventiveDetectiveControl", width: 25 },
+        { header: "Control Owner", key: "ownerControl", width: 25 },
+        { header: "Control Nominee", key: "nomineeControl", width: 25 },
+        {
+          header: "Review Date",
+          key: "reviewDate",
+          format: (date) => date ? new Date(date).toLocaleDateString() : "-"
+        },
+        { header: "Assessment Frequency", key: "frequence" },
+        {
+          header: "Next Assessment Due On",
+          key: "nextAssessMent",
+          format: (date) => date ? new Date(date).toLocaleDateString() : "-",
+          width: 20
+        },
+        {
+          header: "Last Assessment Date",
+          key: "lastAssessmentDate",
+          format: (date) => date ? new Date(date).toLocaleDateString() : "-",
+          width: 20
+        },
+        { header: "Assessed By", key: "assessedBy", width: 20 }
+      ]
     });
   };
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Control List
-      </Text>
+      <Flex alignItems='center' justifyContent='space-between'>
+        <Text fontSize="xl" fontWeight="bold" mb={4}>
+          Control List
+        </Text>
+        {reports.length > 0 && (
+          <Menu>
+            <MenuButton
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+              colorScheme="blue"
+              w="full"
+            >
+              Exporter
+            </MenuButton>
+            <MenuList>
+              <MenuItem
+                onClick={() => {
+                  // generatePDF();
+                }}
+              >
+                Exporter en PDF
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  generateExcel();
+                }}
+              >
+                Exporter en Excel
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        )}
+      </Flex>
       {loading ? (
         <Flex alignItems="center" justifyContent="center">
           <Image src={Loader} alt="Loading..." height={50} width={50} />
@@ -125,36 +108,6 @@ export default function ControlTable({ reports, selectedData, loading }) {
                 marginBottom: "20px",
               }}
             >
-              {/* <HStack spacing={6}>
-                <Box w="200px" bg={cardBg} borderRadius="lg" p={4} shadow="md"> */}
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  colorScheme="blue"
-                  w="full"
-                >
-                  Exporter
-                </MenuButton>
-                <MenuList>
-                  <MenuItem
-                    onClick={() => {
-                      // generatePDF();
-                    }}
-                  >
-                    Exporter en PDF
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      generateExcel();
-                    }}
-                  >
-                    Exporter en Excel
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-              {/* </Box>
-              </HStack> */}
             </div>
           </div>
 
@@ -447,10 +400,10 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       }}
                     >
                       {item.history.length === 0 ||
-                      !item.history.some(
-                        (historyItem) =>
-                          historyItem.coutAnnually === selectedData.session
-                      )
+                        !item.history.some(
+                          (historyItem) =>
+                            historyItem.coutAnnually === selectedData.session
+                        )
                         ? "No"
                         : "Yes"}
                     </span>

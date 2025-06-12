@@ -14,7 +14,6 @@ import { updateProfile } from 'redux/profile/action';
 const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles, entities }) => {
   console.log("entities:", entities)
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isDetailsVisible, setIsDetailsVisible] = useState(true);
   const [formData, setFormData] = useState({
     userId: '',
     name: '',
@@ -77,30 +76,38 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
 
   const handleSave = () => {
     console.log(formData);
-    dispatch(AddProfile(formData));
-    setFormData({
-      userId: '',
-      name: '',
-      surname: '',
-      jobTitle: '',
-      location: '',
-      telephone: '',
-      email: '',
-      userGroup: null,
-      language: '',
-      ccEmailTo: '',
-      nominee: '',
-      passwordExpiryDate: '2030-12-31',
-      lockedOutReason: '',
-      administrator: false,
-      canAuthorize: false,
-      activeUser: false,
-      role: '',
-      entity: '',
-    });
-    onClose();
+  
+    dispatch(AddProfile(formData, {
+      onSuccess: () => {
+        // Nettoyage et fermeture uniquement en cas de succès
+        setFormData({
+          userId: '',
+          name: '',
+          surname: '',
+          jobTitle: '',
+          location: '',
+          telephone: '',
+          email: '',
+          userGroup: null,
+          language: '',
+          ccEmailTo: '',
+          nominee: '',
+          passwordExpiryDate: '2030-12-31',
+          lockedOutReason: '',
+          administrator: false,
+          canAuthorize: false,
+          activeUser: false,
+          role: '',
+          entity: '',
+        });
+        onClose();
+      },
+      onError: (errorMessage) => {
+        console.warn("Erreur lors de la sauvegarde :", errorMessage);
+      }
+    }));
   };
-
+  
   useEffect(() => {
 
     if (selectedUser) {
@@ -140,14 +147,6 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     });
     onClose();
   };
-
-  // useEffect(() => {
-  //   if (selectedUser && selectedUser.userId) {
-  //     setIsEditMode(true); // Mode édition
-  //   } else {
-  //     setIsEditMode(false); // Mode ajout
-  //   }
-  // }, [selectedUser]);
 
   const handleAmendClick = () => {
     setIsEditMode(false); // Désactiver le mode lecture seule après avoir cliqué sur "Amend"

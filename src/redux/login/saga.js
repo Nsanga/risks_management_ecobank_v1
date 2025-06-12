@@ -25,8 +25,10 @@ function* loginRequest(action) {
 
       // Concatène les valeurs avec un espace, en évitant les espaces supplémentaires
       const username = [surname, name].filter(Boolean).join(' '); // Filtre les valeurs falsy et les joint avec un espace
+      const role = data.data.user.role;
 
       localStorage.setItem('username', username);
+      localStorage.setItem('role', role);
       yield put({ type: types.LOGIN_SUCCESS, payload: { token: data.data.token, username: data.data.user.fullname } });
     } else {
       toast.error("Connexion echouée.");

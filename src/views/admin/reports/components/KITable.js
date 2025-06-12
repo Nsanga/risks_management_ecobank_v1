@@ -78,10 +78,11 @@ export default function KITable({ reports, loading }) {
       padding: "8px 4px"
     }
   };
+
   return (
     <div style={{ overflowX: "auto", maxWidth: "100%" }}>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Key Indicator
+        Key Indicator Analysis
       </Text>
       {loading ? (
         <Flex alignItems='center' justifyContent='center'>
@@ -212,15 +213,15 @@ export default function KITable({ reports, loading }) {
                           {item.frequenceKeyIndicator}
                         </span>
                       </td>
-                      <td style={columnStyles.numeric}>{item?.i || '-'}</td>
-                      <td style={columnStyles.numeric}>{item?.ii || '-'}</td>
-                      <td style={columnStyles.numeric}>{item?.iii || '-'}</td>
+                      <td style={columnStyles.numeric}>{item?.history[0]?.value || '0'}</td>
+                      <td style={columnStyles.numeric}>{item?.history[1]?.value || '0'}</td>
+                      <td style={columnStyles.numeric}>{item?.history[2]?.value || '0'}</td>
                       <td style={{
                         ...columnStyles.numeric,
                         backgroundColor: "#f0f9ff",
                         fontWeight: "600"
                       }}>
-                        {item?.avg ? item?.avg.toFixed(2) : '-'}
+                        {!item?.history?.length ? '0' : (item.history.reduce((acc, {value}) => acc + (Number(value) || 0), 0) / 3).toFixed(2)}
                       </td>
                       <td style={{
                         ...columnStyles.numeric,
@@ -228,7 +229,7 @@ export default function KITable({ reports, loading }) {
                         color: "#dc3545",
                         fontWeight: "600"
                       }}>
-                        {item?.Rm || '-'}
+                        {item?.escaladeKeyIndicator || '-'}
                       </td>
                       <td style={{
                         ...columnStyles.numeric,
@@ -236,7 +237,7 @@ export default function KITable({ reports, loading }) {
                         color: "#fd7e14",
                         fontWeight: "600"
                       }}>
-                        {item?.Am || '-'}
+                        {item?.seuilKeyIndicator || '-'}
                       </td>
                       <td style={{
                         ...columnStyles.numeric,
@@ -244,7 +245,7 @@ export default function KITable({ reports, loading }) {
                         color: "#198754",
                         fontWeight: "600"
                       }}>
-                        {item?.target || '-'}
+                        {item?.toleranceKeyIndicator || '-'}
                       </td>
                       <td style={{
                         ...columnStyles.numeric,

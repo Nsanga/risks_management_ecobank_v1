@@ -1,6 +1,8 @@
 import React from "react";
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import Loader from '../../../../assets/img/loader.gif'
+import { exportToExcel } from "utils/exportToExcel";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const RiskAssessmentTable = ({ reports, loading }) => {
 
@@ -20,11 +22,93 @@ const RiskAssessmentTable = ({ reports, loading }) => {
     return dueDate < today;
   };
 
+  const generateExcel = async () => {
+    await exportToExcel({
+      data: reports,
+      filename: "Risk & Control Assessment Report",
+      worksheetName: "Risk Data",
+      columns: [
+        {
+          header: "Entity",
+          key: "entitie",
+          width: 20,
+          format: (ent) => `ENT${ent.referenceId}`
+        },
+        {
+          header: "Entity Description",
+          key: "entitie",
+          width: 20,
+          format: (ent) => ent.description
+        },
+        {
+          header: "Risk",
+          key: "riskAssociate",
+          format: (risk) => risk?.reference || "-"
+        },
+        {
+          header: "Description du risque",
+          key: "riskAssociate",
+          format: (risk) => risk?.description || "-"
+        },
+        {
+          header: "Risk Category",
+          key: "riskAssociate",
+          format: (risk) => risk?.description || "-"
+        },
+        {
+          header: "Causal Category",
+          key: "riskAssociate",
+          format: (risk) => risk?.description || "-"
+        },
+        { header: "Reference du Control", key: "reference", width: 25 },
+        { header: "Description du Control", key: "controlSummary", width: 25 },
+        { header: "Action Reference", key: "actionReference", width: 25 },
+        { header: "Action Description", key: "actionDescription", width: 25 },
+        { header: "Action Owner", key: "actionOwner", width: 25 },
+        { header: "Action Nominee", key: "actionNominee" },
+        { header: "Assessment Frequenc", key: "frequence", width: 25 },
+        { header: "Next Assessment Date", key: "nextAssessMent", width: 25 },
+      ]
+    });
+  };
+
   return (
     <Box p={4} overflowX="auto">
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Risk & Control Assessment Details
-      </Text>
+      <Flex alignItems='center' justifyContent='space-between' mb={4}>
+        <Text fontSize="xl" fontWeight="bold" mb={4}>
+          Risk & Control Assessment Details
+        </Text>
+        {reports.length > 0 && (
+          <Box>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                colorScheme="blue"
+                w="full"
+              >
+                Exporter
+              </MenuButton>
+              <MenuList>
+                <MenuItem
+                  onClick={() => {
+                    // generatePDF();
+                  }}
+                >
+                  Exporter en PDF
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    generateExcel();
+                  }}
+                >
+                  Exporter en Excel
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+        )}
+      </Flex>
       <div style={{ overflowX: "auto" }}>
         {loading ? (
           <Flex alignItems='center' justifyContent='center'>
@@ -53,9 +137,9 @@ const RiskAssessmentTable = ({ reports, loading }) => {
               }}
             >
               <tr>
-                <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "100px" }}>Risk</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "100px" }}>Entity</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "180px" }}>Entity Description</th>
+                <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "100px" }}>Risk</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "220px" }}>Description du risque</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "150px" }}>Risk Category</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "150px" }}>Causal Category</th>
@@ -78,13 +162,13 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                   }}
                 >
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
-                    <strong>{item.referenceRisk}</strong>
-                  </td>
-                  <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
                     <strong>ENT{item.entitie.referenceId}</strong>
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top", lineHeight: "1.4" }}>
                     {item.entitie.description || "-"}
+                  </td>
+                  <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
+                    <strong>{item.referenceRisk}</strong>
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top", lineHeight: "1.4" }}>
                     <div style={{
@@ -104,15 +188,24 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
                     {item.riskAssociate.causalCategory || "-"}
                   </td>
-                  <td style={{
-                    border: "1px solid #e0e0e0",
-                    padding: "10px",
-                    verticalAlign: "top",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    color: getSeverityColor(item.residualSeverity)
-                  }}>
-                    {item.residualSeverity || "-"}
+                  <td
+                    style={{
+                      border: "1px solid #e0e0e0",
+                      padding: "10px",
+                      verticalAlign: "top",
+                    }}
+                  >
+                    <div style={{ fontWeight: "bold" }}>{item.reference}</div>
+                    <div style={{
+                      maxHeight: "100px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical"
+                    }}>
+                      {item.controlSummary || "-"}
+                    </div>
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
                     {item.actionReference || "-"}
