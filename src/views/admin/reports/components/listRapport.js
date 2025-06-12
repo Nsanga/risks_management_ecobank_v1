@@ -1,4 +1,4 @@
-import { Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import Loader from "../../../../assets/img/loader.gif";
 import { Button } from "@chakra-ui/react";
@@ -60,32 +60,34 @@ export default function ControlTable({ reports, selectedData, loading }) {
           Control List
         </Text>
         {reports.length > 0 && (
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<ChevronDownIcon />}
-              colorScheme="blue"
-              w="full"
-            >
-              Exporter
-            </MenuButton>
-            <MenuList>
-              <MenuItem
-                onClick={() => {
-                  // generatePDF();
-                }}
+          <Box>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                colorScheme="blue"
+                w="full"
               >
-                Exporter en PDF
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  generateExcel();
-                }}
-              >
-                Exporter en Excel
-              </MenuItem>
-            </MenuList>
-          </Menu>
+                Exporter
+              </MenuButton>
+              <MenuList>
+                <MenuItem
+                  onClick={() => {
+                    // generatePDF();
+                  }}
+                >
+                  Exporter en PDF
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    generateExcel();
+                  }}
+                >
+                  Exporter en Excel
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
         )}
       </Flex>
       {loading ? (
