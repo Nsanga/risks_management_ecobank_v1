@@ -92,6 +92,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
   const [reviewer, setReviewer] = React.useState(null);
   const toast = useToast();
   const dispatch = useDispatch();
+  const userRole = localStorage.getItem('role')
 
   const profileOptions = profiles
     ?.filter(profile => profile.activeUser)
@@ -732,33 +733,37 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                     </>
                   </div>
                 </div>
-                {selectedRows.length > 0 && (
-                  <HStack mt={4} spacing={4} justifyContent="start">
-                    <Button
-                      colorScheme="blue"
-                      fontSize={12}
-                      leftIcon={<EditIcon />}
-                      onClick={bulkAmendModalOpen}
-                    >
-                      Bulk Amend
-                    </Button>
-                    <Button
-                      colorScheme="teal"
-                      fontSize={12}
-                      leftIcon={<IoMove />}
-                      onClick={moveModalOpen}
-                    >
-                      Move {currentView === "Risks" ? "Risk" : "Control"}
-                    </Button>
-                    <Button
-                      colorScheme="green"
-                      fontSize={12}
-                      leftIcon={<CopyIcon />}
-                      onClick={copyModalOpen}
-                    >
-                      Copy {currentView === "Risks" ? "Risk" : "Control"}
-                    </Button>
-                  </HStack>
+                {userRole === 'admin' && (
+                  <>
+                    {selectedRows.length > 0 && (
+                      <HStack mt={4} spacing={4} justifyContent="start">
+                        <Button
+                          colorScheme="blue"
+                          fontSize={12}
+                          leftIcon={<EditIcon />}
+                          onClick={bulkAmendModalOpen}
+                        >
+                          Bulk Amend
+                        </Button>
+                        <Button
+                          colorScheme="teal"
+                          fontSize={12}
+                          leftIcon={<IoMove />}
+                          onClick={moveModalOpen}
+                        >
+                          Move {currentView === "Risks" ? "Risk" : "Control"}
+                        </Button>
+                        <Button
+                          colorScheme="green"
+                          fontSize={12}
+                          leftIcon={<CopyIcon />}
+                          onClick={copyModalOpen}
+                        >
+                          Copy {currentView === "Risks" ? "Risk" : "Control"}
+                        </Button>
+                      </HStack>
+                    )}
+                  </>
                 )}
                 {/* Pagination */}
                 {!loading && totalItems > itemsPerPage && (

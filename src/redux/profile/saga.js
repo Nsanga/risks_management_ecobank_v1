@@ -8,7 +8,7 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
 
-function* list(action) {
+function* list() {
     try {
         let link = `${url}/api/v1/profiles/all`;
         console.log(link)
@@ -47,25 +47,37 @@ function* update(action) {
 
 function* add(action) {
     try {
-        const link = `${url}/api/v1/profiles/create`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
-
-        if (data.message === 'Created') {
-            yield put({ type: types.ADD_PROFILE_SUCCESS, payload: data });
-            toast.success(data.data.message);
-            yield put({ type: types.GET_PROFILES_REQUEST, payload: { type: action.payload.type } });
-        } else {
-            toast.error("Aucune donnée n'a été ajouté.");
-            yield put({ type: types.ADD_PROFILE_FAILED, payload: "Échec lors de la creation de l'évenement" });
+      const link = `${url}/api/v1/profiles/create`;
+      const data = yield postRequest(link, JSON.stringify(action.payload));
+  
+      if (data.status === 201) {
+        yield put({ type: types.ADD_PROFILE_SUCCESS, payload: data });
+        toast.success(data.data.message);
+        yield put({ type: types.GET_PROFILES_REQUEST, payload: { type: action.payload.type } });
+  
+        // Exécuter le callback si défini
+        if (action.meta?.onSuccess) {
+          action.meta.onSuccess();
         }
-
+      } else {
+        toast.error(data.message.message);
+        yield put({ type: types.ADD_PROFILE_FAILED, payload: "Échec lors de la création du profil" });
+  
+        if (action.meta?.onError) {
+          action.meta.onError("Erreur lors de l'ajout");
+        }
+      }
+  
     } catch (error) {
-        toast.error("Aucune donnée n'a été ajouté.");
-        console.error(error);
-        yield put({ type: types.ADD_PROFILE_FAILED, payload: error.message || "Une erreur s'est produite" });
+      toast.error("Aucune donnée n'a été ajoutée.");
+      console.error(error);
+      yield put({ type: types.ADD_PROFILE_FAILED, payload: error.message || "Une erreur s'est produite" });
+  
+      if (action.meta?.onError) {
+        action.meta.onError(error.message);
+      }
     }
-}
+  }  
 
 function* deleteProfile(action) {
     const { id } = action.payload;

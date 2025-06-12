@@ -35,13 +35,7 @@ import { listEntityKeyIndicators } from "redux/kri/action";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { updateKeyIndicator } from "redux/kri/action";
 
-const truncateWords = (text = "", limit = 40) => {
-  if (!text) return "";
-  const words = text.split(" ");
-  return words.length > limit ? words.slice(0, limit).join(" ") + "..." : text;
-};
-
-const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, setSelectedEntity, isRCSA=false }) => {
+const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, setSelectedEntity, isRCSA = false }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const [selectedEntity, setSelectedEntity] = useState(null);
@@ -60,6 +54,7 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
 
   const isRowSelected = (row) => selectedRows.includes(row._id);
   const toast = useToast();
+  const userRole = localStorage.getItem('role')
 
   const columnsByView = {
     KIs: [
@@ -269,23 +264,23 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
     <Box>
       {!isRCSA && (
         <div>
-        <FormControl mr={4} maxW="250px">
-          <FormLabel fontSize={18}>Entity</FormLabel>
-          <Select
-            options={entitiesOptions}
-            styles={customStyles}
-            placeholder="Select Entity"
-            value={entitiesOptions?.find(
-              (ent) => ent.value === formData.entity
-            )}
-            onChange={(selectedOption) =>
-              handleSelectChange("entity", selectedOption)
-            }
-          />
-        </FormControl>
-      </div>
+          <FormControl mr={4} maxW="250px">
+            <FormLabel fontSize={18}>Entity</FormLabel>
+            <Select
+              options={entitiesOptions}
+              styles={customStyles}
+              placeholder="Select Entity"
+              value={entitiesOptions?.find(
+                (ent) => ent.value === formData.entity
+              )}
+              onChange={(selectedOption) =>
+                handleSelectChange("entity", selectedOption)
+              }
+            />
+          </FormControl>
+        </div>
       )}
-      
+
       {loading ? (
         <Flex alignItems='center' justifyContent='center'>
           <Image src={Loader} alt="Loading..." height={50} width={50} />
@@ -359,17 +354,21 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
             </div>
           </div>
           <Box>
-            {selectedRows.length > 0 && (
-              <HStack mt={4} spacing={4} justifyContent="start">
-                <Button
-                  colorScheme="blue"
-                  fontSize={12}
-                  leftIcon={<EditIcon />}
-                  onClick={bulkAmendModalOpen}
-                >
-                  Bulk Amend
-                </Button>
-              </HStack>
+            {userRole === 'admin' && (
+              <>
+                {selectedRows.length > 0 && (
+                  <HStack mt={4} spacing={4} justifyContent="start">
+                    <Button
+                      colorScheme="blue"
+                      fontSize={12}
+                      leftIcon={<EditIcon />}
+                      onClick={bulkAmendModalOpen}
+                    >
+                      Bulk Amend
+                    </Button>
+                  </HStack>
+                )}
+              </>
             )}
             <Flex justifyContent='space-between'>
               {/* Affichage du nombre d'éléments */}

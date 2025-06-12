@@ -23,15 +23,9 @@ const System = ({ userGroups, loading, profiles, entities }) => {
       <Card mt="100px">
         <Tabs variant='soft-rounded' colorScheme='green'>
           <TabList>
-<<<<<<< HEAD
-           <Tab> GROUPE D’UTILISATEURS</Tab>
-            <Tab>ENTITÉ</Tab>
-            <Tab>PROFIL UTILISATEUR</Tab>
-=======
             <Tab>USER GROUP</Tab>
             <Tab>ENTITY</Tab>
             <Tab>USER</Tab>
->>>>>>> c26b46ad27e370cded7d6b7ec6bc76132a6c5c99
           </TabList>
           <TabPanels>
             <TabPanel>

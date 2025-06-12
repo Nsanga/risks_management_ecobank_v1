@@ -35,8 +35,7 @@ export default function HeaderLinks(props) {
 	const dispatch = useDispatch();
 
 	const handleLogout = () => {
-		localStorage.removeItem('token');
-		localStorage.removeItem('username');
+		localStorage.clear();
 		dispatch(logoutSuccess());
 		window.location.href = "/auth/login"
 	};

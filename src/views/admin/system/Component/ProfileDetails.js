@@ -205,7 +205,7 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        isReadOnly={isReadOnly}
+                        isReadOnly={selectedUser ? true : false}
                     />
                 </FormControl>
                 <FormControl>

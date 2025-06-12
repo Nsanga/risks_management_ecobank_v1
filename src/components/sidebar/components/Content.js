@@ -5,8 +5,27 @@ import React from "react";
 
 function SidebarContent(props) {
   const { routes, isCollapsed } = props;
-  const excludedRoutes = ["Login", "Event", "Action", "KeyIndicator"];
-  const filteredRoutes = routes.filter((route) => !excludedRoutes.includes(route.name));
+  const getFilteredRoutes = () => {
+    const userRole = localStorage.getItem('role');
+    const systemIntegrationRoutes = ["Login", "Event", "Action", "KeyIndicator"];
+    const validatedOnlyRoutes = ["System", "Integration"];
+    
+    // Liste des rôles qui ont accès aux routes validées
+    const privilegedRoles = ['validated', 'inputeurs'];
+    
+    if (!privilegedRoles.includes(userRole)) {
+      // Cas 1: Rôles privilégiés - on exclut uniquement les routes système
+      return routes.filter(route => !systemIntegrationRoutes.includes(route.name));
+    } else {
+      // Cas 2: Autres rôles - on exclut routes système + routes réservées
+      return routes.filter(route => 
+        ![...systemIntegrationRoutes, ...validatedOnlyRoutes].includes(route.name)
+      );
+    }
+  };
+  
+  // Utilisation
+  const filteredRoutes = getFilteredRoutes();
 
   return (
     <Flex

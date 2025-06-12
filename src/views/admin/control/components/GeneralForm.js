@@ -42,6 +42,8 @@ const GeneralForm = ({
   });
   const dispatch = useDispatch();
 
+  const userRole = localStorage.getItem('role')
+
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
     ?.map((profile, index) => {
@@ -496,8 +498,9 @@ const GeneralForm = ({
                   variant="solid"
                   onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
                   disabled={
-                    selectedControl?.historyControl?.length > 0 &&
-                    !selectedControl.historyControl[0]?.attested
+                    (selectedControl?.historyControl?.length > 0 &&
+                    !selectedControl.historyControl[0]?.attested) ||
+                    userRole !== 'inputeurs'
                   }
                 >
                   Test du contrôle
@@ -506,7 +509,8 @@ const GeneralForm = ({
                   fontSize={12}
                   colorScheme="red"
                   variant="solid"
-                  disabled
+                  disabled = {userRole === 'inputeurs'}
+                  onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
                 >
                   Valider le Test
                 </Button>

@@ -19,7 +19,6 @@ import ControlListForm from "./components/ControlListForm";
 import RiskRegisterForm from "./components/RiskRegisterForm";
 import KeyIndicatorAnalysisForm from "./components/KeyIndicatorAnalysisForm";
 import RiskAndControlAssessmentDetails from "./components/RiskAndControlAssessmentDetails";
-import RiskAssessmentTable from "./components/RiskAssessmentTable ";
 import RiskDetailsForm from "./components/RiskDetailsForm";
 import RiskControlTable from "./components/RiskControlTable";
 import IncidentTrendsAnalysisForm from "./components/IncidentTrendsAnalysisForm";
@@ -35,6 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { listEntities } from "redux/entity/action";
 import { listProfiles } from "redux/profile/action";
 import { listEntityReports } from "redux/reports/action";
+import RiskAssessmentTable from "./components/RiskAssessmentTable";
 
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);

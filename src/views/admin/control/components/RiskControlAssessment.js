@@ -38,6 +38,8 @@ const RiskControlAssessment = ({
   const entities = useSelector(state => state.EntityReducer.entities);
   const actions = useSelector(state => state.ActionReducer.actions);
 
+  const userRole = localStorage.getItem('role');
+
   const profileOptions = profiles
     ?.filter(profile => profile.activeUser)
     ?.map((profile, index) => {
@@ -299,10 +301,10 @@ const RiskControlAssessment = ({
       </Flex>
 
       <Flex justifyContent="center" gap={4} mt={6}>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">Amend Assess</Button>
-        <Button fontSize="sm" colorScheme="red" variant="outline">UnAttest Assess</Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={selectedControl?.historyControl?.length > 0 && !selectedControl.historyControl[0]?.attested}>Save</Button>
-        <Button fontSize="sm" colorScheme="blue" variant="outline">Attest Assess</Button>
+        <Button fontSize="sm" colorScheme="blue" variant="outline" disabled={userRole === "inputeurs"}>Amend Assess</Button>
+        <Button fontSize="sm" colorScheme="red" variant="outline" disabled={userRole === "inputeurs"}>UnAttest Assess</Button>
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={(selectedControl?.historyControl?.length > 0 && !selectedControl.historyControl[0]?.attested) || userRole !== "inputeurs"}>Save</Button>
+        <Button fontSize="sm" colorScheme="blue" variant="outline" disabled={userRole === "inputeurs"}>Attest Assess</Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
