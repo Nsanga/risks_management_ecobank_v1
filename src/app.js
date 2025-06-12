@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 
 const App = ({ userAuth }) => {
     const [authenticate, setAuthenticate] = useState(false)
+    const userRole = localStorage.getItem('role')
 
     useEffect(() => {
         setAuthenticate(isAuth());
@@ -23,8 +24,12 @@ const App = ({ userAuth }) => {
                     <Route exact path="/admin/events" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/settings" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/reports" render={(props) => <AdminLayout {...props} />} />
-                    <Route exact path="/admin/system" render={(props) => <AdminLayout {...props} />} />
-                    <Route exact path="/admin/integration" render={(props) => <AdminLayout {...props} />} />
+                    {userRole !== 'inputeurs' && userRole !== 'validated' && (
+                        <>
+                            <Route exact path="/admin/system" render={(props) => <AdminLayout {...props} />} />
+                            <Route exact path="/admin/integration" render={(props) => <AdminLayout {...props} />} />
+                        </>
+                    )}
                     <Route exact path="/admin/configuration" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/logout" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/event" render={(props) => <AdminLayout {...props} />} />
