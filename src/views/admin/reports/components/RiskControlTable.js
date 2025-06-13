@@ -1,6 +1,8 @@
 import React from "react";
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import Loader from '../../../../assets/img/loader.gif'
+import { exportToExcel } from "utils/exportToExcel";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const RiskControlTable = ({ reports, loading }) => {
 
@@ -32,12 +34,127 @@ const RiskControlTable = ({ reports, loading }) => {
     if (value >= 6) return "Moyen";
     return "Faible";
   };
+  const generateExcel = async () => {
+  const cleanedReports = reports.filter(r => r !== undefined && r !== null);
+
+  await exportToExcel({
+    data: cleanedReports,
+    filename: "Risk & Control Report",
+    worksheetName: "Risk Data",
+    columns: [
+      {
+        header: "Référence Entité",
+        key: "entiteReference",
+        width: 20,
+        format: (row) => row?.entitie?.referenceId ? `ENT${row.entitie.referenceId}` : ""
+      },
+      {
+        header: "Référence Risque",
+        key: "riskReference",
+        width: 20,
+        format: (row) => row?.riskAssociate?.reference ?? "-"
+      },
+      {
+        header: "Catégorie du Risque",
+        key: "riskCategory",
+        width: 25,
+        format: (row) => row?.riskAssociate?.category ?? "-"
+      },
+      {
+        header: "Catégorie Causale",
+        key: "causalCategory",
+        width: 25,
+        format: (row) => row?.riskAssociate?.causalCategory ?? "-"
+      },
+      {
+        header: "Responsable",
+        key: "actionOwner",
+        width: 20
+      },
+      {
+        header: "Nominee",
+        key: "actionNominee",
+        width: 20
+      },
+      {
+        header: "Description",
+        key: "controlSummary",
+        width: 30
+      },
+      {
+        header: "Description Détaillée",
+        key: "detailedDescription",
+        width: 40
+      },
+      {
+        header: "Date d'Évaluation",
+        key: "nextAssessMent",
+        width: 25,
+        format: (row) => row?.nextAssessMent ? new Date(row.nextAssessMent).toLocaleDateString() : "-"
+      },
+      {
+        header: "Probabilité",
+        key: "likelihood",
+        width: 15
+      },
+      {
+        header: "Impact",
+        key: "impact",
+        width: 15
+      },
+      {
+        header: "Total",
+        key: "totalScore",
+        width: 10,
+        format: (row) => `${(row?.likelihood || 0) * (row?.impact || 0)}`
+      },
+      {
+        header: "Niveau risque",
+        key: "riskLevel",
+        width: 20
+      }
+    ]
+  });
+};
+
 
   return (
     <Box p={4} overflowX="auto">
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Risk Register Table
-      </Text>
+          <Flex alignItems='center' justifyContent='space-between' mb={4}>
+            <Text fontSize="xl" fontWeight="bold" mb={4}>
+              Risk Register table
+            </Text>
+            {reports.length > 0 && (
+              <Box>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    colorScheme="blue"
+                    w="full"
+                  >
+                    Exporter
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem
+                      onClick={() => {
+                        // generatePDF();
+                      }}
+                    >
+                      Exporter en PDF
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        generateExcel();
+                      }}
+                    >
+                      Exporter en Excel
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </Box>
+            )}
+          </Flex>
       <div style={{ overflowX: "auto" }}>
         {loading ? (
           <Flex alignItems='center' justifyContent='center'>

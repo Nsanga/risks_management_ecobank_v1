@@ -1,7 +1,7 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Loader from '../../../../assets/img/loader.gif'
-
+import { exportToExcel } from "utils/exportToExcel";
 const groupedData = [
   {
     status: "Status",
@@ -36,6 +36,7 @@ export default function KITable({ reports, loading }) {
     lineHeight: "1.4"
   };
 
+  
   const columnStyles = {
     // Colonnes étroites pour les codes/références
     narrow: {
@@ -77,6 +78,88 @@ export default function KITable({ reports, loading }) {
       fontWeight: "bold",
       padding: "8px 4px"
     }
+  };
+  const generateExcel = async () => {
+    const cleanedReports = reports.filter(r => r !== undefined && r !== null);
+  
+    await exportToExcel({
+      data: cleanedReports,
+      filename: "Risk & Control Report",
+      worksheetName: "Risk Data",
+      columns: [
+        {
+          header: "Référence Entité",
+          key: "entiteReference",
+          width: 20,
+          format: (row) => row?.entitie?.referenceId ? `ENT${row.entitie.referenceId}` : ""
+        },
+        {
+          header: "Référence Risque",
+          key: "riskReference",
+          width: 20,
+          format: (row) => row?.riskAssociate?.reference ?? "-"
+        },
+        {
+          header: "Catégorie du Risque",
+          key: "riskCategory",
+          width: 25,
+          format: (row) => row?.riskAssociate?.category ?? "-"
+        },
+        {
+          header: "Catégorie Causale",
+          key: "causalCategory",
+          width: 25,
+          format: (row) => row?.riskAssociate?.causalCategory ?? "-"
+        },
+        {
+          header: "Responsable",
+          key: "actionOwner",
+          width: 20
+        },
+        {
+          header: "Nominee",
+          key: "actionNominee",
+          width: 20
+        },
+        {
+          header: "Description",
+          key: "controlSummary",
+          width: 30
+        },
+        {
+          header: "Description Détaillée",
+          key: "detailedDescription",
+          width: 40
+        },
+        {
+          header: "Date d'Évaluation",
+          key: "nextAssessMent",
+          width: 25,
+          format: (row) => row?.nextAssessMent ? new Date(row.nextAssessMent).toLocaleDateString() : "-"
+        },
+        {
+          header: "Probabilité",
+          key: "likelihood",
+          width: 15
+        },
+        {
+          header: "Impact",
+          key: "impact",
+          width: 15
+        },
+        {
+          header: "Total",
+          key: "totalScore",
+          width: 10,
+          format: (row) => `${(row?.likelihood || 0) * (row?.impact || 0)}`
+        },
+        {
+          header: "Niveau risque",
+          key: "riskLevel",
+          width: 20
+        }
+      ]
+    });
   };
 
   return (
