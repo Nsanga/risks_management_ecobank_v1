@@ -147,7 +147,6 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Action Reference</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "200px" }}>Action Description</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Action Owner</th>
-                <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Action Nominee</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Assessment Frequency</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Next Assessment Date</th>
               </tr>
@@ -208,7 +207,7 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                     </div>
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
-                    {item.actionReference || "-"}
+                    {item?.actions[0]?.reference || "-"}
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top", lineHeight: "1.4" }}>
                     <div style={{
@@ -219,14 +218,11 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                       WebkitLineClamp: 3,
                       WebkitBoxOrient: "vertical"
                     }}>
-                      {item.actionDescription || "-"}
+                      {item?.actions[0]?.descriptionAction || "-"}
                     </div>
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
-                    {item.actionOwner || "-"}
-                  </td>
-                  <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
-                    {item.actionNominee || "-"}
+                    {item?.actions[0]?.proprioAction || "-"}
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
                     {item.frequence || "-"}

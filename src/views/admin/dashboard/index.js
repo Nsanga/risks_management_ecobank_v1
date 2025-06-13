@@ -153,6 +153,7 @@ const Dashboard = ({ stats, loading }) => {
   );
 
   const headerBg = useColorModeValue('white', 'gray.800');
+  const userRole = localStorage.getItem('role');
 
   return (
     <Box minH="100vh" bg={bgGradient} p={8} mt={14}>
@@ -163,7 +164,7 @@ const Dashboard = ({ stats, loading }) => {
       ) : (
         <VStack spacing={8} maxW="7xl" mx="auto">
         {/* Header */}
-        <Card w="full" bg={headerBg} shadow="lg" borderRadius="xl">
+        {/* <Card w="full" bg={headerBg} shadow="lg" borderRadius="xl">
           <CardBody p={6}>
             <VStack spacing={2}>
               <Heading
@@ -179,7 +180,7 @@ const Dashboard = ({ stats, loading }) => {
               </Text>
             </VStack>
           </CardBody>
-        </Card>
+        </Card> */}
 
         {/* Stats Grid */}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} w="full">
@@ -226,7 +227,8 @@ const Dashboard = ({ stats, loading }) => {
           />
 
           {/* User */}
-          <StatsCard
+          {userRole !== 'inputeurs' && userRole !== 'validated' && (
+            <StatsCard
             title="Utilisateurs"
             value={stats?.profiles?.total || 0}
             subtitle={
@@ -243,6 +245,7 @@ const Dashboard = ({ stats, loading }) => {
               </Text>
             }
           />
+          )}
         </SimpleGrid>
 
         {/* Detailed Stats */}

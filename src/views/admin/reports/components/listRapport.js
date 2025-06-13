@@ -270,7 +270,10 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       verticalAlign: "top",
                     }}
                   >
-                    <strong>{`ENT${item.entitie.referenceId}` || "-"}</strong>
+                    <div style={{ fontWeight: "bold" }}>{`ENT${item.entitie.referenceId}` || "-"}</div>
+                    <div style={{ marginTop: "4px", lineHeight: "1.4" }}>
+                      {item.entitie.description || "-"}
+                    </div>
                   </td>
                   <td
                     style={{
@@ -332,8 +335,8 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       verticalAlign: "top",
                     }}
                   >
-                    {item.reviewDate
-                      ? new Date(item.reviewDate).toLocaleDateString()
+                    {item.history[0]?.dueOn
+                      ? new Date(item.history[0]?.dueOn).toLocaleDateString()
                       : "-"}
                   </td>
                   <td
@@ -343,7 +346,7 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       verticalAlign: "top",
                     }}
                   >
-                    {item.frequence || "-"}
+                    {item.history[0]?.frequency || "-"}
                   </td>
                   <td
                     style={{
@@ -375,7 +378,7 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       verticalAlign: "top",
                     }}
                   >
-                    {item.assessedBy || "-"}
+                    {item.history[0]?.assessedBy || "-"}
                   </td>
                   <td
                     style={{
