@@ -22,7 +22,7 @@ const Commentary = (
             <Box p={5} shadow='md' borderWidth='1px'>
             <Flex justifyContent='space-between' alignItems="center">
                 <Flex gap={6} alignItems="center">
-                    <Text>Event Date:</Text>
+                    <Text>Date de l’événement:</Text>
                     <Box width={200}>
                         <Text style={{ color: 'blue', fontWeight: 'bold' }}>{moment(eventDate).format('DD/MM/YYYY')}</Text>
                     </Box>
@@ -39,7 +39,7 @@ const Commentary = (
             </Flex>
             <Flex justifyContent='space-between' alignItems="center">
                 <Flex gap={5} alignItems="center">
-                    <Text>Event Time:</Text>
+                    <Text>Heure de l’événement:</Text>
                     <Box width={200}>
                         <Text style={{ color: 'blue', fontWeight: 'bold' }}>{eventTime}</Text>
                     </Box>
@@ -47,11 +47,11 @@ const Commentary = (
             </Flex>
             <Flex justifyContent='space-between' alignItems="center">
                 <Flex gap={5} alignItems="center">
-                    <Text>Recorded by:</Text>
+                    <Text>Enregistré par:</Text>
                     <Text style={{ color: 'blue', fontWeight: 'bold' }}>{recordedBy}</Text>
                 </Flex>
                 <Flex gap={5} alignItems="center">
-                    <Text>On:</Text>
+                    <Text>le:</Text>
                     <Text style={{ color: 'blue', fontWeight: 'bold' }}>{moment(dateRecording).format('DD/MM/YYYY')} at {moment(timeRecording).format('HH:MM')}</Text>
                 </Flex>
                 <Flex width={155}>

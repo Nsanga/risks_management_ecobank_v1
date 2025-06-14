@@ -207,7 +207,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
         </Box>
         <Input
           name="description"
-          placeholder="Event description"
+          placeholder="Description de l’événement"
           size="sm"
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
@@ -215,7 +215,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
       </Box>
       <Box pt={5} pb={5}>
         <Box bg="green.400" color="#FFF" mb={6} padding={2}>
-          Detailed Description
+          Description détaillée
         </Box>
         <Textarea
           name="descriptionDetailled"
@@ -230,7 +230,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
       <Flex flexDirection="column" gap={4}>
         <Flex justifyContent="space-between" alignItems="center">
           <Flex gap={6} alignItems="center">
-            <Text fontSize={12}>Event Date : <span style={{ color: "red" }}>*</span></Text>
+            <Text fontSize={12}>Date de l’événement : <span style={{ color: "red" }}>*</span></Text>
             <Box width={200}>
               <Input
                 placeholder="Select Date"
@@ -268,13 +268,13 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
                 handleInputChange("activeEvent", e.target.checked)
               }
             >
-              Active Event
+              Événement actif
             </Checkbox>
           </Flex>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Flex gap={5} alignItems="center">
-            <Text fontSize={12}>Event Time :</Text>
+            <Text fontSize={12}>Heure de l’événement :</Text>
             <Box width={200}>
               <Input
                 placeholder="Select Date and Time"
@@ -290,13 +290,13 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Flex gap={5} alignItems="center">
-            <Text fontSize={12}>Recorded by :</Text>
+            <Text fontSize={12}>Enregistré par :</Text>
             <Text color="blue" fontSize={12}>
               {recordedName}
             </Text>
           </Flex>
           <Flex gap={5} alignItems="center">
-            <Text fontSize={12}>On :</Text>
+            <Text fontSize={12}>le :</Text>
             <Text color="blue" fontSize={12}>
               {moment(formData.recorded_date).format("DD/MM/YYYY")}
             </Text>
@@ -309,7 +309,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
                 handleInputChange("excludeFundLosses", e.target.checked)
               }
             >
-              Exclude Fund Losses
+              Exclure les pertes de fonds
             </Checkbox>
           </Flex>
         </Flex>
@@ -321,7 +321,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               handleInputChange("externalEvent", e.target.checked)
             }
           >
-            External Event
+            Événement externe
           </Checkbox>
           <Flex gap={5} alignItems="center">
             <Text fontSize={12}>External Ref :</Text>
@@ -343,25 +343,25 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               isChecked={formData.notify}
               onChange={(e) => handleInputChange("notify", e.target.checked)}
             >
-              Notify
+              Informer
             </Checkbox>
           </Flex>
         </Flex>
         <Flex justifyContent="space-between">
           <Box p={5} shadow="md" borderWidth="1px" width="49%">
             <Box bg="green.400" color="#FFF" mb={6} padding={2}>
-              Area of Detection
+              Zone de détection
             </Box>
             <Flex flexDirection="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>
-                  Entity : <span style={{ color: "red" }}>*</span>
+                  Entité : <span style={{ color: "red" }}>*</span>
                 </Text>
                 <Box width={200}>
                   <Select
                     options={entitiesOptions}
                     styles={customStyles}
-                    placeholder="Select Entity"
+                    placeholder="Sélectionner une entité"
                     value={entitiesOptions?.find(
                       (ent) => ent.value === formData.entityOfDetection
                     )}
@@ -372,7 +372,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
                 </Box>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontSize={12}>Sub Entity :</Text>
+                <Text fontSize={12}>Sous-entité :</Text>
                 <Box width={200}>
                   <Input
                     placeholder=""
@@ -387,7 +387,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>
-                  Detection Date : <span style={{ color: "red" }}>*</span>
+                  Date de détection : <span style={{ color: "red" }}>*</span>
                 </Text>
                 <Box width={200}>
                   <Input
@@ -405,18 +405,18 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
           </Box>
           <Box p={5} shadow="md" borderWidth="1px" width="49%">
             <Box bg="green.400" color="#FFF" mb={6} padding={2}>
-              Area of Origin
+               Zone d’origine.
             </Box>
             <Flex flexDirection="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize={12}>
-                  Entity : <span style={{ color: "red" }}>*</span>
+                  Entité : <span style={{ color: "red" }}>*</span>
                 </Text>
                 <Box width={200}>
                   <Select
                     options={entitiesOptions}
                     styles={customStyles}
-                    placeholder="Select Entity"
+                    placeholder="Sélectionner une entité"
                     value={entitiesOptions?.find(
                       (ent) => ent.value === formData.entityOfOrigin
                     )}
@@ -427,7 +427,7 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
                 </Box>
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontSize={12}>Sub Entity :</Text>
+                <Text fontSize={12}>Sous-entité :</Text>
                 <Box width={200}>
                   <Input
                     placeholder=""
@@ -446,10 +446,10 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
         <Flex justifyContent="space-between" pt={5}>
           <Flex flexDirection="column" gap={2}>
             <Flex gap={20} alignItems="center">
-              <Text fontSize={12}>Approved :</Text>
+              <Text fontSize={12}>approuvé :</Text>
               <Box width={200}>
                 <Input
-                  placeholder="Select Date"
+                  placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
                   value={formData.approved_date}
@@ -460,10 +460,10 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               </Box>
             </Flex>
             <Flex gap={14} alignItems="center">
-              <Text fontSize={12}>Closed Date :</Text>
+              <Text fontSize={12}>Date d’approbation :</Text>
               <Box width={200} marginLeft={3}>
                 <Input
-                  placeholder="Select Date"
+                  placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
                   value={formData.closed_date}
@@ -474,10 +474,10 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               </Box>
             </Flex>
             <Flex gap={6} alignItems="center">
-              <Text fontSize={12}>Target Closure Date :</Text>
+              <Text fontSize={12}>Date cible de clôture :</Text>
               <Box width={200}>
                 <Input
-                  placeholder="Select Date"
+                  placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
                   value={formData.targetClosureDate}
@@ -491,12 +491,12 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
           <Flex flexDirection="column" gap={2}>
             <Flex gap={10} alignItems="center">
               <Text fontSize={12}>
-                Owner : <span style={{ color: "red" }}>*</span>
+                Propriétaire : <span style={{ color: "red" }}>*</span>
               </Text>
               <Box width={200} marginLeft={1}>
                 <Select
                   name="owner"
-                  placeholder="Select owner"
+                  placeholder="Sélectionner le propriétaire"
                   options={profilesOptions}
                   styles={customStyles}
                   value={profilesOptions?.find(
@@ -510,12 +510,12 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
             </Flex>
             <Flex gap={8} alignItems="center">
               <Text fontSize={12}>
-                Nominee : <span style={{ color: "red" }}>*</span>
+                Désigné : <span style={{ color: "red" }}>*</span>
               </Text>
               <Box width={200}>
                 <Select
-                  name="nominee"
-                  placeholder="Select nominee"
+                  name="mandataire"
+                  placeholder="Sélectionner le mandataire"
                   options={profilesOptions}
                   styles={customStyles}
                   value={profilesOptions?.find(
@@ -528,11 +528,11 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               </Box>
             </Flex>
             <Flex gap={10} alignItems="center">
-              <Text fontSize={12}>Reviewer :</Text>
+              <Text fontSize={12}> Réviseur :</Text>
               <Box width={200} marginLeft={1}>
                 <Select
                   name="reviewer"
-                  placeholder="Select reviewer"
+                  placeholder="Sélectionner le réviseur"
                   options={profilesOptions}
                   styles={customStyles}
                   value={profilesOptions?.find(
@@ -545,10 +545,10 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
               </Box>
             </Flex>
             <Flex gap={6} alignItems="center">
-              <Text fontSize={12}>Reviewer Date :</Text>
+              <Text fontSize={12}>Date de révision :</Text>
               <Box width={200}>
                 <Input
-                  placeholder="Select Date"
+                  placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
                   value={formData.reviewer_date}

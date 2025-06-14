@@ -7,7 +7,7 @@ const Review = ({ details }) => {
             <Flex flexDirection='column' gap={4}>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={6} alignItems="center">
-                        <Text fontSize={12}>Event Date:</Text>
+                        <Text fontSize={12}>Date de l’événement:</Text>
                         <Box width={200}>
                             <Input value={details.eventDate} size='md' type='date' />
                         </Box>
@@ -25,7 +25,7 @@ const Review = ({ details }) => {
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center">
-                        <Text fontSize={12}>Event Time:</Text>
+                        <Text fontSize={12}>Heure de l’événement:</Text>
                         <Box width={200}>
                             <Input value={details.eventTime} size='md' type='time' />
                         </Box>
@@ -33,25 +33,25 @@ const Review = ({ details }) => {
                 </Flex>
                 <Flex justifyContent='space-between' alignItems="center">
                     <Flex gap={5} alignItems="center"></Flex>
-                        <Checkbox isChecked={details.externalEvent} isReadOnly>External Event</Checkbox>
+                        <Checkbox isChecked={details.externalEvent} isReadOnly>Événement externe</Checkbox>
                         <Flex gap={5} alignItems="center">
-                            <Text>External Ref:</Text>
+                            <Text>Réf externe:</Text>
                             <Box>
                                 <Input value={details.externalRef} size='md' type='text' readOnly />
                             </Box>
                         </Flex>
                         <Flex width={155}>
-                            <Checkbox isChecked={details.notify} isReadOnly>Notify</Checkbox>
+                            <Checkbox isChecked={details.notify} isReadOnly>Notifier</Checkbox>
                         </Flex>
                     </Flex>
                     <Flex justifyContent='space-between'>
                         <Box p={5} shadow='md' borderWidth='1px' width='49%'>
                             <Box bg='green.400' color='#FFF' mb={6} padding={2}>
-                                Area of Detection
+                                Zone de détection
                             </Box>
                             <Flex flexDirection='column' gap={4}>
                                 <Flex justifyContent='space-between' alignItems="center">
-                                    <Text>Entity:</Text>
+                                    <Text>entité:</Text>
                                     <Box width={200}>
                                         <Select value={details.detectionEntity} size='md' readOnly>
                                             <option value="option1">Option 1</option>
@@ -60,13 +60,13 @@ const Review = ({ details }) => {
                                     </Box>
                                 </Flex>
                                 <Flex justifyContent='space-between' alignItems="center">
-                                    <Text>Sub Entity:</Text>
+                                    <Text>Sous-entité:</Text>
                                     <Box width={200}>
                                         <Input value={details.detectionSubEntity} size='md' type='text' readOnly />
                                     </Box>
                                 </Flex>
                                 <Flex justifyContent='space-between' alignItems="center">
-                                    <Text>Detection Date:</Text>
+                                    <Text> Zone de détection:</Text>
                                     <Box width={200}>
                                         <Input value={details.detectionDate} size='md' type='date' readOnly />
                                     </Box>
@@ -75,11 +75,11 @@ const Review = ({ details }) => {
                         </Box>
                         <Box p={5} shadow='md' borderWidth='1px' width='49%'>
                             <Box bg='green.400' color='#FFF' mb={6} padding={2}>
-                                Area of Origin
+                                Zone d’origine
                             </Box>
                             <Flex flexDirection='column' gap={4}>
                                 <Flex justifyContent='space-between' alignItems="center">
-                                    <Text>Entity:</Text>
+                                    <Text>Entité:</Text>
                                     <Box width={200}>
                                         <Select value={details.originEntity} size='md' readOnly>
                                             <option value="option1">Option 1</option>
@@ -88,7 +88,7 @@ const Review = ({ details }) => {
                                     </Box>
                                 </Flex>
                                 <Flex justifyContent='space-between' alignItems="center">
-                                    <Text>Sub Entity:</Text>
+                                    <Text>Sous-entité:</Text>
                                     <Box width={200}>
                                         <Input value={details.originSubEntity} size='md' type='text' readOnly />
                                     </Box>
@@ -104,26 +104,26 @@ const Review = ({ details }) => {
                     </Box>
                     <Box p={5} shadow='md' borderWidth='1px'>
                         <Box bg='green.400' color='#FFF' mb={6} padding={2}>
-                            Detailed Description
+                            Description détaillée
                         </Box>
                         <Textarea value={details.detailedDescription} readOnly />
                     </Box>
                     <Flex justifyContent='space-between' pt={5}>
                         <Flex flexDirection='column' gap={2}>
                             <Flex gap={14} alignItems="center">
-                                <Text>Approved Date:</Text>
+                                <Text>Date d’approbation:</Text>
                                 <Box width={200}>
                                     <Input value={details.approvedDate} size='md' type='date' readOnly />
                                 </Box>
                             </Flex>
                             <Flex gap={16} alignItems="center">
-                                <Text>Closed Date:</Text>
+                                <Text>Date de clôture:</Text>
                                 <Box width={200} marginLeft={3}>
                                     <Input value={details.closedDate} size='md' type='date' readOnly />
                                 </Box>
                             </Flex>
                             <Flex gap={6} alignItems="center">
-                                <Text>Target Closure Date:</Text>
+                                <Text>Date cible de clôture:</Text>
                                 <Box width={200}>
                                     <Input value={details.targetClosureDate} size='md' type='date' readOnly />
                                 </Box>
@@ -131,25 +131,25 @@ const Review = ({ details }) => {
                         </Flex>
                         <Flex flexDirection='column' gap={2}>
                             <Flex gap={14} alignItems="center">
-                                <Text>Owner:</Text>
+                                <Text>Propriétaire:</Text>
                                 <Box width={200} marginLeft={1}>
                                     <Input value={details.owner} size='md' type='text' readOnly />
                                 </Box>
                             </Flex>
                             <Flex gap={10} alignItems="center">
-                                <Text>Nominee:</Text>
+                                <Text>Mandataire:</Text>
                                 <Box width={200} marginLeft={1}>
                                     <Input value={details.nominee} size='md' type='text' readOnly />
                                 </Box>
                             </Flex>
                             <Flex gap={10} alignItems="center">
-                                <Text>Reviewer:</Text>
+                                <Text>Réviseur:</Text>
                                 <Box width={200} marginLeft={1}>
                                     <Input value={details.reviewer} size='md' type='text' readOnly />
                                 </Box>
                             </Flex>
                             <Flex gap={6} alignItems="center">
-                                <Text>Review Date:</Text>
+                                <Text>Date de révision:</Text>
                                 <Box width={200}>
                                     <Input value={details.reviewDate} size='md' type='date' readOnly />
                                 </Box>
@@ -158,7 +158,7 @@ const Review = ({ details }) => {
                     </Flex>
                     <Box pt={5} pb={5}>
                         <Box bg='green.400' color='#FFF' mb={6} padding={2}>
-                            Uploaded Files
+                            Fichiers importés
                         </Box>
                         <Box>
                             {details.uploadedFiles && details.uploadedFiles.length > 0 ? (
@@ -168,7 +168,7 @@ const Review = ({ details }) => {
                                     </Box>
                                 ))
                             ) : (
-                                <Text>No files uploaded.</Text>
+                                <Text>Aucun fichier importé</Text>
                             )}
                         </Box>
                     </Box>

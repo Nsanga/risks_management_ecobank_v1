@@ -81,7 +81,7 @@ const Info = () => {
                     <ModalHeader>Modal Title</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Text>Select a category:</Text>
+                        <Text>Sélectionner une catégorie:</Text>
                         <Select value={selectedCategory} onChange={handleCategoryChange} placeholder="Select category" mt={2}>
                             {data.categories.map((category, index) => (
                                 <option key={index} value={category.name}>
@@ -92,7 +92,7 @@ const Info = () => {
 
                         {selectedCategory && (
                             <>
-                                <Text mt={4}>Select a sub-category:</Text>
+                                <Text mt={4}>Sélectionner une sous-catégorie:</Text>
                                 <Select value={selectedSubCategory} onChange={handleSubCategoryChange} placeholder="Select sub-category" mt={2}>
                                     {getSubCategoryOptions().map((option, index) => (
                                         <option key={index} value={option.value}>
@@ -105,7 +105,7 @@ const Info = () => {
 
                         {selectedSubCategory && (
                             <>
-                                <Text mt={4}>Select an item:</Text>
+                                <Text mt={4}>Sélectionner un élément:</Text>
                                 <Select value={selectedItem} onChange={handleItemChange} placeholder="Select item" mt={2}>
                                     {getItemOptions().map((option, index) => (
                                         <option key={index} value={option.value}>
@@ -119,9 +119,9 @@ const Info = () => {
 
                     <ModalFooter>
                         <Button colorScheme="blue" mr={3} onClick={closeModal}>
-                            Close
+                            Fermer
                         </Button>
-                        <Button variant="ghost">Secondary Action</Button>
+                        <Button variant="ghost">Action secondaire</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

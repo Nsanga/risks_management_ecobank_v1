@@ -346,11 +346,11 @@ const Finances = ({
     <Box>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <Flex flex="1" alignItems="center" gap={4}>
-          <Text fontSize={12}>Total Currencies :</Text>
+          <Text fontSize={12}>Total des devises :</Text>
           <Box w="30%">
             <Input
               fontSize={12}
-              placeholder="Total Currencies"
+              placeholder="Total des devises"
               value={totalCurrencies}
               onChange={(e) => setTotalCurrencies(e.target.value)}
               type="text"
@@ -359,7 +359,7 @@ const Finances = ({
           </Box>
         </Flex>
         <Flex flex="1" alignItems="center" gap={4}>
-          <Text fontSize={12}>Currencies :</Text>
+          <Text fontSize={12}>Devises :</Text>
           <Box w="30%">
             <Select
               fontSize={12}
@@ -394,13 +394,13 @@ const Finances = ({
                   Direct
                 </Th>
                 <Th textAlign="start" fontSize={10}>
-                  Regulatory fines
+                  Amendes réglementaires
                 </Th>
                 <Th textAlign="start" fontSize={10}>
-                  Asset write-down
+                  Dépréciation d’actif
                 </Th>
                 <Th textAlign="start" fontSize={10}>
-                  Other
+                  Autre
                 </Th>
               </Tr>
             </Thead>
@@ -429,7 +429,7 @@ const Finances = ({
           <Box maxW="300px">
             <Table variant="simple">
               <TableCaption placement="top" fontSize={12}>
-                DAILY RATE
+                Taux journalier
               </TableCaption>
               <Tbody>
                 <Tr>
@@ -474,10 +474,10 @@ const Finances = ({
                 Direct
               </Th>
               <Th textAlign="start" fontSize={10}>
-                Regulatory fines
+                Amendes réglementaires
               </Th>
               <Th textAlign="start" fontSize={10}>
-                Asset write-down
+                 Dépréciation d’actif
               </Th>
               <Th textAlign="start" fontSize={10}>
                 Other
@@ -522,7 +522,7 @@ const Finances = ({
         <Box maxW="300px">
           <Table variant="simple">
             <TableCaption placement="top" fontSize={12}>
-              DAILY RATE
+              Taux journalier
             </TableCaption>
             <Tbody>
               <Tr>
