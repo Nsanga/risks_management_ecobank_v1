@@ -268,7 +268,7 @@ const Reports = () => {
                       >
                         Risk & Control assessment
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         w="full"
                         justifyContent="flex-start"
@@ -281,7 +281,7 @@ const Reports = () => {
                         }
                       >
                         Risk Details by Entity
-                      </Button>
+                      </Button> */}
                     </ListItem>
                   </List>
                 </AccordionPanel>

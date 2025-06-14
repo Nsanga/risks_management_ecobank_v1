@@ -35,126 +35,143 @@ const RiskControlTable = ({ reports, loading }) => {
     return "Faible";
   };
   const generateExcel = async () => {
-  const cleanedReports = reports.filter(r => r !== undefined && r !== null);
+    const cleanedReports = reports.filter(r => r !== undefined && r !== null);
 
-  await exportToExcel({
-    data: cleanedReports,
-    filename: "Risk & Control Report",
-    worksheetName: "Risk Data",
-    columns: [
-      {
-        header: "Référence Entité",
-        key: "entiteReference",
-        width: 20,
-        format: (row) => row?.entitie?.referenceId ? `ENT${row.entitie.referenceId}` : ""
-      },
-      {
-        header: "Référence Risque",
-        key: "riskReference",
-        width: 20,
-        format: (row) => row?.riskAssociate?.reference ?? "-"
-      },
-      {
-        header: "Catégorie du Risque",
-        key: "riskCategory",
-        width: 25,
-        format: (row) => row?.riskAssociate?.category ?? "-"
-      },
-      {
-        header: "Catégorie Causale",
-        key: "causalCategory",
-        width: 25,
-        format: (row) => row?.riskAssociate?.causalCategory ?? "-"
-      },
-      {
-        header: "Responsable",
-        key: "actionOwner",
-        width: 20
-      },
-      {
-        header: "Nominee",
-        key: "actionNominee",
-        width: 20
-      },
-      {
-        header: "Description",
-        key: "controlSummary",
-        width: 30
-      },
-      {
-        header: "Description Détaillée",
-        key: "detailedDescription",
-        width: 40
-      },
-      {
-        header: "Date d'Évaluation",
-        key: "nextAssessMent",
-        width: 25,
-        format: (row) => row?.nextAssessMent ? new Date(row.nextAssessMent).toLocaleDateString() : "-"
-      },
-      {
-        header: "Probabilité",
-        key: "likelihood",
-        width: 15
-      },
-      {
-        header: "Impact",
-        key: "impact",
-        width: 15
-      },
-      {
-        header: "Total",
-        key: "totalScore",
-        width: 10,
-        format: (row) => `${(row?.likelihood || 0) * (row?.impact || 0)}`
-      },
-      {
-        header: "Niveau risque",
-        key: "riskLevel",
-        width: 20
-      }
-    ]
-  });
-};
+    await exportToExcel({
+      data: cleanedReports,
+      filename: "Risk & Control Report",
+      worksheetName: "Risk Data",
+      columns: [
+        {
+          header: "Référence Entité",
+          key: "entitie",
+          width: 20,
+          format: (ent) => `ENT${ent.referenceId}`
+        },
+        {
+          header: "Description de l'entité",
+          key: "entitie",
+          width: 25,
+          format: (ent) => ent?.description
+        },
+        {
+          header: "Référence Risque",
+          key: "riskAssociate",
+          width: 25,
+          format: (risk) => risk?.referenceRisk ?? "-"
+        },
+        {
+          header: "Description du risque",
+          key: "riskAssociate",
+          width: 25,
+          format: (risk) => risk?.description ?? "-"
+        },
+
+        {
+          header: "Catégorie du Risque",
+          key: "riskAssociate",
+          width: 25,
+          format: (risk) => risk?.riskEventCategory ?? "-"
+        },
+        {
+          header: "Catégorie Causale",
+          key: "riskAssociate",
+          width: 25,
+          format: (risk) => risk?.causalCategory ?? "-"
+        },
+        {
+          header: "Responsable",
+          key: "ownerControl",
+          width: 30
+        },
+        {
+          header: "Nominee",
+          key: "nomineeControl",
+          width: 40
+        },
+        {
+          header: "Description",
+          key: "riskAssociate",
+          width: 25,
+          format: (risk) => risk?.riskSummary ?? "-"
+        },
+        {
+          header: "Description Détaillée",
+          key: "riskAssociate",
+          width: 15,
+          format: (risk) => risk?.description ?? "-"
+        },
+        {
+          header: "Date d'Évaluation",
+          key: "evaluationDate",
+          width: 15
+        },
+        {
+          header: "Probabilité",
+          key: "riskAssociate",
+          width: 15,
+          format: (risk) => risk?.occurrenceProbability ?? "-"
+        },
+        {
+          header: "Impact",
+          key: "riskAssociate",
+          width: 25,
+          format: (risk) => risk?.riskImpact ?? "-"
+        },
+        {
+          header: "Total",
+          key: "riskAssociate",
+          width: 10,
+          format: (risk) => risk?.total ?? "-"
+        },
+        {
+          header: "Niveau risque",
+          key: "riskAssociate",
+          width: 10,
+          format: (risk) => getRiskLevel(risk.total) ?? "-"
+        },
+      ]
+    });
+  };
 
 
   return (
     <Box p={4} overflowX="auto">
-          <Flex alignItems='center' justifyContent='space-between' mb={4}>
-            <Text fontSize="xl" fontWeight="bold" mb={4}>
-              Risk Register table
-            </Text>
-            {reports.length > 0 && (
-              <Box>
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    rightIcon={<ChevronDownIcon />}
-                    colorScheme="blue"
-                    w="full"
-                  >
-                    Exporter
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      onClick={() => {
-                        // generatePDF();
-                      }}
-                    >
-                      Exporter en PDF
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        generateExcel();
-                      }}
-                    >
-                      Exporter en Excel
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </Box>
-            )}
-          </Flex>
+      <Flex alignItems='center' justifyContent='space-between' mb={4}>
+        <Text fontSize="xl" fontWeight="bold" mb={4}>
+          Risk Register table
+        </Text>
+        {reports.length > 0 && (
+          <Box>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                colorScheme="blue"
+                w="full"
+              >
+                Exporter
+              </MenuButton>
+              <MenuList>
+                <MenuItem
+                  onClick={() => {
+                    // generatePDF();
+                  }}
+                >
+                  Exporter en PDF
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    generateExcel();
+                  }}
+                >
+                  Exporter en Excel
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+        )}
+      </Flex>
       <div style={{ overflowX: "auto" }}>
         {loading ? (
           <Flex alignItems='center' justifyContent='center'>
@@ -184,7 +201,7 @@ const RiskControlTable = ({ reports, loading }) => {
             >
               <tr>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Référence Entité</th>
-                <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "180px" }}>Entity Description</th>
+                <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "180px" }}>Description de l'entité</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "120px" }}>Référence Risque</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "220px" }}>Description du risque</th>
                 <th style={{ border: "1px solid #e0e0e0", padding: "12px", minWidth: "150px" }}>Catégorie du Risque</th>
@@ -210,7 +227,7 @@ const RiskControlTable = ({ reports, loading }) => {
                   }}
                 >
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
-                    <strong>ENT{item.entitie.referenceId}</strong>
+                    <strong>ENT{item.entitie?.referenceId}</strong>
                   </td>
                   <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top", lineHeight: "1.4" }}>
                     {item.entitie.description || "-"}
