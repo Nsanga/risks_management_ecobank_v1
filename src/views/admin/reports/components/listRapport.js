@@ -19,43 +19,47 @@ export default function ControlTable({ reports, selectedData, loading }) {
           header: "Entity",
           key: "entitie",
           width: 20,
-          format: (ent) => `ENT${ent.referenceId}`
+          format: (ent) => `ENT${ent.referenceId}`,
         },
         { header: "Control", key: "reference", width: 15 },
         {
           header: "Risk",
           key: "riskAssociate",
-          format: (risk) => risk?.reference || "-"
+          format: (risk) => risk?.reference || "-",
         },
-        { header: "Library Ref Type", key: "preventiveDetectiveControl", width: 25 },
+        {
+          header: "Library Ref Type",
+          key: "preventiveDetectiveControl",
+          width: 25,
+        },
         { header: "Control Owner", key: "ownerControl", width: 25 },
         { header: "Control Nominee", key: "nomineeControl", width: 25 },
         {
           header: "Review Date",
           key: "reviewDate",
-          format: (date) => date ? new Date(date).toLocaleDateString() : "-"
+          format: (date) => (date ? new Date(date).toLocaleDateString() : "-"),
         },
         { header: "Assessment Frequency", key: "frequence" },
         {
           header: "Next Assessment Due On",
           key: "nextAssessMent",
-          format: (date) => date ? new Date(date).toLocaleDateString() : "-",
-          width: 20
+          format: (date) => (date ? new Date(date).toLocaleDateString() : "-"),
+          width: 20,
         },
         {
           header: "Last Assessment Date",
           key: "lastAssessmentDate",
-          format: (date) => date ? new Date(date).toLocaleDateString() : "-",
-          width: 20
+          format: (date) => (date ? new Date(date).toLocaleDateString() : "-"),
+          width: 20,
         },
-        { header: "Assessed By", key: "assessedBy", width: 20 }
-      ]
+        { header: "Assessed By", key: "assessedBy", width: 20 },
+      ],
     });
   };
 
   return (
     <div style={{ overflowX: "auto" }}>
-      <Flex alignItems='center' justifyContent='space-between'>
+      <Flex alignItems="center" justifyContent="space-between">
         <Text fontSize="xl" fontWeight="bold" mb={4}>
           Control List
         </Text>
@@ -109,8 +113,7 @@ export default function ControlTable({ reports, selectedData, loading }) {
                 justifyContent: "flex-end",
                 marginBottom: "20px",
               }}
-            >
-            </div>
+            ></div>
           </div>
 
           <table
@@ -270,7 +273,9 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       verticalAlign: "top",
                     }}
                   >
-                    <div style={{ fontWeight: "bold" }}>{`ENT${item.entitie.referenceId}` || "-"}</div>
+                    <div style={{ fontWeight: "bold" }}>
+                      {`ENT${item.entitie.referenceId}` || "-"}
+                    </div>
                     <div style={{ marginTop: "4px", lineHeight: "1.4" }}>
                       {item.entitie.description || "-"}
                     </div>
@@ -367,8 +372,10 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       verticalAlign: "top",
                     }}
                   >
-                    {item.lastAssessmentDate
-                      ? new Date(item.lastAssessmentDate).toLocaleDateString()
+                    {item.history[0]?.createdAt
+                      ? new Date(
+                          item.history[0]?.createdAt
+                        ).toLocaleDateString()
                       : "-"}
                   </td>
                   <td
@@ -405,10 +412,10 @@ export default function ControlTable({ reports, selectedData, loading }) {
                       }}
                     >
                       {item.history.length === 0 ||
-                        !item.history.some(
-                          (historyItem) =>
-                            historyItem.coutAnnually === selectedData.session
-                        )
+                      !item.history.some(
+                        (historyItem) =>
+                          historyItem.coutAnnually === selectedData.session
+                      )
                         ? "No"
                         : "Yes"}
                     </span>
