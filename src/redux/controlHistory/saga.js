@@ -30,10 +30,9 @@ function* update(action) {
         let link = `${url}/api/v1/history/updateHistory/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.controlHistoryData));
         console.log("data:::/", data)
-        if (data.message === "Success") {
+        if (data.statut === 200) {
             yield put({ type: types.UPDATE_CONTROLHISTORY_SUCCESS, payload: data.data.controlHistory});
-            toast.success("Entity updated successfully");
-            yield put({ type: types.GET_CONTROLHISTORIES_REQUEST});
+            toast.success(data.message);
         } else {
             yield put({ type: types.UPDATE_CONTROLHISTORY_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.message);

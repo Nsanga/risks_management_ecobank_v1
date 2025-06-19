@@ -25,6 +25,24 @@ function* list(action) {
     }
 }
 
+function* fetchOne(action) {
+    const { id } = action.payload;
+    try {
+        const link = `${url}/api/v1/risks-controls/specific-risk-or-control?idControl=${id}`;
+        const data = yield getRequest(link);
+        console.log('dataADD::', data);
+
+        if (data.success === true) {
+            yield put({ type: types.GET_ENTITYRISKCONTROL_SUCCESS, payload: { data: data.data } });
+        } else {
+            yield put({ type: types.GET_ENTITYRISKCONTROL_FAILED, payload: "Échec lors de la récupération des contrôles de risques de l'entité" });
+        }
+    } catch (error) {
+        console.error(error);
+        yield put({ type: types.GET_ENTITYRISKCONTROL_FAILED, payload: error.message || "Une erreur s'est produite" });
+    }
+}
+
 function* update(action) {
     // console.log("action =>", action.payload.entityRiskControlData)
     try {
@@ -107,6 +125,7 @@ function* move(action) {
 
 export default function* EntityRiskControlSaga() {
     yield takeLatest(types.GET_ENTITYRISKCONTROLS_REQUEST, list);
+    yield takeLatest(types.GET_ENTITYRISKCONTROL_REQUEST, fetchOne);
     yield takeLatest(types.UPDATE_ENTITYRISKCONTROL_REQUEST, update);
     yield takeLatest(types.DELETE_ENTITYRISKCONTROL_REQUEST, deleteEntityRiskControl);
     yield takeLatest(types.COPY_ENTITYRISKCONTROL_REQUEST, copy);

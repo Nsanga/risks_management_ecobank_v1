@@ -26,6 +26,7 @@ import ActionModal from "./ActionModal";
 import { AddAction } from "redux/actions/action";
 import { listControlActions } from "redux/actions/action";
 import { updateControlHistory } from "redux/controlHistory/action";
+import { fetchOneRiskControls } from "redux/entityRiskControl/action";
 
 const RiskControlAssessment = ({
   selectedFrequency,
@@ -38,6 +39,8 @@ const RiskControlAssessment = ({
   const profiles = useSelector(state => state.ProfileReducer.profiles);
   const entities = useSelector(state => state.EntityReducer.entities);
   const actions = useSelector(state => state.ActionReducer.actions);
+  const loadingSave = useSelector(state => state.ControlHistoryReducer.loding);
+  const {riskControl, loading} = useSelector(state => state.EntityRiskControlReducer);
 
   const userRole = localStorage.getItem('role');
 
@@ -74,6 +77,8 @@ const RiskControlAssessment = ({
     attested: false,
   });
 
+  const controlId = selectedControl._id;
+
   // Ajoutez cet useEffect pour calculer automatiquement closeDate
   useEffect(() => {
     if (formData.dueOn) {
@@ -102,10 +107,10 @@ const RiskControlAssessment = ({
   });
 
   useEffect(() => {
-    const methodology = selectedControl?.monitoringMethodology;
+    const methodology = riskControl?.monitoringMethodology;
     setMonitoring(methodology || "");
 
-    const historyControl = selectedControl?.historyControl || [];
+    const historyControl = riskControl?.historyControl || [];
     if (historyControl.length > 0) {
       const latestHistory = historyControl[historyControl.length - 1]; // Dernier élément
       setFormData(prev => ({
@@ -119,10 +124,9 @@ const RiskControlAssessment = ({
         attested: latestHistory.attested || false,
       }));
     }
-    console.log("actions:", actions)
-  }, [dispatch, selectedControl, selectedEntityDescription, userName]);
-
-  const controlId = selectedControl._id;
+    dispatch(fetchOneRiskControls(controlId));
+    // console.log("actions:", actions)
+  }, [dispatch, controlId]);
 
   const handleSave = async () => {
     // Vérification de la condition sur la performance
@@ -132,15 +136,17 @@ const RiskControlAssessment = ({
       return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
     } else {
       // Sinon, procéder à l'enregistrement des données
+
       await dispatch(
         AddControlHistory({
           ...formData,
           idControl: controlId,
           frequency: selectedFrequency,
           author: localStorage.getItem("username"),
+          attested: false,
         })
       );
-      dispatch(listControlActions({ idControl: controlId }));
+      dispatch(fetchOneRiskControls(controlId));
     }
   };
 
@@ -181,17 +187,19 @@ const RiskControlAssessment = ({
       await dispatch(
         updateControlHistory(id, data)
       );
-      dispatch(listControlActions({ idControl: controlId }));
+
+      dispatch(fetchOneRiskControls(controlId));
     }
   };
 
-  const lastHistory = selectedControl.historyControl.length > 0
-    ? selectedControl.historyControl[selectedControl.historyControl.length - 1]
+  const lastHistory = riskControl?.historyControl.length > 0
+    ? riskControl?.historyControl[riskControl?.historyControl.length - 1]
     : null;
 
-  const isDisabledToAdmin = selectedControl.historyControl.length === 0 || lastHistory.attested || userRole === "inputeurs"
-  const isDisabledUnattest = selectedControl.historyControl.length === 0 || !lastHistory.attested || userRole === "inputeurs";
-  const isDisabledAmendAttest = selectedControl.historyControl.length === 0 || userRole !== "inputeurs" || (lastHistory.closeDate && new Date(lastHistory.closeDate) < new Date());
+  const isDisabledToAdmin = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "inputeurs"
+  const isDisabledUnattest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "inputeurs";
+  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
+  const isDisabledSave = userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) > new Date());
 
   return (
     <Box fontSize="12px">
@@ -208,8 +216,8 @@ const RiskControlAssessment = ({
             </Tr>
           </Thead>
           <Tbody>
-            {selectedControl.historyControl.length > 0 ? (
-              selectedControl.historyControl.slice(-5).map((controlHistory) => (
+            {riskControl?.historyControl.length > 0 ? (
+              riskControl?.historyControl.slice(-5).map((controlHistory) => (
                 <Tr
                   key={controlHistory._id}
                   onClick={() => {
@@ -332,10 +340,10 @@ const RiskControlAssessment = ({
       </Flex>
 
       <Flex justifyContent="center" gap={4} mt={6}>
-        <Button onClick={() => handleUpdate(lastHistory._id)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>Amend Assess</Button>
-        <Button onClick={() => handleUpdate(lastHistory._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>UnAttest Assess</Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={(selectedControl?.historyControl?.length > 0 && !selectedControl.historyControl[0]?.attested) || userRole !== "inputeurs"}>Save</Button>
-        <Button onClick={() => handleUpdate(lastHistory._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}>Attest Assess</Button>
+        <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>{loading ? 'Amend in progress...' : 'Amend Assess'}</Button>
+        <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>{loading ? "In progress..." : "UnAttest Assess"}</Button>
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={isDisabledSave}> {loadingSave ? "In progress..." : "Save"} </Button>
+        <Button onClick={() => handleUpdate(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}> {loading ? "In progress..." : "Attest Assess"} </Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
