@@ -8,7 +8,7 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 
 
-function* list(action) {
+function* list() {
     try {
         let link = `${url}/api/v1/risk-controls/all`;
         console.log(link)
@@ -34,7 +34,6 @@ function* update(action) {
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_RISKCONTROL_SUCCESS, payload: data.data.riskControl });
             toast.success(data.data.message);
-            yield put({ type: types.GET_RISKCONTROLS_REQUEST});
         } else {
             yield put({ type: types.UPDATE_RISKCONTROL_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.data.message);
@@ -54,7 +53,6 @@ function* add(action) {
         if (data.message === 'Created') {
             yield put({ type: types.ADD_RISKCONTROL_SUCCESS, payload: data });
             toast.success(data.data.message);
-            yield put({ type: types.GET_RISKCONTROLS_REQUEST });
         } else {
             toast.error("Aucune donnée n'a été ajouté.");
             yield put({ type: types.ADD_RISKCONTROL_FAILED, payload: "Échec lors de la creation de l'évenement" });

@@ -25,6 +25,7 @@ import { AddControlHistory } from "redux/controlHistory/action";
 import ActionModal from "./ActionModal";
 import { AddAction } from "redux/actions/action";
 import { listControlActions } from "redux/actions/action";
+import { updateControlHistory } from "redux/controlHistory/action";
 
 const RiskControlAssessment = ({
   selectedFrequency,
@@ -162,6 +163,36 @@ const RiskControlAssessment = ({
     onClose();
   }
 
+  const handleUpdate = async (id, attest) => {
+    // Vérification de la condition sur la performance
+    if (formData.performance === "Unsatisfactory") {
+      // Si la performance n'est pas "Satisfaisant", ouvrir la modal
+      onOpen();
+      return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
+    } else {
+      const data = {
+        ...formData,
+        id,
+        idControl: controlId,
+        frequency: selectedFrequency,
+        attested: attest
+      }
+      // Sinon, procéder à l'enregistrement des données
+      await dispatch(
+        updateControlHistory(id, data)
+      );
+      dispatch(listControlActions({ idControl: controlId }));
+    }
+  };
+
+  const lastHistory = selectedControl.historyControl.length > 0
+    ? selectedControl.historyControl[selectedControl.historyControl.length - 1]
+    : null;
+
+  const isDisabledToAdmin = selectedControl.historyControl.length === 0 || lastHistory.attested || userRole === "inputeurs"
+  const isDisabledUnattest = selectedControl.historyControl.length === 0 || !lastHistory.attested || userRole === "inputeurs";
+  const isDisabledAmendAttest = selectedControl.historyControl.length === 0 || userRole !== "inputeurs" || (lastHistory.closeDate && new Date(lastHistory.closeDate) < new Date());
+
   return (
     <Box fontSize="12px">
       <Flex flexDirection="column" gap={4} alignItems="start">
@@ -261,50 +292,50 @@ const RiskControlAssessment = ({
               />
             </FormControl>
             <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
-            <FormControl>
-              <FormLabel fontSize="sm">Assessed On</FormLabel>
-              <Input
-                fontSize="sm"
-                type="date"
-                placeholder="Enter assessed date"
-                value={formData.assessedOn}
-                onChange={(e) =>
-                  setFormData({ ...formData, assessedOn: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm">Due On</FormLabel>
-              <Input
-                fontSize="sm"
-                type="date"
-                value={formData.dueOn}
-                onChange={(e) =>
-                  setFormData({ ...formData, dueOn: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm">Closed date</FormLabel>
-              <Input
-                fontSize="sm"
-                type="date"
-                value={formData.closeDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, closeDate: e.target.value })
-                }
-              />
-            </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm">Assessed On</FormLabel>
+                <Input
+                  fontSize="sm"
+                  type="date"
+                  placeholder="Enter assessed date"
+                  value={formData.assessedOn}
+                  onChange={(e) =>
+                    setFormData({ ...formData, assessedOn: e.target.value })
+                  }
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm">Due On</FormLabel>
+                <Input
+                  fontSize="sm"
+                  type="date"
+                  value={formData.dueOn}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dueOn: e.target.value })
+                  }
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel fontSize="sm">Closed date</FormLabel>
+                <Input
+                  fontSize="sm"
+                  type="date"
+                  value={formData.closeDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, closeDate: e.target.value })
+                  }
+                />
+              </FormControl>
             </Flex>
           </Box>
         </Flex>
       </Flex>
 
       <Flex justifyContent="center" gap={4} mt={6}>
-        <Button fontSize="sm" colorScheme="blue" variant="outline" disabled={userRole === "inputeurs"}>Amend Assess</Button>
-        <Button fontSize="sm" colorScheme="red" variant="outline" disabled={userRole === "inputeurs"}>UnAttest Assess</Button>
+        <Button onClick={() => handleUpdate(lastHistory._id)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>Amend Assess</Button>
+        <Button onClick={() => handleUpdate(lastHistory._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>UnAttest Assess</Button>
         <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={(selectedControl?.historyControl?.length > 0 && !selectedControl.historyControl[0]?.attested) || userRole !== "inputeurs"}>Save</Button>
-        <Button fontSize="sm" colorScheme="blue" variant="outline" disabled={userRole === "inputeurs"}>Attest Assess</Button>
+        <Button onClick={() => handleUpdate(lastHistory._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}>Attest Assess</Button>
         <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
