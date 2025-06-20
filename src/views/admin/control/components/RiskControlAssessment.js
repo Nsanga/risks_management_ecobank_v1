@@ -115,13 +115,24 @@ const RiskControlAssessment = ({
       const latestHistory = historyControl[historyControl.length - 1]; // Dernier élément
       setFormData(prev => ({
         ...prev,
-        performance: latestHistory.performance || "Not Assessed",
-        assessedBy: latestHistory.assessedBy || userName,
-        assessedOn: latestHistory.assessedOn || new Date().toISOString().split('T')[0],
-        dueOn: latestHistory.dueOn || "",
-        closeDate: latestHistory.closeDate || "",
-        note: latestHistory.note || "",
-        attested: latestHistory.attested || false,
+        performance: latestHistory.performance,
+        assessedBy: latestHistory.assessedBy,
+        assessedOn: latestHistory.assessedOn,
+        dueOn: latestHistory.dueOn, 
+        closeDate: latestHistory.closeDate,
+        note: latestHistory.note,
+        attested: latestHistory.attested, 
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        performance: "Not Assessed",
+        assessedBy: userName,
+        assessedOn: new Date().toISOString().split('T')[0],
+        dueOn: "", 
+        closeDate: "",
+        note: "",
+        attested: false,
       }));
     }
     dispatch(fetchOneRiskControls(controlId));
@@ -198,7 +209,7 @@ const RiskControlAssessment = ({
 
   const isDisabledToAdmin = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "inputeurs"
   const isDisabledUnattest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "inputeurs";
-  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
+  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
   const isDisabledSave = userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) > new Date());
 
   return (

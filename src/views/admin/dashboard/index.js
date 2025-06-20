@@ -117,7 +117,7 @@ const Dashboard = ({ stats, loading }) => {
   useEffect(() => {
     dispatch(allStats());
   }, [dispatch]);
-  console.log("stats:", stats)
+
   const data = {
     "status": 200,
     "message": "Success",

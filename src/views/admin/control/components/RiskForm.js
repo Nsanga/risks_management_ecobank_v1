@@ -397,7 +397,7 @@ function RiskForm({
         >
           Home
         </Button>
-        <Button
+        {/* <Button
           fontSize={12}
           colorScheme="green"
           variant="outline"
@@ -420,7 +420,7 @@ function RiskForm({
           leftIcon={<EditIcon />}
         >
           Save
-        </Button>
+        </Button> */}
         <Button
           fontSize={12}
           colorScheme="teal"
@@ -430,7 +430,7 @@ function RiskForm({
         >
           Amend
         </Button>
-        <Button
+        {/* <Button
           fontSize={12}
           colorScheme="red"
           variant="outline"
@@ -445,7 +445,7 @@ function RiskForm({
           leftIcon={<CheckIcon />}
         >
           Save and Approve
-        </Button>
+        </Button> */}
       </HStack>
     </Box>
   );

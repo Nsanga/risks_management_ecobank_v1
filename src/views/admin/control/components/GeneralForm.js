@@ -63,9 +63,14 @@ const GeneralForm = ({
     { id: 2, label: "Weekly" },
     { id: 3, label: "Monthly" },
     { id: 4, label: "Quarterly" },
-    { id: 5, label: "Semi-Annually" },
-    { id: 6, label: "Annually" },
+    // { id: 5, label: "Semi-Annually" },
+    // { id: 6, label: "Annually" },
   ];
+
+  const frequenciesOperationOptions = frequencies.map((frequency) => ({
+    value: frequency.label,
+    label: frequency.label,
+  }));
 
   const frequenciesOptions = frequencies.map((frequency) => ({
     value: frequency.label,
@@ -386,8 +391,8 @@ const GeneralForm = ({
                       name="frequency"
                       placeholder="Select frequency"
                       styles={customStyles}
-                      options={frequenciesOptions}
-                      value={frequenciesOptions?.find(
+                      options={frequenciesOperationOptions}
+                      value={frequenciesOperationOptions?.find(
                         (option) => option.value === formData.frequency
                       )}
                       onChange={handleFrequencyChange}
@@ -520,14 +525,14 @@ const GeneralForm = ({
         </Box>
       </SimpleGrid>
       <HStack spacing={4} mt={6} justify="center">
-        <Button
+        {/* <Button
           fontSize={12}
           colorScheme="blue"
           variant="outline"
           leftIcon={<AddIcon />}
         >
           Add Control
-        </Button>
+        </Button> */}
         <Button
           fontSize={12}
           colorScheme="green"
@@ -537,7 +542,7 @@ const GeneralForm = ({
         >
           Amend Control
         </Button>
-        <Button
+        {/* <Button
           fontSize={12}
           colorScheme="red"
           variant="outline"
@@ -553,7 +558,7 @@ const GeneralForm = ({
           onClick={handleFormSubmit}
         >
           Save
-        </Button>
+        </Button> */}
         <Button
           fontSize={12}
           colorScheme="red"
