@@ -218,10 +218,7 @@ const RiskControlAssessment = ({
       return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
     } else {
       const data = {
-        ...formData,
-        id,
         idControl: controlId,
-        frequency: selectedFrequency,
         attested: attest
       }
       // Sinon, procéder à l'enregistrement des données
@@ -243,7 +240,7 @@ const RiskControlAssessment = ({
 
   const isDisabledToAdmin = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "inputeurs"
   const isDisabledUnattest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "inputeurs";
-  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
+  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
   const isDisabledSave = userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) > new Date());
 
   return (

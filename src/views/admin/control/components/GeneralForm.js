@@ -40,6 +40,8 @@ const GeneralForm = ({
     // Initialiser avec la fréquence par défaut
     return selectedControl?.frequence || '';
   });
+  const [amend, setAmend] = useState(false);
+
   const dispatch = useDispatch();
 
   const userRole = localStorage.getItem('role')
@@ -134,12 +136,11 @@ const GeneralForm = ({
     }),
   };
 
-  // Fonction pour gérer la soumission du formulaire
-  const handleFormSubmit = () => {
-    // handleSubmit(payload); // Appeler handleSubmit avec le payload
+  const handleAmendControl = async () => {
+    setAmend(true);
   };
 
-  const handleAmendControl = async () => {
+  const handleFormSubmit = async () => {
     const postData = {
       itemIds: [selectedControl?._id],
       itemType: "control",
@@ -277,6 +278,7 @@ const GeneralForm = ({
                 name="controlCategory"
                 value={formData.controlCategory}
                 onChange={handleChange}
+                readOnly={!amend}
               />
             </HStack>
           </FormControl>
@@ -361,6 +363,7 @@ const GeneralForm = ({
                 name="reviewDate"
                 value={formData.reviewDate}
                 onChange={handleChange}
+                readOnly={!amend}
               />
             </HStack>
           </FormControl>
@@ -424,6 +427,7 @@ const GeneralForm = ({
                         });
                       }
                     }}
+                    readOnly={!amend}
                   />
                 </HStack>
               </FormControl>
