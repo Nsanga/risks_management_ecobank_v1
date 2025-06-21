@@ -132,7 +132,7 @@ const RiskControl = ({
       >
         <TabList>
           <Tab>Details</Tab>
-          <Tab isDisabled ={userRole === "inputeurs"} _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}>History</Tab>
+          <Tab isDisabled={userRole === "inputeurs"} _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}>History</Tab>
           <Tab>Documents</Tab>
           <Tab>Actions</Tab>
           <Tab>Risk focus</Tab>
@@ -163,6 +163,8 @@ const RiskControl = ({
               selectedEntityDescription={selectedEntityDescription}
               handleChange={handleChange}
               selectedFrequency={selectedFrequency}
+              activeSubTab={activeSubTab} // Passer l'état du sous-onglet
+              setActiveSubTab={setActiveSubTab} // Passer la fonction pour changer le sous-onglet
             />
           </TabPanel>
           <TabPanel>

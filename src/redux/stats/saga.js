@@ -7,7 +7,6 @@ function* allStats() {
     try {
         let link = `${url}/api/v1/stats/get-stats`;
         const response = yield getRequest(link);
-        console.log("API Response::", response);
         if (response.status === 200) {
             yield put({ type: types.GET_STATS_SUCCESS, payload: { data: response.data } });
         } else {

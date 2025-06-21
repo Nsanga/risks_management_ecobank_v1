@@ -12,7 +12,6 @@ function* list(action) {
     try {
         const link = `${url}/api/v1/risks-controls/get-entity`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data);
 
         if (data.success === true) {
             yield put({ type: types.GET_ENTITYRISKCONTROLS_SUCCESS, payload: { data: data.data } });
@@ -30,7 +29,6 @@ function* fetchOne(action) {
     try {
         const link = `${url}/api/v1/risks-controls/specific-risk-or-control?idControl=${id}`;
         const data = yield getRequest(link);
-        console.log('dataADD::', data);
 
         if (data.success === true) {
             yield put({ type: types.GET_ENTITYRISKCONTROL_SUCCESS, payload: { data: data.data } });
@@ -44,11 +42,9 @@ function* fetchOne(action) {
 }
 
 function* update(action) {
-    // console.log("action =>", action.payload.entityRiskControlData)
     try {
         let link = `${url}/api/v1/risks-controls/update`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityRiskControlData));
-        // console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_SUCCESS, payload: { data: data.data } });
             yield put({ type: types.GET_ENTITYRISKCONTROLS_SUCCESS, payload: { data: data.data } });
@@ -89,7 +85,6 @@ function* copy(action) {
     try {
         const link = `${url}/api/v1/risks-controls/copy`;
         const data = yield call(postRequest, link, JSON.stringify(action.payload));
-        console.log('dataCOPY::', data);
 
         if (data.success === true) {
             // Rafraîchir la liste après une copie réussie
@@ -108,7 +103,6 @@ function* move(action) {
     try {
         const link = `${url}/api/v1/risks-controls/move`;
         const data = yield call(postRequest, link, JSON.stringify(action.payload));
-        console.log('dataMOVE::', data);
 
         if (data.success === true) {
             toast.success(data.message);

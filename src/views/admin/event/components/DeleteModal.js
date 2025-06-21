@@ -27,7 +27,6 @@ const DeleteModal = ({ selectedEntity, isDeleteDisabled }) => {
     const history = useHistory();
 
     const handleDelete = async () => {
-        console.log(selectedEntity)
         await dispatch(deleteEvent(selectedEntity._id));
         onClose();
         setReason("")

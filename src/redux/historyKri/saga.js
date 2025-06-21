@@ -12,7 +12,6 @@ function* list(action) {
     try {
         let link = `${url}/api/v1/historiqueKRI/getHistoriqueKRIByIdKeyIndicator`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log(data)
         if (data.statut === 200) {
             yield put({ type: types.GET_HISTORIESKRI_SUCCESS, payload: data });
         } else {
@@ -29,7 +28,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/history/updateHistory/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.HistoryKRIData));
-        console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_HISTORYKRI_SUCCESS, payload: data.data.HistoryKRI});
             toast.success("Entity updated successfully");
@@ -48,7 +46,6 @@ function* add(action) {
     try {
         const link = `${url}/api/v1/historiqueKRI/postHistoriqueKRI`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
 
         if (data.statut === 201) { 
             yield put({ type: types.ADD_HISTORYKRI_SUCCESS, payload: data });

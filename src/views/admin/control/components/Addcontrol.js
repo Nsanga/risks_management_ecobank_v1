@@ -55,7 +55,6 @@ import KeyIndicatorComponent from "views/admin/KRI/components/KeyIndicatorCompon
 import KriCard from "views/admin/KRI/components/KriCard";
 
 function AddControl({ entityRiskControls, loading, entities, profiles, events, actions, keyIndicator }) {
-  // console.log("keyIndicator:", keyIndicator);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [selectedControl, setSelectedControl] = useState(null);

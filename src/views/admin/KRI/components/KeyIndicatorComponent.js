@@ -41,6 +41,7 @@ const KeyIndicatorComponent = ({
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [dataHostorie, setDataHostorie] = useState([]);
+  const [amend, setAmend] = useState(false);
 
   const [isHistory, setIsHistory] = useState(false);
 
@@ -193,7 +194,7 @@ const KeyIndicatorComponent = ({
         setValue(
           "category",
           categoryOptions.find((opt) => opt.value === kriData.category) ||
-            categoryOptions[0]
+          categoryOptions[0]
         );
       }
 
@@ -253,6 +254,7 @@ const KeyIndicatorComponent = ({
   }, [kriData, setValue, profilesOptions]);
 
   const onSubmit = async (data) => {
+    setAmend(false)
     // Transformation des données avant soumission
     const formData = {
       ...data,
@@ -274,14 +276,11 @@ const KeyIndicatorComponent = ({
       setIsModalOpen(true);
     } else {
       // Soumettre directement si la condition n'est pas remplie
-      console.log("Form Submitted:", formData);
-      // Ici vous ajouteriez votre logique de soumission réelle
     }
     const postData = {
       itemIds: [kriData?._id],
       updates: formData,
     };
-    // console.log("postData:", postData);
     await dispatch(updateKeyIndicator(postData));
     if (selectedEntity) {
       try {
@@ -320,6 +319,10 @@ const KeyIndicatorComponent = ({
   };
 
   const disabledOptions = ["daily", "weekly"];
+
+  const handleAmend = () => {
+    setAmend(true);
+  }
 
   return (
     <Box p={5}>
@@ -402,6 +405,7 @@ const KeyIndicatorComponent = ({
                         value={watch("owner")}
                         placeholder="Select owner"
                         isClearable
+                        isDisabled={!amend}
                       />
                     </Box>
                   </FormControl>
@@ -424,6 +428,7 @@ const KeyIndicatorComponent = ({
                         value={watch("nominee")}
                         placeholder="Select nominee"
                         isClearable
+                        isDisabled={!amend}
                       />
                     </Box>
                   </FormControl>
@@ -446,6 +451,7 @@ const KeyIndicatorComponent = ({
                         value={watch("reviewer")}
                         placeholder="Select reviewer"
                         isClearable
+                        isDisabled={!amend}
                       />
                     </Box>
                   </FormControl>
@@ -463,6 +469,7 @@ const KeyIndicatorComponent = ({
                       fontSize="12px"
                       {...register("reviewDate")}
                       type="date"
+                      readOnly={!amend}
                     />
                   </FormControl>
 
@@ -471,8 +478,8 @@ const KeyIndicatorComponent = ({
                     alignItems="center"
                     marginBottom={4}
                   >
-                    <Checkbox {...register("isActive")} defaultChecked mr={2} />
-                    <FormLabel mb="0">Active Key Indicator</FormLabel>
+                    <Checkbox {...register("isActive")} defaultChecked mr={2} isDisabled={!amend} />
+                    <FormLabel mb="0" fontSize="12px">Active Key Indicator</FormLabel>
                   </FormControl>
 
                   <FormControl>
@@ -481,6 +488,7 @@ const KeyIndicatorComponent = ({
                       fontSize="12px"
                       {...register("detailedDescription")}
                       defaultValue={kriData.riskIndicatorDescription}
+                      readOnly={!amend}
                     />
                   </FormControl>
                 </Box>
@@ -500,6 +508,7 @@ const KeyIndicatorComponent = ({
                       fontSize="12px"
                       {...register("typeOfKi")}
                       defaultValue={kriData.type}
+                      readOnly={!amend}
                     />
                   </FormControl>
 
@@ -523,6 +532,7 @@ const KeyIndicatorComponent = ({
                             setValue("thresholdType", selected)
                           }
                           value={watch("thresholdType")}
+                          isDisabled={!amend}
                         />
                       </Box>
                     </FormControl>
@@ -670,7 +680,10 @@ const KeyIndicatorComponent = ({
                 </Box>
               </SimpleGrid>
               <Stack direction="row" spacing={4} mt={6} justify="flex-end">
-                <Button colorScheme="blue" type="submit" fontSize="12px">
+                <Button onClick={handleAmend} colorScheme="blue" type="button" fontSize="12px">
+                  Amend
+                </Button>
+                <Button colorScheme="green" type="submit" fontSize="12px" disabled={!amend}>
                   Save
                 </Button>
                 {!search && (

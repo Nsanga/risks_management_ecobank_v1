@@ -65,8 +65,6 @@ const Event = ({ profiles, entities }) => {
   const iframeRef = useRef(null);
   const history = useHistory();
 
-  console.log("evttttt:::", event);
-
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -11,9 +11,7 @@ import { deleteRequest } from 'helper/api';
 function* list() {
     try {
         let link = `${url}/api/v1/profiles/all`;
-        console.log(link)
         const data = yield getRequest(link);
-        console.log(data)
         if (data.message === "Success") {
             yield put({ type: types.GET_PROFILES_SUCCESS, payload: data });
         } else {
@@ -30,7 +28,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/profiles/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.profileData));
-        console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_PROFILE_SUCCESS, payload: data.data.profile });
             toast.success(data.data.message);

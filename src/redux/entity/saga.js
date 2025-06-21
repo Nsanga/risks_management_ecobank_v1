@@ -12,7 +12,6 @@ function* list(action) {
     try {
         let link = `${url}/api/v1/entities/all`;
         const data = yield getRequest(link);
-        console.log(data)
         if (data.message === "Success") {
             yield put({ type: types.GET_ENTITIES_SUCCESS, payload: data });
         } else {
@@ -29,7 +28,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/entities/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityData));
-        console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_ENTITY_SUCCESS, payload: data.data.entity});
             toast.success("Entity updated successfully");
@@ -48,7 +46,6 @@ function* add(action) {
     try {
         const link = `${url}/api/v1/entities/create`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
 
         if (data.message === 'Created') {
             yield put({ type: types.ADD_ENTITY_SUCCESS, payload: data });

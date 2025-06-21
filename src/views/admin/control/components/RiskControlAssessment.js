@@ -32,6 +32,7 @@ const RiskControlAssessment = ({
   selectedFrequency,
   selectedControl,
   selectedEntityDescription,
+  setActiveSubTab
 }) => {
   const userName = localStorage.getItem("username");
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const RiskControlAssessment = ({
   const entities = useSelector(state => state.EntityReducer.entities);
   const actions = useSelector(state => state.ActionReducer.actions);
   const loadingSave = useSelector(state => state.ControlHistoryReducer.loding);
-  const {riskControl, loading} = useSelector(state => state.EntityRiskControlReducer);
+  const { riskControl, loading } = useSelector(state => state.EntityRiskControlReducer);
 
   const userRole = localStorage.getItem('role');
 
@@ -106,38 +107,67 @@ const RiskControlAssessment = ({
     evolutionAction: "",
   });
 
+  // Réinitialiser le formulaire quand le contrôle change
   useEffect(() => {
-    const methodology = riskControl?.monitoringMethodology;
-    setMonitoring(methodology || "");
+    // Réinitialiser avec les valeurs par défaut
+    setFormData({
+      performance: "Not Assessed",
+      assessedBy: userName,
+      assessedOn: new Date().toISOString().split('T')[0],
+      dueOn: "",
+      closeDate: "",
+      note: "",
+      attested: false,
+    });
 
-    const historyControl = riskControl?.historyControl || [];
-    if (historyControl.length > 0) {
-      const latestHistory = historyControl[historyControl.length - 1]; // Dernier élément
+    // Charger les données du nouveau contrôle
+    if (controlId) {
+      dispatch(fetchOneRiskControls(controlId));
+    }
+  }, [controlId, dispatch, userName]);
+
+  // Mettre à jour le formulaire quand les données sont chargées
+  useEffect(() => {
+    if (!riskControl || riskControl._id !== controlId) return;
+
+    // Mise à jour de la méthodologie
+    if (selectedControl?.monitoringMethodology) {
+      setMonitoring(selectedControl.monitoringMethodology);
+    }
+
+    // Préremplissage avec le dernier historique s'il existe
+    if (riskControl.historyControl?.length > 0) {
+      const latestHistory = riskControl.historyControl[riskControl.historyControl.length - 1];
+      const today = new Date().toISOString().split('T')[0];
+
+      // Vérifier si nextAssessMent existe et si closeDate correspond à aujourd'hui
+      const shouldUseNextAssessment = selectedControl?.nextAssessMent &&
+        latestHistory.closeDate === today;
+
+      // Calculer la nouvelle closeDate si nécessaire
+      let newCloseDate = latestHistory.closeDate || "";
+
+      if (shouldUseNextAssessment) {
+        // Créer une date à partir de nextAssessMent
+        const dueDate = new Date(selectedControl.nextAssessMent);
+        // Ajouter un mois
+        dueDate.setMonth(dueDate.getMonth() + 1);
+        // Formater en YYYY-MM-DD
+        newCloseDate = dueDate.toISOString().split('T')[0];
+      }
+
       setFormData(prev => ({
         ...prev,
-        performance: latestHistory.performance,
-        assessedBy: latestHistory.assessedBy,
-        assessedOn: latestHistory.assessedOn,
-        dueOn: latestHistory.dueOn, 
-        closeDate: latestHistory.closeDate,
-        note: latestHistory.note,
-        attested: latestHistory.attested, 
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        performance: "Not Assessed",
-        assessedBy: userName,
-        assessedOn: new Date().toISOString().split('T')[0],
-        dueOn: "", 
-        closeDate: "",
-        note: "",
-        attested: false,
+        performance: latestHistory.performance || "Not Assessed",
+        assessedBy: latestHistory.assessedBy || userName,
+        assessedOn: latestHistory.assessedOn || new Date().toISOString().split('T')[0],
+        dueOn: shouldUseNextAssessment ? selectedControl.nextAssessMent : (latestHistory.dueOn || ""),
+        closeDate: newCloseDate,
+        note: latestHistory.note || "",
+        attested: latestHistory.attested || false,
       }));
     }
-    dispatch(fetchOneRiskControls(controlId));
-    // console.log("actions:", actions)
-  }, [dispatch, controlId]);
+  }, [riskControl, selectedControl, userName, controlId]);
 
   const handleSave = async () => {
     // Vérification de la condition sur la performance
@@ -203,14 +233,18 @@ const RiskControlAssessment = ({
     }
   };
 
+  const handleCancel = () => {
+    setActiveSubTab(0)
+  }
+
   const lastHistory = riskControl?.historyControl.length > 0
     ? riskControl?.historyControl[riskControl?.historyControl.length - 1]
     : null;
 
   const isDisabledToAdmin = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "inputeurs"
   const isDisabledUnattest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "inputeurs";
-  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
-  const isDisabledSave = userRole !== "inputeurs" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) > new Date());
+  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
+  const isDisabledSave = userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) > new Date());
 
   return (
     <Box fontSize="12px">
@@ -355,7 +389,7 @@ const RiskControlAssessment = ({
         <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>{loading ? "In progress..." : "UnAttest Assess"}</Button>
         <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={isDisabledSave}> {loadingSave ? "In progress..." : "Save"} </Button>
         <Button onClick={() => handleUpdate(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}> {loading ? "In progress..." : "Attest Assess"} </Button>
-        <Button fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
+        <Button onClick={handleCancel} fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
       <ActionModal

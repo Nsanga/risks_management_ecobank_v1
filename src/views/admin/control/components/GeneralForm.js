@@ -505,7 +505,7 @@ const GeneralForm = ({
                   disabled={
                     (selectedControl?.historyControl?.length > 0 &&
                     !selectedControl.historyControl[0]?.attested) ||
-                    userRole !== 'inputeurs'
+                    userRole === 'validated'
                   }
                 >
                   Test du contrôle

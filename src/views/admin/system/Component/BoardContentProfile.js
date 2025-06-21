@@ -27,9 +27,6 @@ const BoardContentProfile = ({ profiles, loading, userGroups }) => {
         dispatch(listProfiles());
     }, [dispatch]);
 
-    console.log('list des users', profiles)
-
-
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };

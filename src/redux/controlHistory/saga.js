@@ -12,7 +12,6 @@ function* list() {
     try {
         let link = `${url}/api/v1/history/getHistory`;
         const data = yield getRequest(link);
-        console.log(data)
         if (data.status === 200) {
             yield put({ type: types.GET_CONTROLHISTORIES_SUCCESS, payload: data });
         } else {
@@ -29,7 +28,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/history/updateHistory/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.controlHistoryData));
-        console.log("data:::/", data)
         if (data.statut === 200) {
             yield put({ type: types.UPDATE_CONTROLHISTORY_SUCCESS, payload: data.data.controlHistory});
             toast.success(data.message);
@@ -47,7 +45,6 @@ function* add(action) {
     try {
         const link = `${url}/api/v1/history/postHistory`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
 
         if (data.statut === 200) { 
             yield put({ type: types.ADD_CONTROLHISTORY_SUCCESS, payload: data });

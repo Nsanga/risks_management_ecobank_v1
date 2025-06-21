@@ -11,7 +11,6 @@ function* listByEntity(action) {
     try {
         let link = `${url}/api/v1/actions/getRapport`;
         const response = yield postRequest(link, JSON.stringify(action.payload));
-        console.log("API Response::", response);
         if (response.success === true) {
             yield put({ type: types.GET_ENTITY_REPORTS_SUCCESS, payload: { data: response.data } });
         } else {
@@ -28,7 +27,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/actions/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.actionData));
-        console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_REPORT_SUCCESS, payload: data.data.action });
             toast.success("Action updated successfully");
@@ -47,7 +45,6 @@ function* add(action) {
     try {
         const link = `${url}/api/v1/actions/postAction`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
 
         if (data.statut === 200) {
             yield put({ type: types.ADD_REPORT_SUCCESS, payload: data });

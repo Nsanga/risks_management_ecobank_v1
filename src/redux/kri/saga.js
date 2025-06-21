@@ -11,7 +11,6 @@ function* list() {
     try {
         let link = `${url}/api/v1/risks-controls/getKeyIndicator`;
         const response = yield getRequest(link);
-        console.log("response triggered", response);
         
         if (response.success === true) {
             // Récupérer tous les dataKeyIndicators de toutes les entités
@@ -39,11 +38,9 @@ function* list() {
 }
 
 function* listByEntity(action) {
-    console.log("actions.action::", action)
     try {
         let link = `${url}/api/v1/risks-controls/get-KeyIndicator`;
         const response = yield postRequest(link, JSON.stringify(action.payload));
-        console.log("API Response::", response.data.dataKeyIndicators);
         if (response.success === true) {
             yield put({ type: types.GET_ENTITY_KRI_SUCCESS, payload: response.data.dataKeyIndicators });
         } else {
@@ -59,7 +56,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/risks-controls/updateKri`;
         const data = yield putRequest(link, JSON.stringify(action.payload.keyIndicatorData));
-        console.log("data:::/", data)
         if (data.message === "Mise à jour réussie") {
             yield put({ type: types.UPDATE_KRI_SUCCESS, payload: data.data});
             toast.success("Risk indicator updated successfully");
@@ -77,7 +73,6 @@ function* add(action) {
     try {
         const link = `${url}/api/v1/actions/postAction`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
 
         if (data.statut === 200) { 
             yield put({ type: types.ADD_KRI_SUCCESS, payload: data });

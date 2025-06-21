@@ -12,7 +12,6 @@ function* list() {
     try {
         let link = `${url}/api/v1/events/all`;
         const data = yield getRequest(link);
-        console.log(data)
         if (data.message === "Success") {
             yield put({ type: types.GET_EVENTS_SUCCESS, payload: data });
         } else {
@@ -28,7 +27,6 @@ function* listByEntity(action) {
     try {
         let link = `${url}/api/v1/events/${action.payload}`;
         const data = yield getRequest(link);
-        console.log(data)
         if (data.status === 200) {
             yield put({ type: types.GET_EVENTS_BY_ENTITY_SUCCESS, payload: data });
         } else {
@@ -45,7 +43,6 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/events/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.eventData));
-        console.log("data:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_EVENT_SUCCESS, payload: data.data.event });
             toast.success(data.data.message);
@@ -64,7 +61,6 @@ function* add(action) {
     try {
         const link = `${url}/api/v1/events/create`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
-        console.log('dataADD::', data)
 
         if (data.message === 'Created') {
             yield put({ type: types.ADD_EVENT_SUCCESS, payload: data });

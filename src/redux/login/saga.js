@@ -15,7 +15,6 @@ function* loginRequest(action) {
       userId: userId,
       password: password
     }));
-    console.log(data)
 
     if (data && data.data?.token) {
       toast.success("Connexion reussie");
