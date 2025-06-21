@@ -11,6 +11,7 @@ import {
   FormLabel,
   HStack,
   Button,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   AddIcon,
@@ -32,6 +33,7 @@ const GeneralForm = ({
   selectedControl,
   handleTestControlBySubTabClick,
   selectedEntityDescription,
+  loading,
   onClose,
 }) => {
   const [nomineeValue, setNomineeValue] = useState(null);
@@ -141,6 +143,8 @@ const GeneralForm = ({
   };
 
   const handleFormSubmit = async () => {
+    setAmend(false);
+
     const postData = {
       itemIds: [selectedControl?._id],
       itemType: "control",
@@ -162,9 +166,13 @@ const GeneralForm = ({
         controlSummary: formData.controlSummary,
       },
     };
-    // console.log("postData:", postData);
-    await dispatch(updateEntityRiskControl(postData));
-    dispatch(listEntityRiskControls(selectedEntityDescription));
+
+    try {
+      await dispatch(updateEntityRiskControl(postData));
+      await dispatch(listEntityRiskControls(selectedEntityDescription));
+    } catch (error) {
+      console.error("Erreur lors de la soumission:", error);
+    }
   };
 
   useEffect(() => {
@@ -293,6 +301,7 @@ const GeneralForm = ({
                 fontSize={12}
                 name="controlSummary"
                 onChange={handleChange}
+                readOnly={!amend}
               />
             </HStack>
           </FormControl>
@@ -307,6 +316,7 @@ const GeneralForm = ({
                 fontSize={12}
                 name="description"
                 onChange={handleChange}
+                readOnly={!amend}
               />
             </HStack>
           </FormControl>
@@ -327,6 +337,7 @@ const GeneralForm = ({
                     setNomineeValue(selectedOption);
                     handleSelectChange("nominee", selectedOption);
                   }}
+                  isDisabled={!amend}
                 />
               </Box>
             </HStack>
@@ -347,6 +358,7 @@ const GeneralForm = ({
                     setReviewerValue(selectedOption);
                     handleSelectChange("reviewer", selectedOption);
                   }}
+                  isDisabled={!amend}
                 />
               </Box>
             </HStack>
@@ -399,6 +411,7 @@ const GeneralForm = ({
                         (option) => option.value === formData.frequency
                       )}
                       onChange={handleFrequencyChange}
+                      isDisabled={!amend}
                     />
                   </Box>
                 </HStack>
@@ -482,6 +495,7 @@ const GeneralForm = ({
                           handleChange("frequencyAssessment", selectedOption.value); // Passez directement le nom et la valeur
                         }
                       }}
+                      isDisabled={!amend}
                     />
                   </Box>
                 </HStack>
@@ -508,7 +522,7 @@ const GeneralForm = ({
                   onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
                   disabled={
                     (selectedControl?.historyControl?.length > 0 &&
-                    !selectedControl.historyControl[0]?.attested) ||
+                      !selectedControl.historyControl[0]?.attested) ||
                     userRole === 'validated'
                   }
                 >
@@ -518,7 +532,7 @@ const GeneralForm = ({
                   fontSize={12}
                   colorScheme="red"
                   variant="solid"
-                  disabled = {userRole === 'inputeurs'}
+                  disabled={userRole === 'inputeurs'}
                   onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
                 >
                   Valider le Test
@@ -543,6 +557,7 @@ const GeneralForm = ({
           variant="outline"
           onClick={handleAmendControl}
           leftIcon={<EditIcon />}
+          disabled={amend}
         >
           Amend Control
         </Button>
@@ -558,10 +573,11 @@ const GeneralForm = ({
           fontSize={12}
           colorScheme="blue"
           variant="outline"
-          leftIcon={<CheckCircleIcon />}
+          leftIcon={loading ? <Spinner size="sm" /> : <CheckCircleIcon />}
           onClick={handleFormSubmit}
+          disabled={!amend || loading}
         >
-          Save
+          {loading ? "Saving..." : "Save"}
         </Button>
         <Button
           fontSize={12}

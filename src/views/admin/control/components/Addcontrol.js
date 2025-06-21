@@ -574,6 +574,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             currentView={currentView}
             indexChoice={indexChoice}
             selectedEntityDescription={selectedEntityDescription}
+            loading={loading}
           />
         )}
 

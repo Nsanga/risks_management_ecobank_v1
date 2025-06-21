@@ -284,6 +284,7 @@ const RiskControlInformationView = ({
                     selectedFrequency={selectedFrequency} // Passer la fréquence sélectionnée
                     setSelectedFrequency={setSelectedFrequency} // Passer la fonction pour mettre à jour la fréquence
                     actions={actions}
+                    loading={loading}
                   />
                 </TabPanel>
                 <TabPanel>

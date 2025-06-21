@@ -18,6 +18,7 @@ import {
   useDisclosure,
   Grid,
   GridItem,
+  useToast,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { listEntityRiskControls } from "redux/entityRiskControl/action";
@@ -34,6 +35,7 @@ const RiskControlAssessment = ({
   selectedEntityDescription,
   setActiveSubTab
 }) => {
+  const [amend, setAmend] = useState(false);
   const userName = localStorage.getItem("username");
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,6 +46,8 @@ const RiskControlAssessment = ({
   const { riskControl, loading } = useSelector(state => state.EntityRiskControlReducer);
 
   const userRole = localStorage.getItem('role');
+
+  const toast = useToast();
 
   const profileOptions = profiles
     ?.filter(profile => profile.activeUser)
@@ -96,7 +100,6 @@ const RiskControlAssessment = ({
       }));
     }
   }, [formData.dueOn]);
-
   const [monitoring, setMonitoring] = useState("");
   const [actionData, setActionData] = useState({
     descriptionAction: "",
@@ -170,6 +173,32 @@ const RiskControlAssessment = ({
   }, [riskControl, selectedControl, userName, controlId]);
 
   const handleSave = async () => {
+    // Vérification que tous les champs requis sont remplis
+    const requiredFields = ['performance', 'assessedBy', 'assessedOn', 'dueOn', 'note'];
+    const missingFields = requiredFields.filter(field => !formData[field] || formData[field].trim() === '');
+
+    if (missingFields.length > 0) {
+      toast({
+        title: 'Champs manquants',
+        description: `Veuillez remplir tous les champs obligatoires: ${missingFields.join(', ')}`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (formData.performance === "Not Assessed") {
+      toast({
+        title: 'Performance non évaluée',
+        description: 'Veuillez sélectionner une évaluation de performance valide (différente de "Non testé")',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     // Vérification de la condition sur la performance
     if (formData.performance === "Unsatisfactory") {
       // Si la performance n'est pas "Satisfaisant", ouvrir la modal
@@ -177,7 +206,6 @@ const RiskControlAssessment = ({
       return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
     } else {
       // Sinon, procéder à l'enregistrement des données
-
       await dispatch(
         AddControlHistory({
           ...formData,
@@ -210,6 +238,10 @@ const RiskControlAssessment = ({
     onClose();
   }
 
+  const handleAmend = () => {
+    setAmend(true);
+  }
+
   const handleUpdate = async (id, attest) => {
     // Vérification de la condition sur la performance
     if (formData.performance === "Unsatisfactory") {
@@ -218,7 +250,9 @@ const RiskControlAssessment = ({
       return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
     } else {
       const data = {
+        ...formData,
         idControl: controlId,
+        frequency: selectedFrequency,
         attested: attest
       }
       // Sinon, procéder à l'enregistrement des données
@@ -230,18 +264,38 @@ const RiskControlAssessment = ({
     }
   };
 
-  const handleCancel = () => {
-    setActiveSubTab(0)
+  const handleSaveTest = (id, attest) => {
+    if (!amend) {
+      handleSave();
+    } else {
+      handleUpdate(id, attest);
+    }
+    setAmend(false);
   }
 
-  const lastHistory = riskControl?.historyControl.length > 0
-    ? riskControl?.historyControl[riskControl?.historyControl.length - 1]
-    : null;
+  const handleCancel = () => {
+    setActiveSubTab(0);
+    setAmend(false);
+  }
 
-  const isDisabledToAdmin = riskControl?.historyControl.length === 0 || lastHistory?.attested || userRole === "inputeurs"
-  const isDisabledUnattest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "inputeurs";
-  const isDisabledAmendAttest = riskControl?.historyControl.length === 0 || !lastHistory?.attested || userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) < new Date());
-  const isDisabledSave = userRole === "validated" || (lastHistory?.closeDate && new Date(lastHistory?.closeDate) > new Date());
+  // Conditions de désactivation bien structurées
+  const hasHistory = riskControl?.historyControl?.length > 0;
+  const lastHistory = hasHistory ? riskControl.historyControl[riskControl.historyControl.length - 1] : null;
+  const isClosed = lastHistory?.closeDate && new Date(lastHistory.closeDate) > new Date();
+  const isInputer = userRole === "inputeurs";
+  const isValidator = userRole === "validated";
+
+  // Conditions pour chaque bouton
+  const isDisabledUnattest = !hasHistory || !lastHistory?.attested || isInputer;
+  const isDisabledAmendAttest = !hasHistory || lastHistory?.attested || isValidator || !isClosed || amend;
+  const isDisabledToAdmin = !hasHistory || lastHistory?.attested || isInputer || isDisabledAmendAttest;
+  const isDisabledSave = (isValidator && !isClosed && !amend) || !isDisabledAmendAttest || lastHistory?.attested;
+
+  const isReadOnly = !amend && (riskControl?.historyControl && riskControl?.historyControl.length > 0)
+
+  // useEffect(() => {
+  //   setAmend(false);
+  // }, []);
 
   return (
     <Box fontSize="12px">
@@ -258,7 +312,7 @@ const RiskControlAssessment = ({
             </Tr>
           </Thead>
           <Tbody>
-            {riskControl?.historyControl.length > 0 ? (
+            {(riskControl?.historyControl && riskControl?.historyControl.length) > 0 ? (
               riskControl?.historyControl.slice(-5).map((controlHistory) => (
                 <Tr
                   key={controlHistory._id}
@@ -312,6 +366,7 @@ const RiskControlAssessment = ({
                       performance: e.target.value
                     }));
                   }}
+                  disabled={isReadOnly}
                 >
                   <option value="Not Assessed">Non testé</option>
                   <option value="Needs Improvement">Amélioration nécessaire</option>
@@ -326,6 +381,7 @@ const RiskControlAssessment = ({
                   type="text"
                   placeholder="Enter assessed name"
                   value={formData.assessedBy}
+                  readOnly
                 />
               </FormControl>
             </Flex>
@@ -339,6 +395,7 @@ const RiskControlAssessment = ({
                 onChange={(e) =>
                   setFormData({ ...formData, note: e.target.value })
                 }
+                readOnly={isReadOnly}
               />
             </FormControl>
             <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
@@ -352,6 +409,7 @@ const RiskControlAssessment = ({
                   onChange={(e) =>
                     setFormData({ ...formData, assessedOn: e.target.value })
                   }
+                  readOnly={isReadOnly}
                 />
               </FormControl>
               <FormControl>
@@ -363,6 +421,7 @@ const RiskControlAssessment = ({
                   onChange={(e) =>
                     setFormData({ ...formData, dueOn: e.target.value })
                   }
+                  readOnly={isReadOnly}
                 />
               </FormControl>
               <FormControl>
@@ -374,6 +433,7 @@ const RiskControlAssessment = ({
                   onChange={(e) =>
                     setFormData({ ...formData, closeDate: e.target.value })
                   }
+                  readOnly
                 />
               </FormControl>
             </Flex>
@@ -382,9 +442,9 @@ const RiskControlAssessment = ({
       </Flex>
 
       <Flex justifyContent="center" gap={4} mt={6}>
-        <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>{loading ? 'Amend in progress...' : 'Amend Assess'}</Button>
+        <Button onClick={handleAmend} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>Amend Assess</Button>
         <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>{loading ? "In progress..." : "UnAttest Assess"}</Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={handleSave} disabled={isDisabledSave}> {loadingSave ? "In progress..." : "Save"} </Button>
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={() => handleSaveTest(lastHistory?._id, false)} disabled={isDisabledSave}> {loadingSave ? "Saving..." : "Save"} </Button>
         <Button onClick={() => handleUpdate(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}> {loading ? "In progress..." : "Attest Assess"} </Button>
         <Button onClick={handleCancel} fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>

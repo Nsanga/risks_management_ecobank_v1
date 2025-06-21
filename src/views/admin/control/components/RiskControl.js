@@ -32,7 +32,8 @@ const RiskControl = ({
   selectedEntityDescription,
   actions,
   selectedFrequency,
-  onClose
+  onClose,
+  loading
 }) => {
   const toast = useToast();
   const userRole = localStorage.getItem('role');
@@ -153,6 +154,7 @@ const RiskControl = ({
               handleTestControlBySubTabClick={handleTestControlBySubTabClick}
               selectedEntityDescription={selectedEntityDescription}
               onClose={onClose}
+              loading={loading}
             />
           </TabPanel>
 
