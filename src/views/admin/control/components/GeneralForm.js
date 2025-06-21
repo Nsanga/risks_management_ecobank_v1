@@ -549,7 +549,7 @@ const GeneralForm = ({
           leftIcon={<DeleteIcon />}
         >
           Delete Control
-        </Button>
+        </Button> */}
         <Button
           fontSize={12}
           colorScheme="blue"
@@ -558,7 +558,7 @@ const GeneralForm = ({
           onClick={handleFormSubmit}
         >
           Save
-        </Button> */}
+        </Button>
         <Button
           fontSize={12}
           colorScheme="red"
