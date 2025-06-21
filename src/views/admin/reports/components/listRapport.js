@@ -35,7 +35,7 @@ export default function ControlTable({ reports, selectedData, loading }) {
         { header: "Control Owner", key: "ownerControl", width: 25 },
         { header: "Control Nominee", key: "nomineeControl", width: 25 },
         {
-          header: "Review Date",
+          header: "Due On",
           key: "reviewDate",
           format: (date) => (date ? new Date(date).toLocaleDateString() : "-"),
         },
@@ -199,7 +199,7 @@ export default function ControlTable({ reports, selectedData, loading }) {
                     minWidth: "100px",
                   }}
                 >
-                  Review Date
+                  Due On
                 </th>
                 <th
                   style={{
