@@ -418,7 +418,7 @@ console.log("historiesKRI:", historiesKRI)
             fontSize="12px"
             colorScheme="blue"
             onClick={handleAmend}
-            disabled={!canAmend || loading || historiesKRI?.length === 0} 
+            disabled={loading || historiesKRI?.length === 0} 
           >
             Amend
           </Button>
@@ -426,7 +426,7 @@ console.log("historiesKRI:", historiesKRI)
             fontSize="12px"
             colorScheme="green"
             onClick={handleSave}
-            disabled={historiesKRI?.length !== 0 && (!canSave || loading)}
+            disabled={loading}
           >
             {loading ? "Saving..." : "Save"}
           </Button>
