@@ -190,7 +190,7 @@ export default function IncidentLossReportTable() {
   return (
     <Box p={4} overflowX="auto" maxWidth="100%">
       <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Incident Loss Report table
+        Event Loss Report table
       </Text>
       <table
         border="1"
