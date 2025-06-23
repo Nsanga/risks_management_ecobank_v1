@@ -426,7 +426,7 @@ console.log("historiesKRI:", historiesKRI)
             fontSize="12px"
             colorScheme="green"
             onClick={handleSave}
-            disabled={!canSave || loading}
+            disabled={historiesKRI?.length !== 0 && (!canSave || loading)}
           >
             {loading ? "Saving..." : "Save"}
           </Button>
