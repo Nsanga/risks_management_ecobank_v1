@@ -76,7 +76,7 @@ const RiskAssessmentTable = ({ reports, loading }) => {
           key: "actionReference",
           width: 25,
         },
-        { header: "Action", key: "actionDescription", width: 25 },
+        { header: "Description de l'action", key: "actionDescription", width: 25 },
         { header: "Action Owner", key: "actionOwner", width: 25 },
         { header: "Action Nominee", key: "actionNominee" },
         { header: "Assessment Frequenc", key: "frequence", width: 25 },
@@ -220,7 +220,7 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                     minWidth: "120px",
                   }}
                 >
-                  performance du controle
+                  Performance du controle
                 </th>
                 <th
                   style={{
@@ -229,7 +229,7 @@ const RiskAssessmentTable = ({ reports, loading }) => {
                     minWidth: "200px",
                   }}
                 >
-                  Action
+                  Description de l'action
                 </th>
                 <th
                   style={{
