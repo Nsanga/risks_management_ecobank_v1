@@ -45,7 +45,7 @@ const History = ({
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldSave, setShouldSave] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [amend, setAmend] = useState(false);
   const toast = useToast();
 
   const [formData, setFormData] = useState({
@@ -54,6 +54,19 @@ const History = ({
     comment: "",
     time: "",
   });
+console.log("historiesKRI:", historiesKRI)
+  const loading = useSelector(state => state.HistoryKRIReducer.loading);
+  const today = new Date().toISOString().split('T')[0];
+
+  // Récupère le dernier élément de l'historique
+  const lastHistory = historiesKRI?.length > 0 ? historiesKRI[historiesKRI.length - 1] : null;
+
+  // Vérifie si la période du dernier élément correspond à la date du jour
+  const isCurrentPeriod = lastHistory?.period < valueRemindOne;
+
+  // Conditions d'activation/désactivation des boutons
+  const canAmend = !isHistory && !amend && (!isCurrentPeriod || !lastHistory);
+  const canSave = (!isHistory && amend && (isCurrentPeriod || !lastHistory) || isCurrentPeriod);
 
   // Gestionnaire de changement pour les inputs
   const handleInputChange = (e) => {
@@ -88,6 +101,26 @@ const History = ({
     );
   };
 
+  const handleAmend = () => {
+    setAmend(true);
+    // Préremplir avec les valeurs du dernier historique si disponible
+    if (lastHistory) {
+      setFormData({
+        period: today,
+        value: lastHistory.value,
+        comment: lastHistory.comment,
+        time: new Date().toLocaleTimeString(),
+      });
+    } else {
+      setFormData({
+        period: today,
+        value: "",
+        comment: "",
+        time: new Date().toLocaleTimeString(),
+      });
+    }
+  };
+
   const handleSave = async () => {
     if (!formData.value) {
       toast({
@@ -105,11 +138,16 @@ const History = ({
       setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
     } else {
       await performSave(); // Sauvegarde directement si la valeur est OK
+      setAmend(false);
     }
   };
 
+  const handleCancel = () => {
+    onCancel();
+    setAmend(false);
+  }
+
   const performSave = async () => {
-    setIsLoading(true);
     try {
       const currentTime = new Date()
         .toLocaleTimeString("fr-FR", {
@@ -143,8 +181,6 @@ const History = ({
       setShouldSave(false);
     } catch (error) {
       console.error("PerformSave error:", error); // Log complet
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -298,9 +334,9 @@ const History = ({
                 <Input
                   size="sm"
                   name="period"
-                  value={isHistory ? valuePeriod : valueRemindOne}
-                  disabled={isHistory}
-                  // onChange={handleInputChange}
+                  value={amend ? valuePeriod : (isHistory ? valuePeriod : valueRemindOne)}
+                  disabled={true}
+                // onChange={handleInputChange}
                 />
               </HStack>
 
@@ -315,7 +351,7 @@ const History = ({
                   name="value"
                   value={formData.value}
                   onChange={handleInputChange}
-                  disabled={isHistory}
+                  disabled={isHistory || !amend}
                 />
               </HStack>
 
@@ -366,7 +402,7 @@ const History = ({
                   name="comment"
                   value={formData.comment}
                   onChange={handleInputChange}
-                  disabled={isHistory}
+                  disabled={isHistory || !amend}
                 />
               </Box>
             </VStack>
@@ -381,17 +417,25 @@ const History = ({
           <Button
             fontSize="12px"
             colorScheme="blue"
-            onClick={handleSave}
-            disabled={isHistory}
+            onClick={handleAmend}
+            disabled={!canAmend || loading || historiesKRI?.length === 0} 
           >
-            {isLoading ? "Save in progress ..." : "Save"}
+            Amend
+          </Button>
+          <Button
+            fontSize="12px"
+            colorScheme="green"
+            onClick={handleSave}
+            disabled={!canSave || loading}
+          >
+            {loading ? "Saving..." : "Save"}
           </Button>
           <Button
             // onClick={onClose}
             colorScheme="red"
             type="reset"
             fontSize="12px"
-            onClick={onCancel}
+            onClick={handleCancel}
           >
             Cancel
           </Button>

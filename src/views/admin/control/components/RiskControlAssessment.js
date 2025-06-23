@@ -356,7 +356,7 @@ const RiskControlAssessment = ({
             </FormControl>
             <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
               <FormControl>
-                <FormLabel fontSize="sm">Performance</FormLabel>
+                <FormLabel fontSize="sm">Performance <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Select
                   fontSize="sm"
                   value={formData.performance}
@@ -388,7 +388,7 @@ const RiskControlAssessment = ({
           </Box>
           <Box width="50%">
             <FormControl>
-              <FormLabel fontSize="sm">Résultats du test</FormLabel>
+              <FormLabel fontSize="sm">Résultats du test <span style={{ color: 'red' }}>*</span></FormLabel>
               <Textarea
                 fontSize="sm"
                 value={formData.note}
@@ -400,7 +400,7 @@ const RiskControlAssessment = ({
             </FormControl>
             <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
               <FormControl>
-                <FormLabel fontSize="sm">Assessed On</FormLabel>
+                <FormLabel fontSize="sm">Assessed On <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   fontSize="sm"
                   type="date"
@@ -413,7 +413,7 @@ const RiskControlAssessment = ({
                 />
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="sm">Due On</FormLabel>
+                <FormLabel fontSize="sm">Due On <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   fontSize="sm"
                   type="date"
