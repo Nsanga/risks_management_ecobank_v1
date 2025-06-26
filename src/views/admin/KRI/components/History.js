@@ -66,7 +66,7 @@ const History = ({
 
   // Conditions d'activation/désactivation des boutons
   const canAmend = !isHistory && !amend && historiesKRI.length > 0;
-  const canSave = !isHistory && amend;
+const canSave = !isHistory && amend;
 
   // Gestionnaire de changement pour les inputs
   const handleInputChange = (e) => {
@@ -103,6 +103,22 @@ const History = ({
 
   const handleAmend = () => {
     setAmend(true);
+    // Préremplir avec les valeurs du dernier historique si disponible
+    if (lastHistory) {
+      setFormData({
+        period: lastHistory.period,
+        value: lastHistory.value,
+        comment: lastHistory.comment,
+        time: new Date().toLocaleTimeString(),
+      });
+    } else {
+      setFormData({
+        period: today,
+        value: "",
+        comment: "",
+        time: new Date().toLocaleTimeString(),
+      });
+    }
   };
 
   const handleSave = async () => {
@@ -225,20 +241,27 @@ const History = ({
   };
 
   useEffect(() => {
-    setDataHostorie(historiesKRI);
-  }, [historiesKRI]);
-
-  useEffect(() => {
-    if (!lastHistory) {
+    if (historiesKRI.length === 0) {
+      // Activer automatiquement l’édition
+      setAmend(true);
       setFormData({
         period: today,
         value: "",
         comment: "",
         time: new Date().toLocaleTimeString(),
       });
-      setAmend(true); // Activer les champs directement
+    } else {
+      // Revenir à l'état initial
+      setAmend(false);
+      setFormData({
+        period: today,
+        value: "",
+        comment: "",
+        time: new Date().toLocaleTimeString(),
+      });
     }
-  }, [lastHistory]);
+  }, [historiesKRI]);
+  
 
 
   return (
