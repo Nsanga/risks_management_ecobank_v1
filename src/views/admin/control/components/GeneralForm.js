@@ -47,6 +47,7 @@ const GeneralForm = ({
   const dispatch = useDispatch();
 
   const userRole = localStorage.getItem('role')
+  const latestHistory = selectedControl?.historyControl[selectedControl?.historyControl.length - 1];
 
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
@@ -522,7 +523,7 @@ const GeneralForm = ({
                   onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
                   disabled={
                     (selectedControl?.historyControl?.length > 0 &&
-                      !selectedControl.historyControl[0]?.attested) ||
+                      !latestHistory?.attested) ||
                     userRole === 'validated'
                   }
                 >
@@ -557,7 +558,7 @@ const GeneralForm = ({
           variant="outline"
           onClick={handleAmendControl}
           leftIcon={<EditIcon />}
-          disabled={amend}
+          disabled={amend || userRole === 'validated' || userRole === 'inputeurs'}
         >
           Amend Control
         </Button>
