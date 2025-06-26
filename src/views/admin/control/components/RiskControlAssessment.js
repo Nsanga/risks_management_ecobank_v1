@@ -243,12 +243,6 @@ const RiskControlAssessment = ({
   }
 
   const handleUpdate = async (id, attest) => {
-    // Vérification de la condition sur la performance
-    if (formData.performance === "Unsatisfactory") {
-      // Si la performance n'est pas "Satisfaisant", ouvrir la modal
-      onOpen();
-      return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
-    } else {
       const data = {
         ...formData,
         idControl: controlId,
@@ -261,7 +255,6 @@ const RiskControlAssessment = ({
       );
 
       dispatch(fetchOneRiskControls(controlId));
-    }
   };
 
   const handleSaveTest = (id, attest) => {
