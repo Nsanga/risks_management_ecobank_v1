@@ -54,7 +54,7 @@ const History = ({
     comment: "",
     time: "",
   });
-console.log("historiesKRI:", historiesKRI)
+  console.log("historiesKRI:", historiesKRI)
   const loading = useSelector(state => state.HistoryKRIReducer.loading);
   const today = new Date().toISOString().split('T')[0];
 
@@ -65,8 +65,8 @@ console.log("historiesKRI:", historiesKRI)
   const isCurrentPeriod = lastHistory?.period < valueRemindOne;
 
   // Conditions d'activation/désactivation des boutons
-  const canAmend = !isHistory && !amend && (!isCurrentPeriod || !lastHistory);
-  const canSave = (!isHistory && amend && (isCurrentPeriod || !lastHistory) || isCurrentPeriod);
+  const canAmend = !isHistory && !amend && historiesKRI.length > 0;
+  const canSave = !isHistory && amend;
 
   // Gestionnaire de changement pour les inputs
   const handleInputChange = (e) => {
@@ -103,22 +103,6 @@ console.log("historiesKRI:", historiesKRI)
 
   const handleAmend = () => {
     setAmend(true);
-    // Préremplir avec les valeurs du dernier historique si disponible
-    if (lastHistory) {
-      setFormData({
-        period: today,
-        value: lastHistory.value,
-        comment: lastHistory.comment,
-        time: new Date().toLocaleTimeString(),
-      });
-    } else {
-      setFormData({
-        period: today,
-        value: "",
-        comment: "",
-        time: new Date().toLocaleTimeString(),
-      });
-    }
   };
 
   const handleSave = async () => {
@@ -244,6 +228,19 @@ console.log("historiesKRI:", historiesKRI)
     setDataHostorie(historiesKRI);
   }, [historiesKRI]);
 
+  useEffect(() => {
+    if (!lastHistory) {
+      setFormData({
+        period: today,
+        value: "",
+        comment: "",
+        time: new Date().toLocaleTimeString(),
+      });
+      setAmend(true); // Activer les champs directement
+    }
+  }, [lastHistory]);
+
+
   return (
     <Box className="container" fontSize="12px" p={4}>
       {/* TABLE PRINCIPALE */}
@@ -334,7 +331,7 @@ console.log("historiesKRI:", historiesKRI)
                 <Input
                   size="sm"
                   name="period"
-                  value={amend ? valuePeriod : (isHistory ? valuePeriod : valueRemindOne)}
+                  value={formData.period}
                   disabled={true}
                 // onChange={handleInputChange}
                 />
@@ -418,15 +415,16 @@ console.log("historiesKRI:", historiesKRI)
             fontSize="12px"
             colorScheme="blue"
             onClick={handleAmend}
-            disabled={loading || historiesKRI?.length === 0} 
+            disabled={loading || !canAmend}
           >
             Amend
           </Button>
+
           <Button
             fontSize="12px"
             colorScheme="green"
             onClick={handleSave}
-            disabled={loading}
+            disabled={loading || !canSave}
           >
             {loading ? "Saving..." : "Save"}
           </Button>

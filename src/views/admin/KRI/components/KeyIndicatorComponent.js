@@ -52,6 +52,8 @@ const KeyIndicatorComponent = ({
   const [valuePeriod, setValuePeriod] = useState("");
   const [valueRemindOne, setValueRemindOne] = useState("");
 
+  const userRole = localStorage.getItem('role')
+
   const changeHistory = () => {
     setIsHistory(true);
   };
@@ -680,7 +682,7 @@ const KeyIndicatorComponent = ({
                 </Box>
               </SimpleGrid>
               <Stack direction="row" spacing={4} mt={6} justify="flex-end">
-                <Button onClick={handleAmend} colorScheme="blue" type="button" fontSize="12px">
+                <Button onClick={handleAmend} colorScheme="blue" type="button" fontSize="12px" disabled={userRole === 'inputeurs' || userRole === 'validated'}>
                   Amend
                 </Button>
                 <Button colorScheme="green" type="submit" fontSize="12px" disabled={!amend}>
