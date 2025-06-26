@@ -522,8 +522,6 @@ const GeneralForm = ({
                   variant="solid"
                   onClick={() => handleTestControlBySubTabClick(selectedFrequency)}
                   disabled={
-                    (selectedControl?.historyControl?.length > 0 &&
-                      !latestHistory?.attested) ||
                     userRole === 'validated'
                   }
                 >
