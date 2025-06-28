@@ -116,6 +116,10 @@ const Reports = () => {
   const handleOpenEventRecoveriesTable = () => {
     setEventRecoveriesTable(true);
   };
+  const handleBack = () => {
+    setIncidentLossReportTable(false);
+    setSelectedEventData({ entities: [], start_date: "", end_date: "" });
+  }
   const renderForm = () => {
     switch (selectedForm) {
       case "control-list":
@@ -208,7 +212,7 @@ const Reports = () => {
       )}
       {openIncidentLossReportTable && (
         <Box>
-          <Flex alignItems="center" mb={4} onClick={() => setIncidentLossReportTable(false)} cursor="pointer">
+          <Flex alignItems="center" mb={4} onClick={handleBack} cursor="pointer">
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
