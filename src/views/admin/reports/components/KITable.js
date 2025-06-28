@@ -19,6 +19,11 @@ const groupedData = [
     trend: "Stable",
     color: "#228B22" // Vert pour Stable (corrigé le double #)
   },
+  {
+    status: "Stable",
+    trend: "N/A",
+    color: "#808080" // Vert pour Stable (corrigé le double #)
+  },
 ];
 
 export default function KITable({ reports, loading }) {
@@ -300,15 +305,15 @@ export default function KITable({ reports, loading }) {
                             {item.frequenceKeyIndicator}
                           </span>
                         </td>
-                        <td style={columnStyles.numeric}>{item?.history[0]?.value || '0'}</td>
-                        <td style={columnStyles.numeric}>{item?.history[1]?.value || '0'}</td>
-                        <td style={columnStyles.numeric}>{item?.history[2]?.value || '0'}</td>
+                        <td style={columnStyles.numeric}>{item?.history[0]?.value || 'N/A'}</td>
+                        <td style={columnStyles.numeric}>{item?.history[1]?.value || 'N/A'}</td>
+                        <td style={columnStyles.numeric}>{item?.history[2]?.value || 'N/A'}</td>
                         <td style={{
                           ...columnStyles.numeric,
                           backgroundColor: "#f0f9ff",
                           fontWeight: "600"
                         }}>
-                          {!item?.history?.length ? '0' : (item.history.reduce((acc, { value }) => acc + (Number(value) || 0), 0) / 3).toFixed(2)}
+                          {item?.moyenneValue ? item?.moyenneValue.toFixed(2) : ''}
                         </td>
                         <td style={{
                           ...columnStyles.numeric,
