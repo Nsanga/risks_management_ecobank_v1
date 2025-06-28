@@ -5,6 +5,11 @@ export const listEntityReports = (reportData) => ({
   payload: reportData
 });
 
+export const listEventsReports = (reportData) => ({
+  type: types.GET_EVENT_ENTITY_REPORTS_REQUEST,
+  payload: reportData
+});
+
 export const updateReport = (id, reportData) => ({
     type: types.UPDATE_REPORT_REQUEST,
     payload: {id, reportData}

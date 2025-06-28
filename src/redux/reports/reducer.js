@@ -26,6 +26,24 @@ function ReportReducer(state = INITIAL_STATE, action) {
         loading: false,
         reports: [],
       };
+    case types.GET_EVENT_ENTITY_REPORTS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.GET_EVENT_ENTITY_REPORTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        reports: action.payload.data,
+      };
+    case types.GET_EVENT_ENTITY_REPORTS_FAILED:
+      return {
+        ...state,
+        loading: false,
+        reports: [],
+      };
     case types.UPDATE_REPORT_REQUEST:
       return {
         ...state,

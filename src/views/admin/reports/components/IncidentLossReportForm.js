@@ -22,6 +22,8 @@ const IncidentLossReportForm = ({
 }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
+    start_date: '',
+    end_date: '',
     entity: [],
   });
 
@@ -45,6 +47,27 @@ const IncidentLossReportForm = ({
     // Notifier le parent des nouvelles sélections
     if (onSelectionChange) {
       onSelectionChange({
+        selectedStartDate: updatedFormData.start_date,
+        selectedEndDate: updatedFormData.end_date,
+        selectedEntities: updatedFormData.entity,
+      });
+    }
+  };
+
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    const updatedFormData = {
+      ...formData,
+      [name]: value
+    };
+  
+    setFormData(updatedFormData);
+  
+    // Notifier le parent des nouvelles sélections
+    if (onSelectionChange) {
+      onSelectionChange({
+        selectedStartDate: updatedFormData.start_date,
+        selectedEndDate: updatedFormData.end_date,
         selectedEntities: updatedFormData.entity,
       });
     }
@@ -57,27 +80,6 @@ const IncidentLossReportForm = ({
     description: entity.description,
     fullEntity: entity,
   }));
-
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-    }),
-    menu: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-      maxHeight: "200px",
-      overflowY: "auto",
-    }),
-    option: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      fontSize: "12px",
-    }),
-  };
 
   return (
     <VStack spacing={4} align="stretch">
@@ -108,20 +110,22 @@ const IncidentLossReportForm = ({
           <Input
             fontSize={12}
             type="date"
-            name="lastOperation"
-            // value={formData.lastOperation}
+            name="start_date"
+            value={formData.start_date}
+            onChange={handleDateChange}
           />
         </Box>
 
         <Box display="flex" alignItems="center" w="100%">
           <FormLabel mb="0" minW="120px">
-            Start Date
+            End Date
           </FormLabel>
           <Input
             fontSize={12}
             type="date"
-            name="lastOperation"
-            // value={formData.lastOperation}
+            name="end_date"
+            value={formData.end_date}
+            onChange={handleDateChange}
           />
         </Box>
       </FormControl>

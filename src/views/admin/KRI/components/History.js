@@ -261,8 +261,6 @@ const canSave = !isHistory && amend;
       });
     }
   }, [historiesKRI]);
-  
-
 
   return (
     <Box className="container" fontSize="12px" p={4}>

@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import Loader from "../../../../assets/img/loader.gif";
 
 const data = [
   {
@@ -186,92 +187,99 @@ const data = [
   },
 ];
 
-export default function IncidentLossReportTable() {
+export default function IncidentLossReportTable({ reports, loading }) {
+  console.log("reports:", reports)
   return (
     <Box p={4} overflowX="auto" maxWidth="100%">
       <Text fontSize="xl" fontWeight="bold" mb={4}>
         Event Loss Report table
       </Text>
-      <table
-        border="1"
-        cellPadding="8"
-        cellSpacing="0"
-        style={{
-          borderCollapse: "collapse",
-          width: "1400px",
-          fontSize: "14px",
-          border: "1px solid gray",
-          minWidth: "1400px",
-        }}
-      >
-        <thead
+      {loading ? (
+        <Flex alignItems="center" justifyContent="center">
+          <Image src={Loader} alt="Loading..." height={50} width={50} />
+        </Flex>
+      ) : (
+        <table
+          border="1"
+          cellPadding="8"
+          cellSpacing="0"
           style={{
-            backgroundColor: "#009fe3",
-            color: "white",
-            textAlign: "left",
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
+            borderCollapse: "collapse",
+            width: "1400px",
+            fontSize: "14px",
+            border: "1px solid gray",
+            minWidth: "1400px",
           }}
         >
-          <tr>
-            <th style={{ border: "1px solid gray" }}>Event Reference</th>
-            <th style={{ border: "1px solid gray" }}>Short Description</th>
-            <th style={{ border: "1px solid gray" }}>Detail Description</th>
-            <th style={{ border: "1px solid gray" }}>Impact Entity</th>
-            <th style={{ border: "1px solid gray" }}>Origin Entity</th>
-            <th style={{ border: "1px solid gray" }}>Event Date</th>
-            <th style={{ border: "1px solid gray" }}>Raised Date</th>
-            <th style={{ border: "1px solid gray" }}>Approval Date</th>
-            <th style={{ border: "1px solid gray" }}>Event Owner</th>
-            <th style={{ border: "1px solid gray" }}>Event Nominee</th>
-            <th style={{ border: "1px solid gray" }}>Event Reviewer</th>
-            <th style={{ border: "1px solid gray" }}>Gross Loss</th>
-            <th style={{ border: "1px solid gray" }}>Net Loss</th>
-            <th style={{ border: "1px solid gray" }}>First Increment Date</th>
-            <th style={{ border: "1px solid gray" }}>Last Increment Date</th>
-            <th style={{ border: "1px solid gray" }}>Effective Date</th>
-            <th style={{ border: "1px solid gray" }}>Casual Category</th>
-            <th style={{ border: "1px solid gray" }}>Toplevel Casual Category</th>
-            <th style={{ border: "1px solid gray" }}>Business Line</th>
-            <th style={{ border: "1px solid gray" }}>Location</th>
-            <th style={{ border: "1px solid gray" }}>Casual Entity</th>
-            <th style={{ border: "1px solid gray" }}>Product Type</th>
-            <th style={{ border: "1px solid gray" }}>System Type</th>
-            <th style={{ border: "1px solid gray" }}>Boundary Event Class</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, idx) => (
-            <tr key={idx}>
-              <td style={{ border: "1px solid gray" }}>{item.eventReference}</td>
-              <td style={{ border: "1px solid gray" }}>{item.shortDescription}</td>
-              <td style={{ border: "1px solid gray" }}>{item.detailDescription}</td>
-              <td style={{ border: "1px solid gray" }}>{item.impactEntity}</td>
-              <td style={{ border: "1px solid gray" }}>{item.originEntity}</td>
-              <td style={{ border: "1px solid gray" }}>{item.eventDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.raisedDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.approvalDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.eventOwner}</td>
-              <td style={{ border: "1px solid gray" }}>{item.eventNominee}</td>
-              <td style={{ border: "1px solid gray" }}>{item.eventReviewer}</td>
-              <td style={{ border: "1px solid gray" }}>{item.grossLoss}</td>
-              <td style={{ border: "1px solid gray" }}>{item.netLoss}</td>
-              <td style={{ border: "1px solid gray" }}>{item.firstIncrementDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.lastIncrementDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.effectiveDate}</td>
-              <td style={{ border: "1px solid gray" }}>{item.casualCategory}</td>
-              <td style={{ border: "1px solid gray" }}>{item.toplevelCasualCategory}</td>
-              <td style={{ border: "1px solid gray" }}>{item.businessLine}</td>
-              <td style={{ border: "1px solid gray" }}>{item.location}</td>
-              <td style={{ border: "1px solid gray" }}>{item.casualEntity}</td>
-              <td style={{ border: "1px solid gray" }}>{item.productType}</td>
-              <td style={{ border: "1px solid gray" }}>{item.systemType}</td>
-              <td style={{ border: "1px solid gray" }}>{item.boundaryEventClass}</td>
+          <thead
+            style={{
+              backgroundColor: "#009fe3",
+              color: "white",
+              textAlign: "left",
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+            }}
+          >
+            <tr>
+              <th style={{ border: "1px solid gray" }}>Event Reference</th>
+              <th style={{ border: "1px solid gray" }}>Short Description</th>
+              <th style={{ border: "1px solid gray" }}>Detail Description</th>
+              <th style={{ border: "1px solid gray" }}>Impact Entity</th>
+              <th style={{ border: "1px solid gray" }}>Origin Entity</th>
+              <th style={{ border: "1px solid gray" }}>Event Date</th>
+              <th style={{ border: "1px solid gray" }}>Raised Date</th>
+              <th style={{ border: "1px solid gray" }}>Approval Date</th>
+              <th style={{ border: "1px solid gray" }}>Event Owner</th>
+              <th style={{ border: "1px solid gray" }}>Event Nominee</th>
+              <th style={{ border: "1px solid gray" }}>Event Reviewer</th>
+              <th style={{ border: "1px solid gray" }}>Gross Loss</th>
+              <th style={{ border: "1px solid gray" }}>Net Loss</th>
+              <th style={{ border: "1px solid gray" }}>First Increment Date</th>
+              <th style={{ border: "1px solid gray" }}>Last Increment Date</th>
+              <th style={{ border: "1px solid gray" }}>Effective Date</th>
+              <th style={{ border: "1px solid gray" }}>Casual Category</th>
+              <th style={{ border: "1px solid gray" }}>Toplevel Casual Category</th>
+              <th style={{ border: "1px solid gray" }}>Business Line</th>
+              <th style={{ border: "1px solid gray" }}>Location</th>
+              <th style={{ border: "1px solid gray" }}>Casual Entity</th>
+              <th style={{ border: "1px solid gray" }}>Product Type</th>
+              <th style={{ border: "1px solid gray" }}>System Type</th>
+              <th style={{ border: "1px solid gray" }}>Boundary Event Class</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {reports.map((item, idx) => (
+              <tr key={idx}>
+                <td style={{ border: "1px solid gray" }}>EVT{item.num_ref}</td>
+                <td style={{ border: "1px solid gray" }}>{item.details.description}</td>
+                <td style={{ border: "1px solid gray" }}>{item.details.descriptionDetailled}</td>
+                <td style={{ border: "1px solid gray" }}>{item.details.entityOfDetection.description}</td>
+                <td style={{ border: "1px solid gray" }}>{item.details.entityOfOrigin.description}</td>
+                <td style={{ border: "1px solid gray" }}>{item.details.event_date ? new Date(item.details.event_date).toLocaleDateString() : ""}</td>
+                <td style={{ border: "1px solid gray" }}>{item.raisedDate}</td>
+                <td style={{ border: "1px solid gray" }}>{item.details.approved_date ? new Date(item.details.approved_date).toLocaleDateString() : ""}</td>
+                <td style={{ border: "1px solid gray" }}>{item.owner}</td>
+                <td style={{ border: "1px solid gray" }}>{item.nominee}</td>
+                <td style={{ border: "1px solid gray" }}>{item.reviewer}</td>
+                <td style={{ border: "1px solid gray" }}>{item.grossLoss}</td>
+                <td style={{ border: "1px solid gray" }}>{item.netLoss}</td>
+                <td style={{ border: "1px solid gray" }}>{item.firstIncrementDate}</td>
+                <td style={{ border: "1px solid gray" }}>{item.lastIncrementDate}</td>
+                <td style={{ border: "1px solid gray" }}>{item.effectiveDate}</td>
+                <td style={{ border: "1px solid gray" }}>{item.casualCategory}</td>
+                <td style={{ border: "1px solid gray" }}>{item.toplevelCasualCategory}</td>
+                <td style={{ border: "1px solid gray" }}>{item.businessLine}</td>
+                <td style={{ border: "1px solid gray" }}>CAMEROUN</td>
+                <td style={{ border: "1px solid gray" }}>{item.casualEntity}</td>
+                <td style={{ border: "1px solid gray" }}>{item.productType}</td>
+                <td style={{ border: "1px solid gray" }}>{item.systemType}</td>
+                <td style={{ border: "1px solid gray" }}>{item.boundaryEventClass}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </Box>
   );
 }

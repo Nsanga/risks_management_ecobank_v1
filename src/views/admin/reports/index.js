@@ -35,6 +35,7 @@ import { listEntities } from "redux/entity/action";
 import { listProfiles } from "redux/profile/action";
 import { listEntityReports } from "redux/reports/action";
 import RiskAssessmentTable from "./components/RiskAssessmentTable";
+import { listEventsReports } from "redux/reports/action";
 
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
@@ -47,6 +48,7 @@ const Reports = () => {
   const [openEventRecoveriesTable, setEventRecoveriesTable] = useState(false);
   const [openKIListTable, setKIListTable] = useState(false);
   const [selectedData, setSelectedData] = useState({ entities: [], session: "" });
+  const [selectedEventData, setSelectedEventData] = useState({ entities: [], start_date: "", end_date: "" });
 
   const cardBg = useColorModeValue("white", "gray.700");
   const entities = useSelector(state => state.EntityReducer.entities);
@@ -65,6 +67,14 @@ const Reports = () => {
 
   const handleSelectionChange = ({ selectedEntities, selectedSession }) => {
     setSelectedData({ entities: selectedEntities, session: selectedSession });
+  };
+
+  const handleSelectionEventChange = (selectedData) => {
+    setSelectedEventData({
+      entities: selectedData.selectedEntities || [],
+      start_date: selectedData.selectedStartDate || "",
+      end_date: selectedData.selectedEndDate || ""
+    });
   };
 
   const handleOpenView = () => {
@@ -96,6 +106,11 @@ const Reports = () => {
     setIncidentTrendsAnalysisTable(true);
   };
   const handleOpenIncidentLossReportTable = () => {
+    console.log("Selected data:", selectedEventData);
+    console.log("Start date:", selectedEventData.start_date);
+    console.log("End date:", selectedEventData.end_date);
+    console.log("Entities:", selectedEventData.entities);
+    dispatch(listEventsReports({ startDate: selectedEventData.start_date, endDate: selectedEventData.end_date, targetEntityId: selectedEventData.entities }));
     setIncidentLossReportTable(true);
   };
   const handleOpenEventRecoveriesTable = () => {
@@ -116,7 +131,7 @@ const Reports = () => {
       case "incident-trends-analysis":
         return <IncidentTrendsAnalysisForm handleOpenView={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "incident-loss-report":
-        return <IncidentLossReportForm handleOpenView={handleOpenIncidentLossReportTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        return <IncidentLossReportForm handleOpenView={handleOpenIncidentLossReportTable} onSelectionChange={handleSelectionEventChange} entities={entities} loading={loading} />;
       case "incident-event-report":
         return <IncidentEventReportForm handleOpenView={handleOpenEventRecoveriesTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       default:
@@ -129,6 +144,8 @@ const Reports = () => {
         );
     }
   };
+
+  console.log('lost event', reports)
 
   return (
     <Box mt="100px">

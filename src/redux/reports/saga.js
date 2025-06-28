@@ -22,6 +22,21 @@ function* listByEntity(action) {
     }
 }
 
+function* listEventReportByEntity(action) {
+    try {
+        let link = `${url}/api/v1/events/getRapport`;
+        const response = yield postRequest(link, JSON.stringify(action.payload));
+        if (response.success === true) {
+            yield put({ type: types.GET_EVENT_ENTITY_REPORTS_SUCCESS, payload: { data: response.data } });
+        } else {
+            yield put({ type: types.GET_EVENT_ENTITY_REPORTS_FAILED, payload: "echec recuperation des données" });
+        }
+    } catch (error) {
+        console.log(error);
+        yield put({ type: types.GET_EVENT_ENTITY_REPORTS_FAILED, payload: error });
+    }
+}
+
 function* update(action) {
     const { id } = action.payload;
     try {
@@ -86,6 +101,7 @@ function* deleteAction(action) {
 
 export default function* ReportSaga() {
     yield takeLatest(types.GET_ENTITY_REPORTS_REQUEST, listByEntity);
+    yield takeLatest(types.GET_EVENT_ENTITY_REPORTS_REQUEST, listEventReportByEntity);
     yield takeLatest(types.UPDATE_REPORT_REQUEST, update);
     yield takeLatest(types.ADD_REPORT_REQUEST, add);
     yield takeLatest(types.DELETE_REPORT_REQUEST, deleteAction);
