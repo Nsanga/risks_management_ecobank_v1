@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -21,16 +21,22 @@ import {
   IconButton,
   Text,
   useDisclosure,
-} from '@chakra-ui/react';
-import { MdUploadFile } from 'react-icons/md';
-import data from '../Data';
-import MultiLevelList from './NestedListItem ';
+} from "@chakra-ui/react";
+import { MdUploadFile } from "react-icons/md";
+import data from "../Data";
+import MultiLevelList from "./NestedListItem ";
 
 const Additional = ({ onAdditionalChange, event }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDescriptions, setSelectedDescriptions] = useState({});
-  
+  const [topLevel, setTopLevel] = useState({});
+
+  console.log("====================================");
+  console.log("selectedDescriptions", selectedDescriptions);
+  console.log("topLevel", topLevel);
+  console.log("====================================");
+
   // État pour stocker les descriptions pré-remplies
   const [preFilledDescriptions, setPreFilledDescriptions] = useState({});
 
@@ -50,14 +56,75 @@ const Additional = ({ onAdditionalChange, event }) => {
     setIsOpen(true);
   };
 
+  /**
+   * Parcourt récursivement un nœud (objet ou tableau) pour trouver la valeur.
+   * @param {any} node      - Sous‑arbre courant.
+   * @param {string[]} path - Chemin des clés menant à ce nœud.
+   * @param {string} value  - Valeur recherchée.
+   * @returns {string|null} - La clé parent immédiate du `value`, ou null.
+   */
+  const recursiveFindParent = (node, path, value) => {
+    if (Array.isArray(node)) {
+      // Cas feuille : un tableau de valeurs
+      return node.includes(value) ? path.at(-1) ?? null : null;
+    }
+
+    if (node && typeof node === "object") {
+      // Parcours profondeur d'abord sur chaque clé
+      for (const key in node) {
+        const found = recursiveFindParent(node[key], [...path, key], value);
+        if (found) return found; // stop dès qu'on a la première correspondance
+      }
+    }
+
+    return null; // valeur non trouvée dans ce sous‑arbre
+  };
+
+  /**
+   * Renvoie la clé parent pour `selectedValue` à l’intérieur de `dataItem`.
+   */
+  const findParentKey = (dataItem, selectedValue) => {
+    const categories = dataItem?.data?.categories;
+    if (!categories) return null;
+    return recursiveFindParent(categories, [], selectedValue);
+  };
+
+  // const handleItemClick = (item) => {
+  //   setSelectedDescriptions((prevState) => ({
+  //     ...prevState,
+  //     [selectedCategory.index]: item,
+  //   }));
+  //   setIsOpen(false);
+  //   onAdditionalChange({
+  //     ...selectedDescriptions,
+  //     [selectedCategory.index]: item,
+  //   });
+  // };
+
   const handleItemClick = (item) => {
-    setSelectedDescriptions(prevState => ({
-      ...prevState,
+    const currentCategoryData = data.find(
+      (d) => d.title === selectedCategory.category
+    );
+
+    const parentKey = findParentKey(currentCategoryData, item);
+
+    setSelectedDescriptions((prev) => ({
+      ...prev,
       [selectedCategory.index]: item,
     }));
+
+    if (parentKey) {
+      setTopLevel((prev) => ({
+        ...prev,
+        [selectedCategory.index]: parentKey,
+      }));
+    }
+
     setIsOpen(false);
+
     onAdditionalChange({
       ...selectedDescriptions,
+      topLevel,
       [selectedCategory.index]: item,
     });
   };
@@ -67,11 +134,12 @@ const Additional = ({ onAdditionalChange, event }) => {
   };
 
   const handleSubmit = () => {
-    const payload = Object.keys(selectedDescriptions).map(index => ({
+    const payload = Object.keys(selectedDescriptions).map((index) => ({
       category: data[index].title,
-      description: selectedDescriptions[index] || preFilledDescriptions[index] || '', // Inclure la description pré-remplie si aucune sélection
+      description:
+        selectedDescriptions[index] || preFilledDescriptions[index] || "", // Inclure la description pré-remplie si aucune sélection
     }));
-    console.log('Payload:', payload);
+    console.log("Payload:", payload);
     // Vous pouvez envoyer le payload à un serveur ici si nécessaire
   };
 
@@ -88,18 +156,32 @@ const Additional = ({ onAdditionalChange, event }) => {
         <Tbody>
           {data.map((item, index) => (
             <Tr key={index}>
-              <Td fontSize={12}>{item.title} <span style={{ color: 'red' }}>*</span></Td>
-              <Td onClick={() => handleCellClick(index, item.title)}>
-                <Button variant="link" color="blue"><MdUploadFile /></Button>
+              <Td fontSize={12}>
+                {item.title} <span style={{ color: "red" }}>*</span>
               </Td>
-              <Td fontSize={12}>{selectedDescriptions[index] || preFilledDescriptions[index] || ''}</Td> {/* Afficher la description pré-remplie */}
+              <Td onClick={() => handleCellClick(index, item.title)}>
+                <Button variant="link" color="blue">
+                  <MdUploadFile />
+                </Button>
+              </Td>
+              <Td fontSize={12}>
+                {selectedDescriptions[index] ||
+                  preFilledDescriptions[index] ||
+                  ""}
+              </Td>{" "}
+              {/* Afficher la description pré-remplie */}
             </Tr>
           ))}
         </Tbody>
       </Table>
 
       {/* Modal */}
-      <Modal isOpen={isOpen} onClose={closeModal} isCentered scrollBehavior='inside'>
+      <Modal
+        isOpen={isOpen}
+        onClose={closeModal}
+        isCentered
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{selectedCategory?.category}</ModalHeader>
@@ -107,7 +189,9 @@ const Additional = ({ onAdditionalChange, event }) => {
           <ModalBody>
             {selectedCategory && (
               <MultiLevelList
-                data={data.find(item => item.title === selectedCategory.category)}
+                data={data.find(
+                  (item) => item.title === selectedCategory.category
+                )}
                 onItemClick={handleItemClick}
               />
             )}
