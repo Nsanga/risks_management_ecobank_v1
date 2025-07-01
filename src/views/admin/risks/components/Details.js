@@ -16,7 +16,7 @@ import DocumentUploader from "./DocumentUploader";
 import RAG from "../RAG";
 import moment from "moment";
 
-const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurrency }) => {
+const Details = ({ event, onDetailsChange, entities, profiles }) => {
   const [rag, setRag] = useState([]);
 
   function getCurrentTime() {
@@ -145,7 +145,6 @@ const Details = ({ event, onDetailsChange, entities, profiles, setSelectedCurren
           ? event.details.document
           : [],
       }));
-      setSelectedCurrency(event.details.rate);
     }
   }, [event]);
 

@@ -15,6 +15,17 @@ import {
   Flex,
   Button,
   Image,
+  Stepper,
+  Step,
+  StepIndicator,
+  StepStatus,
+  StepTitle,
+  StepDescription,
+  StepSeparator,
+  StepIcon,
+  StepNumber,
+  useSteps,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import Details from "./Details";
@@ -42,17 +53,47 @@ const truncateText = (text, maxLength) => {
   return text.substring(0, maxLength) + "...";
 };
 
+const steps = [
+  { title: 'Détails', description: 'Informations principales' },
+  { title: 'Commentaire', description: 'Ajouter un commentaire' },
+  { title: 'Finances', description: 'Informations financières' },
+  {
+    title: 'Informations supplémentaires',
+    description: 'Détails complémentaires'
+  },
+];
+
 function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [detailsData, setDetailsData] = useState({});
   const [commentaryData, setCommentaryData] = useState({});
   const [financesData, setFinanceData] = useState(null);
   const [additionalData, setAdditionalData] = useState({});
-  const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [isLoading, setIsLoading] = useState(null);
-  const [totalCurrenciesProps, setTotalCurrenciesProps] = useState(0);
-  const [activeTab, setActiveTab] = useState(0);
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
+    count: steps.length,
+  });
   const history = useHistory();
+
+  const handleNext = () => {
+    if (activeStep < steps.length - 1) {
+      setActiveStep(activeStep + 1);
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const handlePrev = () => {
+    if (activeStep > 0) {
+      setActiveStep(activeStep - 1);
+    }
+  };
+
+  const handleClose = () => {
+    onClose();
+    setActiveStep(0);
+  }
 
   const categories = data.map((item) => item.title);
 
@@ -97,7 +138,6 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       const payload = {
         details: {
           ...detailsData,
-          rate: selectedCurrency,
           recorded_by: localStorage.getItem("username"),
         },
         commentary: {
@@ -107,8 +147,6 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         additionnalInfo: [...additionalInfoData],
         approved: approved,
       };
-
-      // console.log(payload, selectedCurrency);
 
       setIsLoading(true);
       try {
@@ -131,7 +169,6 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       details: {
         ...event.details, // données existantes
         ...detailsData,   // données modifiées
-        rate: selectedCurrency || event.details.rate,
         recorded_by: localStorage.getItem("username"),
       },
       commentary: {
@@ -209,75 +246,84 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Tabs index={activeTab} onChange={(index) => setActiveTab(index)}>
-              <TabList>
-                <Tab>Détails</Tab>
-                <Tab>Commentaire</Tab>
-                <Tab>
-                  Finances <span style={{ color: "red" }}>*</span>
-                </Tab>
-                <Tab>
-                  Informations supplémentaires <span style={{ color: "red" }}>*</span>
-                </Tab>
-              </TabList>
+            <Box>
+              <Stepper index={activeStep} orientation="horizontal" gap="0">
+                {steps.map((step, index) => (
+                  <Step key={index}>
+                    <StepIndicator>
+                      <StepStatus
+                        complete={<StepIcon />}
+                        incomplete={<StepNumber />}
+                        active={<StepNumber />}
+                      />
+                    </StepIndicator>
 
-              <TabPanels>
-                <TabPanel>
+                    <Box flexShrink="0">
+                      <StepTitle>{step.title}</StepTitle>
+                      <StepDescription>{step.description}</StepDescription>
+                    </Box>
+
+                    <StepSeparator />
+                  </Step>
+                ))}
+              </Stepper>
+
+              <Box p={4}>
+                {activeStep === 0 && (
                   <Details
                     onDetailsChange={handleDetailsChange}
                     event={event}
                     entities={entities}
                     profiles={profiles}
-                    setSelectedCurrency={setSelectedCurrency}
                   />
-                </TabPanel>
-                <TabPanel>
+                )}
+                {activeStep === 1 && (
                   <Commentary
                     onCommentaryChange={handleCommentaryChange}
                     event={event}
                   />
-                </TabPanel>
-                <TabPanel>
-                  {/* <Finances
-                    onFinancesChange={handleFinancesChange}
-                    financesData={financesData}
-                    isEdit={isEdit}
-                    event={event}
-                    setTotalCurrenciesProps={setTotalCurrenciesProps}
-                    selectedCurrency={selectedCurrency}
-                    setSelectedCurrency={setSelectedCurrency}
-                  /> */}
-                  <DynamicTable onDataChange={handleTableChange}/>
-                </TabPanel>
-                <TabPanel>
+                )}
+                {activeStep === 2 && (
+                  <DynamicTable onDataChange={handleTableChange} />
+                )}
+                {activeStep === 3 && (
                   <Additional
                     onAdditionalChange={handleAdditionalChange}
                     event={event}
                   />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
+                )}
+
+
+              </Box>
+            </Box>
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              onClick={event ? () => handleUpdate(event) : handleSubmit}
-              colorScheme="blue"
-              mr={2}
-              disabled={activeTab === 2 && totalCurrenciesProps < 1}
-            >
-              {isLoading ? (
-                <Flex alignItems="center" justifyContent="center" width="100%">
-                  <Image src={Loader} alt="Loading..." height={25} width={25} />
-                </Flex>
-              ) : (
-                <>{event ? " Modifier et approuver" : "Enregistrer et approuver"}</>
-              )}
-            </Button>
-            {/* <GlobalViewEvent detailsData={detailsData} commentaryData={commentaryData} financesData={financesData} additionalData={additionalData} categories={categories} /> */}
-            <Button colorScheme="red" mr={2} onClick={onClose}>
-              Annuler
-            </Button>
+            <ButtonGroup mt={5} spacing={4}>
+              <Button
+                isDisabled={activeStep === 0}
+                onClick={handlePrev}
+                variant="outline"
+              >
+                Retour
+              </Button>
+              <Button colorScheme="red" mr={2} onClick={handleClose}>
+                Annuler
+              </Button>
+              <Button
+                onClick={activeStep === steps.length - 1 ? (event ? () => handleUpdate(event) : handleSubmit) : handleNext}
+                colorScheme="blue"
+                mr={2}
+              >
+                {isLoading ? (
+                  <Flex alignItems="center" justifyContent="center" width="100%">
+                    <Image src={Loader} alt="Loading..." height={25} width={25} />
+                  </Flex>
+                ) : (
+                  <>{activeStep === steps.length - 1 ? (event ? " Modifier et approuver" : "Enregistrer et approuver") : 'Suivant'}</>
+                )}
+              </Button>
+            </ButtonGroup>
           </ModalFooter>
         </ModalContent>
       </Modal>
