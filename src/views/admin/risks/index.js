@@ -20,7 +20,6 @@ console.log("events:", events)
   // Trier les événements par date de création et sélectionner les 5 plus récents
   const recentEvents = [...events]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
 
   return (
     <Card mt="100px">

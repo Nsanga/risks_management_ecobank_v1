@@ -69,12 +69,24 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const [commentaryData, setCommentaryData] = useState({});
   const [financesData, setFinanceData] = useState(null);
   const [additionalData, setAdditionalData] = useState({});
-  const [isLoading, setIsLoading] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
   const history = useHistory();
+
+  const isFirstStepValid = () => {
+    return (
+      detailsData.description &&
+      detailsData.entityOfDetection &&
+      detailsData.entityOfOrigin &&
+      detailsData.owner &&
+      detailsData.nominee &&
+      detailsData.detection_date &&
+      detailsData.event_date
+    );
+  };
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -97,8 +109,8 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
   const categories = data.map((item) => item.title);
 
-  const handleDetailsChange = (data) => {
-    setDetailsData(data);
+  const handleDetailsChange = (newDetails) => {
+    setDetailsData({ ...detailsData, ...newDetails });
   };
 
   const handleCommentaryChange = (data) => {
@@ -259,7 +271,15 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                     </StepIndicator>
 
                     <Box flexShrink="0">
-                      <StepTitle>{step.title}</StepTitle>
+                      <StepTitle>
+                        {step.title}
+                        {step.title === "Finances" && (
+                          <span style={{ color: "red", marginLeft: "2px" }}>*</span>
+                        )}
+                        {step.title === "Informations supplémentaires" && (
+                          <span style={{ color: "red", marginLeft: "2px" }}>*</span>
+                        )}
+                      </StepTitle>
                       <StepDescription>{step.description}</StepDescription>
                     </Box>
 
@@ -300,13 +320,14 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
           <ModalFooter>
             <ButtonGroup mt={5} spacing={4}>
-              <Button
-                isDisabled={activeStep === 0}
-                onClick={handlePrev}
-                variant="outline"
-              >
-                Retour
-              </Button>
+              {activeStep !== 0 && (
+                <Button
+                  onClick={handlePrev}
+                  variant="outline"
+                >
+                  Retour
+                </Button>
+              )}
               <Button colorScheme="red" mr={2} onClick={handleClose}>
                 Annuler
               </Button>
@@ -314,6 +335,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                 onClick={activeStep === steps.length - 1 ? (event ? () => handleUpdate(event) : handleSubmit) : handleNext}
                 colorScheme="blue"
                 mr={2}
+                isDisabled={isLoading || activeStep === 0 && !isFirstStepValid()}
               >
                 {isLoading ? (
                   <Flex alignItems="center" justifyContent="center" width="100%">

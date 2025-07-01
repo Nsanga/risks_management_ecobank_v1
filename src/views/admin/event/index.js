@@ -38,6 +38,8 @@ import { listEntities } from "redux/entity/action";
 import { listProfiles } from "redux/profile/action";
 import { url } from "urlLoader";
 import moment from "moment";
+import { updateEvent } from "redux/events/action";
+import { listEvents } from "redux/events/action";
 
 const generatePDF = async () => {
   const headElement = document.getElementById("head-component"); // Assume the Head component has an ID
@@ -59,6 +61,7 @@ const Event = ({ profiles, entities }) => {
   const [isUnapprovedDisabled, setIsUnapprovedDisabled] = useState(false);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
   const [isAmendDisabled, setIsAmendDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const event = location.state?.event;
   const loading = location.state?.loading;
@@ -93,12 +96,29 @@ const Event = ({ profiles, entities }) => {
     }
   };
 
-  const handleUnapprovedClick = () => {
-    setIsEmailDisabled(true);
-    setIsPrintDisabled(true);
-    setIsUnapprovedDisabled(true);
-    setIsDeleteDisabled(true);
-    setIsAmendDisabled(false);
+  const handleUnapprovedClick = async () => {
+    const payload = {
+      approved: false,
+    };
+
+    console.log(payload);
+
+    setIsLoading(true);
+    try {
+      await dispatch(updateEvent(event._id, payload));
+      await dispatch(listEvents());
+      setIsEmailDisabled(true);
+      setIsPrintDisabled(true);
+      setIsUnapprovedDisabled(true);
+      setIsDeleteDisabled(true);
+      setIsAmendDisabled(false);
+
+    } catch (error) {
+      console.error("Erreur lors de la soumission:", error);
+      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEmailClick = async () => {
@@ -150,7 +170,7 @@ const Event = ({ profiles, entities }) => {
     iframe.print();
   };
 
-  const totalRow = event?.financials.find((f) => f.name === "Total");
+  const totalRow = event?.financials.totalConverted;
   const name = event.details.reviewer?.name ? event.details.reviewer?.name : "";
   const surname = event.details.reviewer?.surname
     ? event.details.reviewer?.surname
@@ -199,15 +219,8 @@ const Event = ({ profiles, entities }) => {
                   }
                   currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
                   description={event.details.description}
-                  totalLosses={
-                    totalRow?.values
-                      ? totalRow?.values[0] +
-                      totalRow?.values[1] +
-                      totalRow?.values[2] +
-                      totalRow?.values[3]
-                      : ""
-                  }
-                  devise={event?.details?.rate}
+                  totalLosses={totalRow}
+                  devise={event?.financials.currency}
                   externalRef={event.details.externalRef}
                 />
                 <DetailsForm
@@ -272,7 +285,7 @@ const Event = ({ profiles, entities }) => {
                     colorScheme="red"
                     onClick={handleEmailClick}
                     isLoading={loader}
-                    isDisabled={isEmailDisabled}
+                    isDisabled={!event.approved}
                   >
                     E-mail
                   </Button>
@@ -283,7 +296,7 @@ const Event = ({ profiles, entities }) => {
                     variant="outline"
                     colorScheme="teal"
                     onClick={handlePrint}
-                    isDisabled={isPrintDisabled}
+                    isDisabled={!event.approved}
                   >
                     Print
                   </Button>
@@ -294,9 +307,15 @@ const Event = ({ profiles, entities }) => {
                     variant="outline"
                     colorScheme="green"
                     onClick={handleUnapprovedClick}
-                    isDisabled={isUnapprovedDisabled}
+                    isDisabled={isLoading || !event.approved}
                   >
-                    Non approuvé
+                    {isLoading ? (
+                      <Flex alignItems="center" justifyContent="center" width="100%">
+                        <Image src={Loader} alt="Loading..." height={25} width={25} />
+                      </Flex>
+                    ) : (
+                      "Non approuvé"
+                    )}
                   </Button>
                 </Flex>
                 <Flex>
@@ -305,13 +324,13 @@ const Event = ({ profiles, entities }) => {
                     entities={entities}
                     profiles={profiles}
                     isEdit={isEdit}
-                    isAmendDisabled={isAmendDisabled}
+                    isAmendDisabled={event.approved}
                   />
                 </Flex>
                 <Flex>
                   <DeleteModal
                     selectedEntity={event}
-                    isDeleteDisabled={isDeleteDisabled}
+                    isDeleteDisabled={!event.approved}
                   />
                 </Flex>
               </Flex>

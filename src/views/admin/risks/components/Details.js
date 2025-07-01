@@ -404,7 +404,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
           </Box>
           <Box p={5} shadow="md" borderWidth="1px" width="49%">
             <Box bg="green.400" color="#FFF" mb={6} padding={2}>
-               Zone d’origine.
+              Zone d’origine.
             </Box>
             <Flex flexDirection="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
@@ -488,11 +488,13 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
             </Flex>
           </Flex>
           <Flex flexDirection="column" gap={2}>
-            <Flex gap={10} alignItems="center">
-              <Text fontSize={12}>
-                Propriétaire : <span style={{ color: "red" }}>*</span>
-              </Text>
-              <Box width={200} marginLeft={1}>
+            <Flex alignItems="center">
+              <Box width={"40%"}>
+                <Text fontSize={12}>
+                  Propriétaire : <span style={{ color: "red" }}>*</span>
+                </Text>
+              </Box>
+              <Box width={"100%"}>
                 <Select
                   name="owner"
                   placeholder="Sélectionner le propriétaire"
@@ -507,11 +509,13 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 />
               </Box>
             </Flex>
-            <Flex gap={8} alignItems="center">
-              <Text fontSize={12}>
-                Désigné : <span style={{ color: "red" }}>*</span>
-              </Text>
-              <Box width={200}>
+            <Flex alignItems="center">
+              <Box width={"40%"}>
+                <Text fontSize={12}>
+                  Désigné : <span style={{ color: "red" }}>*</span>
+                </Text>
+              </Box>
+              <Box width={"100%"}>
                 <Select
                   name="mandataire"
                   placeholder="Sélectionner le mandataire"
@@ -526,9 +530,13 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
                 />
               </Box>
             </Flex>
-            <Flex gap={10} alignItems="center">
-              <Text fontSize={12}> Réviseur :</Text>
-              <Box width={200} marginLeft={1}>
+            <Flex alignItems="center">
+              <Box width={"40%"}>
+                <Text fontSize={12}>
+                  Réviseur :
+                </Text>
+              </Box>
+              <Box width={"100%"}>
                 <Select
                   name="reviewer"
                   placeholder="Sélectionner le réviseur"
