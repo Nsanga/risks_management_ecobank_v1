@@ -22,25 +22,12 @@ const DynamicTable = ({ onDataChange }) => {
         EUR_to_XAF: 655.957,
     });
 
-    const conversionRates = {
-        USD: exchangeRates.USD,
-        EUR: exchangeRates.EUR_to_USD,
-        XAF: exchangeRates.USD_to_XAF,
-    };
-
     const handleRateChange = (rate, value) => {
         setExchangeRates((prevRates) => ({
             ...prevRates,
             [rate]: parseFloat(value),
         }));
-    };
-
-    const convertValue = (value, toCurrency) => {
-        const val = parseFloat(value);
-        if (isNaN(val)) return 0;
-
-        return val * conversionRates[toCurrency];
-    };
+    };  
 
     const [data, setData] = useState(() => {
         const initialData = {};
@@ -58,6 +45,51 @@ const DynamicTable = ({ onDataChange }) => {
         newData[row][col] = value;
         setData(newData);
     };
+
+    const convertAllData = (prevCurrency, newCurrency) => {
+        const newData = {};
+
+        rows.forEach((row) => {
+            newData[row] = {};
+            columns.forEach((col) => {
+                const val = parseFloat(data[row][col]);
+                const safeVal = isNaN(val) ? 0 : val;
+
+                const convertedVal = convertBetweenCurrencies(safeVal, prevCurrency, newCurrency);
+                newData[row][col] = convertedVal.toFixed(2);
+            });
+        });
+
+        setData(newData);
+    };
+
+    const convertBetweenCurrencies = (value, fromCurrency, toCurrency) => {
+        if (fromCurrency === toCurrency) return value;
+
+        // Revenir à USD puis convertir vers la nouvelle devise
+        let valueInUSD;
+
+        if (fromCurrency === 'USD') {
+            valueInUSD = value;
+        } else if (fromCurrency === 'EUR') {
+            valueInUSD = value * exchangeRates.EUR_to_USD;
+        } else if (fromCurrency === 'XAF') {
+            valueInUSD = value / exchangeRates.USD_to_XAF;
+        }
+
+        if (toCurrency === 'USD') return valueInUSD;
+        if (toCurrency === 'EUR') return valueInUSD / exchangeRates.EUR_to_USD;
+        if (toCurrency === 'XAF') return valueInUSD * exchangeRates.USD_to_XAF;
+
+        return value; // fallback
+    };
+
+    const handleCurrencyChange = (newCurrency) => {
+        if (newCurrency !== currency) {
+          convertAllData(currency, newCurrency);
+          setCurrency(newCurrency);
+        }
+      };    
 
     const calculateRowTotal = (row) => {
         return columns.reduce((sum, col) => {
@@ -88,11 +120,6 @@ const DynamicTable = ({ onDataChange }) => {
         }, 0);
     };
 
-    const calculateConvertedGlobalTotal = () => {
-        const totalUSD = calculateGlobalTotal();
-        return convertValue(totalUSD, currency).toFixed(2);
-    };
-
     const buildPayload = () => {
         const enrichedData = {};
 
@@ -105,7 +132,7 @@ const DynamicTable = ({ onDataChange }) => {
 
         return {
             currency,
-            totalConverted: parseFloat(calculateConvertedGlobalTotal()),
+            totalConverted: parseFloat(calculateGlobalTotal()),
             data: enrichedData,
         };
     };
@@ -127,14 +154,14 @@ const DynamicTable = ({ onDataChange }) => {
             <Flex justifyContent="space-between" alignItems="center" mb={4}>
                 <Flex flex="1" alignItems="center" gap={4}>
                     <Text fontSize={12}>Total des devises :</Text>
-                    <span style={{ fontSize: "12px" }}>{calculateConvertedGlobalTotal()} {currency}</span>
+                    <span style={{ fontSize: "12px" }}>{calculateGlobalTotal()} {currency}</span>
                 </Flex>
                 <Flex flex="1" alignItems="center" gap={4}>
                     <Text fontSize={12} fontWeight='bold'>Devises :</Text>
                     <Box w="30%">
                         <Select
                             value={currency}
-                            onChange={(e) => setCurrency(e.target.value)}
+                            onChange={(e) => handleCurrencyChange(e.target.value)}
                             fontSize={12}
                             style={{ color: !currency ? "gray" : "black" }}
                         >
@@ -160,7 +187,7 @@ const DynamicTable = ({ onDataChange }) => {
                         {rows.map((row) => (
                             <Tr key={row}>
                                 <Td fontSize={12}><strong>{row}</strong></Td>
-                                <Td fontSize={12} height="10px">{convertValue(calculateRowTotal(row), currency).toFixed(2)}</Td>
+                                <Td fontSize={12} height="10px">{calculateRowTotal(row).toFixed(2)}</Td>
                                 {columns.map((col) => (
                                     <Td key={col}>
                                         <Input
@@ -176,9 +203,9 @@ const DynamicTable = ({ onDataChange }) => {
                         ))}
                         <Tr style={{ backgroundColor: '#e6f7ff', fontWeight: 'bold' }}>
                             <Td>Total</Td>
-                            <Td fontSize={12} height="10px">{calculateConvertedGlobalTotal()}</Td>
+                            <Td fontSize={12} height="10px">{calculateGlobalTotal().toFixed(2)}</Td>
                             {columns.map((col) => (
-                                <Td fontSize={12} height="10px" key={col}>{convertValue(calculateColumnTotal(col), currency).toFixed(2)}</Td>
+                                <Td fontSize={12} height="10px" key={col}>{calculateColumnTotal(col).toFixed(2)}</Td>
                             ))}
                         </Tr>
                     </Tbody>
@@ -190,18 +217,14 @@ const DynamicTable = ({ onDataChange }) => {
                         </TableCaption>
                         <Tbody>
                             <Tr>
-                                <Td maxW="150px" fontSize={12}>
-                                    EUR/USD
-                                </Td>
-                                <Td maxW="200px" fontSize={12}>
+                                <Td fontSize={12}>EUR/USD</Td>
+                                <Td fontSize={12}>
                                     {exchangeRates.EUR_to_USD}
                                 </Td>
                             </Tr>
                             <Tr>
-                                <Td maxW="150px" fontSize={12}>
-                                    USD/XAF
-                                </Td>
-                                <Td maxW="200px" fontSize={12}>
+                                <Td fontSize={12}>USD/XAF</Td>
+                                <Td fontSize={12}>
                                     <Input
                                         fontSize={12}
                                         value={exchangeRates.USD_to_XAF}
@@ -212,10 +235,8 @@ const DynamicTable = ({ onDataChange }) => {
                                 </Td>
                             </Tr>
                             <Tr>
-                                <Td maxW="150px" fontSize={12}>
-                                    EUR/XAF
-                                </Td>
-                                <Td maxW="200px" fontSize={12}>
+                                <Td fontSize={12}>EUR/XAF</Td>
+                                <Td fontSize={12}>
                                     <Input
                                         fontSize={12}
                                         value={exchangeRates.EUR_to_XAF}
