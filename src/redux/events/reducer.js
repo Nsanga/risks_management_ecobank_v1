@@ -3,6 +3,7 @@ import * as types from './types';
 
 const INITIAL_STATE = {
   events: [],
+  event: null,
   loading: false,
   error: null,
 };
@@ -21,6 +22,19 @@ const EventReducer = (state = INITIAL_STATE, action) =>
       case types.GET_EVENTS_FAILED:
         draft.loading = false;
         draft.events = [];
+        draft.error = action.payload;
+        break;
+      case types.GET_EVENT_REQUEST:
+        draft.loading = true;
+        draft.error = null;
+        break;
+      case types.GET_EVENT_SUCCESS:
+        draft.loading = false;
+        draft.event = action.payload.data.event;
+        break;
+      case types.GET_EVENT_FAILED:
+        draft.loading = false;
+        draft.event = null;
         draft.error = action.payload;
         break;
       case types.GET_EVENTS_BY_ENTITY_REQUEST:

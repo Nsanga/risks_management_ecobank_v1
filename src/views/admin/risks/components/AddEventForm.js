@@ -65,28 +65,16 @@ const steps = [
 
 function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [detailsData, setDetailsData] = useState({});
-  const [commentaryData, setCommentaryData] = useState({});
+  const [detailsData, setDetailsData] = useState(null);
+  const [commentaryData, setCommentaryData] = useState(null);
   const [financesData, setFinanceData] = useState(null);
-  const [additionalData, setAdditionalData] = useState({});
+  const [additionalData, setAdditionalData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
   const history = useHistory();
-
-  const isFirstStepValid = () => {
-    return (
-      detailsData.description &&
-      detailsData.entityOfDetection &&
-      detailsData.entityOfOrigin &&
-      detailsData.owner &&
-      detailsData.nominee &&
-      detailsData.detection_date &&
-      detailsData.event_date
-    );
-  };
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -110,7 +98,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const categories = data.map((item) => item.title);
 
   const handleDetailsChange = (newDetails) => {
-    setDetailsData({ ...detailsData, ...newDetails });
+    setDetailsData(prevDetails => ({ ...prevDetails, ...newDetails }));
   };
 
   const handleCommentaryChange = (data) => {
@@ -198,18 +186,32 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   };
 
   useEffect(() => {
+    console.log('event', event)
     if (event) {
       setDetailsData(event.details);
       setCommentaryData(event.commentary);
       setFinanceData(event.financials);
       setAdditionalData(event.detais);
     } else {
-      setDetailsData({});
-      setCommentaryData({});
-      setFinanceData({});
-      setAdditionalData({});
+      setDetailsData(null);
+      setCommentaryData(null);
+      setFinanceData(null);
+      setAdditionalData(null);
     }
+    console.log('detailData', detailsData)
   }, [event]);
+
+  const isFirstStepValid = () => {
+    return (
+      detailsData?.description &&
+      detailsData?.entityOfDetection &&
+      detailsData?.entityOfOrigin &&
+      detailsData?.owner &&
+      detailsData?.nominee &&
+      detailsData?.detection_date &&
+      detailsData?.event_date
+    );
+  };
 
   return (
     <>

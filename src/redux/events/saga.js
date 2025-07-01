@@ -38,6 +38,21 @@ function* listByEntity(action) {
     }
 }
 
+function* fetchEvent(action) {
+    try {
+        let link = `${url}/api/v1/events/one/${action.payload}`;
+        const data = yield getRequest(link);
+        if (data.status === 200) {
+            yield put({ type: types.GET_EVENT_SUCCESS, payload: data });
+        } else {
+            yield put({ type: types.GET_EVENT_FAILED, payload: "echec recuperation des données" });
+        }
+    } catch (error) {
+        console.log(error);
+        yield put({ type: types.GET_EVENT_FAILED, payload: error });
+    }
+}
+
 function* update(action) {
     const { id } = action.payload;
     try {
@@ -100,6 +115,7 @@ function* deleteEvent(action) {
 export default function* EventSaga() {
     yield takeLatest(types.GET_EVENTS_REQUEST, list);
     yield takeLatest(types.GET_EVENTS_BY_ENTITY_REQUEST, listByEntity);
+    yield takeLatest(types.GET_EVENT_REQUEST, fetchEvent);
     // yield takeLatest(types.GET_SERVICES_REQUEST, listServices);
     yield takeLatest(types.UPDATE_EVENT_REQUEST, update);
     yield takeLatest(types.ADD_EVENT_REQUEST, add);

@@ -9,6 +9,11 @@ export const listEventsByEntity = (id) => ({
   payload: id
 });
 
+export const fetchEvent = (id) => ({
+  type: types.GET_EVENT_REQUEST,
+  payload: id
+});
+
 export const updateEvent = (id, eventData) => ({
     type: types.UPDATE_EVENT_REQUEST,
     payload: {id, eventData}

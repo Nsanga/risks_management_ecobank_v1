@@ -234,6 +234,7 @@ export default function IncidentLossReportTable({ reports, loading }) {
               <th style={{ border: "1px solid gray" }}>Event Nominee</th>
               <th style={{ border: "1px solid gray" }}>Event Reviewer</th>
               <th style={{ border: "1px solid gray" }}>Gross Loss</th>
+              <th style={{ border: "1px solid gray" }}>Recovery</th>
               <th style={{ border: "1px solid gray" }}>Net Loss</th>
               <th style={{ border: "1px solid gray" }}>First Increment Date</th>
               <th style={{ border: "1px solid gray" }}>Last Increment Date</th>
@@ -280,8 +281,9 @@ export default function IncidentLossReportTable({ reports, loading }) {
                 <td style={{ border: "1px solid gray" }}>{item.owner}</td>
                 <td style={{ border: "1px solid gray" }}>{item.nominee}</td>
                 <td style={{ border: "1px solid gray" }}>{item.reviewer}</td>
-                <td style={{ border: "1px solid gray" }}>{item.grossLoss}</td>
-                <td style={{ border: "1px solid gray" }}>{item.netLoss}</td>
+                <td style={{ border: "1px solid gray" }}>{item.financials.data["Actual Loss"]?.Total || 0}</td>
+                <td style={{ border: "1px solid gray" }}>{item.financials.data["Actual Recovery"]?.Total + item.financials.data["Expected Recovery"]?.Total + item.financials.data["Insurance Recovery"]?.Total || 0}</td>
+                <td style={{ border: "1px solid gray" }}>{(item.financials.data["Actual Loss"].Total || 0) - (item.financials.data["Actual Recovery"]?.Total || 0)}</td>
                 <td style={{ border: "1px solid gray" }}>
                   {item.firstIncrementDate}
                 </td>
