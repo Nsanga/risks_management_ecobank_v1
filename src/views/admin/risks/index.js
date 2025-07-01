@@ -16,7 +16,7 @@ const Risks = ({ events, loading, entities, profiles }) => {
     dispatch(listEntities());
     dispatch(listProfiles());
   }, [dispatch]);
-
+console.log("events:", events)
   // Trier les événements par date de création et sélectionner les 5 plus récents
   const recentEvents = [...events]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

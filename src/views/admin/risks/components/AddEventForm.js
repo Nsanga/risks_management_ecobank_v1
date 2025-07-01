@@ -33,6 +33,7 @@ import toast from "react-hot-toast";
 import Loader from "../../../../assets/img/loader.gif";
 import { listEvents } from "redux/events/action";
 import { useHistory } from "react-router-dom";
+import DynamicTable from "./DynamicTable";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -45,7 +46,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [detailsData, setDetailsData] = useState({});
   const [commentaryData, setCommentaryData] = useState({});
-  const [financesData, setFinancesData] = useState([]);
+  const [financesData, setFinanceData] = useState(null);
   const [additionalData, setAdditionalData] = useState({});
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [isLoading, setIsLoading] = useState(null);
@@ -63,18 +64,14 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     setCommentaryData(data);
   };
 
-  const handleFinancesChange = (data) => {
-    setFinancesData(data);
+  const handleTableChange = (payload) => {
+    console.log('Payload reçu du tableau :', payload);
+    setFinanceData(payload);
   };
 
   const handleAdditionalChange = (data) => {
     setAdditionalData(data);
   };
-
-  useEffect(() => {
-    console.log("Devise changée:", selectedCurrency);
-    // Faire quelque chose quand la devise change
-  }, [selectedCurrency, financesData]);
 
   const dispatch = useDispatch();
 
@@ -106,7 +103,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         commentary: {
           ...commentaryData,
         },
-        financials: [...financesData],
+        financials: financesData,
         additionnalInfo: [...additionalInfoData],
         approved: approved,
       };
@@ -141,7 +138,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         ...event.commentary, // données existantes
         ...commentaryData,   // données modifiées
       },
-      financials: financesData.length > 0 ? [...financesData] : [...event.financials],
+      financials: financesData,
       additionnalInfo: additionalInfoData.length > 0
         ? [...additionalInfoData]
         : [...event.additionnalInfo],
@@ -241,7 +238,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                   />
                 </TabPanel>
                 <TabPanel>
-                  <Finances
+                  {/* <Finances
                     onFinancesChange={handleFinancesChange}
                     financesData={financesData}
                     isEdit={isEdit}
@@ -249,7 +246,8 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                     setTotalCurrenciesProps={setTotalCurrenciesProps}
                     selectedCurrency={selectedCurrency}
                     setSelectedCurrency={setSelectedCurrency}
-                  />
+                  /> */}
+                  <DynamicTable onDataChange={handleTableChange}/>
                 </TabPanel>
                 <TabPanel>
                   <Additional

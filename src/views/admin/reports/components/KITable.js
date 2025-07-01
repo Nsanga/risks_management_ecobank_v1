@@ -22,7 +22,7 @@ const groupedData = [
   {
     status: "Stable",
     trend: "N/A",
-    color: "#808080" // Vert pour Stable (corrigé le double #)
+    color: "#000000" // Vert pour Stable (corrigé le double #)
   },
 ];
 

@@ -27,7 +27,7 @@ const CardDetails = ({ events, loading }) => {
         </Flex>
       ) : hasEvents ? (
         events.map((event) => {
-          const totalLoss = event?.financials.find((f) => f.name === "Total")?.values.reduce((acc, val) => acc + val, 0);
+          const totalLoss = event?.financials.totalConverted;
           
           return (
             <Box
@@ -62,7 +62,7 @@ const CardDetails = ({ events, loading }) => {
                 
                 {/* Colonne Taux */}
                 <Text fontSize="sm" textAlign="left">
-                  {event?.details.rate || '-'}
+                  {event?.financials.currency || '-'}
                 </Text>
                 
                 {/* Colonne Statut */}
