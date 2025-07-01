@@ -283,7 +283,7 @@ export default function IncidentLossReportTable({ reports, loading }) {
                 <td style={{ border: "1px solid gray" }}>{item.reviewer}</td>
                 <td style={{ border: "1px solid gray" }}>{item.financials.data["Actual Loss"]?.Total || 0}</td>
                 <td style={{ border: "1px solid gray" }}>{item.financials.data["Actual Recovery"]?.Total + item.financials.data["Expected Recovery"]?.Total + item.financials.data["Insurance Recovery"]?.Total || 0}</td>
-                <td style={{ border: "1px solid gray" }}>{(item.financials.data["Actual Loss"].Total || 0) - (item.financials.data["Actual Recovery"]?.Total || 0)}</td>
+                <td style={{ border: "1px solid gray" }}>{(item.financials.data["Actual Loss"].Total || 0) - (item.financials.data["Actual Recovery"]?.Total || 0 + item.financials.data["Expected Recovery"]?.Total || 0 + item.financials.data["Insurance Recovery"]?.Total || 0)}</td>
                 <td style={{ border: "1px solid gray" }}>
                   {item.firstIncrementDate}
                 </td>
