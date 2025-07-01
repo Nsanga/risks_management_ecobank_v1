@@ -13,7 +13,7 @@ const rows = [
 
 const columns = ['Direct', 'Amendes réglementaires', 'Dépréciation d’actif', 'Other'];
 
-const DynamicTable = ({ onDataChange }) => {
+const DynamicTable = ({ onDataChange, financesData }) => {
     const [currency, setCurrency] = useState('USD');
     const [exchangeRates, setExchangeRates] = useState({
         USD: 1,
@@ -27,7 +27,7 @@ const DynamicTable = ({ onDataChange }) => {
             ...prevRates,
             [rate]: parseFloat(value),
         }));
-    };  
+    };
 
     const [data, setData] = useState(() => {
         const initialData = {};
@@ -86,10 +86,10 @@ const DynamicTable = ({ onDataChange }) => {
 
     const handleCurrencyChange = (newCurrency) => {
         if (newCurrency !== currency) {
-          convertAllData(currency, newCurrency);
-          setCurrency(newCurrency);
+            convertAllData(currency, newCurrency);
+            setCurrency(newCurrency);
         }
-      };    
+    };
 
     const calculateRowTotal = (row) => {
         return columns.reduce((sum, col) => {
@@ -149,6 +149,24 @@ const DynamicTable = ({ onDataChange }) => {
         }
     }, [data, currency]);
 
+    useEffect(() => {
+        if (financesData?.data) {
+            const loadedData = {};
+            rows.forEach(row => {
+                loadedData[row] = {};
+                columns.forEach(col => {
+                    const value = financesData.data[row]?.[col];
+                    loadedData[row][col] = value === null || value === undefined ? '' : value;
+                });
+            });
+
+            setData(loadedData);
+            if (financesData.currency) {
+                setCurrency(financesData.currency);
+            }
+        }
+    }, []);
+
     return (
         <div style={{ overflowX: 'auto' }}>
             <Flex justifyContent="space-between" alignItems="center" mb={4}>
@@ -194,7 +212,7 @@ const DynamicTable = ({ onDataChange }) => {
                                             type="number"
                                             value={data[row][col]}
                                             onChange={(e) => handleChange(row, col, e.target.value)}
-                                            placeHolder="0"
+                                            placeholder="0"
                                             style={{ width: '100%', fontSize: '12px' }}
                                         />
                                     </Td>

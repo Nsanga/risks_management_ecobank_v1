@@ -43,10 +43,9 @@ function* update(action) {
     try {
         let link = `${url}/api/v1/events/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.eventData));
-        if (data.message === "Success") {
+        if (data.status === 200) {
             yield put({ type: types.UPDATE_EVENT_SUCCESS, payload: data.data.event });
             toast.success(data.data.message);
-            yield call(list, { payload: { type: 'Automatically' } });
         } else {
             yield put({ type: types.UPDATE_EVENT_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.data.message);

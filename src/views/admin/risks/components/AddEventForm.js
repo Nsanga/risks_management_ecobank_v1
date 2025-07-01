@@ -26,14 +26,13 @@ import {
   StepNumber,
   useSteps,
   ButtonGroup,
+  Text,
 } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import Details from "./Details";
 import Commentary from "./Commentary";
-import Finances from "./Finances";
 import { AddIcon } from "@chakra-ui/icons";
 import Additional from "./Additional";
-import GlobalViewEvent from "./globalViewEvent/GlobalViewEvent";
 import { useEffect, useState } from "react";
 import data from "../Data";
 import { FaFilePen } from "react-icons/fa6";
@@ -45,6 +44,7 @@ import Loader from "../../../../assets/img/loader.gif";
 import { listEvents } from "redux/events/action";
 import { useHistory } from "react-router-dom";
 import DynamicTable from "./DynamicTable";
+import FinanceSummaryTable from "./FinanceSummaryTable";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -128,49 +128,39 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
   const dispatch = useDispatch();
 
-  const additionalInfoData = Object.keys(additionalData).map((key, index) => ({
-    category: categories[index],
-    description: additionalData[key],
-  }));
+  const additionalInfoData = additionalData
+    ? Object.keys(additionalData).map((key, index) => ({
+      category: categories[index],
+      description: additionalData[key],
+    }))
+    : [];
 
   const approved = true;
-
+  console.log("event::>", event)
   const handleSubmit = async () => {
-    if (
-      !detailsData.description ||
-      !detailsData.entityOfDetection ||
-      !detailsData.entityOfOrigin ||
-      !detailsData.owner ||
-      !detailsData.nominee ||
-      !detailsData.detection_date ||
-      !detailsData.event_date
-    ) {
-      toast.error("Please enter all required fields");
-    } else {
-      const payload = {
-        details: {
-          ...detailsData,
-          recorded_by: localStorage.getItem("username"),
-        },
-        commentary: {
-          ...commentaryData,
-        },
-        financials: financesData,
-        additionnalInfo: [...additionalInfoData],
-        approved: approved,
-      };
+    const payload = {
+      details: {
+        ...detailsData,
+        recorded_by: localStorage.getItem("username"),
+      },
+      commentary: {
+        ...commentaryData,
+      },
+      financials: financesData,
+      additionnalInfo: [...additionalInfoData],
+      approved: approved,
+    };
 
-      setIsLoading(true);
-      try {
-        await dispatch(AddEvent(payload));
-        onClose(); // Ferme la modal après la soumission réussie
-        await dispatch(listEvents());
-      } catch (error) {
-        console.error("Erreur lors de la soumission:", error);
-        // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
-      } finally {
-        setIsLoading(false);
-      }
+    setIsLoading(true);
+    try {
+      await dispatch(AddEvent(payload));
+      onClose(); // Ferme la modal après la soumission réussie
+      await dispatch(listEvents());
+    } catch (error) {
+      console.error("Erreur lors de la soumission:", error);
+      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -179,18 +169,13 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     // avec les données modifiées des états locaux
     const payload = {
       details: {
-        ...event.details, // données existantes
-        ...detailsData,   // données modifiées
-        recorded_by: localStorage.getItem("username"),
+        detailsData,
       },
       commentary: {
-        ...event.commentary, // données existantes
-        ...commentaryData,   // données modifiées
+        commentaryData,
       },
       financials: financesData,
-      additionnalInfo: additionalInfoData.length > 0
-        ? [...additionalInfoData]
-        : [...event.additionnalInfo],
+      additionnalInfo: additionalInfoData,
       approved: approved,
     };
 
@@ -211,6 +196,20 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (event) {
+      setDetailsData(event.details);
+      setCommentaryData(event.commentary);
+      setFinanceData(event.financials);
+      setAdditionalData(event.detais);
+    } else {
+      setDetailsData({});
+      setCommentaryData({});
+      setFinanceData({});
+      setAdditionalData({});
+    }
+  }, [event]);
 
   return (
     <>
@@ -292,7 +291,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                 {activeStep === 0 && (
                   <Details
                     onDetailsChange={handleDetailsChange}
-                    event={event}
+                    detailsData={detailsData}
                     entities={entities}
                     profiles={profiles}
                   />
@@ -300,11 +299,18 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                 {activeStep === 1 && (
                   <Commentary
                     onCommentaryChange={handleCommentaryChange}
-                    event={event}
+                    commentaryData={commentaryData}
                   />
                 )}
                 {activeStep === 2 && (
-                  <DynamicTable onDataChange={handleTableChange} />
+                  <>
+                    <DynamicTable onDataChange={handleTableChange} financesData={financesData} />
+                    {financesData && financesData?.data && (
+                      <>
+                        {financesData && <FinanceSummaryTable financesData={financesData} />}
+                      </>
+                    )}
+                  </>
                 )}
                 {activeStep === 3 && (
                   <Additional

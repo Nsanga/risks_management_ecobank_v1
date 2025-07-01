@@ -16,7 +16,7 @@ import DocumentUploader from "./DocumentUploader";
 import RAG from "../RAG";
 import moment from "moment";
 
-const Details = ({ event, onDetailsChange, entities, profiles }) => {
+const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
   const [rag, setRag] = useState([]);
 
   function getCurrentTime() {
@@ -102,51 +102,51 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
   }, []);
 
   useEffect(() => {
-    if (event && event.details) {
+    if (detailsData) {
       setFormData((prevState) => ({
         ...prevState,
-        event_date: moment(event.details.event_date).format("YYYY-MM-DD") || "",
-        event_time: event.details.event_time || "",
-        detection_date: event.details.detection_date
-          ? new Date(event.details.detection_date).toISOString().split("T")[0]
+        event_date: moment(detailsData.event_date).format("YYYY-MM-DD") || "",
+        event_time: detailsData.event_time || "",
+        detection_date: detailsData.detection_date
+          ? new Date(detailsData.detection_date).toISOString().split("T")[0]
           : "",
-        approved_date: event.details.approved_date
-          ? new Date(event.details.approved_date).toISOString().split("T")[0]
+        approved_date: detailsData.approved_date
+          ? new Date(detailsData.approved_date).toISOString().split("T")[0]
           : "",
-        closed_date: event.details.closed_date
-          ? new Date(event.details.closed_date).toISOString().split("T")[0]
+        closed_date: detailsData.closed_date
+          ? new Date(detailsData.closed_date).toISOString().split("T")[0]
           : "",
-        recorded_by: event.details.recorded_by || "",
-        recorded_date: event.details.recorded_date || "",
-        description: event.details.description || "",
-        descriptionDetailled: event.details.descriptionDetailled || "",
-        owner: event.details.owner?._id || null,
-        nominee: event.details.nominee?._id || null,
-        reviewer: event.details.reviewer?._id || null,
-        reviewer_date: event.details.reviewer_date
-          ? new Date(event.details.reviewer_date).toISOString().split("T")[0]
+        recorded_by: detailsData.recorded_by || "",
+        recorded_date: detailsData.recorded_date || "",
+        description: detailsData.description || "",
+        descriptionDetailled: detailsData.descriptionDetailled || "",
+        owner: detailsData.owner?._id || null,
+        nominee: detailsData.nominee?._id || null,
+        reviewer: detailsData.reviewer?._id || null,
+        reviewer_date: detailsData.reviewer_date
+          ? new Date(detailsData.reviewer_date).toISOString().split("T")[0]
           : "",
-        activeEvent: event.details.activeEvent || false,
-        excludeFundLosses: event.details.excludeFundLosses || false,
-        notify: event.details.notify || false,
-        externalEvent: event.details.externalEvent || false,
-        externalRef: event.details.externalRef || "",
-        entityOfDetection: event.details.entityOfDetection
-          ? event.details.entityOfDetection._id
+        activeEvent: detailsData.activeEvent || false,
+        excludeFundLosses: detailsData.excludeFundLosses || false,
+        notify: detailsData.notify || false,
+        externalEvent: detailsData.externalEvent || false,
+        externalRef: detailsData.externalRef || "",
+        entityOfDetection: detailsData.entityOfDetection
+          ? detailsData.entityOfDetection._id
           : null, // Stocker l'ID
-        subentityOfDetection: event.details.subentityOfDetection || "",
-        entityOfOrigin: event.details.entityOfOrigin
-          ? event.details.entityOfOrigin._id
+        subentityOfDetection: detailsData.subentityOfDetection || "",
+        entityOfOrigin: detailsData.entityOfOrigin
+          ? detailsData.entityOfOrigin._id
           : null, // Stocker l'ID
-        subentityOfOrigin: event.details.subentityOfOrigin || "",
-        RAG: event.details.RAG || "",
-        targetClosureDate: event.details.targetClosureDate || "",
-        document: Array.isArray(event.details.document)
-          ? event.details.document
+        subentityOfOrigin: detailsData.subentityOfOrigin || "",
+        RAG: detailsData.RAG || "",
+        targetClosureDate: detailsData.targetClosureDate || "",
+        document: Array.isArray(detailsData.document)
+          ? detailsData.document
           : [],
       }));
     }
-  }, [event]);
+  }, [detailsData]);
 
   useEffect(() => {
     // Initialiser la date du jour dans createdOn lors du montage du composant ou lorsque selectedEntity change
@@ -156,7 +156,7 @@ const Details = ({ event, onDetailsChange, entities, profiles }) => {
       event_date: prevValues.event_date,
       recorded_date: prevValues.recorded_date || today,
     }));
-  }, [event]);
+  }, [detailsData]);
 
   const customStyles = {
     control: (provided) => ({
