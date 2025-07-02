@@ -73,8 +73,6 @@ const Event = ({ profiles, entities }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(listEntities());
-    dispatch(listProfiles());
     dispatch(fetchEvent(event._id));
   }, [dispatch]);
 
@@ -173,7 +171,7 @@ const Event = ({ profiles, entities }) => {
     iframe.focus();
     iframe.print();
   };
-
+console.log('eventFetch:', eventfecth)
   const totalRow = eventfecth?.financials.totalConverted;
   const name = eventfecth.details.reviewer?.name ? eventfecth.details.reviewer?.name : "";
   const surname = eventfecth.details.reviewer?.surname

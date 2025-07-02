@@ -18,6 +18,7 @@ import moment from "moment";
 
 const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
   const [rag, setRag] = useState([]);
+  const [formData, setFormData] = useState(detailsData || null);
 
   function getCurrentTime() {
     const currentDate = new Date();
@@ -29,35 +30,6 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
 
     return formattedTime;
   }
-
-  const [formData, setFormData] = useState({
-    event_date: "",
-    rate: "",
-    RAG: "",
-    activeEvent: false,
-    event_time: "",
-    excludeFundLosses: false,
-    externalEvent: false,
-    recorded_by: "",
-    recorded_date: "",
-    externalRef: "",
-    notify: false,
-    entityOfDetection: null,
-    subentityOfDetection: "",
-    detection_date: "",
-    entityOfOrigin: null,
-    subentityOfOrigin: "",
-    description: "",
-    descriptionDetailled: "",
-    approved_date: "",
-    closed_date: "",
-    targetClosureDate: "",
-    owner: null,
-    nominee: null,
-    reviewer: null,
-    reviewer_date: "",
-    document: [],
-  });
 
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
@@ -79,16 +51,20 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
     label: `ENT${entity.referenceId} CAM - ${entity.description}`,
   }));
 
-  const handleSelectChange = (name, selectedOption) => {
-    setFormData((prevState) => {
-      const updatedFormData = {
-        ...prevState,
-        [name]: selectedOption ? selectedOption.value : null,
+  const handleSelectChange = (field, selectedOption) => {
+    setFormData((prevData) => {
+      const newData = {
+        ...prevData,
+        [field]: selectedOption ? {
+          _id: selectedOption.value,
+          name: selectedOption.label, // ou récupère depuis profiles si besoin
+        } : null,
       };
-      onDetailsChange(updatedFormData); // Notify parent about changes
-      return updatedFormData;
+      onDetailsChange(newData);
+      return newData;
     });
   };
+
 
   useEffect(() => {
     const loadRag = async () => {
@@ -100,53 +76,6 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
     };
     loadRag();
   }, []);
-
-  useEffect(() => {
-    if (detailsData) {
-      setFormData((prevState) => ({
-        ...prevState,
-        event_date: moment(detailsData.event_date).format("YYYY-MM-DD") || "",
-        event_time: detailsData.event_time || "",
-        detection_date: detailsData.detection_date
-          ? new Date(detailsData.detection_date).toISOString().split("T")[0]
-          : "",
-        approved_date: detailsData.approved_date
-          ? new Date(detailsData.approved_date).toISOString().split("T")[0]
-          : "",
-        closed_date: detailsData.closed_date
-          ? new Date(detailsData.closed_date).toISOString().split("T")[0]
-          : "",
-        recorded_by: detailsData.recorded_by || "",
-        recorded_date: detailsData.recorded_date || "",
-        description: detailsData.description || "",
-        descriptionDetailled: detailsData.descriptionDetailled || "",
-        owner: detailsData.owner?._id || null,
-        nominee: detailsData.nominee?._id || null,
-        reviewer: detailsData.reviewer?._id || null,
-        reviewer_date: detailsData.reviewer_date
-          ? new Date(detailsData.reviewer_date).toISOString().split("T")[0]
-          : "",
-        activeEvent: detailsData.activeEvent || false,
-        excludeFundLosses: detailsData.excludeFundLosses || false,
-        notify: detailsData.notify || false,
-        externalEvent: detailsData.externalEvent || false,
-        externalRef: detailsData.externalRef || "",
-        entityOfDetection: detailsData.entityOfDetection
-          ? detailsData.entityOfDetection._id
-          : null, // Stocker l'ID
-        subentityOfDetection: detailsData.subentityOfDetection || "",
-        entityOfOrigin: detailsData.entityOfOrigin
-          ? detailsData.entityOfOrigin._id
-          : null, // Stocker l'ID
-        subentityOfOrigin: detailsData.subentityOfOrigin || "",
-        RAG: detailsData.RAG || "",
-        targetClosureDate: detailsData.targetClosureDate || "",
-        document: Array.isArray(detailsData.document)
-          ? detailsData.document
-          : [],
-      }));
-    }
-  }, [detailsData]);
 
   useEffect(() => {
     // Initialiser la date du jour dans createdOn lors du montage du composant ou lorsque selectedEntity change
@@ -182,10 +111,10 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
   const handleInputChange = (field, value) => {
     setFormData((prevData) => {
       const newData = { ...prevData, [field]: value };
-      onDetailsChange(newData); // Notify parent about changes
+      onDetailsChange(newData);
       return newData;
     });
-  };
+  }; 
 
   const handleUploadLinks = (newLinks) => {
     setFormData((prevData) => {
@@ -196,8 +125,20 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
     });
   };
 
-  const recordedName = localStorage.getItem("username");
+  useEffect(() => {
+    if (detailsData) {
+      setFormData(detailsData);
+    }
+  }, [detailsData]);
 
+  useEffect(() => {
+    if (formData) {
+      onDetailsChange(formData);
+    }
+  }, []);
+
+  const recordedName = localStorage.getItem("username");
+  console.log('formData', formData)
   return (
     <Box>
       <Box pt={5} pb={5}>
@@ -235,7 +176,11 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                 placeholder="Select Date"
                 size="sm"
                 type="date"
-                value={formData.event_date}
+                value={
+                  formData.event_date
+                    ? formData.event_date.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
+                    : ""
+                }
                 onChange={(e) =>
                   handleInputChange("event_date", e.target.value)
                 }
@@ -362,7 +307,7 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                     styles={customStyles}
                     placeholder="Sélectionner une entité"
                     value={entitiesOptions?.find(
-                      (ent) => ent.value === formData.entityOfDetection
+                      (ent) => ent.value === formData.entityOfDetection?._id
                     )}
                     onChange={(selectedOption) =>
                       handleSelectChange("entityOfDetection", selectedOption)
@@ -393,7 +338,11 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                     placeholder="Select Date"
                     size="sm"
                     type="date"
-                    value={formData.detection_date}
+                    value={
+                      formData.detection_date
+                        ? formData.detection_date.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
+                        : ""
+                    }
                     onChange={(e) =>
                       handleInputChange("detection_date", e.target.value)
                     }
@@ -417,7 +366,7 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                     styles={customStyles}
                     placeholder="Sélectionner une entité"
                     value={entitiesOptions?.find(
-                      (ent) => ent.value === formData.entityOfOrigin
+                      (ent) => ent.value === formData.entityOfOrigin?._id
                     )}
                     onChange={(selectedOption) =>
                       handleSelectChange("entityOfOrigin", selectedOption)
@@ -451,7 +400,11 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
-                  value={formData.approved_date}
+                  value={
+                    formData.approved_date
+                      ? formData.approved_date.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
+                      : ""
+                  }
                   onChange={(e) =>
                     handleInputChange("approved_date", e.target.value)
                   }
@@ -465,7 +418,11 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
-                  value={formData.closed_date}
+                  value={
+                    formData.closed_date
+                      ? formData.closed_date.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
+                      : ""
+                  }
                   onChange={(e) =>
                     handleInputChange("closed_date", e.target.value)
                   }
@@ -479,7 +436,11 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
-                  value={formData.targetClosureDate}
+                  value={
+                    formData.targetClosureDate
+                      ? formData.targetClosureDate.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
+                      : ""
+                  }
                   onChange={(e) =>
                     handleInputChange("targetClosureDate", e.target.value)
                   }
@@ -501,8 +462,8 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   options={profilesOptions}
                   styles={customStyles}
                   value={profilesOptions?.find(
-                    (option) => option.value === formData.owner
-                  )} // Assurez-vous que la valeur est null si non trouvée
+                    (option) => option.value === formData.owner?._id
+                  )}
                   onChange={(selectedOption) =>
                     handleSelectChange("owner", selectedOption)
                   }
@@ -522,7 +483,7 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   options={profilesOptions}
                   styles={customStyles}
                   value={profilesOptions?.find(
-                    (option) => option.value === formData.nominee
+                    (option) => option.value === formData.nominee?._id
                   )}
                   onChange={(selectedOption) =>
                     handleSelectChange("nominee", selectedOption)
@@ -543,7 +504,7 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   options={profilesOptions}
                   styles={customStyles}
                   value={profilesOptions?.find(
-                    (option) => option.value === formData.reviewer
+                    (option) => option.value === formData.reviewer?._id
                   )}
                   onChange={(selectedOption) =>
                     handleSelectChange("reviewer", selectedOption)
@@ -558,7 +519,11 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   placeholder="Sélectionner une Date"
                   size="sm"
                   type="date"
-                  value={formData.reviewer_date}
+                  value={
+                    formData.reviewer_date
+                      ? formData.reviewer_date.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
+                      : ""
+                  }
                   onChange={(e) =>
                     handleInputChange("reviewer_date", e.target.value)
                   }

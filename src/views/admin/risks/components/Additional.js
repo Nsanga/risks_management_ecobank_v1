@@ -15,18 +15,12 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  List,
-  ListItem,
-  Collapse,
-  IconButton,
-  Text,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { MdUploadFile } from "react-icons/md";
 import data from "../Data";
 import MultiLevelList from "./NestedListItem ";
 
-const Additional = ({ onAdditionalChange, event }) => {
+const Additional = ({ onAdditionalChange, additionalData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDescriptions, setSelectedDescriptions] = useState({});
@@ -42,14 +36,14 @@ const Additional = ({ onAdditionalChange, event }) => {
 
   // Remplissage des descriptions à partir de l'objet event
   useEffect(() => {
-    if (event && event.additionnalInfo) {
+    if (additionalData) {
       const descriptions = {};
-      event.additionnalInfo.forEach((item, index) => {
+      additionalData.additionnalInfo.forEach((item, index) => {
         descriptions[index] = item.description; // Assurez-vous que l'index correspond
       });
       setPreFilledDescriptions(descriptions);
     }
-  }, [event]);
+  }, [additionalData]);
 
   const handleCellClick = (index, category) => {
     setSelectedCategory({ index, category });

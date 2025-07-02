@@ -45,6 +45,7 @@ import { listEvents } from "redux/events/action";
 import { useHistory } from "react-router-dom";
 import DynamicTable from "./DynamicTable";
 import FinanceSummaryTable from "./FinanceSummaryTable";
+import { fetchEvent } from "redux/events/action";
 
 const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) {
@@ -77,6 +78,9 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const history = useHistory();
 
   const handleNext = () => {
+    console.log('Payload reçu de details :', detailsData);
+    console.log('Payload reçu de comment :', commentaryData);
+    console.log('Payload reçu de finances :', financesData);
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
     } else {
@@ -98,6 +102,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const categories = data.map((item) => item.title);
 
   const handleDetailsChange = (newDetails) => {
+    // console.log('Payload reçu de details :', newDetails);
     setDetailsData(prevDetails => ({ ...prevDetails, ...newDetails }));
   };
 
@@ -106,7 +111,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   };
 
   const handleTableChange = (payload) => {
-    console.log('Payload reçu du tableau :', payload);
+    // console.log('Payload reçu du tableau :', payload);
     setFinanceData(payload);
   };
 
@@ -124,7 +129,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     : [];
 
   const approved = true;
-  console.log("event::>", event)
+  
   const handleSubmit = async () => {
     const payload = {
       details: {
@@ -138,44 +143,20 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       additionnalInfo: [...additionalInfoData],
       approved: approved,
     };
-
+    console.log('payload', payload);
     setIsLoading(true);
     try {
+      if (event) {
+        await dispatch(updateEvent(event._id, payload));
+        await dispatch(fetchEvent(event._id));
+        history.push({
+          pathname: '/admin/events',
+        });
+      } else {
+        await dispatch(AddEvent(payload));
+      }
       await dispatch(AddEvent(payload));
       onClose(); // Ferme la modal après la soumission réussie
-      await dispatch(listEvents());
-    } catch (error) {
-      console.error("Erreur lors de la soumission:", error);
-      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUpdate = async (event) => {
-    // Créer le payload en combinant les données existantes de l'événement
-    // avec les données modifiées des états locaux
-    const payload = {
-      details: {
-        detailsData,
-      },
-      commentary: {
-        commentaryData,
-      },
-      financials: financesData,
-      additionnalInfo: additionalInfoData,
-      approved: approved,
-    };
-
-    console.log(payload);
-
-    setIsLoading(true);
-    try {
-      await dispatch(updateEvent(event._id, payload));
-      onClose(); // Ferme la modal après la soumission réussie
-      history.push({
-        pathname: '/admin/events',
-      });
       await dispatch(listEvents());
     } catch (error) {
       console.error("Erreur lors de la soumission:", error);
@@ -198,7 +179,6 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       setFinanceData(null);
       setAdditionalData(null);
     }
-    console.log('detailData', detailsData)
   }, [event]);
 
   const isFirstStepValid = () => {
@@ -317,7 +297,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                 {activeStep === 3 && (
                   <Additional
                     onAdditionalChange={handleAdditionalChange}
-                    event={event}
+                    additionalData={additionalData}
                   />
                 )}
 
@@ -340,7 +320,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
                 Annuler
               </Button>
               <Button
-                onClick={activeStep === steps.length - 1 ? (event ? () => handleUpdate(event) : handleSubmit) : handleNext}
+                onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
                 colorScheme="blue"
                 mr={2}
                 isDisabled={isLoading || activeStep === 0 && !isFirstStepValid()}
