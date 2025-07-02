@@ -2,7 +2,7 @@ import { Box, Button, Flex, GridItem, Input, Text, Textarea } from '@chakra-ui/r
 import React, { useEffect, useState } from 'react'
 
 const Commentary = ({ commentaryData, onCommentaryChange }) => {
-  const [comment, setComment] = useState(commentaryData | {});
+  const [comment, setComment] = useState(commentaryData || {});
 
   const handleInputChange = (field, value) => {
     setComment(prevData => {
@@ -14,7 +14,7 @@ const Commentary = ({ commentaryData, onCommentaryChange }) => {
 
   useEffect(() => {
     if (commentaryData) {
-      setComment(commentaryData);
+      setComment(commentaryData.comment || "");
     }
   }, [commentaryData]);
 
@@ -23,7 +23,7 @@ const Commentary = ({ commentaryData, onCommentaryChange }) => {
       onCommentaryChange(comment);
     }
   }, []);
-  
+
   return (
     <Box>
       <Flex direction="column" gap={4} flex="2">

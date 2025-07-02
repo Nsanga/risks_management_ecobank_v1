@@ -2,16 +2,21 @@ import { Box, Flex, Input, Select, Table, TableCaption, Tbody, Td, Text, Th, The
 import React, { useEffect, useState } from 'react';
 
 const rows = [
-    'Actual Loss',
-    'Potential Loss',
-    'Actual Recovery',
-    'Expected Recovery',
-    'Recovery Expenses',
-    'Insurance Recovery',
-    'Near Miss',
+    { id: 'actualLoss', value: 'Actual Loss' },
+    { id: 'potentialLoss', value: 'Potential Loss' },
+    { id: 'actualRecovery', value: 'Actual Recovery' },
+    { id: 'expectedRecovery', value: 'Expected Recovery' },
+    { id: 'recoveryExpenses', value: 'Recovery Expenses' },
+    { id: 'insuranceRecovery', value: 'Insurance Recovery' },
+    { id: 'nearMiss', value: 'Near Miss' },
 ];
 
-const columns = ['Direct', 'Amendes réglementaires', 'Dépréciation d’actif', 'Other'];
+const columns = [
+    { id: 'direct', value: 'Direct' },
+    { id: 'regulatoryFines', value: 'Amendes réglementaires' },
+    { id: 'assetImpairment', value: 'Dépréciation d’actif' },
+    { id: 'other', value: 'Other' },
+];
 
 const DynamicTable = ({ onDataChange, financesData }) => {
     const [currency, setCurrency] = useState('USD');
@@ -40,26 +45,25 @@ const DynamicTable = ({ onDataChange, financesData }) => {
         return initialData;
     });
 
-    const handleChange = (row, col, value) => {
+    const handleChange = (rowId, colId, value) => {
         const newData = { ...data };
-        newData[row][col] = value;
+        if (!newData[rowId]) newData[rowId] = {};
+        newData[rowId][colId] = value;
         setData(newData);
     };
 
     const convertAllData = (prevCurrency, newCurrency) => {
         const newData = {};
-
-        rows.forEach((row) => {
-            newData[row] = {};
-            columns.forEach((col) => {
-                const val = parseFloat(data[row][col]);
+        rows.forEach(({ id: rowId }) => {
+            newData[rowId] = {};
+            columns.forEach(({ id: colId }) => {
+                const val = parseFloat(data?.[rowId]?.[colId]);
                 const safeVal = isNaN(val) ? 0 : val;
 
                 const convertedVal = convertBetweenCurrencies(safeVal, prevCurrency, newCurrency);
-                newData[row][col] = convertedVal.toFixed(2);
+                newData[rowId][colId] = convertedVal.toFixed(2);
             });
         });
-
         setData(newData);
     };
 
@@ -91,42 +95,37 @@ const DynamicTable = ({ onDataChange, financesData }) => {
         }
     };
 
-    const calculateRowTotal = (row) => {
-        return columns.reduce((sum, col) => {
-            const val = parseFloat(data[row][col]);
+    const calculateRowTotal = (rowId) => {
+        return columns.reduce((sum, { id: colId }) => {
+            const val = parseFloat(data?.[rowId]?.[colId]);
             return sum + (isNaN(val) ? 0 : val);
         }, 0);
     };
 
-    const calculateColumnTotal = (col) => {
-        const actualLoss = parseFloat(data['Actual Loss'][col]) || 0;
-        const actualRecovery = parseFloat(data['Actual Recovery'][col]) || 0;
-        const recoveryExpenses = parseFloat(data['Recovery Expenses'][col]) || 0;
-        const insuranceRecovery = parseFloat(data['Insurance Recovery'][col]) || 0;
+    const calculateColumnTotal = (colId) => {
+        const get = (rowId) => parseFloat(data?.[rowId]?.[colId]) || 0;
 
         return (
-            actualLoss - (actualRecovery + recoveryExpenses + insuranceRecovery)
+            get('actualLoss') - (get('actualRecovery') + get('recoveryExpenses') + get('insuranceRecovery'))
         );
     };
 
     const calculateGlobalTotal = () => {
-        return columns.reduce((sum, col) => {
-            const actualLoss = parseFloat(data['Actual Loss'][col]) || 0;
-            const actualRecovery = parseFloat(data['Actual Recovery'][col]) || 0;
-            const recoveryExpenses = parseFloat(data['Recovery Expenses'][col]) || 0;
-            const insuranceRecovery = parseFloat(data['Insurance Recovery'][col]) || 0;
+        return columns.reduce((sum, { id: colId }) => {
+            const get = (rowId) => parseFloat(data?.[rowId]?.[colId]) || 0;
 
-            return sum + (actualLoss - (actualRecovery + recoveryExpenses + insuranceRecovery));
+            return sum + (
+                get('actualLoss') - (get('actualRecovery') + get('recoveryExpenses') + get('insuranceRecovery'))
+            );
         }, 0);
     };
 
     const buildPayload = () => {
         const enrichedData = {};
-
-        rows.forEach(row => {
-            enrichedData[row] = {
-                ...data[row], // toutes les colonnes éditables
-                Total: calculateRowTotal(row), // ajouter la valeur calculée du total
+        rows.forEach(({ id: rowId }) => {
+            enrichedData[rowId] = {
+                ...data?.[rowId],
+                total: calculateRowTotal(rowId),
             };
         });
 
@@ -152,15 +151,15 @@ const DynamicTable = ({ onDataChange, financesData }) => {
     useEffect(() => {
         if (financesData?.data) {
             const loadedData = {};
-            rows.forEach(row => {
-                loadedData[row] = {};
-                columns.forEach(col => {
-                    const value = financesData.data[row]?.[col];
-                    loadedData[row][col] = value === null || value === undefined ? '' : value;
+            rows.forEach(({ id: rowId }) => {
+                loadedData[rowId] = {};
+                columns.forEach(({ id: colId }) => {
+                    const value = financesData.data?.[rowId]?.[colId];
+                    loadedData[rowId][colId] = value === null || value === undefined ? '' : value;
                 });
             });
-
             setData(loadedData);
+
             if (financesData.currency) {
                 setCurrency(financesData.currency);
             }
@@ -172,7 +171,7 @@ const DynamicTable = ({ onDataChange, financesData }) => {
             <Flex justifyContent="space-between" alignItems="center" mb={4}>
                 <Flex flex="1" alignItems="center" gap={4}>
                     <Text fontSize={12}>Total des devises :</Text>
-                    <span style={{ fontSize: "12px" }}>{calculateGlobalTotal()} {currency}</span>
+                    <span style={{ fontSize: "12px" }}>{calculateGlobalTotal().toFixed(2)} {currency}</span>
                 </Flex>
                 <Flex flex="1" alignItems="center" gap={4}>
                     <Text fontSize={12} fontWeight='bold'>Devises :</Text>
@@ -197,21 +196,21 @@ const DynamicTable = ({ onDataChange, financesData }) => {
                             <Th></Th>
                             <Th fontSize={10} textAlign="start">Total</Th>
                             {columns.map((col) => (
-                                <Th key={col} textAlign="start" fontSize={10}>{col}</Th>
+                                <Th key={col.id} textAlign="start" fontSize={10}>{col.value}</Th>
                             ))}
                         </Tr>
                     </Thead>
                     <Tbody>
                         {rows.map((row) => (
-                            <Tr key={row}>
-                                <Td fontSize={12}><strong>{row}</strong></Td>
-                                <Td fontSize={12} height="10px">{calculateRowTotal(row).toFixed(2)}</Td>
+                            <Tr key={row.id}>
+                                <Td fontSize={12}><strong>{row.value}</strong></Td>
+                                <Td fontSize={12} height="10px">{calculateRowTotal(row.id).toFixed(2)}</Td>
                                 {columns.map((col) => (
-                                    <Td key={col}>
+                                    <Td key={col.id}>
                                         <Input
                                             type="number"
-                                            value={data[row][col]}
-                                            onChange={(e) => handleChange(row, col, e.target.value)}
+                                            value={data?.[row.id]?.[col.id] || ''}
+                                            onChange={(e) => handleChange(row.id, col.id, e.target.value)}
                                             placeholder="0"
                                             style={{ width: '100%', fontSize: '12px' }}
                                         />
@@ -223,7 +222,9 @@ const DynamicTable = ({ onDataChange, financesData }) => {
                             <Td>Total</Td>
                             <Td fontSize={12} height="10px">{calculateGlobalTotal().toFixed(2)}</Td>
                             {columns.map((col) => (
-                                <Td fontSize={12} height="10px" key={col}>{calculateColumnTotal(col).toFixed(2)}</Td>
+                                <Td fontSize={12} height="10px" key={col.id}>
+                                    {calculateColumnTotal(col.id).toFixed(2)}
+                                </Td>
                             ))}
                         </Tr>
                     </Tbody>

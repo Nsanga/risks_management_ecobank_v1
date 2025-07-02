@@ -69,18 +69,19 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   const [detailsData, setDetailsData] = useState(null);
   const [commentaryData, setCommentaryData] = useState(null);
   const [financesData, setFinanceData] = useState(null);
-  const [additionalData, setAdditionalData] = useState(null);
+  const [additionalData, setAdditionalData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const handleNext = () => {
-    console.log('Payload reçu de details :', detailsData);
+    // console.log('Payload reçu de details :', detailsData);
     console.log('Payload reçu de comment :', commentaryData);
-    console.log('Payload reçu de finances :', financesData);
+    // console.log('Payload reçu de finances :', financesData);
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
     } else {
@@ -99,8 +100,6 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     setActiveStep(0);
   }
 
-  const categories = data.map((item) => item.title);
-
   const handleDetailsChange = (newDetails) => {
     // console.log('Payload reçu de details :', newDetails);
     setDetailsData(prevDetails => ({ ...prevDetails, ...newDetails }));
@@ -115,69 +114,74 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     setFinanceData(payload);
   };
 
-  const handleAdditionalChange = (data) => {
-    setAdditionalData(data);
+  const handleAdditionalChange = ({ index, category, description, topLevel }) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      [index]: { category, description, topLevel },
+    }));
   };
 
-  const dispatch = useDispatch();
-
-  const additionalInfoData = additionalData
-    ? Object.keys(additionalData).map((key, index) => ({
-      category: categories[index],
-      description: additionalData[key],
-    }))
-    : [];
-
   const approved = true;
-  
   const handleSubmit = async () => {
-    const payload = {
-      details: {
-        ...detailsData,
-        recorded_by: localStorage.getItem("username"),
-      },
-      commentary: {
-        ...commentaryData,
-      },
-      financials: financesData,
-      additionnalInfo: [...additionalInfoData],
-      approved: approved,
-    };
-    console.log('payload', payload);
     setIsLoading(true);
+  
     try {
-      if (event) {
+      // Vérification des données minimales
+      const safeDetails = detailsData || {};
+      const safeCommentary = commentaryData || {};
+      const safeFinancials = financesData || {};
+      const safeAdditional = additionalData && typeof additionalData === 'object' ? Object.values(additionalData) : [];
+  
+      // Construction du payload
+      const payload = {
+        details: {
+          ...safeDetails,
+          recorded_by: localStorage.getItem("username") || "inconnu",
+        },
+        commentary: {
+          comment: safeCommentary.commentary || "", // champ texte seulement
+        },
+        financials: safeFinancials,
+        additionnalInfo: safeAdditional, // tableau [{ description, topLevel, category }, ...]
+        approved: !!approved, // force à boolean
+      };
+  
+      console.log('✅ Payload prêt à envoyer :', payload);
+      console.log('🗂️ Données additionnelles brutes :', additionalData);
+  
+      // Enregistrement ou mise à jour
+      if (event && event._id) {
         await dispatch(updateEvent(event._id, payload));
         await dispatch(fetchEvent(event._id));
-        history.push({
-          pathname: '/admin/events',
-        });
       } else {
         await dispatch(AddEvent(payload));
       }
-      await dispatch(AddEvent(payload));
-      onClose(); // Ferme la modal après la soumission réussie
+  
+      // Fermeture du modal
+      onClose();
+  
+      // Rafraîchissement de la liste principale
       await dispatch(listEvents());
+  
     } catch (error) {
-      console.error("Erreur lors de la soumission:", error);
-      // Vous pouvez également gérer les erreurs ici, par exemple en affichant un message d'erreur
+      console.error("❌ Erreur lors de la soumission :", error);
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   useEffect(() => {
     console.log('event', event)
     if (event) {
       setDetailsData(event.details);
       setCommentaryData(event.commentary);
       setFinanceData(event.financials);
-      setAdditionalData(event.detais);
+      setAdditionalData(event.additionnalInfo);
     } else {
       setDetailsData(null);
       setCommentaryData(null);
       setFinanceData(null);
-      setAdditionalData(null);
+      setAdditionalData({});
     }
   }, [event]);
 

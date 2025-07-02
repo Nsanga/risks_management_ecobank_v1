@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Table,
@@ -15,34 +15,39 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@chakra-ui/react";
-import { MdUploadFile } from "react-icons/md";
-import data from "../Data";
-import MultiLevelList from "./NestedListItem ";
+} from '@chakra-ui/react';
+import { MdUploadFile } from 'react-icons/md';
+import data from '../Data';
+import MultiLevelList from './NestedListItem ';
 
 const Additional = ({ onAdditionalChange, additionalData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDescriptions, setSelectedDescriptions] = useState({});
-  const [topLevel, setTopLevel] = useState({});
-
-  console.log("====================================");
-  console.log("selectedDescriptions", selectedDescriptions);
-  console.log("topLevel", topLevel);
-  console.log("====================================");
 
   // État pour stocker les descriptions pré-remplies
   const [preFilledDescriptions, setPreFilledDescriptions] = useState({});
 
-  // Remplissage des descriptions à partir de l'objet event
+  // Remplissage des descriptions à partir de l'objet additionalData
   useEffect(() => {
-    if (additionalData) {
-      const descriptions = {};
-      additionalData.additionnalInfo.forEach((item, index) => {
-        descriptions[index] = item.description; // Assurez-vous que l'index correspond
+    console.log('additionalData', additionalData);
+
+    const info = additionalData?.additionnalInfo;
+    if (!info) return;
+
+    const descriptions = {};
+
+    if (Array.isArray(info)) {
+      info.forEach((item, index) => {
+        descriptions[index] = item.description;
       });
-      setPreFilledDescriptions(descriptions);
+    } else if (typeof info === 'object') {
+      Object.entries(info).forEach(([key, item]) => {
+        descriptions[key] = item.description;
+      });
     }
+
+    setPreFilledDescriptions(descriptions);
   }, [additionalData]);
 
   const handleCellClick = (index, category) => {
@@ -50,91 +55,27 @@ const Additional = ({ onAdditionalChange, additionalData }) => {
     setIsOpen(true);
   };
 
-  /**
-   * Parcourt récursivement un nœud (objet ou tableau) pour trouver la valeur.
-   * @param {any} node      - Sous‑arbre courant.
-   * @param {string[]} path - Chemin des clés menant à ce nœud.
-   * @param {string} value  - Valeur recherchée.
-   * @returns {string|null} - La clé parent immédiate du `value`, ou null.
-   */
-  const recursiveFindParent = (node, path, value) => {
-    if (Array.isArray(node)) {
-      // Cas feuille : un tableau de valeurs
-      return node.includes(value) ? path.at(-1) ?? null : null;
-    }
+  const handleItemClick = (item, path) => {
+    const topLevel = path.length > 1 ? path[1] : null; // [0] = "No set", [1] = "Retail/ Consumer Banking"
 
-    if (node && typeof node === "object") {
-      // Parcours profondeur d'abord sur chaque clé
-      for (const key in node) {
-        const found = recursiveFindParent(node[key], [...path, key], value);
-        if (found) return found; // stop dès qu'on a la première correspondance
-      }
-    }
+    const payload = {
+      index: selectedCategory.index,
+      category: selectedCategory.category,
+      description: item,
+      topLevel,
+    };
 
-    return null; // valeur non trouvée dans ce sous‑arbre
-  };
-
-  /**
-   * Renvoie la clé parent pour `selectedValue` à l’intérieur de `dataItem`.
-   */
-  const findParentKey = (dataItem, selectedValue) => {
-    const categories = dataItem?.data?.categories;
-    if (!categories) return null;
-    return recursiveFindParent(categories, [], selectedValue);
-  };
-
-  // const handleItemClick = (item) => {
-  //   setSelectedDescriptions((prevState) => ({
-  //     ...prevState,
-  //     [selectedCategory.index]: item,
-  //   }));
-  //   setIsOpen(false);
-  //   onAdditionalChange({
-  //     ...selectedDescriptions,
-  //     [selectedCategory.index]: item,
-  //   });
-  // };
-
-  const handleItemClick = (item) => {
-    const currentCategoryData = data.find(
-      (d) => d.title === selectedCategory.category
-    );
-
-    const parentKey = findParentKey(currentCategoryData, item);
-
-    setSelectedDescriptions((prev) => ({
-      ...prev,
+    setSelectedDescriptions(prevState => ({
+      ...prevState,
       [selectedCategory.index]: item,
     }));
 
-    if (parentKey) {
-      setTopLevel((prev) => ({
-        ...prev,
-        [selectedCategory.index]: parentKey,
-      }));
-    }
-
     setIsOpen(false);
-
-    onAdditionalChange({
-      ...selectedDescriptions,
-      topLevel,
-      [selectedCategory.index]: item,
-    });
+    onAdditionalChange(payload); // envoie l'objet au parent
   };
 
   const closeModal = () => {
     setIsOpen(false);
-  };
-
-  const handleSubmit = () => {
-    const payload = Object.keys(selectedDescriptions).map((index) => ({
-      category: data[index].title,
-      description:
-        selectedDescriptions[index] || preFilledDescriptions[index] || "", // Inclure la description pré-remplie si aucune sélection
-    }));
-    console.log("Payload:", payload);
-    // Vous pouvez envoyer le payload à un serveur ici si nécessaire
   };
 
   return (
@@ -142,7 +83,7 @@ const Additional = ({ onAdditionalChange, additionalData }) => {
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th fontSize={12}>Catégorie</Th>
+            <Th fontSize={12}>Category</Th>
             <Th fontSize={12}>Select</Th>
             <Th fontSize={12}>Description</Th>
           </Tr>
@@ -150,32 +91,18 @@ const Additional = ({ onAdditionalChange, additionalData }) => {
         <Tbody>
           {data.map((item, index) => (
             <Tr key={index}>
-              <Td fontSize={12}>
-                {item.title} <span style={{ color: "red" }}>*</span>
-              </Td>
+              <Td fontSize={12}>{item.title} <span style={{ color: 'red' }}>*</span></Td>
               <Td onClick={() => handleCellClick(index, item.title)}>
-                <Button variant="link" color="blue">
-                  <MdUploadFile />
-                </Button>
+                <Button variant="link" color="blue"><MdUploadFile /></Button>
               </Td>
-              <Td fontSize={12}>
-                {selectedDescriptions[index] ||
-                  preFilledDescriptions[index] ||
-                  ""}
-              </Td>{" "}
-              {/* Afficher la description pré-remplie */}
+              <Td fontSize={12}>{selectedDescriptions[index] || preFilledDescriptions[index] || ''}</Td> {/* Afficher la description pré-remplie */}
             </Tr>
           ))}
         </Tbody>
       </Table>
 
       {/* Modal */}
-      <Modal
-        isOpen={isOpen}
-        onClose={closeModal}
-        isCentered
-        scrollBehavior="inside"
-      >
+      <Modal isOpen={isOpen} onClose={closeModal} isCentered scrollBehavior='inside'>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{selectedCategory?.category}</ModalHeader>
@@ -183,16 +110,14 @@ const Additional = ({ onAdditionalChange, additionalData }) => {
           <ModalBody>
             {selectedCategory && (
               <MultiLevelList
-                data={data.find(
-                  (item) => item.title === selectedCategory.category
-                )}
+                data={data.find(item => item.title === selectedCategory.category)}
                 onItemClick={handleItemClick}
               />
             )}
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={closeModal}>
-              Fermer
+              Close
             </Button>
           </ModalFooter>
         </ModalContent>
