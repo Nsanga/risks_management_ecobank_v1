@@ -64,19 +64,19 @@ const Event = ({ profiles, entities }) => {
   const [isAmendDisabled, setIsAmendDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-  const event = location.state?.event;
+  const selectedEvent = location.state?.event;
   const iframeRef = useRef(null);
   const history = useHistory();
 
-  const {eventfecth=event, loading} = useSelector(state => state.EventReducer);
+  const {event, loading} = useSelector(state => state.EventReducer);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchEvent(event._id));
+    dispatch(fetchEvent(selectedEvent._id));
   }, [dispatch]);
 
-  if (!eventfecth) {
+  if (!event) {
     return <Text>Cet évènement n'existe pas.</Text>;
   }
 
@@ -106,9 +106,9 @@ const Event = ({ profiles, entities }) => {
 
     setIsLoading(true);
     try {
-      await dispatch(updateEvent(eventfecth._id, payload));
+      await dispatch(updateEvent(event._id, payload));
       await dispatch(listEvents());
-      await dispatch(fetchEvent(eventfecth._id));
+      await dispatch(fetchEvent(event._id));
       setIsEmailDisabled(true);
       setIsPrintDisabled(true);
       setIsUnapprovedDisabled(true);
@@ -171,21 +171,21 @@ const Event = ({ profiles, entities }) => {
     iframe.focus();
     iframe.print();
   };
-console.log('eventFetch:', eventfecth)
-  const totalRow = eventfecth?.financials.totalConverted;
-  const name = eventfecth.details.reviewer?.name ? eventfecth.details.reviewer?.name : "";
-  const surname = eventfecth.details.reviewer?.surname
-    ? eventfecth.details.reviewer?.surname
+console.log('eventFetch:', event)
+  const totalRow = event?.financials.totalConverted;
+  const name = event.details.reviewer?.name ? event.details.reviewer?.name : "";
+  const surname = event.details.reviewer?.surname
+    ? event.details.reviewer?.surname
     : "";
 
-  const nameOwner = eventfecth.details.owner?.name ? eventfecth.details.owner?.name : "";
-  const surnameOwner = eventfecth.details.owner?.surname
-    ? eventfecth.details.owner?.surname
+  const nameOwner = event.details.owner?.name ? event.details.owner?.name : "";
+  const surnameOwner = event.details.owner?.surname
+    ? event.details.owner?.surname
     : "";
 
-  const nameNominee = eventfecth.details.nominee?.name ? eventfecth.details.nominee?.name : "";
-  const surnameNominee = eventfecth.details.nominee?.surname
-    ? eventfecth.details.nominee?.surname
+  const nameNominee = event.details.nominee?.name ? event.details.nominee?.name : "";
+  const surnameNominee = event.details.nominee?.surname
+    ? event.details.nominee?.surname
     : "";
 
   return (
@@ -202,7 +202,7 @@ console.log('eventFetch:', eventfecth)
         </Flex>
       ) : (
         <>
-          {!eventfecth ? (
+          {!event ? (
             <Flex alignItems="center" justifyContent="center">
               <Text fontSize="12px">
                 Cet événement n’existe pas.
@@ -215,60 +215,60 @@ console.log('eventFetch:', eventfecth)
                 style={{ display: "flex", flexDirection: "column", gap: 12 }}
               >
                 <Head
-                  eventRef={`EVT${eventfecth.num_ref}`}
+                  eventRef={`EVT${event.num_ref}`}
                   currentState={
-                    eventfecth.approved === true ? "Approved" : "Unapproved"
+                    event.approved === true ? "Approved" : "Unapproved"
                   }
                   currentLocks={<Icon as={MdInsertDriveFile} boxSize={6} />}
-                  description={eventfecth.details.description}
+                  description={event.details.description}
                   totalLosses={totalRow}
-                  devise={eventfecth?.financials.currency}
-                  externalRef={eventfecth.details.externalRef}
+                  devise={event?.financials.currency}
+                  externalRef={event.details.externalRef}
                 />
                 <DetailsForm
-                  detailledDescription={eventfecth.details.descriptionDetailled}
+                  detailledDescription={event.details.descriptionDetailled}
                 />
                 <LossesEntities
                   entityofDetection={
-                    eventfecth?.details?.entityOfDetection?.referenceId
-                      ? `ENT ${eventfecth?.details?.entityOfDetection?.referenceId} CAM - ${eventfecth?.details?.entityOfDetection?.description}`
+                    event?.details?.entityOfDetection?.referenceId
+                      ? `ENT ${event?.details?.entityOfDetection?.referenceId} CAM - ${event?.details?.entityOfDetection?.description}`
                       : ""
                   }
-                  subEntityofDetection={eventfecth?.details?.subentityOfDetection}
+                  subEntityofDetection={event?.details?.subentityOfDetection}
                   entityofDOrigin={
-                    eventfecth?.details?.entityOfOrigin?.referenceId
-                      ? `ENT ${eventfecth.details.entityOfOrigin.referenceId} CAM - ${eventfecth.details.entityOfOrigin.description}`
+                    event?.details?.entityOfOrigin?.referenceId
+                      ? `ENT ${event.details.entityOfOrigin.referenceId} CAM - ${event.details.entityOfOrigin.description}`
                       : ""
                   }
-                  subEntityofOrigin={eventfecth.details.subentityOfOrigin}
+                  subEntityofOrigin={event.details.subentityOfOrigin}
                 />
                 <Commentary
                   eventDate={
-                    eventfecth.details?.event_date ? eventfecth.details?.event_date : ""
+                    event.details?.event_date ? event.details?.event_date : ""
                   }
-                  rag={eventfecth.details?.RAG}
+                  rag={event.details?.RAG}
                   activeEvent={
-                    eventfecth.details?.activeeventfecth ? eventfecth.details?.activeEvent : ""
+                    event.details?.activeevent ? event.details?.activeEvent : ""
                   }
                   eventTime={
-                    eventfecth.details?.event_time ? eventfecth.details?.eventfecth_time : ""
+                    event.details?.event_time ? event.details?.event_time : ""
                   }
                   recordedBy={
-                    eventfecth.details?.recorded_by ? eventfecth.details?.recorded_by : ""
+                    event.details?.recorded_by ? event.details?.recorded_by : ""
                   }
-                  dateRecording={eventfecth?.createdAt ? eventfecth?.createdAt : ""}
-                  timeRecording={eventfecth?.createdAt ? eventfecth?.createdAt : ""}
-                  excludeFundLosse={eventfecth.details.excludeFundLosses}
-                  externalEvent={eventfecth.details.externalEvent}
-                  notify={eventfecth.details.notify}
-                  detectionDate={eventfecth.details?.detection_date}
+                  dateRecording={event?.createdAt ? event?.createdAt : ""}
+                  timeRecording={event?.createdAt ? event?.createdAt : ""}
+                  excludeFundLosse={event.details.excludeFundLosses}
+                  externalEvent={event.details.externalEvent}
+                  notify={event.details.notify}
+                  detectionDate={event.details?.detection_date}
                 />
                 <Finances
-                  approved={eventfecth.details.approved_date}
-                  closed={eventfecth.details.closed_date}
+                  approved={event.details.approved_date}
+                  closed={event.details.closed_date}
                   targetClosure={
-                    eventfecth.details.targetClosureDate
-                      ? moment(eventfecth.details.targetClosureDate).format(
+                    event.details.targetClosureDate
+                      ? moment(event.details.targetClosureDate).format(
                         "DD/MM/YYYY"
                       )
                       : ""
@@ -276,7 +276,7 @@ console.log('eventFetch:', eventfecth)
                   owner={nameOwner + " " + surnameOwner}
                   nominee={nameNominee + " " + surnameNominee}
                   reviewer={name + " " + surname}
-                  reviewerDate={eventfecth.details.reviewer_date}
+                  reviewerDate={event.details.reviewer_date}
                 />
               </div>
               <Flex justifyContent="flex-end" gap={4}>
@@ -287,7 +287,7 @@ console.log('eventFetch:', eventfecth)
                     colorScheme="red"
                     onClick={handleEmailClick}
                     isLoading={loader}
-                    isDisabled={!eventfecth.approved}
+                    isDisabled={!event.approved}
                   >
                     E-mail
                   </Button>
@@ -298,7 +298,7 @@ console.log('eventFetch:', eventfecth)
                     variant="outline"
                     colorScheme="teal"
                     onClick={handlePrint}
-                    isDisabled={!eventfecth.approved}
+                    isDisabled={!event.approved}
                   >
                     Print
                   </Button>
@@ -309,7 +309,7 @@ console.log('eventFetch:', eventfecth)
                     variant="outline"
                     colorScheme="green"
                     onClick={handleUnapprovedClick}
-                    isDisabled={isLoading || !eventfecth.approved}
+                    isDisabled={isLoading || !event.approved}
                   >
                     {isLoading ? (
                       <Flex alignItems="center" justifyContent="center" width="100%">
@@ -322,17 +322,17 @@ console.log('eventFetch:', eventfecth)
                 </Flex>
                 <Flex>
                   <AddEventForm
-                    event={eventfecth}
+                    event={event}
                     entities={entities}
                     profiles={profiles}
                     isEdit={isEdit}
-                    isAmendDisabled={eventfecth.approved}
+                    isAmendDisabled={event.approved}
                   />
                 </Flex>
                 <Flex>
                   <DeleteModal
-                    selectedEntity={eventfecth}
-                    isDeleteDisabled={!eventfecth.approved}
+                    selectedEntity={event}
+                    isDeleteDisabled={!event.approved}
                   />
                 </Flex>
               </Flex>

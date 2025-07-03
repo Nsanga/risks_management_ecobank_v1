@@ -84,7 +84,7 @@ const IncidentLossReportForm = ({
   return (
     <VStack spacing={4} align="stretch">
       <Heading size="md" color="blue.600">
-        Incident Loss Report
+        Incident Loss Form
       </Heading>
 
       <FormControl display={"flex"} flexDirection="column" gap={4}>

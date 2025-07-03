@@ -76,8 +76,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     count: steps.length,
   });
   const dispatch = useDispatch();
-  const history = useHistory();
-
+  
   const handleNext = () => {
     // console.log('Payload reçu de details :', detailsData);
     console.log('Payload reçu de comment :', commentaryData);
@@ -122,6 +121,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
   };
 
   const approved = true;
+
   const handleSubmit = async () => {
     setIsLoading(true);
   
@@ -146,8 +146,8 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         approved: !!approved, // force à boolean
       };
   
-      console.log('✅ Payload prêt à envoyer :', payload);
-      console.log('🗂️ Données additionnelles brutes :', additionalData);
+      // console.log('✅ Payload prêt à envoyer :', payload);
+      // console.log('🗂️ Données additionnelles brutes :', additionalData);
   
       // Enregistrement ou mise à jour
       if (event && event._id) {

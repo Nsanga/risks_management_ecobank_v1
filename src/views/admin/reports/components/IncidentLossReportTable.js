@@ -10,7 +10,7 @@ export default function IncidentLossReportTable({ reports, loading }) {
     <>
       <Box p={4} overflowX="auto" maxWidth="100%">
         <Text fontSize="xl" fontWeight="bold" mb={4}>
-          Event Loss Report table
+          Event Loss Report
         </Text>
         {loading ? (
           <Flex alignItems="center" justifyContent="center">
