@@ -226,7 +226,7 @@ function RiskForm({
           <FormControl>
             <HStack spacing={6} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>
-                Owner:{" "}
+                Propriétaire:{" "}
               </Text>
               <Box width="100%">
                 <Select
@@ -247,7 +247,7 @@ function RiskForm({
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>
-                Nominee:{" "}
+                Désigné:{" "}
               </Text>
               <Box width="100%">
                 <Select
@@ -268,7 +268,7 @@ function RiskForm({
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>
-                Reviewer:{" "}
+               Examinateur:{" "}
               </Text>
               <Box width="100%">
                 <Select
@@ -294,7 +294,7 @@ function RiskForm({
               fontWeight="bold"
               mb={2}
             >
-              <span style={{ fontSize: 12 }}>Active Risk</span>
+              <span style={{ fontSize: 12 }}>Risque actif</span>
             </Checkbox>
           </FormControl>
         </Box>
@@ -308,7 +308,7 @@ function RiskForm({
             isChecked={riskFormData.ownerEmail}
             onChange={handleChange}
           >
-            <span style={{ fontSize: 12 }}>Owner Email</span>
+            <span style={{ fontSize: 12 }}>Email du propriétaire</span>
           </Checkbox>
         </Box>
 
@@ -323,7 +323,7 @@ function RiskForm({
           <FormControl>
             <HStack spacing={2} alignItems="center">
               <Text fontWeight="bold" fontSize={12} mb={2}>
-                Frequency:{" "}
+                Fréquence:{" "}
               </Text>
               <Box width="100%">
                 <Select
@@ -344,8 +344,8 @@ function RiskForm({
 
           <FormControl mt={4}>
             <HStack spacing={2} alignItems="center">
-              <Text fontWeight="bold" fontSize={12} mb={2}>
-                Remind On:{" "}
+              <Text fontWeight="bold" fontSize={11} mb={2}>
+                 Rappel le:{" "}
               </Text>
               <Input
                 fontSize={12}
@@ -395,7 +395,7 @@ function RiskForm({
           leftIcon={<ArrowBackIcon />}
           onClick={onClose}
         >
-          Home
+          Accueil
         </Button>
         {/* <Button
           fontSize={12}
@@ -428,7 +428,7 @@ function RiskForm({
           leftIcon={<EditIcon />}
           onClick={handleAmend}
         >
-          Amend
+          Modifier
         </Button>
         {/* <Button
           fontSize={12}

@@ -19,16 +19,16 @@ import { AddIcon, EditIcon, CheckIcon, CloseIcon } from '@chakra-ui/icons';
 const LogTable = () => {
   const [data, setData] = useState([
     { dateTime: '2024-09-26 12:00', user: 'John Doe', type: 'Info', comment: '' },
-    { dateTime: '2024-09-26 12:30', user: 'Jane Smith', type: 'Error', comment: '' },
-  ]); // Sample initial data
-  const [comment, setComment] = useState(''); // Manage selected comment
-  const [selectedLog, setSelectedLog] = useState(null); // Track selected log
-  const [isEditing, setIsEditing] = useState(false); // Track editing state
+    { dateTime: '2024-09-26 12:30', user: 'Jane Smith', type: 'Erreur', comment: '' },
+  ]); // Données initiales exemples
+  const [comment, setComment] = useState(''); // Gérer le commentaire sélectionné
+  const [selectedLog, setSelectedLog] = useState(null); // Suivre la ligne sélectionnée
+  const [isEditing, setIsEditing] = useState(false); // Suivre l'état édition
 
   const handleAddComment = () => {
     const newLog = {
       dateTime: new Date().toLocaleString(),
-      user: 'New User',
+      user: 'Nouvel utilisateur',
       type: 'Info',
       comment,
     };
@@ -51,8 +51,8 @@ const LogTable = () => {
 
   const handleRowClick = (log) => {
     setSelectedLog(log);
-    setComment(log.comment || ''); // Populate comment field with existing comment
-    setIsEditing(true); // Set editing mode
+    setComment(log.comment || ''); // Remplir le champ commentaire avec le commentaire existant
+    setIsEditing(true); // Mode édition
   };
 
   const handleCancel = () => {
@@ -69,17 +69,17 @@ const LogTable = () => {
             <Table variant="striped" colorScheme="blue">
               <Thead>
                 <Tr>
-                  <Th fontSize="12px">Date/Time</Th>
-                  <Th fontSize="12px">User</Th>
+                  <Th fontSize="12px">Date/Heure</Th>
+                  <Th fontSize="12px">Utilisateur</Th>
                   <Th fontSize="12px">Type</Th>
-                  <Th fontSize="12px">Comment</Th>
+                  <Th fontSize="12px">Commentaire</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {data.length === 0 ? (
                   <Tr>
                     <Td colSpan={4} textAlign="center">
-                      <Text fontSize="12px">No data to display</Text>
+                      <Text fontSize="12px">Aucune donnée à afficher</Text>
                     </Td>
                   </Tr>
                 ) : (
@@ -87,7 +87,8 @@ const LogTable = () => {
                     <Tr 
                       key={index} 
                       onClick={() => handleRowClick(log)} 
-                      bg={selectedLog === log ? 'blue.100' : undefined} // Highlight selected row
+                      bg={selectedLog === log ? 'blue.100' : undefined} // Highlight ligne sélectionnée
+                      cursor="pointer"
                     >
                       <Td fontSize="12px">{log.dateTime}</Td>
                       <Td fontSize="12px">{log.user}</Td>
@@ -101,11 +102,11 @@ const LogTable = () => {
           </Box>
 
           <Box p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
-            <Text fontWeight="bold" fontSize="12px">Comment</Text>
+            <Text fontWeight="bold" fontSize="12px" mb={2}>Commentaire</Text>
             <Textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Type your comment here..."
+              placeholder="Tapez votre commentaire ici..."
               size="sm"
               h={100}
               overflowY="auto"
@@ -117,40 +118,44 @@ const LogTable = () => {
         </SimpleGrid>
 
         <HStack spacing={4} justify="center">
-          <Button variant="outline"
+          <Button 
+            variant="outline"
             colorScheme="blue" 
             onClick={handleAddComment} 
             leftIcon={<AddIcon />} 
             isDisabled={!comment}
             fontSize="12px"
           >
-            Add Comment
+            Ajouter commentaire
           </Button>
-          <Button variant="outline"
+          <Button 
+            variant="outline"
             colorScheme="yellow" 
             onClick={handleAmendComment} 
             leftIcon={<EditIcon />} 
             isDisabled={!isEditing || !comment}
             fontSize="12px"
           >
-            Amend Comment
+            Modifier commentaire
           </Button>
-          <Button variant="outline"
+          <Button 
+            variant="outline"
             colorScheme="green" 
             onClick={handleAmendComment} 
             leftIcon={<CheckIcon />} 
             isDisabled={!isEditing || !comment}
             fontSize="12px"
           >
-            Save
+            Enregistrer
           </Button>
-          <Button variant="outline"
+          <Button 
+            variant="outline"
             colorScheme="red" 
             onClick={handleCancel} 
             leftIcon={<CloseIcon />}
             fontSize="12px"
           >
-            Cancel
+            Annuler
           </Button>
         </HStack>
       </VStack>

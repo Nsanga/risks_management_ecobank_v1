@@ -519,7 +519,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
       > */}
       <Flex alignItems="center" justifyContent="space-between">
         <FormControl mr={4} maxW="250px">
-          <FormLabel fontSize={18}>Entity</FormLabel>
+          <FormLabel fontSize={18}>Entité</FormLabel>
           <Select
             options={entitiesOptions}
             styles={customStyles}
@@ -552,7 +552,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
               setIsModalOpen(true);
             }}
           >
-            Amend
+            Modifier 
           </Button>
         </Flex>
       </Flex>
@@ -605,7 +605,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
 
           <Flex direction="row" alignItems="center" mb={4}>
             <Box fontSize={12} mr={4}>
-              Show:
+              Afficher :
             </Box>
             <RadioGroup
               defaultValue="Risks"
@@ -628,15 +628,15 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
 
           <Flex direction="row" align="center" justify="space-between" mb={4}>
             <FormControl mr={4} maxW="200px">
-              <FormLabel fontSize={12}>Filter on</FormLabel>
-              <Select styles={customStyles} placeholder="Filter by" />
+              <FormLabel fontSize={12}>Filtrer par</FormLabel>
+              <Select styles={customStyles} placeholder="Filtrer par" />
             </FormControl>
             <FormControl mr={4} maxW="150px">
-              <FormLabel fontSize={12}>Status</FormLabel>
-              <Select styles={customStyles} placeholder="Select status" />
+              <FormLabel fontSize={12}>Statut</FormLabel>
+              <Select styles={customStyles} placeholder="Choisir un statut" />
             </FormControl>
             <FormControl mr={4} maxW="150px">
-              <FormLabel fontSize={12}>Number of {currentView}</FormLabel>
+              <FormLabel fontSize={12}>Nombre de {currentView}</FormLabel>
               <Input
                 fontSize={12}
                 type="number"
@@ -743,7 +743,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                           leftIcon={<EditIcon />}
                           onClick={bulkAmendModalOpen}
                         >
-                          Bulk Amend
+                          Modification en masse
                         </Button>
                         <Button
                           colorScheme="teal"
@@ -751,7 +751,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                           leftIcon={<IoMove />}
                           onClick={moveModalOpen}
                         >
-                          Move {currentView === "Risks" ? "Risk" : "Control"}
+                          Déplacer {currentView === "Risks" ? "Risk" : "Control"}
                         </Button>
                         <Button
                           colorScheme="green"
@@ -759,7 +759,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                           leftIcon={<CopyIcon />}
                           onClick={copyModalOpen}
                         >
-                          Copy {currentView === "Risks" ? "Risk" : "Control"}
+                          Copier {currentView === "Risks" ? "Risk" : "Control"}
                         </Button>
                       </HStack>
                     )}
@@ -846,7 +846,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             justifyContent="center"
             alignItems="center"
           >
-            No data available for {currentView}
+            Aucune donnée disponible pour {currentView}
           </Flex>
         )}
       </Flex>
@@ -856,13 +856,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize={12}>
-            Move {currentView === "Risks" ? "Risk" : "Control"}
+            Déplacer {currentView === "Risks" ? "Risk" : "Control"}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontSize={12}>From Entity :</Text>
+                <Text fontSize={12}>De l'entité :</Text>
                 <Input
                   name="entitySelecter"
                   value={
@@ -879,7 +879,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 />
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontSize={12}>To Entity :</Text>
+                <Text fontSize={12}> Vers l'entité :</Text>
                 <Box width={280}>
                   <Select
                     options={entitiesOptions}
@@ -904,7 +904,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 onChange={handleRadioMoveChange}
               >
                 <span style={{ fontSize: 12 }}>
-                  Move {currentView === "Risks" ? "Control" : "Risk"}
+                  Déplacer {currentView === "Risks" ? "Control" : "Risk"}
                 </span>
               </Radio>
             </Flex>
@@ -919,7 +919,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 isLoading={loading}
                 isDisabled={!isRadioMoveChecked || !formData.entityMove}
               >
-                Move
+                Déplacer
               </Button>
               <Button
                 colorScheme="red"
@@ -927,7 +927,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 leftIcon={<CloseIcon />}
                 onClick={closeMoveModal}
               >
-                Cancel
+                Annuler
               </Button>
             </HStack>
           </ModalFooter>
@@ -939,13 +939,13 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize={12}>
-            Copy {currentView === "Risks" ? "Risk" : "Control"}
+            Copier {currentView === "Risks" ? "Risk" : "Control"}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" gap={4}>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontSize={12}>From Entity :</Text>
+                <Text fontSize={12}>De l'entité :</Text>
                 <Input
                   name="entitySelecter"
                   value={
@@ -962,7 +962,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 />
               </Flex>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontSize={12}>To Entity :</Text>
+                <Text fontSize={12}>Vers l'entité :</Text>
                 <Box width={280}>
                   <Select
                     options={entitiesOptions.filter(
@@ -989,7 +989,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 onChange={handleRadioCopyChange}
               >
                 <span style={{ fontSize: 12 }}>
-                  Copy {currentView === "Risks" ? "Control" : "Risk"}
+                  Copier {currentView === "Risks" ? "Control" : "Risk"}
                 </span>
               </Radio>
             </Flex>
@@ -1002,7 +1002,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 leftIcon={<CloseIcon />}
                 onClick={closeCopyModal}
               >
-                Cancel
+                Annuler
               </Button>
               <Button
                 colorScheme="blue"
@@ -1012,7 +1012,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 isLoading={loading}
                 isDisabled={!isRadioCopyChecked || !formData.entityCopy}
               >
-                Copy
+                Copier
               </Button>
             </HStack>
           </ModalFooter>
@@ -1027,11 +1027,11 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize={14}>Bulk Amend</ModalHeader>
+          <ModalHeader fontSize={14}>Modification en masse</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl mb={4} isRequired>
-              <FormLabel fontSize={12}>Owner</FormLabel>
+              <FormLabel fontSize={12}>propriétaire</FormLabel>
               <Select
                 placeholder="Select Owner"
                 options={profileOptions}
@@ -1042,7 +1042,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             </FormControl>
 
             <FormControl mb={4} isRequired>
-              <FormLabel fontSize={12}>Nominee</FormLabel>
+              <FormLabel fontSize={12}>Désigné</FormLabel>
               <Select
                 placeholder="Select Nominee"
                 options={profileOptions}
@@ -1053,7 +1053,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
             </FormControl>
 
             <FormControl mb={4}>
-              <FormLabel fontSize={12}>Reviewer</FormLabel>
+              <FormLabel fontSize={12}>Réviseur</FormLabel>
               <Select
                 placeholder="Select Reviewer"
                 options={profileOptions}
@@ -1071,7 +1071,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 leftIcon={<CloseIcon />}
                 onClick={closeBulkAmendModal}
               >
-                Cancel
+                Annuler
               </Button>
               <Button
                 colorScheme="blue"
@@ -1080,7 +1080,7 @@ function AddControl({ entityRiskControls, loading, entities, profiles, events, a
                 onClick={handleBulkAmend}
                 isLoading={loading}
               >
-                Save
+                Enregistrer
               </Button>
             </HStack>
           </ModalFooter>

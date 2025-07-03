@@ -69,14 +69,15 @@ const RiskControl = ({
       <Table variant="simple" mb={6}>
         <Thead bg="blue.100">
           <Tr fontSize="10px">
-            <Th textTransform="none">Ref</Th>
-            <Th textTransform="none">Description</Th>
-            <Th textTransform="none">Active</Th>
-            <Th textTransform="none">Key Ctrl</Th>
-            <Th textTransform="none">Last Ass. Date</Th>
-            <Th textTransform="none">Last Ass. Perf.</Th>
-            <Th textTransform="none">Last Ass. Creator</Th>
-            <Th textTransform="none">Last Assess. Status</Th>
+            <Th textTransform="none">Réf</Th>
+          <Th textTransform="none">Description</Th>
+          <Th textTransform="none">Actif</Th>
+          <Th textTransform="none">Contrôle clé</Th>
+          <Th textTransform="none">Date dernière éval.</Th>
+          <Th textTransform="none">Perf. dernière éval.</Th>
+          <Th textTransform="none">Créateur dernière éval.</Th>
+           <Th textTransform="none">Statut dernière éval.</Th>
+
           </Tr>
         </Thead>
         <Tbody>

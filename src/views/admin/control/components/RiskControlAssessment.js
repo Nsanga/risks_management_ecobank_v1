@@ -16,8 +16,6 @@ import {
   Td,
   Checkbox,
   useDisclosure,
-  Grid,
-  GridItem,
   useToast,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,9 +23,8 @@ import { listEntityRiskControls } from "redux/entityRiskControl/action";
 import { AddControlHistory } from "redux/controlHistory/action";
 import ActionModal from "./ActionModal";
 import { AddAction } from "redux/actions/action";
-import { listControlActions } from "redux/actions/action";
-import { updateControlHistory } from "redux/controlHistory/action";
 import { fetchOneRiskControls } from "redux/entityRiskControl/action";
+import { updateControlHistory } from "redux/controlHistory/action";
 
 const RiskControlAssessment = ({
   selectedFrequency,
@@ -41,25 +38,21 @@ const RiskControlAssessment = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const profiles = useSelector(state => state.ProfileReducer.profiles);
   const entities = useSelector(state => state.EntityReducer.entities);
-  const actions = useSelector(state => state.ActionReducer.actions);
   const loadingSave = useSelector(state => state.ControlHistoryReducer.loding);
   const { riskControl, loading } = useSelector(state => state.EntityRiskControlReducer);
 
   const userRole = localStorage.getItem('role');
-
   const toast = useToast();
 
   const profileOptions = profiles
     ?.filter(profile => profile.activeUser)
     ?.map((profile, index) => {
-      // Vérification de la présence de name et surname
-      const name = profile.name ? profile.name : "";
-      const surname = profile.surname ? profile.surname : "";
-
+      const name = profile.name || "";
+      const surname = profile.surname || "";
       return {
-        key: `${profile._id}-${index}`, // Unicité assurée
+        key: `${profile._id}-${index}`,
         value: `${name} ${surname}`.trim(),
-        label: `${name} ${surname}`.trim(), // Concaténation des valeurs et suppression des espaces inutiles
+        label: `${name} ${surname}`.trim(),
         email: profile.email,
       };
     });
@@ -84,22 +77,16 @@ const RiskControlAssessment = ({
 
   const controlId = selectedControl._id;
 
-  // Ajoutez cet useEffect pour calculer automatiquement closeDate
   useEffect(() => {
     if (formData.dueOn) {
       const dueDate = new Date(formData.dueOn);
       const closeDate = new Date(dueDate);
       closeDate.setMonth(closeDate.getMonth() + 1);
-
-      // Formattez la date au format YYYY-MM-DD
       const formattedcloseDate = closeDate.toISOString().split('T')[0];
-
-      setFormData(prev => ({
-        ...prev,
-        closeDate: formattedcloseDate
-      }));
+      setFormData(prev => ({ ...prev, closeDate: formattedcloseDate }));
     }
   }, [formData.dueOn]);
+
   const [monitoring, setMonitoring] = useState("");
   const [actionData, setActionData] = useState({
     descriptionAction: "",
@@ -110,9 +97,7 @@ const RiskControlAssessment = ({
     evolutionAction: "",
   });
 
-  // Réinitialiser le formulaire quand le contrôle change
   useEffect(() => {
-    // Réinitialiser avec les valeurs par défaut
     setFormData({
       performance: "Not Assessed",
       assessedBy: userName,
@@ -123,39 +108,28 @@ const RiskControlAssessment = ({
       attested: false,
     });
 
-    // Charger les données du nouveau contrôle
     if (controlId) {
       dispatch(fetchOneRiskControls(controlId));
     }
   }, [controlId, dispatch, userName]);
 
-  // Mettre à jour le formulaire quand les données sont chargées
   useEffect(() => {
     if (!riskControl || riskControl._id !== controlId) return;
 
-    // Mise à jour de la méthodologie
     if (selectedControl?.monitoringMethodology) {
       setMonitoring(selectedControl.monitoringMethodology);
     }
 
-    // Préremplissage avec le dernier historique s'il existe
     if (riskControl.historyControl?.length > 0) {
       const latestHistory = riskControl.historyControl[riskControl.historyControl.length - 1];
       const today = new Date().toISOString().split('T')[0];
-
-      // Vérifier si nextAssessMent existe et si closeDate correspond à aujourd'hui
       const shouldUseNextAssessment = selectedControl?.nextAssessMent &&
         latestHistory.closeDate === today;
 
-      // Calculer la nouvelle closeDate si nécessaire
       let newCloseDate = latestHistory.closeDate || "";
-
       if (shouldUseNextAssessment) {
-        // Créer une date à partir de nextAssessMent
         const dueDate = new Date(selectedControl.nextAssessMent);
-        // Ajouter un mois
         dueDate.setMonth(dueDate.getMonth() + 1);
-        // Formater en YYYY-MM-DD
         newCloseDate = dueDate.toISOString().split('T')[0];
       }
 
@@ -173,14 +147,13 @@ const RiskControlAssessment = ({
   }, [riskControl, selectedControl, userName, controlId]);
 
   const handleSave = async () => {
-    // Vérification que tous les champs requis sont remplis
     const requiredFields = ['performance', 'assessedBy', 'assessedOn', 'dueOn', 'note'];
     const missingFields = requiredFields.filter(field => !formData[field] || formData[field].trim() === '');
 
     if (missingFields.length > 0) {
       toast({
         title: 'Champs manquants',
-        description: `Veuillez remplir tous les champs obligatoires: ${missingFields.join(', ')}`,
+        description: `Veuillez remplir tous les champs obligatoires : ${missingFields.join(', ')}`,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -199,19 +172,16 @@ const RiskControlAssessment = ({
       return;
     }
 
-    // Vérification de la condition sur la performance
     if (formData.performance === "Unsatisfactory") {
-      // Si la performance n'est pas "Satisfaisant", ouvrir la modal
       onOpen();
-      return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
+      return;
     } else {
-      // Sinon, procéder à l'enregistrement des données
       await dispatch(
         AddControlHistory({
           ...formData,
           idControl: controlId,
           frequency: selectedFrequency,
-          author: localStorage.getItem("username"),
+          author: userName,
           attested: false,
         })
       );
@@ -223,10 +193,9 @@ const RiskControlAssessment = ({
     const postData = {
       ...actionData,
       idControl: controlId,
-      author: localStorage.getItem("username"),
-    }
-    console.log("postData:", postData)
-    await dispatch((AddAction(postData)));
+      author: userName,
+    };
+    await dispatch(AddAction(postData));
     await dispatch(
       AddControlHistory({
         ...formData,
@@ -236,25 +205,19 @@ const RiskControlAssessment = ({
     );
     dispatch(listEntityRiskControls(selectedEntityDescription));
     onClose();
-  }
+  };
 
-  const handleAmend = () => {
-    setAmend(true);
-  }
+  const handleAmend = () => setAmend(true);
 
   const handleUpdate = async (id, attest) => {
-      const data = {
-        ...formData,
-        idControl: controlId,
-        frequency: selectedFrequency,
-        attested: attest
-      }
-      // Sinon, procéder à l'enregistrement des données
-      await dispatch(
-        updateControlHistory(id, data)
-      );
-
-      dispatch(fetchOneRiskControls(controlId));
+    const data = {
+      ...formData,
+      idControl: controlId,
+      frequency: selectedFrequency,
+      attested: attest
+    };
+    await dispatch(updateControlHistory(id, data));
+    dispatch(fetchOneRiskControls(controlId));
   };
 
   const handleSaveTest = (id, attest) => {
@@ -264,31 +227,25 @@ const RiskControlAssessment = ({
       handleUpdate(id, attest);
     }
     setAmend(false);
-  }
+  };
 
   const handleCancel = () => {
     setActiveSubTab(0);
     setAmend(false);
-  }
+  };
 
-  // Conditions de désactivation bien structurées
   const hasHistory = riskControl?.historyControl?.length > 0;
   const lastHistory = hasHistory ? riskControl.historyControl[riskControl.historyControl.length - 1] : null;
   const isClosed = lastHistory?.closeDate && new Date(lastHistory.closeDate) > new Date();
   const isInputer = userRole === "inputeurs";
   const isValidator = userRole === "validated";
 
-  // Conditions pour chaque bouton
   const isDisabledUnattest = !hasHistory || !lastHistory?.attested || isInputer;
   const isDisabledAmendAttest = !hasHistory || lastHistory?.attested || isValidator || !isClosed || amend;
   const isDisabledToAdmin = !hasHistory || lastHistory?.attested || isInputer || isDisabledAmendAttest;
   const isDisabledSave = (isValidator && !isClosed && !amend) || !isDisabledAmendAttest || lastHistory?.attested;
 
-  const isReadOnly = !amend && (riskControl?.historyControl && riskControl?.historyControl.length > 0)
-
-  // useEffect(() => {
-  //   setAmend(false);
-  // }, []);
+  const isReadOnly = !amend && hasHistory;
 
   return (
     <Box fontSize="12px">
@@ -296,17 +253,17 @@ const RiskControlAssessment = ({
         <Table variant="simple" width="100%" fontSize="10px">
           <Thead bg="gray.200">
             <Tr>
-              <Th textTransform="none">Ref</Th>
-              <Th textTransform="none">Ass On</Th>
-              <Th textTransform="none">Due On</Th>
-              <Th textTransform="none">Closed date</Th>
-              <Th textTransform="none">Perf</Th>
-              <Th textTransform="none">Att</Th>
+              <Th textTransform="none">Réf</Th>
+              <Th textTransform="none">Date d’évaluation</Th>
+              <Th textTransform="none">Date limite</Th>
+              <Th textTransform="none">Date de clôture</Th>
+              <Th textTransform="none">Performance</Th>
+              <Th textTransform="none">Attesté</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {(riskControl?.historyControl && riskControl?.historyControl.length) > 0 ? (
-              riskControl?.historyControl.slice(-5).map((controlHistory) => (
+            {hasHistory ? (
+              riskControl.historyControl.slice(-5).map((controlHistory) => (
                 <Tr
                   key={controlHistory._id}
                   onClick={() => {
@@ -347,18 +304,13 @@ const RiskControlAssessment = ({
               <FormLabel fontSize="sm">Méthodologie du test :</FormLabel>
               <Textarea fontSize="sm" textAlign="justify" value={monitoring} readOnly />
             </FormControl>
-            <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
+            <Flex alignItems="start" justifyContent="space-between" gap={2} mt={4}>
               <FormControl>
                 <FormLabel fontSize="sm">Performance <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Select
                   fontSize="sm"
                   value={formData.performance}
-                  onChange={(e) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      performance: e.target.value
-                    }));
-                  }}
+                  onChange={(e) => setFormData(prev => ({ ...prev, performance: e.target.value }))}
                   disabled={isReadOnly}
                 >
                   <option value="Not Assessed">Non testé</option>
@@ -368,11 +320,11 @@ const RiskControlAssessment = ({
                 </Select>
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="sm">Assessed By</FormLabel>
+                <FormLabel fontSize="sm">Évalué par</FormLabel>
                 <Input
                   fontSize="sm"
                   type="text"
-                  placeholder="Enter assessed name"
+                  placeholder="Nom de l’évaluateur"
                   value={formData.assessedBy}
                   readOnly
                 />
@@ -385,47 +337,39 @@ const RiskControlAssessment = ({
               <Textarea
                 fontSize="sm"
                 value={formData.note}
-                onChange={(e) =>
-                  setFormData({ ...formData, note: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                 readOnly={isReadOnly}
               />
             </FormControl>
-            <Flex alignItems="start" justifyContent="space-between" gap={2} marginTop={4}>
+            <Flex alignItems="start" justifyContent="space-between" gap={2} mt={4}>
               <FormControl>
-                <FormLabel fontSize="sm">Assessed On <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize="sm">Date d’évaluation <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   fontSize="sm"
                   type="date"
-                  placeholder="Enter assessed date"
+                  placeholder="Date d’évaluation"
                   value={formData.assessedOn}
-                  onChange={(e) =>
-                    setFormData({ ...formData, assessedOn: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, assessedOn: e.target.value })}
                   readOnly={isReadOnly}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="sm">Due On <span style={{ color: 'red' }}>*</span></FormLabel>
+                <FormLabel fontSize="sm">Date limite <span style={{ color: 'red' }}>*</span></FormLabel>
                 <Input
                   fontSize="sm"
                   type="date"
                   value={formData.dueOn}
-                  onChange={(e) =>
-                    setFormData({ ...formData, dueOn: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, dueOn: e.target.value })}
                   readOnly={isReadOnly}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel fontSize="sm">Closed date</FormLabel>
+                <FormLabel fontSize="sm">Date de clôture</FormLabel>
                 <Input
                   fontSize="sm"
                   type="date"
                   value={formData.closeDate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, closeDate: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, closeDate: e.target.value })}
                   readOnly
                 />
               </FormControl>
@@ -435,11 +379,19 @@ const RiskControlAssessment = ({
       </Flex>
 
       <Flex justifyContent="center" gap={4} mt={6}>
-        <Button onClick={handleAmend} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>Amend Assess</Button>
-        <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>{loading ? "In progress..." : "UnAttest Assess"}</Button>
-        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={() => handleSaveTest(lastHistory?._id, false)} disabled={isDisabledSave}> {loadingSave ? "Saving..." : "Save"} </Button>
-        <Button onClick={() => handleUpdate(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}> {loading ? "In progress..." : "Attest Assess"} </Button>
-        <Button onClick={handleCancel} fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
+        <Button onClick={handleAmend} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>
+          Modifier l’évaluation
+        </Button>
+        <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>
+          {loading ? "En cours..." : "Désattester"}
+        </Button>
+        <Button fontSize="sm" colorScheme="green" variant="outline" onClick={() => handleSaveTest(lastHistory?._id, false)} disabled={isDisabledSave}>
+          {loadingSave ? "Enregistrement..." : "Enregistrer"}
+        </Button>
+        <Button onClick={() => handleUpdate(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}>
+          {loading ? "En cours..." : "Attester"}
+        </Button>
+        <Button onClick={handleCancel} fontSize="sm" colorScheme="red" variant="outline">Annuler</Button>
       </Flex>
 
       <ActionModal
@@ -449,7 +401,8 @@ const RiskControlAssessment = ({
         actionData={actionData}
         setActionData={setActionData}
         profileOptions={profileOptions}
-        entitiesOptions={entitiesOptions} />
+        entitiesOptions={entitiesOptions}
+      />
     </Box>
   );
 };

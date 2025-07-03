@@ -246,7 +246,7 @@ const GeneralForm = ({
               isChecked={formData.keyControl}
               onChange={handleChange}
             >
-              <span style={{ fontSize: 12 }}>Key Control</span>
+              <span style={{ fontSize: 12 }}>Contrôle clé</span>
             </Checkbox>
             <Checkbox
               fontWeight="bold"
@@ -255,14 +255,14 @@ const GeneralForm = ({
               isChecked={formData.activeControl}
               onChange={handleChange}
             >
-              <span style={{ fontSize: 12 }}>Active Control</span>
+              <span style={{ fontSize: 12 }}>Contrôle actif</span>
             </Checkbox>
           </Flex>
 
           <FormControl mb={4}>
             <HStack spacing={2} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Control Library Reference:
+                Référence de la bibliothèque de contrôles:
               </Text>
               <Input
                 fontSize={12}
@@ -279,7 +279,7 @@ const GeneralForm = ({
           <FormControl mb={4}>
             <HStack spacing={10} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Control Category:
+                Catégorie de contrôle:
               </Text>
               <Input
                 fontSize={12}
@@ -325,7 +325,7 @@ const GeneralForm = ({
           <FormControl mb={4}>
             <HStack spacing={16} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Nominee:
+                Désigné:
               </Text>
               <Box width="100%">
                 <Select
@@ -346,7 +346,7 @@ const GeneralForm = ({
           <FormControl mb={4}>
             <HStack spacing={16} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Reviewer:
+                Réviseur:
               </Text>
               <Box width="100%">
                 <Select
@@ -368,7 +368,7 @@ const GeneralForm = ({
           <FormControl mb={4}>
             <HStack spacing={14} alignItems="center">
               <Text fontSize={12} fontWeight="bold" mb={4}>
-                Review Date:
+                Date de révision:
               </Text>
               <Input
                 fontSize={12}
@@ -394,13 +394,13 @@ const GeneralForm = ({
             mb={8}
           >
             <Text fontSize={12} fontWeight="bold" mb={4}>
-              Operation:
+              Opération:
             </Text>
             <Flex direction="column">
               <FormControl mb={4}>
                 <HStack spacing={6} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>
-                    Frequency:
+                    Fréquence:
                   </Text>
                   <Box width="100%">
                     <Select
@@ -420,7 +420,7 @@ const GeneralForm = ({
               <FormControl mb={4}>
                 <HStack spacing={4} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>
-                    Last Operation:
+                    Dernière opération:
                   </Text>
                   <Input
                     fontSize={12}
@@ -448,7 +448,7 @@ const GeneralForm = ({
               <FormControl mb={4}>
                 <HStack spacing={2} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>
-                    Next Operation:
+                    Prochaine opération:
                   </Text>
                   <Input
                     fontSize={12}
@@ -472,13 +472,13 @@ const GeneralForm = ({
             boxShadow="lg"
           >
             <Text fontSize={12} fontWeight="bold" mb={4}>
-              Assessment:
+              Évaluation:
             </Text>
             <Flex direction="column">
               <FormControl mb={4}>
                 <HStack spacing={8} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>
-                    Frequency:
+                    Fréquence:
                   </Text>
                   <Box width="100%">
                     <Select
@@ -504,7 +504,7 @@ const GeneralForm = ({
               <FormControl mb={4}>
                 <HStack spacing={2} alignItems="center">
                   <Text fontSize={12} fontWeight="bold" mb={4}>
-                    Next Assessment:
+                    Prochaine évaluation:
                   </Text>
                   <Input
                     fontSize={12}
@@ -558,7 +558,7 @@ const GeneralForm = ({
           leftIcon={<EditIcon />}
           disabled={amend || userRole === 'validated' || userRole === 'inputeurs'}
         >
-          Amend Control
+          Modifier le contrôle
         </Button>
         {/* <Button
           fontSize={12}
@@ -576,7 +576,7 @@ const GeneralForm = ({
           onClick={handleFormSubmit}
           disabled={!amend || loading}
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? "Saving..." : "Enregistrer"}
         </Button>
         <Button
           fontSize={12}
@@ -585,7 +585,7 @@ const GeneralForm = ({
           leftIcon={<CloseIcon />}
           onClick={onClose}
         >
-          Cancel
+          Annuler
         </Button>
       </HStack>
     </Box>

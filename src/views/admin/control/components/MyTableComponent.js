@@ -64,9 +64,9 @@ const MyTableComponent = () => {
         <Thead bg="blue.100">
           <Tr>
             <Th>Id</Th>
-            <Th>Reference</Th>
+            <Th>Référence</Th>
             <Th>Description</Th>
-            <Th>Actions</Th>
+             <Th>Actions</Th>
           </Tr>
         </Thead>
         <Tbody>

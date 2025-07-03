@@ -84,7 +84,7 @@ const RiskPage = ({
         >
           <HStack spacing={24} alignItems="center">
             <Text fontSize={12} fontWeight="bold">
-              Entity:
+              Entité:
             </Text>
             <Box width="100%">
               <Input
@@ -97,7 +97,7 @@ const RiskPage = ({
           </HStack>
           <HStack spacing={isEditMode ? 6 : 16} alignItems="center">
             <Text fontSize={12} fontWeight="bold" mr={2}>
-              Operational Models:
+              Modèles opérationnels:
             </Text>
             <Text fontSize={12}>Location:</Text>
             {isEditMode ? (
@@ -113,7 +113,7 @@ const RiskPage = ({
                 // onBlur={logPayload} // Log payload on blur
               />
             )}
-            <Text fontSize={12}>Business Line:</Text>
+            <Text fontSize={12}>Ligne d’affaires:</Text>
             {isEditMode ? (
               <Text fontSize={12} fontWeight="bold">
                 {riskData.businessLine}
@@ -159,7 +159,7 @@ const RiskPage = ({
           </HStack>
           <HStack spacing={16} alignItems="center">
             <Text fontSize={12} mt={6} fontWeight="bold" mb={2}>
-              Risk Category:
+              Catégorie de risque:
             </Text>
             <Input
               fontSize={12}
@@ -172,7 +172,7 @@ const RiskPage = ({
           </HStack>
           <HStack spacing={10} alignItems="center">
             <Text fontSize={12} mt={6} fontWeight="bold" mb={2}>
-              Dismissal Category:
+              Catégorie de licenciement:
             </Text>
             <Input
               fontSize={12}
@@ -238,37 +238,37 @@ const RiskPage = ({
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
-              <Text fontSize={12}>Linked Risk:</Text>
+              <Text fontSize={12}>Risque lié:</Text>
               <Text fontSize={12} fontWeight="bold">
                 {riskData.linkedRisk}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
-              <Text fontSize={12}>Residual Severity:</Text>
+              <Text fontSize={12}>Sévérité résiduelle:</Text>
               <Text fontSize={12} fontWeight="bold">
                 {riskData.residualSeverity}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
-              <Text fontSize={12}>Residual Score:</Text>
+              <Text fontSize={12}>Score résiduel:</Text>
               <Text fontSize={12} fontWeight="bold">
                 {riskData.residualScore}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
-              <Text fontSize={12}>Residual Ann Exp:</Text>
+              <Text fontSize={12}>Exposition ann résiduelle:</Text>
               <Text fontSize={12} fontWeight="bold">
                 {riskData.residualAnnExp}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
-              <Text fontSize={12}>Risk Actions:</Text>
+              <Text fontSize={12}>Actions de risque:</Text>
               <Text fontSize={12} fontWeight="bold" color="red">
                 {riskData.riskActions}
               </Text>
             </Flex>
             <Flex gap={4} mb={2}>
-              <Text fontSize={12}>Risk Status:</Text>
+              <Text fontSize={12}>Statut du risque:</Text>
               <Badge fontSize={10} colorScheme="blue">
                 {riskData.riskStatus}
               </Badge>

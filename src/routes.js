@@ -34,14 +34,14 @@ import Indicator from "views/admin/kri-search-result";
 
 const routes = [
   {
-    name: "Dashboard",
+    name: "Tableau de bord",
     layout: "/admin",
     path: "/dashboard",
     icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
     component: MainDashboard,
   },
   {
-    name: "Events",
+    name: "Evénement",
     layout: "/admin",
     path: "/events",
     icon: <Icon as={RiSkull2Fill} width='20px' height='20px' color='inherit' />,
