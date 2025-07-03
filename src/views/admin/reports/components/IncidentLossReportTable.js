@@ -2,191 +2,6 @@ import React from "react";
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import Loader from "../../../../assets/img/loader.gif";
 
-const data = [
-  {
-    eventReference: "EVT-CM-001",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2023-01-13",
-    raisedDate: "2023-01-30",
-    approvalDate: "2023-01-30",
-    eventOwner: "BETKEU BETKEU PAHO",
-    eventNominee: "Ibrahima DANDJOUMA",
-    eventReviewer: "",
-    grossLoss: 1727.15,
-    netLoss: 0,
-    firstIncrementDate: "2023-01-30",
-    lastIncrementDate: "2023-01-30",
-    effectiveDate: "2023-01-13",
-    casualCategory: "Debit card fraud",
-    toplevelCasualCategory: "External Fraud",
-    businessLine: "Commercial",
-    location: "CAMEROON",
-    casualEntity: "Commercial",
-    productType: "Commercial Banking",
-    systemType: "NOT SYSTEM RELATED",
-    boundaryEventClass: "Operational Risk Event",
-  },
-  {
-    eventReference: "EVT-CM-002",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2020-01-15",
-    raisedDate: "2023-10-04",
-    approvalDate: "2023-11-21",
-    eventOwner: "Aubin NOUMEGNE NANKAM",
-    eventNominee: "Guy MBAH",
-    eventReviewer: "",
-    grossLoss: 52680.0,
-    netLoss: 52680.0,
-    firstIncrementDate: "2023-10-04",
-    lastIncrementDate: "2023-11-21",
-    effectiveDate: "2023-09-28",
-    casualCategory: "Accounting error / entry attribution error",
-    toplevelCasualCategory: "Execution, delivery and process management",
-    businessLine: "Commercial",
-    location: "CAMEROON",
-    casualEntity: "Commercial",
-    productType: "Bank Draft",
-    systemType: "FLEXCUBE",
-    boundaryEventClass: "Operational Risk Event",
-  },
-  {
-    eventReference: "EVT-CM-003",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2022-06-15",
-    raisedDate: "2023-06-20",
-    approvalDate: "2023-06-22",
-    eventOwner: "Jean MBENG",
-    eventNominee: "Pauline NDONGO",
-    eventReviewer: "",
-    grossLoss: 1500.0,
-    netLoss: 1200.0,
-    firstIncrementDate: "2023-06-20",
-    lastIncrementDate: "2023-06-22",
-    effectiveDate: "2022-06-15",
-    casualCategory: "Internal fraud",
-    toplevelCasualCategory: "Internal Fraud",
-    businessLine: "Retail",
-    location: "CAMEROON",
-    casualEntity: "Retail Banking",
-    productType: "Savings Account",
-    systemType: "Core Banking",
-    boundaryEventClass: "Operational Risk Event",
-  },
-  {
-    eventReference: "EVT-CM-004",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2021-11-05",
-    raisedDate: "2021-11-10",
-    approvalDate: "2021-11-12",
-    eventOwner: "Mireille KAMDEM",
-    eventNominee: "Eric TCHOUPE",
-    eventReviewer: "",
-    grossLoss: 8000.0,
-    netLoss: 8000.0,
-    firstIncrementDate: "2021-11-10",
-    lastIncrementDate: "2021-11-12",
-    effectiveDate: "2021-11-05",
-    casualCategory: "Process failure",
-    toplevelCasualCategory: "Execution, delivery and process management",
-    businessLine: "Commercial",
-    location: "CAMEROON",
-    casualEntity: "Commercial",
-    productType: "Loan",
-    systemType: "Loan Management System",
-    boundaryEventClass: "Operational Risk Event",
-  },
-  {
-    eventReference: "EVT-CM-005",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2024-02-01",
-    raisedDate: "2024-02-05",
-    approvalDate: "2024-02-06",
-    eventOwner: "Samuel TCHOUAKEU",
-    eventNominee: "Diana MBAL",
-    eventReviewer: "",
-    grossLoss: 3000.0,
-    netLoss: 2800.0,
-    firstIncrementDate: "2024-02-05",
-    lastIncrementDate: "2024-02-06",
-    effectiveDate: "2024-02-01",
-    casualCategory: "Cyber attack",
-    toplevelCasualCategory: "External Fraud",
-    businessLine: "Corporate",
-    location: "CAMEROON",
-    casualEntity: "Corporate Banking",
-    productType: "Online Payment",
-    systemType: "Security System",
-    boundaryEventClass: "Operational Risk Event",
-  },
-  {
-    eventReference: "EVT-CM-006",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2023-12-12",
-    raisedDate: "2023-12-13",
-    approvalDate: "2023-12-14",
-    eventOwner: "Charles NGUEMO",
-    eventNominee: "Rebecca NDEMB",
-    eventReviewer: "",
-    grossLoss: 4500.0,
-    netLoss: 4000.0,
-    firstIncrementDate: "2023-12-13",
-    lastIncrementDate: "2023-12-14",
-    effectiveDate: "2023-12-12",
-    casualCategory: "Human error",
-    toplevelCasualCategory: "Execution, delivery and process management",
-    businessLine: "Retail",
-    location: "CAMEROON",
-    casualEntity: "Retail Banking",
-    productType: "Credit Card",
-    systemType: "Payment System",
-    boundaryEventClass: "Operational Risk Event",
-  },
-  {
-    eventReference: "EVT-CM-007",
-    shortDescription: "",
-    detailDescription: "",
-    impactEntity: "",
-    originEntity: "",
-    eventDate: "2023-09-01",
-    raisedDate: "2023-09-05",
-    approvalDate: "2023-09-07",
-    eventOwner: "Hermine TANG",
-    eventNominee: "Joseph MBONGO",
-    eventReviewer: "",
-    grossLoss: 2100.0,
-    netLoss: 2100.0,
-    firstIncrementDate: "2023-09-05",
-    lastIncrementDate: "2023-09-07",
-    effectiveDate: "2023-09-01",
-    casualCategory: "System failure",
-    toplevelCasualCategory: "Technical",
-    businessLine: "Commercial",
-    location: "CAMEROON",
-    casualEntity: "Commercial",
-    productType: "ATM",
-    systemType: "ATM Network",
-    boundaryEventClass: "Operational Risk Event",
-  },
-];
-
 export default function IncidentLossReportTable({ reports, loading }) {
   console.log("reports:", reports);
   return (
@@ -240,13 +55,13 @@ export default function IncidentLossReportTable({ reports, loading }) {
               <th style={{ border: "1px solid gray" }}>First Increment Date</th>
               <th style={{ border: "1px solid gray" }}>Last Increment Date</th>
               {/* <th style={{ border: "1px solid gray" }}>Effective Date</th> */}
-              <th style={{ border: "1px solid gray" }}>Casual Category</th>
+              <th style={{ border: "1px solid gray" }}>Causal Category</th>
               <th style={{ border: "1px solid gray" }}>
-                Toplevel Casual Category
+                Toplevel Causal Category
               </th>
               <th style={{ border: "1px solid gray" }}>Business Line</th>
               <th style={{ border: "1px solid gray" }}>Location</th>
-              <th style={{ border: "1px solid gray" }}>Casual Entity</th>
+              {/* <th style={{ border: "1px solid gray" }}>Causal Entity</th> */}
               <th style={{ border: "1px solid gray" }}>Product Type</th>
               <th style={{ border: "1px solid gray" }}>System Type</th>
               <th style={{ border: "1px solid gray" }}>Boundary Event Class</th>
@@ -267,13 +82,13 @@ export default function IncidentLossReportTable({ reports, loading }) {
               const surnameOwner = item.details.owner?.surname
                 ? item.details.owner?.surname
                 : "";
-                
-                const nameNominee = item.details.nominee?.name ? item.details.nominee?.name : "";
+
+              const nameNominee = item.details.nominee?.name ? item.details.nominee?.name : "";
               const surnameNominee = item.details.nominee?.surname
                 ? item.details.nominee?.surname
                 : "";
-                
-                const name = item.details.reviewer?.name ? item.details.reviewer?.name : "";
+
+              const name = item.details.reviewer?.name ? item.details.reviewer?.name : "";
               const surname = item.details.reviewer?.surname
                 ? item.details.reviewer?.surname
                 : "";
@@ -295,13 +110,21 @@ export default function IncidentLossReportTable({ reports, loading }) {
                   </td>
                   <td style={{ border: "1px solid gray" }}>
                     {item.details.event_date
-                      ? new Date(item.details.event_date).toLocaleDateString()
+                      ? new Date(item.details.event_date).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      })
                       : ""}
                   </td>
                   {/* <td style={{ border: "1px solid gray" }}>{item.raisedDate}</td> */}
                   <td style={{ border: "1px solid gray" }}>
                     {item.details.approved_date
-                      ? new Date(item.details.approved_date).toLocaleDateString()
+                      ? new Date(item.details.approved_date).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      })
                       : ""}
                   </td>
                   <td style={{ border: "1px solid gray" }}>{nameOwner + " " + surnameOwner}</td>
@@ -313,34 +136,45 @@ export default function IncidentLossReportTable({ reports, loading }) {
                   <td style={{ border: "1px solid gray" }}>{item.financials.currency}</td>
                   <td style={{ border: "1px solid gray" }}>
                     {item.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString()
+                      ? new Date(item.createdAt).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      })
                       : ""}
                   </td>
                   <td style={{ border: "1px solid gray" }}>
                     {item.updatedAt
-                      ? new Date(item.updatedAt).toLocaleDateString()
+                      ? new Date(item.updatedAt).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      })
                       : ""}
                   </td>
                   {/* <td style={{ border: "1px solid gray" }}>
                   {item.effectiveDate}
                 </td> */}
                   <td style={{ border: "1px solid gray" }}>
-                    {item.casualCategory}
+                    {item.additionnalInfo.find(info => info.category === "Causes")?.description || ""}
                   </td>
                   <td style={{ border: "1px solid gray" }}>
-                    {item.toplevelCasualCategory}
+                    {item.additionnalInfo.find(info => info.category === "Causes")?.topLevel || ""}
                   </td>
                   <td style={{ border: "1px solid gray" }}>
-                    {item.businessLine}
+                    {item.additionnalInfo.find(info => info.category === "Regulator Line of Business")?.description || ""}
                   </td>
                   <td style={{ border: "1px solid gray" }}>CAMEROUN</td>
-                  <td style={{ border: "1px solid gray" }}>
+                  {/* <td style={{ border: "1px solid gray" }}>
                     {item.casualEntity}
-                  </td>
-                  <td style={{ border: "1px solid gray" }}>{item.productType}</td>
-                  <td style={{ border: "1px solid gray" }}>{item.systemType}</td>
+                  </td> */}
                   <td style={{ border: "1px solid gray" }}>
-                    {item.boundaryEventClass}
+                    {item.additionnalInfo.find(info => info.category === "Product Type")?.description || ""}
+                  </td>
+                  <td style={{ border: "1px solid gray" }}>
+                    {item.additionnalInfo.find(info => info.category === "System Type")?.description || ""}</td>
+                  <td style={{ border: "1px solid gray" }}>
+                    {item.additionnalInfo.find(info => info.category === "Boundary Event Classification")?.description || ""}
                   </td>
                 </tr>
               );

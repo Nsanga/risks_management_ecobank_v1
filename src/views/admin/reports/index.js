@@ -114,11 +114,13 @@ const Reports = () => {
     setIncidentLossReportTable(true);
   };
   const handleOpenEventRecoveriesTable = () => {
+    dispatch(listEventsReports({ startDate: null, endDate: null, targetEntityId: selectedEventData.entities }));
     setEventRecoveriesTable(true);
   };
   const handleBack = () => {
     setControlListTable(false);
     setIncidentLossReportTable(false);
+    setEventRecoveriesTable(false);
     setSelectedData({ entities: [], session: "" });
     setSelectedEventData({ entities: [], start_date: "", end_date: "" });
   }
@@ -223,7 +225,7 @@ const Reports = () => {
       )}
       {openEventRecoveriesTable && (
         <Box>
-          <Flex alignItems="center" mb={4} onClick={() => setEventRecoveriesTable(false)} cursor="pointer">
+          <Flex alignItems="center" mb={4} onClick={handleBack} cursor="pointer">
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
