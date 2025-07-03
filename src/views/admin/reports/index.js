@@ -356,7 +356,7 @@ const Reports = () => {
                 <AccordionPanel pb={4}>
                   <List spacing={2}>
                     <ListItem>
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         w="full"
                         justifyContent="flex-start"
@@ -371,7 +371,7 @@ const Reports = () => {
                         }
                       >
                         Incident with funds
-                      </Button>
+                      </Button> */}
                       <Button
                         variant="ghost"
                         w="full"

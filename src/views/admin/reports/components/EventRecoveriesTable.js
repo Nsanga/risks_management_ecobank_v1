@@ -1,8 +1,11 @@
 import React from "react";
 import { Box, Heading, Table, Thead, Tr, Th, Text, Flex, Image, Tbody, Td } from "@chakra-ui/react";
 import Loader from "../../../../assets/img/loader.gif";
+import moment from "moment";
 
 const EventRecoveriesTable = ({ reports, loading }) => {
+  const executed_by = localStorage.getItem("username") || "inconnu";
+  const executed_time = moment().format("DD/MM/YYYY HH:mm:ss");
   return (
     <Box p={6}>
       <Heading as="h3" size="md" mb={2} p={2}>
@@ -53,6 +56,13 @@ const EventRecoveriesTable = ({ reports, loading }) => {
             ))}
           </Tbody>
         </Table>
+      )}
+      {!loading && (
+        <Flex alignItems="center" justifyContent="end">
+          <Text fontSize="12px" mt={4}>
+            Exécuté Par {executed_by} {executed_time}
+          </Text>
+        </Flex>
       )}
     </Box>
   );

@@ -14,7 +14,7 @@ import {
 const IncidentTrendsAnalysisTable = () => {
   return (
     <Box p={6}>
-      <Heading as="h3" size="md" mb={2} bg="gray.100" p={2}>
+      <Heading as="h3" size="md" mb={2} p={2}>
         Incident Trends Analysis Table
       </Heading>
       <Table variant="simple" size="sm" border="1px solid #ccc">
