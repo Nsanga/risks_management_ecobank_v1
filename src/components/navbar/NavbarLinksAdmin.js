@@ -41,35 +41,26 @@ export default function HeaderLinks(props) {
 	};
 
 	const getInitials = (name) => {
-		console.log(name)
-		const words = name.split(' ');
-		console.log(words.length)
-		if (words.length === 1) {
-			const firstWord = words[0]?.slice(0, 1).toUpperCase();
-			const secondWord = words[2]?.slice(0, 1).toUpperCase();
-			console.log(firstWord + " " + secondWord)
-			if (firstWord === 'undefined') {
-				return `${secondWord}`;
-			} else if (secondWord === 'undefined') {
-				return `${firstWord}`;
-			} else {
-				return `${firstWord}${secondWord}`;
-			}
-		} else if (words.length >= 2) {
-			const firstWord = words[0]?.slice(0, 1).toUpperCase();
-			const secondWord = words[1]?.slice(0, 1).toUpperCase();
-			console.log(firstWord + " " + secondWord)
-			if (firstWord === 'undefined') {
-				return `${secondWord}`;
-			} else if (secondWord === 'undefined') {
-				return `${firstWord}`;
-			} else {
-				return `${firstWord}${secondWord}`;
-			}
-		} else {
-			return '';
+		if (!name || typeof name !== 'string') return '';
+		
+		const words = name.trim().split(/\s+/);
+		console.log("Original name:", name);
+		console.log("Split words:", words);
+	
+		// Filtre les mots vides et prend les 2 premiers mots max
+		const validWords = words.filter(word => word.length > 0).slice(0, 2);
+		
+		if (validWords.length === 0) return '';
+		
+		// Cas 1 seul mot: prend les 2 premières lettres
+		if (validWords.length === 1) {
+			return validWords[0].slice(0, 2).toUpperCase();
 		}
+		
+		// Cas plusieurs mots: prend 1ère lettre de chaque mot
+		return validWords.map(word => word[0].toUpperCase()).join('');
 	};
+	
 	// Chakra Color Mode
 	const navbarIcon = useColorModeValue('gray.400', 'white');
 	let menuBg = useColorModeValue('white', 'navy.800');

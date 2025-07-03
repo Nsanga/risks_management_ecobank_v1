@@ -95,12 +95,12 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
           role: '',
           entity: '',
         });
-        onClose();
       },
       onError: (errorMessage) => {
         console.warn("Erreur lors de la sauvegarde :", errorMessage);
       }
     }));
+    onClose();
   };
   
   useEffect(() => {
@@ -177,7 +177,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
 
   const username = selectedUser?.surname + " " + selectedUser?.name;
 
-  const isSaveDisabled = !formData.userId || !formData.name || !formData.surname || !formData.telephone || !formData.email;
+  const isSaveDisabled = !formData.userId || !formData.name || !formData.role || !formData.telephone || !formData.email || !formData.entity;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered scrollBehavior='inside'>

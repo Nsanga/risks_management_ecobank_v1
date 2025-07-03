@@ -154,7 +154,7 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
                     />
                 </FormControl>
                 <FormControl>
-                    <FormLabel fontSize={12}>Surname <span style={{ color: 'red' }}>*</span></FormLabel>
+                    <FormLabel fontSize={12}>Surname</FormLabel>
                     <Input
                         fontSize={12}
                         type="text"
@@ -293,7 +293,7 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
                 <Box border="1px solid #E2E8F0" borderRadius="md" p={4} mt={4} backgroundColor="white">
                     <Heading as="h3" size="sm" mb={4} textAlign="left">Entity</Heading>
                     <FormControl>
-                        <FormLabel>Select Entity</FormLabel>
+                        <FormLabel>Select Entity <span style={{ color: 'red' }}>*</span></FormLabel>
                         <Box w="100%">
                             <Select
                                 name="entity"
@@ -312,7 +312,7 @@ const ProfileDetails = ({ formData, selectedUser, handleInputChange, isReadOnly,
                 </Box>
 
                 <Box border="1px solid #E2E8F0" borderRadius="md" p={4} mt={4} backgroundColor="white">
-                    <Heading as="h3" size="sm" mb={4} textAlign="left">Role</Heading>
+                    <Heading as="h3" size="sm" mb={4} textAlign="left">Role <span style={{ color: 'red' }}>*</span></Heading>
                     <FormControl>
                         <FormLabel>Select user role</FormLabel>
                         <Box w="100%">
