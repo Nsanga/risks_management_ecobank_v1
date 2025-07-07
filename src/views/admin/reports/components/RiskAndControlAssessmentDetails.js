@@ -83,7 +83,7 @@ const RiskAndControlAssessmentDetails = ({
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-        <MultiSelectCheckbox
+          <MultiSelectCheckbox
             name="entity"
             options={entitiesOptions}
             value={formData.entity}
@@ -93,7 +93,12 @@ const RiskAndControlAssessmentDetails = ({
         </Box>
       </FormControl>
 
-      <Button onClick={handleOpenView} colorScheme="blue" size="lg">
+      <Button
+        onClick={handleOpenView}
+        colorScheme="blue"
+        size="lg"
+        disabled={!formData.entity?.length}
+      >
         {loading ? "Loading..." : "View report"}
       </Button>
     </VStack>

@@ -11,11 +11,16 @@ import { useSelector } from "react-redux";
 import Select from "react-select";
 import MultiSelectCheckbox from "./MultipleSelectCustom";
 
-const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
+const ControlListForm = ({
+  handleOpenView,
+  entities,
+  loading,
+  onSelectionChange,
+}) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
-    entity: [],  // ✅ ajout
+    entity: [], // ✅ ajout
   });
 
   const sessionOptions = [
@@ -29,8 +34,12 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
     let newValue;
 
     if (name === "entity") {
-      const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
-      const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+      const selectedValues = selectedOption
+        ? selectedOption.map((option) => option.value)
+        : [];
+      const selectedEntities = selectedOption
+        ? selectedOption.map((option) => option.fullEntity)
+        : [];
 
       newValue = selectedValues;
       setSelectedEntity(selectedEntities);
@@ -49,7 +58,7 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
     if (onSelectionChange) {
       onSelectionChange({
         selectedEntities: updatedFormData.entity,
-        selectedSession: updatedFormData.session
+        selectedSession: updatedFormData.session,
       });
     }
   };
@@ -131,8 +140,13 @@ const ControlListForm = ({ handleOpenView, entities, loading, onSelectionChange 
         </Box>
       </FormControl>
 
-      <Button onClick={handleOpenView} colorScheme="blue" size="lg">
-        {loading ? 'Loading...' : 'View report'}
+      <Button
+        onClick={handleOpenView}
+        colorScheme="blue"
+        size="lg"
+        disabled={!formData.entity?.length}
+      >
+        {loading ? "Loading..." : "View report"}
       </Button>
     </VStack>
   );

@@ -11,15 +11,24 @@ import Select from "react-select";
 import MultiSelectCheckbox from "./MultipleSelectCustom";
 
 // Composant pour le formulaire Risk Register
-const RiskRegisterForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
+const RiskRegisterForm = ({
+  handleOpenView,
+  entities,
+  loading,
+  onSelectionChange,
+}) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
     entity: [],
   });
 
   const handleSelectChange = (name, selectedOption) => {
-    const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
-    const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+    const selectedValues = selectedOption
+      ? selectedOption.map((option) => option.value)
+      : [];
+    const selectedEntities = selectedOption
+      ? selectedOption.map((option) => option.fullEntity)
+      : [];
 
     setSelectedEntity(selectedEntities);
 
@@ -65,7 +74,12 @@ const RiskRegisterForm = ({ handleOpenView, entities, loading, onSelectionChange
         </Box>
       </FormControl>
 
-      <Button onClick={handleOpenView} colorScheme="blue" size="lg">
+      <Button
+        onClick={handleOpenView}
+        colorScheme="blue"
+        size="lg"
+        disabled={!formData.entity?.length}
+      >
         {loading ? "Loading..." : "View report"}
       </Button>
     </VStack>

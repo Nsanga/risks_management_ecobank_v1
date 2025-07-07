@@ -22,8 +22,8 @@ const IncidentLossReportForm = ({
 }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
-    start_date: '',
-    end_date: '',
+    start_date: "",
+    end_date: "",
     entity: [],
   });
 
@@ -58,11 +58,11 @@ const IncidentLossReportForm = ({
     const { name, value } = e.target;
     const updatedFormData = {
       ...formData,
-      [name]: value
+      [name]: value,
     };
-  
+
     setFormData(updatedFormData);
-  
+
     // Notifier le parent des nouvelles sélections
     if (onSelectionChange) {
       onSelectionChange({
@@ -130,7 +130,12 @@ const IncidentLossReportForm = ({
         </Box>
       </FormControl>
 
-      <Button onClick={handleOpenView} colorScheme="blue" size="lg">
+      <Button
+        onClick={handleOpenView}
+        colorScheme="blue"
+        size="lg"
+        disabled={!formData.entity?.length}
+      >
         {loading ? "Loading..." : "View Report"}
       </Button>
     </VStack>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   VStack,
   Button,
@@ -6,25 +6,34 @@ import {
   FormLabel,
   Heading,
   Box,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 import Select from "react-select";
-import { useSelector } from 'react-redux';
-import MultiSelectCheckbox from './MultipleSelectCustom';
+import { useSelector } from "react-redux";
+import MultiSelectCheckbox from "./MultipleSelectCustom";
 
 // Composant pour le formulaire Key Indicator Analysis
-const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelectionChange }) => {
+const KeyIndicatorAnalysisForm = ({
+  handleViewReport,
+  entities,
+  loading,
+  onSelectionChange,
+}) => {
   const [formData, setFormData] = useState({
     session: "", // ✅ ajout
-    entity: [],  // ✅ ajout
+    entity: [], // ✅ ajout
   });
   const [selectedEntity, setSelectedEntity] = useState(null);
 
   const handleSelectChange = (name, selectedOption) => {
     let newValue;
-    
+
     if (name === "entity") {
-      const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
-      const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+      const selectedValues = selectedOption
+        ? selectedOption.map((option) => option.value)
+        : [];
+      const selectedEntities = selectedOption
+        ? selectedOption.map((option) => option.fullEntity)
+        : [];
 
       newValue = selectedValues;
       setSelectedEntity(selectedEntities);
@@ -38,12 +47,12 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelec
     };
 
     setFormData(updatedFormData);
-    
+
     // Notifier le parent des nouvelles sélections
     if (onSelectionChange) {
       onSelectionChange({
         selectedEntities: updatedFormData.entity,
-        selectedSession: updatedFormData.session
+        selectedSession: updatedFormData.session,
       });
     }
   };
@@ -86,7 +95,7 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelec
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-        <MultiSelectCheckbox
+          <MultiSelectCheckbox
             name="entity"
             options={entitiesOptions}
             value={formData.entity}
@@ -96,8 +105,13 @@ const KeyIndicatorAnalysisForm = ({ handleViewReport, entities, loading, onSelec
         </Box>
       </FormControl>
 
-      <Button colorScheme="green" size="lg" onClick={handleViewReport} >
-      {loading ? 'Loading...' : 'View report' } 
+      <Button
+        colorScheme="green"
+        size="lg"
+        onClick={handleViewReport}
+        disabled={!formData.entity?.length}
+      >
+        {loading ? "Loading..." : "View report"}
       </Button>
     </VStack>
   );

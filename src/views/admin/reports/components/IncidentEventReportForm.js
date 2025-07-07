@@ -11,15 +11,24 @@ import Select from "react-select";
 import MultiSelectCheckbox from "./MultipleSelectCustom";
 
 // Composant pour le formulaire Incident Event Report
-const IncidentEventReportForm = ({ handleOpenView, entities, loading, onSelectionChange }) => {
+const IncidentEventReportForm = ({
+  handleOpenView,
+  entities,
+  loading,
+  onSelectionChange,
+}) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [formData, setFormData] = useState({
     entity: [],
   });
 
   const handleSelectChange = (name, selectedOption) => {
-    const selectedValues = selectedOption ? selectedOption.map(option => option.value) : [];
-    const selectedEntities = selectedOption ? selectedOption.map(option => option.fullEntity) : [];
+    const selectedValues = selectedOption
+      ? selectedOption.map((option) => option.value)
+      : [];
+    const selectedEntities = selectedOption
+      ? selectedOption.map((option) => option.fullEntity)
+      : [];
 
     setSelectedEntity(selectedEntities);
 
@@ -76,7 +85,7 @@ const IncidentEventReportForm = ({ handleOpenView, entities, loading, onSelectio
       <FormControl>
         <FormLabel>Select Entity</FormLabel>
         <Box w="100%">
-        <MultiSelectCheckbox
+          <MultiSelectCheckbox
             name="entity"
             options={entitiesOptions}
             value={formData.entity}
@@ -86,7 +95,12 @@ const IncidentEventReportForm = ({ handleOpenView, entities, loading, onSelectio
         </Box>
       </FormControl>
 
-      <Button onClick={handleOpenView} colorScheme="blue" size="lg">
+      <Button
+        onClick={handleOpenView}
+        colorScheme="blue"
+        size="lg"
+        disabled={!formData.entity?.length}
+      >
         {loading ? "Loading..." : "View Report"}
       </Button>
     </VStack>
