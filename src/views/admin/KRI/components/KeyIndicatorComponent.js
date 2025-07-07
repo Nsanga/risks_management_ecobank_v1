@@ -189,7 +189,7 @@ const KeyIndicatorComponent = ({
   }, [kriData, dispatch]);
 
   // Pré-remplissage des valeurs initiales
-  React.useEffect(() => {
+  useEffect(() => {
     if (kriData) {
       // Catégorie
       if (kriData.category) {
@@ -575,8 +575,9 @@ const KeyIndicatorComponent = ({
                             bg="red.400"
                             color="white"
                             size="sm"
-                            value={kriData.escaladeKeyIndicator}
-                            readOnly
+                            {...register("escaladeKeyIndicator")}
+                            defaultValue={kriData.escaladeKeyIndicator}
+                            readOnly={!amend}
                           />
                         </HStack>
 
@@ -589,8 +590,9 @@ const KeyIndicatorComponent = ({
                             bg="orange.300"
                             color="white"
                             size="sm"
-                            value={kriData.seuilKeyIndicator}
-                            readOnly
+                            {...register("seuilKeyIndicator")}
+                            defaultValue={kriData.seuilKeyIndicator}
+                            readOnly={!amend}
                           />
                         </HStack>
 
@@ -603,8 +605,9 @@ const KeyIndicatorComponent = ({
                             bg="green.400"
                             color="white"
                             size="sm"
-                            value={kriData.toleranceKeyIndicator}
-                            readOnly
+                            {...register("toleranceKeyIndicator")}
+                            defaultValue={kriData.toleranceKeyIndicator}
+                            readOnly={!amend}
                           />
                         </HStack>
                       </Box>

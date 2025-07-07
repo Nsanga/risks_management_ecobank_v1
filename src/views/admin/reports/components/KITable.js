@@ -168,10 +168,10 @@ export default function KITable({ reports, loading }) {
 
   return (
     <>
+      <Text fontSize="xl" fontWeight="bold" mb={4}>
+        Key Indicator Analysis
+      </Text>
       <div style={{ overflowX: "auto", maxWidth: "100%" }}>
-        <Text fontSize="xl" fontWeight="bold" mb={4}>
-          Key Indicator Analysis
-        </Text>
         {loading ? (
           <Flex alignItems='center' justifyContent='center'>
             <Image src={Loader} alt="Loading..." height={50} width={50} />
@@ -287,15 +287,15 @@ export default function KITable({ reports, loading }) {
                               {item.type}
                             </span>
                           </td>
-                          <td style={columnStyles.medium}>
+                          <td style={{ ...columnStyles.medium, textAlign: 'start' }}>
                             <span style={{
-                              backgroundColor: "#f3e5f5",
-                              padding: "4px 8px",
+                              // backgroundColor: "#f3e5f5",
+                              // padding: "4px 8px",
                               borderRadius: "4px",
                               fontSize: "12px",
                               fontWeight: "500"
                             }}>
-                              {item.thresholdType}
+                              {item.treshold}
                             </span>
                           </td>
                           <td style={columnStyles.medium}>

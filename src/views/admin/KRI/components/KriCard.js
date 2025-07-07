@@ -34,10 +34,12 @@ import KeyIndicatorComponent from "./KeyIndicatorComponent"; // ajuste le path s
 import { listEntityKeyIndicators } from "redux/kri/action";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { updateKeyIndicator } from "redux/kri/action";
+import RefreshButton from "components/refreshButton";
 
 const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, setSelectedEntity, isRCSA = false }) => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   // const [selectedEntity, setSelectedEntity] = useState(null);
   const [selectedKri, setSelectedKri] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -148,12 +150,12 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
     menu: (provided) => ({
       ...provided,
       fontSize: "12px",
-      maxHeight: "200px", // Définir une hauteur maximale pour le menu
-      overflowY: "auto", // Activer le défilement vertical
     }),
     option: (provided) => ({
       ...provided,
       fontSize: "12px",
+      maxHeight: "200px", // Définir une hauteur maximale pour le menu
+      overflowY: "auto", // Activer le défilement vertical
     }),
     singleValue: (provided) => ({
       ...provided,
@@ -258,25 +260,49 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
   // Fonction de changement de page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const handleRefresh = () => {
+    // Active l'état de chargement
+    setIsRefreshing(true);
+
+    // Simule un délai avant l'actualisation (2 secondes)
+    setTimeout(async () => {
+      if (selectedEntity) {
+        await Promise.all([
+          dispatch(listEntityKeyIndicators({ entityId: selectedEntity?._id }))
+        ]);
+      } else {
+        await dispatch(listKeyIndicator());
+      }
+      setIsRefreshing(false);
+    }, 1000);
+  }
+
   return (
     <Box>
       {!isRCSA && (
-        <div>
-          <FormControl mr={4} maxW="250px">
-            <FormLabel fontSize={18}>Entity</FormLabel>
-            <Select
-              options={entitiesOptions}
-              styles={customStyles}
-              placeholder="Select Entity"
-              value={entitiesOptions?.find(
-                (ent) => ent.value === formData.entity
-              )}
-              onChange={(selectedOption) =>
-                handleSelectChange("entity", selectedOption)
-              }
-            />
-          </FormControl>
-        </div>
+        <Flex justifyContent='space-between' alignItems='center'>
+          <Box>
+            <FormControl mr={4} maxW="250px">
+              <FormLabel fontSize={18}>Entity</FormLabel>
+              <Box width="300px">
+                <Select
+                  options={entitiesOptions}
+                  styles={customStyles}
+                  placeholder="Select Entity"
+                  value={entitiesOptions?.find(
+                    (ent) => ent.value === formData.entity
+                  )}
+                  onChange={(selectedOption) =>
+                    handleSelectChange("entity", selectedOption)
+                  }
+                />
+              </Box>
+            </FormControl>
+          </Box>
+          <Box>
+            <RefreshButton handleRefresh={handleRefresh} isRefreshing={isRefreshing} />
+          </Box>
+        </Flex>
       )}
 
       {loading ? (

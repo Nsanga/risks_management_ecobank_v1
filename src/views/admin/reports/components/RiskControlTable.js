@@ -287,7 +287,7 @@ const RiskControlTable = ({ reports, loading }) => {
                       </div>
                     </td>
                     <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top" }}>
-                      {/* {new Date(item.assessmentDate).toLocaleDateString() || "N/A"} */}
+                      {new Date(item.riskAssociate.evaluationDate).toLocaleDateString() || ""}
                     </td>
                     <td style={{ border: "1px solid #e0e0e0", padding: "10px", verticalAlign: "top", textAlign: "center" }}>
                       <span style={{

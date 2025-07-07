@@ -4,10 +4,16 @@ import { AddIcon } from '@chakra-ui/icons';
 import CustomerSummaryCard from './CustomerSummaryCard';
 import AddUserGroupModal from './AddUserGroupModal';
 import Loader from '../../../../assets/img/loader.gif';
+import RefreshButton from 'components/refreshButton';
+import { listUserGroups } from 'redux/userGroup/action';
+import { useDispatch } from 'react-redux';
 
 const UserGroup = ({ userGroups, loading }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUserGroup, setSelectedUserGroup] = useState(null);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const dispatch = useDispatch();
 
     const openModal = (userGroup = null) => {
         setSelectedUserGroup(userGroup); // Set selected user group, or null for a new group
@@ -24,10 +30,22 @@ const UserGroup = ({ userGroups, loading }) => {
         openModal(userGroup); // Open the modal with the selected group
     };
 
+    const handleRefresh = () => {
+        // Active l'état de chargement
+        setIsRefreshing(true);
+
+        // Simule un délai avant l'actualisation (2 secondes)
+        setTimeout(() => {
+            dispatch(listUserGroups());
+            setIsRefreshing(false);
+        }, 1000);
+    }
+
     return (
         <>
             <Box mb={4}>
-                <Flex justifyContent="flex-end" mb={4}>
+                <Flex justifyContent="space-between" mb={4}>
+                    <RefreshButton handleRefresh={handleRefresh} isRefreshing={isRefreshing} />
                     <Button
                         colorScheme='blue' style={{ fontSize: 14 }}
                         leftIcon={<AddIcon />}
