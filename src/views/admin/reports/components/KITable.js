@@ -11,9 +11,9 @@ const groupedData = [
     color: "#ff4444" // Rouge pour Critique
   },
   {
-    status: "Intermediaire",
-    trend: "Intermediaire",
-    color: "#ffaa00" // Orange pour Intermediaire
+    status: "Intermediare",
+    trend: "Intermediare",
+    color: "#ffaa00" // Orange pour Intermediare
   },
   {
     status: "Stable",
@@ -30,7 +30,7 @@ const groupedData = [
 export default function KITable({ reports, loading }) {
   const executed_by = localStorage.getItem("username") || "inconnu";
   const executed_time = moment().format("DD/MM/YYYY HH:mm:ss");
-
+  console.log("reports:", reports);
   // Styles optimisés pour chaque type de colonne
   const baseStyle = {
     padding: "12px 8px",

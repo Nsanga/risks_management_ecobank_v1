@@ -139,9 +139,10 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
     }
 
     const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
+    console.log("formDataHistory::", formDataHistory)
     setIsLoading(true)
     await dispatch(AddActionKRI(dataToSave));
-    await dispatch(AddHistoryKRI({ ...formDataHistory, period: dateFormatee, time: currentTime, idKeyIndicator: kriData._id, idEntity: kriData.entityReference, author: localStorage.getItem("username") }));
+    await dispatch(AddHistoryKRI({ ...formDataHistory, idKeyIndicator: kriData._id, idEntity: kriData.entityReference, author: localStorage.getItem("username") }));
     await dispatch(listActionsKRI(kriData._id));
     await dispatch(listHistoriesKRI(kriData._id));
     resetFields()

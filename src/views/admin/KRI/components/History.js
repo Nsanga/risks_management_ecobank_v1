@@ -48,11 +48,19 @@ const History = ({
   const [amend, setAmend] = useState(false);
   const toast = useToast();
 
+  const currentTime = new Date()
+    .toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(":", ":"); // Format garanti HH:mm (ex: "09:05" ou "14:30")
+
   const [formData, setFormData] = useState({
-    period: "",
+    period: valuePeriod,
     value: "",
     comment: "",
-    time: "",
+    time: currentTime,
   });
   console.log("historiesKRI:", historiesKRI)
   const loading = useSelector(state => state.HistoryKRIReducer.loading);
@@ -66,7 +74,7 @@ const History = ({
 
   // Conditions d'activation/désactivation des boutons
   const canAmend = !isHistory && !amend && historiesKRI.length > 0;
-const canSave = !isHistory && amend;
+  const canSave = !isHistory && amend;
 
   // Gestionnaire de changement pour les inputs
   const handleInputChange = (e) => {
@@ -109,14 +117,7 @@ const canSave = !isHistory && amend;
         period: lastHistory.period,
         value: lastHistory.value,
         comment: lastHistory.comment,
-        time: new Date().toLocaleTimeString(),
-      });
-    } else {
-      setFormData({
-        period: today,
-        value: "",
-        comment: "",
-        time: new Date().toLocaleTimeString(),
+        time: currentTime,
       });
     }
   };
@@ -134,12 +135,19 @@ const canSave = !isHistory && amend;
     }
 
     if (compareValues(formData.value, kriData.escaladeKeyIndicator)) {
+      setFormData({
+        period: valuePeriod,
+        value: formData.value,
+        comment: formData.comment,
+        time: currentTime
+      })
       onOpen(); // Affiche la modal de confirmation
       setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
     } else {
       await performSave(); // Sauvegarde directement si la valeur est OK
       setAmend(false);
     }
+    console.log("valuePeriod::", valuePeriod)
   };
 
   const handleCancel = () => {
@@ -149,13 +157,6 @@ const canSave = !isHistory && amend;
 
   const performSave = async () => {
     try {
-      const currentTime = new Date()
-        .toLocaleTimeString("fr-FR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })
-        .replace(":", ":"); // Format garanti HH:mm (ex: "09:05" ou "14:30")
       const idKeyIndicator = kriData._id; // Référence stable
 
       // 1. Sauvegarde de l'historique
@@ -245,20 +246,20 @@ const canSave = !isHistory && amend;
       // Activer automatiquement l’édition
       setAmend(true);
       setFormData({
-        period: today,
+        period: valuePeriod,
         value: "",
         comment: "",
-        time: new Date().toLocaleTimeString(),
-      });
+        time: currentTime,
+      })
     } else {
       // Revenir à l'état initial
       setAmend(false);
       setFormData({
-        period: today,
+        period: valuePeriod,
         value: "",
         comment: "",
-        time: new Date().toLocaleTimeString(),
-      });
+        time: currentTime,
+      })
     }
   }, [historiesKRI]);
 
@@ -477,7 +478,6 @@ const canSave = !isHistory && amend;
               kriData={kriData}
               profilesOptions={profilesOptions}
               formDataHistory={formData}
-              valuePeriod={valuePeriod}
               setFormDataHistory={setFormData}
             />
           </ModalBody>
