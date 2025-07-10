@@ -202,11 +202,11 @@ const KeyIndicatorComponent = ({
 
       // Threshold
       setValue(
-        "thresholdType",
+        "treshold",
         thresholdOptions.find(
           (opt) =>
             opt.value ===
-            (kriData.thresholdType || "Target - higher value is worse")
+            (kriData.treshold || "Target - higher value is worse")
         ) || thresholdOptions[0]
       );
 
@@ -258,10 +258,12 @@ const KeyIndicatorComponent = ({
   const onSubmit = async (data) => {
     setAmend(false)
     // Transformation des données avant soumission
+    const { reference, ...dataWithoutReference } = data; // Exclut 'reference' de l'objet data
+
     const formData = {
-      ...data,
+      ...dataWithoutReference, // Utilise toutes les propriétés sauf 'reference'
       category: data.category.value,
-      thresholdType: data.thresholdType.value,
+      treshold: data.treshold.value,
       ownerKeyIndicator: data.owner?.label,
       nomineeKeyIndicator: data.nominee?.label,
       reviewerKeyIndicator: data.reviewer?.label,
@@ -527,13 +529,13 @@ const KeyIndicatorComponent = ({
                       <FormLabel fontSize="12px">Threshold</FormLabel>
                       <Box width="100%">
                         <Select
-                          name="thresholdType"
+                          name="treshold"
                           options={thresholdOptions}
                           styles={customStyles}
                           onChange={(selected) =>
-                            setValue("thresholdType", selected)
+                            setValue("treshold", selected)
                           }
-                          value={watch("thresholdType")}
+                          value={watch("treshold")}
                           isDisabled={!amend}
                         />
                       </Box>
@@ -676,6 +678,7 @@ const KeyIndicatorComponent = ({
                           minWidth="120px"
                           // onClick={() => setTabIndex(1)}
                           onClick={changeCapture}
+                          disabled={amend}
                         >
                           Capture de la valeur
                         </Button>
@@ -685,7 +688,7 @@ const KeyIndicatorComponent = ({
                 </Box>
               </SimpleGrid>
               <Stack direction="row" spacing={4} mt={6} justify="flex-end">
-                <Button onClick={handleAmend} colorScheme="blue" type="button" fontSize="12px" disabled={userRole === 'inputeurs' || userRole === 'validated'}>
+                <Button onClick={handleAmend} colorScheme="blue" type="button" fontSize="12px" disabled={amend || userRole === 'inputeurs' || userRole === 'validated'}>
                   Amend
                 </Button>
                 <Button colorScheme="green" type="submit" fontSize="12px" disabled={!amend}>

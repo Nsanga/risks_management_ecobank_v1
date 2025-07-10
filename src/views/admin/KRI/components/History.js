@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddHistoryKRI } from "redux/historyKri/action";
 import { listHistoriesKRI } from "redux/historyKri/action";
 import ActionForm from "./ActionForm";
+import { updateHistoryKRI } from "redux/historyKri/action";
 
 const History = ({
   kriData,
@@ -144,9 +145,16 @@ const History = ({
       onOpen(); // Affiche la modal de confirmation
       setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
     } else {
-      await performSave(); // Sauvegarde directement si la valeur est OK
-      setAmend(false);
+      if (lastHistory) {
+        console.log("lastHistory:", lastHistory)
+        await performUpdate(); // Sauvegarde directement si la valeur est OK
+        // setAmend(false);
+      } else {
+        await performSave(); // Sauvegarde directement si la valeur est OK
+        setAmend(false);
+      }
     }
+
     console.log("valuePeriod::", valuePeriod)
   };
 
@@ -169,6 +177,39 @@ const History = ({
           time: currentTime,
           author: localStorage.getItem("username"),
         })
+      );
+
+      // 2. Réinitialisation du formulaire
+      setFormData({ period: "", value: "", comment: "" });
+
+      // 3. Rechargement de la liste (seulement si sauvegarde réussie)
+      if (saveResponse && !saveResponse.error) {
+        await dispatch(listHistoriesKRI(idKeyIndicator));
+      }
+
+      setShouldSave(false);
+    } catch (error) {
+      console.error("PerformSave error:", error); // Log complet
+    }
+  };
+
+  const performUpdate = async () => {
+    try {
+      const idKeyIndicator = kriData._id; // Référence stable
+      const payload = {
+        ...formData,
+        period: valuePeriod,
+        idKeyIndicator,
+        idEntity: kriData.entityReference,
+        time: currentTime,
+        author: localStorage.getItem("username"),
+      }
+
+      console.log(lastHistory._id, payload);
+
+      // 1. Sauvegarde de l'historique
+      const saveResponse = await dispatch(
+        updateHistoryKRI(lastHistory._id, payload)
       );
 
       // 2. Réinitialisation du formulaire
@@ -245,12 +286,6 @@ const History = ({
     if (historiesKRI.length === 0) {
       // Activer automatiquement l’édition
       setAmend(true);
-      setFormData({
-        period: valuePeriod,
-        value: "",
-        comment: "",
-        time: currentTime,
-      })
     } else {
       // Revenir à l'état initial
       setAmend(false);

@@ -25,6 +25,7 @@ function* list(action) {
 
 function* update(action) {
     const { id } = action.payload;
+    console.log("action:", action)
     try {
         let link = `${url}/api/v1/history/updateHistory/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.HistoryKRIData));
