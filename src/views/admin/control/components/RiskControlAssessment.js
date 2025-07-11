@@ -210,7 +210,7 @@ const RiskControlAssessment = ({
         AddControlHistory({
           ...formData,
           idControl: controlId,
-          frequency: selectedFrequency,
+          frequency: selectedFrequency === "Trimestriel" ? "Quarterly" : selectedFrequency,
           author: localStorage.getItem("username"),
           attested: false,
         })
