@@ -64,16 +64,16 @@ const GeneralForm = ({
     });
 
   const frequencies = [
-    { id: 1, label: "Daily" },
-    { id: 2, label: "Weekly" },
-    { id: 3, label: "Monthly" },
-    { id: 4, label: "Quarterly" },
+    { id: 1, value: "Daily", label: "Journalier" },
+    { id: 2, value: "Weekly", label: "Hebdomadaire" },
+    { id: 3, value: "Monthly", label: "Mensuel" },
+    { id: 4, value: "Quarterly", label: "Trimestriel" },
     // { id: 5, label: "Semi-Annually" },
     // { id: 6, label: "Annually" },
   ];
 
   const frequenciesOperationOptions = frequencies.map((frequency) => ({
-    value: frequency.label,
+    value: frequency.value,
     label: frequency.label,
   }));
 
