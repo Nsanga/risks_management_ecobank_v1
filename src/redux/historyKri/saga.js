@@ -32,7 +32,7 @@ function* update(action) {
         if (data.statut === 200) {
             yield put({ type: types.UPDATE_HISTORYKRI_SUCCESS, payload: data.data.HistoryKRI});
             toast.success("Capture mis à jour avec succès.");
-            yield put({ type: types.GET_HISTORIESKRI_REQUEST});
+            yield put(list(action));
         } else {
             yield put({ type: types.UPDATE_HISTORYKRI_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.message);
