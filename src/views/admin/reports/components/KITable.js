@@ -309,9 +309,9 @@ export default function KITable({ reports, loading }) {
                               {item.frequenceKeyIndicator}
                             </span>
                           </td>
-                          <td style={columnStyles.numeric}>{item?.history[0]?.value || 'N/A'}</td>
-                          <td style={columnStyles.numeric}>{item?.history[1]?.value || 'N/A'}</td>
-                          <td style={columnStyles.numeric}>{item?.history[2]?.value || 'N/A'}</td>
+                          <td style={columnStyles.numeric}>{item?.history[0]?.value || '-'}</td>
+                          <td style={columnStyles.numeric}>{item?.history[1]?.value || '-'}</td>
+                          <td style={columnStyles.numeric}>{item?.history[2]?.value || '-'}</td>
                           <td style={{
                             ...columnStyles.numeric,
                             backgroundColor: "#f0f9ff",

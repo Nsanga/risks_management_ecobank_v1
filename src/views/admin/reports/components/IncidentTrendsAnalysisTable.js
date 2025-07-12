@@ -26,11 +26,14 @@ const IncidentTrendsAnalysisTable = () => {
             <Th color="white" textAlign="center" rowSpan={2}>
               Month
             </Th>
+            <Th color="white" textAlign="center" rowSpan={2}>
+              Entity
+            </Th>
             <Th color="white" textAlign="center" colSpan={2}>
               Actual Loss
             </Th>
             <Th color="white" textAlign="center" colSpan={2}>
-              Total
+            YTD Losses 
             </Th>
           </Tr>
           <Tr bg="blue.500">
@@ -38,13 +41,13 @@ const IncidentTrendsAnalysisTable = () => {
               No. of Events
             </Th>
             <Th color="white" textAlign="center">
-              Total Losses
+              Losses Amount
             </Th>
             <Th color="white" textAlign="center">
               No. of Events
             </Th>
             <Th color="white" textAlign="center">
-              Total Losses
+              Total Amount
             </Th>
           </Tr>
         </Thead>
@@ -53,13 +56,14 @@ const IncidentTrendsAnalysisTable = () => {
           <Tr>
             <Td textAlign="center">2023</Td>
             <Td textAlign="center">Jul</Td>
+            <Td textAlign="center">ENT</Td>
             <Td textAlign="center">1</Td>
             <Td textAlign="center">7962</Td>
             <Td textAlign="center">1</Td>
             <Td textAlign="center">7962</Td>
           </Tr>
           <Tr fontWeight="bold">
-            <Td colSpan={2} textAlign="center">
+            <Td colSpan={3} textAlign="center">
               Total
             </Td>
             <Td textAlign="center">1</Td>
