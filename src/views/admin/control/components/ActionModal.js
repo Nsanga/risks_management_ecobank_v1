@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -22,6 +22,8 @@ const ActionModal = ({
   onConfirm,
   profileOptions,
   entitiesOptions,
+  action_loading,
+  lastHistory
 }) => {
 
   // Créer les options de pourcentage
@@ -51,11 +53,25 @@ const ActionModal = ({
     }),
   };
 
+  useEffect(() => {
+    // console.log("lastHistory:", lastHistory);
+    if (lastHistory) {
+      setActionData({
+        descriptionAction: lastHistory.descriptionAction,
+        delaisAction: lastHistory.delaisAction,
+        proprioAction: lastHistory.proprioAction,
+        emailProprio: lastHistory.emailProprio,
+        idEntity: lastHistory.idEntity,
+        evolutionAction: lastHistory.evolutionAction,
+      })
+    }
+  }, []);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Action</ModalHeader>
+        <ModalHeader>{lastHistory ? "Update action" : "Create action"}</ModalHeader>
         <ModalBody>
           <FormControl mb={4}>
             <FormLabel>Description de l’action</FormLabel>
@@ -133,7 +149,7 @@ const ActionModal = ({
               }}
               placeholder="Sélectionnez un pourcentage"
               className="z-10"
-              // styles={customStyles}
+            // styles={customStyles}
             />
           </FormControl>
         </ModalBody>
@@ -142,8 +158,8 @@ const ActionModal = ({
           <Button colorScheme="red" onClick={onClose}>
             Annuler
           </Button>
-          <Button colorScheme="blue" ml={3} onClick={onConfirm}>
-            Save
+          <Button colorScheme="blue" ml={3} onClick={onConfirm} disabled={action_loading}>
+            {action_loading ? "Saving..." : "Save"}
           </Button>
         </ModalFooter>
       </ModalContent>

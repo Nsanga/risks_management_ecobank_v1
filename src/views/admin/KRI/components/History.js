@@ -505,7 +505,7 @@ const History = ({
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Ajouter une action</ModalHeader>
+          <ModalHeader>{lastHistory ? "Modifier l'action" : "Ajouter une action"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <ActionForm
@@ -514,6 +514,7 @@ const History = ({
               profilesOptions={profilesOptions}
               formDataHistory={formData}
               setFormDataHistory={setFormData}
+              lastHistory={lastHistory}
             />
           </ModalBody>
         </ModalContent>

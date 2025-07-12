@@ -28,6 +28,7 @@ import { AddAction } from "redux/actions/action";
 import { listControlActions } from "redux/actions/action";
 import { updateControlHistory } from "redux/controlHistory/action";
 import { fetchOneRiskControls } from "redux/entityRiskControl/action";
+import { listControlHistories } from "redux/controlHistory/action";
 
 const RiskControlAssessment = ({
   selectedFrequency,
@@ -41,7 +42,7 @@ const RiskControlAssessment = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const profiles = useSelector(state => state.ProfileReducer.profiles);
   const entities = useSelector(state => state.EntityReducer.entities);
-  const actions = useSelector(state => state.ActionReducer.actions);
+  const { action_loading } = useSelector(state => state.ActionReducer);
   const loadingSave = useSelector(state => state.ControlHistoryReducer.loding);
   const { riskControl, loading } = useSelector(state => state.EntityRiskControlReducer);
 
@@ -172,6 +173,21 @@ const RiskControlAssessment = ({
     }
   }, [riskControl, selectedControl, userName, controlId]);
 
+  // Conditions de désactivation bien structurées
+  const hasHistory = riskControl?.historyControl?.length > 0;
+  const lastHistory = hasHistory ? riskControl.historyControl[riskControl.historyControl.length - 1] : null;
+  const isClosed = lastHistory?.closeDate && new Date(lastHistory.closeDate) > new Date();
+  const isInputer = userRole === "inputeurs";
+  const isValidator = userRole === "validated";
+
+  // Conditions pour chaque bouton
+  const isDisabledUnattest = !hasHistory || !lastHistory?.attested || isInputer;
+  const isDisabledAmendAttest = !hasHistory || lastHistory?.attested || isValidator || !isClosed || amend;
+  const isDisabledToAdmin = !hasHistory || lastHistory?.attested || isInputer || isDisabledAmendAttest;
+  const isDisabledSave = (isValidator && !isClosed && !amend) || !isDisabledAmendAttest || lastHistory?.attested;
+
+  const isReadOnly = !amend && (riskControl?.historyControl && riskControl?.historyControl.length > 0)
+
   const handleSave = async () => {
     // Vérification que tous les champs requis sont remplis
     const requiredFields = ['performance', 'assessedBy', 'assessedOn', 'dueOn', 'note'];
@@ -220,22 +236,50 @@ const RiskControlAssessment = ({
   };
 
   const handleSaveAction = async () => {
-    const postData = {
-      ...actionData,
-      idControl: controlId,
-      author: localStorage.getItem("username"),
-    }
-    console.log("postData:", postData)
-    await dispatch((AddAction(postData)));
-    await dispatch(
-      AddControlHistory({
+    try {
+      const controlHistoryPayload = {
         ...formData,
         idControl: controlId,
         frequency: selectedFrequency,
-      })
-    );
-    dispatch(listEntityRiskControls(selectedEntityDescription));
-    onClose();
+      };
+
+      // Crée une promesse manuelle
+      const controlHistoryRes = await new Promise((resolve, reject) => {
+        dispatch(AddControlHistory(controlHistoryPayload, resolve, reject));
+      });
+      console.log("controlHistoryRes", controlHistoryRes)
+      const idHistory = controlHistoryRes?.data?._id;
+
+      if (!idHistory) {
+        throw new Error("L’ID de l'historique n’a pas été récupéré.");
+      }
+
+      const actionPayload = {
+        ...actionData,
+        idControl: controlId,
+        idHistory,
+        author: localStorage.getItem("username"),
+      };
+
+      await dispatch(AddAction(actionPayload));
+      dispatch(fetchOneRiskControls(controlId));
+      await dispatch(listControlHistories());
+      await dispatch(listEntityRiskControls(selectedEntityDescription));
+      onClose();
+    } catch (error) {
+      console.error("Erreur :", error);
+      toast.error("Erreur lors de la sauvegarde.");
+    }
+  };
+
+  const handleUpdateAction = () => {
+    const actionPayload = {
+      ...actionData,
+      idControl: controlId,
+      idHistory: lastHistory._id,
+      author: localStorage.getItem("username"),
+    };
+    console.log(actionPayload)
   }
 
   const handleAmend = () => {
@@ -243,6 +287,38 @@ const RiskControlAssessment = ({
   }
 
   const handleUpdate = async (id, attest) => {
+    // Vérification que tous les champs requis sont remplis
+    const requiredFields = ['performance', 'assessedBy', 'assessedOn', 'dueOn', 'note'];
+    const missingFields = requiredFields.filter(field => !formData[field] || formData[field].trim() === '');
+
+    if (missingFields.length > 0) {
+      toast({
+        title: 'Champs manquants',
+        description: `Veuillez remplir tous les champs obligatoires: ${missingFields.join(', ')}`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (formData.performance === "Not Assessed") {
+      toast({
+        title: 'Performance non évaluée',
+        description: 'Veuillez sélectionner une évaluation de performance valide (différente de "Non testé")',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Vérification de la condition sur la performance
+    if (formData.performance === "Unsatisfactory") {
+      // Si la performance n'est pas "Satisfaisant", ouvrir la modal
+      onOpen();
+      return; // Arrêter l'exécution de la fonction pour ne pas enregistrer
+    } else {
       const data = {
         ...formData,
         idControl: controlId,
@@ -255,7 +331,23 @@ const RiskControlAssessment = ({
       );
 
       dispatch(fetchOneRiskControls(controlId));
+    }
   };
+
+  const handleAttestOrUnattest = async(id, attest) => {
+    const data = {
+      ...formData,
+      idControl: controlId,
+      frequency: selectedFrequency,
+      attested: attest
+    }
+    // Sinon, procéder à l'enregistrement des données
+    await dispatch(
+      updateControlHistory(id, data)
+    );
+
+    dispatch(fetchOneRiskControls(controlId));
+  }
 
   const handleSaveTest = (id, attest) => {
     if (!amend) {
@@ -270,21 +362,6 @@ const RiskControlAssessment = ({
     setActiveSubTab(0);
     setAmend(false);
   }
-
-  // Conditions de désactivation bien structurées
-  const hasHistory = riskControl?.historyControl?.length > 0;
-  const lastHistory = hasHistory ? riskControl.historyControl[riskControl.historyControl.length - 1] : null;
-  const isClosed = lastHistory?.closeDate && new Date(lastHistory.closeDate) > new Date();
-  const isInputer = userRole === "inputeurs";
-  const isValidator = userRole === "validated";
-
-  // Conditions pour chaque bouton
-  const isDisabledUnattest = !hasHistory || !lastHistory?.attested || isInputer;
-  const isDisabledAmendAttest = !hasHistory || lastHistory?.attested || isValidator || !isClosed || amend;
-  const isDisabledToAdmin = !hasHistory || lastHistory?.attested || isInputer || isDisabledAmendAttest;
-  const isDisabledSave = (isValidator && !isClosed && !amend) || !isDisabledAmendAttest || lastHistory?.attested;
-
-  const isReadOnly = !amend && (riskControl?.historyControl && riskControl?.historyControl.length > 0)
 
   // useEffect(() => {
   //   setAmend(false);
@@ -436,20 +513,22 @@ const RiskControlAssessment = ({
 
       <Flex justifyContent="center" gap={4} mt={6}>
         <Button onClick={handleAmend} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledAmendAttest}>Amend Assess</Button>
-        <Button onClick={() => handleUpdate(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>{loading ? "In progress..." : "UnAttest Assess"}</Button>
+        <Button onClick={() => handleAttestOrUnattest(lastHistory?._id, false)} fontSize="sm" colorScheme="red" variant="outline" disabled={isDisabledUnattest}>{loading ? "In progress..." : "UnAttest Assess"}</Button>
         <Button fontSize="sm" colorScheme="green" variant="outline" onClick={() => handleSaveTest(lastHistory?._id, false)} disabled={isDisabledSave}> {loadingSave ? "Saving..." : "Save"} </Button>
-        <Button onClick={() => handleUpdate(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}> {loading ? "In progress..." : "Attest Assess"} </Button>
+        <Button onClick={() => handleAttestOrUnattest(lastHistory?._id, true)} fontSize="sm" colorScheme="blue" variant="outline" disabled={isDisabledToAdmin}> {loading ? "In progress..." : "Attest Assess"} </Button>
         <Button onClick={handleCancel} fontSize="sm" colorScheme="red" variant="outline">Cancel</Button>
       </Flex>
 
       <ActionModal
         isOpen={isOpen}
         onClose={onClose}
-        onConfirm={handleSaveAction}
+        onConfirm={lastHistory ? handleUpdateAction : handleSaveAction}
         actionData={actionData}
         setActionData={setActionData}
         profileOptions={profileOptions}
-        entitiesOptions={entitiesOptions} />
+        entitiesOptions={entitiesOptions}
+        action_loading={action_loading}
+        lastHistory={lastHistory} />
     </Box>
   );
 };

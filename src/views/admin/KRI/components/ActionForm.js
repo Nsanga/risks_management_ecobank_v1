@@ -30,7 +30,7 @@ import { listActionsKRI } from 'redux/actionKRI/action';
 import { AddHistoryKRI } from 'redux/historyKri/action';
 import { listHistoriesKRI } from 'redux/historyKri/action';
 
-const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, formDataHistory, setFormDataHistory, dateFormatee, actionsKRI }) => {
+const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, formDataHistory, setFormDataHistory, dateFormatee, actionsKRI, lastHistory }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch()
   const toast = useToast();
@@ -126,33 +126,84 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
       return;
     }
 
-    const dataToSave = {
-      ...formData,
-      owner: formData.owner.label,
-      nominee: formData.nominee.label,
-      reviewer: formData.reviewer?.label || null,
-      ownerEmail: formData.owner.email,
-      nomineeEmail: formData.nominee.email,
-      reviewerEmail: formData.reviewer?.email || null,
-      idKeyIndicator: kriData._id,
-      idEntity: kriData.entityReference
+    setIsLoading(true);
+
+    try {
+      const baseData = {
+        idKeyIndicator: kriData._id,
+        idEntity: kriData.entityReference
+      };
+
+      // Création de l’historique KRI avec promesse manuelle
+      const historyPayload = {
+        ...formDataHistory,
+        ...baseData,
+        author: localStorage.getItem("username"),
+      };
+
+      const historyRes = await new Promise((resolve, reject) => {
+        dispatch(AddHistoryKRI(historyPayload, resolve, reject));
+      });
+
+      const idHistoryKRI = historyRes?.data?._id;
+
+      if (!idHistoryKRI) {
+        throw new Error("Échec de l’enregistrement de l’historique.");
+      }
+
+      // Création de l’action
+      const actionPayload = {
+        ...formData,
+        ...baseData,
+        owner: formData.owner.label,
+        nominee: formData.nominee.label,
+        reviewer: formData.reviewer?.label || null,
+        ownerEmail: formData.owner.email,
+        nomineeEmail: formData.nominee.email,
+        reviewerEmail: formData.reviewer?.email || null,
+        idHistoryKRI,
+      };
+
+      await dispatch(AddActionKRI(actionPayload));
+      await dispatch(listActionsKRI(kriData._id));
+      await dispatch(listHistoriesKRI(kriData._id));
+
+      resetFields();
+      setFormDataHistory({
+        period: "",
+        value: "",
+        comment: "",
+      });
+      onClose();
+
+    } catch (error) {
+      console.error("❌ Erreur lors de la sauvegarde :", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue pendant la sauvegarde.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!formData.owner || !formData.nominee || !formData.descriptionAction || !formData.targetDate) {
+      toast({
+        title: "Erreur",
+        description: "Description, Owner, Nominee and Target date fields are required.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
     }
 
-    const currentTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-    console.log("formDataHistory::", formDataHistory)
-    setIsLoading(true)
-    await dispatch(AddActionKRI(dataToSave));
-    await dispatch(AddHistoryKRI({ ...formDataHistory, idKeyIndicator: kriData._id, idEntity: kriData.entityReference, author: localStorage.getItem("username") }));
-    await dispatch(listActionsKRI(kriData._id));
-    await dispatch(listHistoriesKRI(kriData._id));
-    resetFields()
-    setFormDataHistory({
-      period: "",
-      value: "",
-      comment: "",
-    });
-    onClose();
-  };
+    console.log(formData);
+  }
 
   useEffect(() => {
     if (kriData) {
@@ -376,14 +427,14 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
             </Flex>
           </VStack>
           <Flex justifyContent="flex-end" gap={2} alignItems="center" mt={4}>
+            <Button colorScheme="red" variant="solid" onClick={onClose}>Annuler</Button>
             <Button
               colorScheme="blue"
-              onClick={handleSave}
+              onClick={lastHistory ? handleUpdate : handleSave}
               disabled={isLoading}
             >
               {isLoading ? 'Save in progress ...' : 'Save'}
             </Button>
-            <Button variant="ghost" onClick={onClose}>Annuler</Button>
           </Flex>
         </Box>
       </Flex>

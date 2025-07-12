@@ -30,7 +30,7 @@ function* update(action) {
         let link = `${url}/api/v1/historiqueKRI/updateHistoriqueKRI/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.historyKRIData));
         if (data.statut === 200) {
-            yield put({ type: types.UPDATE_HISTORYKRI_SUCCESS, payload: data.data.HistoryKRI});
+            yield put({ type: types.UPDATE_HISTORYKRI_SUCCESS, payload: data.data.HistoryKRI });
             toast.success("Capture mis à jour avec succès.");
             yield put(list(action));
         } else {
@@ -48,18 +48,26 @@ function* add(action) {
         const link = `${url}/api/v1/historiqueKRI/postHistoriqueKRI`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
 
-        if (data.statut === 201) { 
+        if (data.statut === 201) {
             yield put({ type: types.ADD_HISTORYKRI_SUCCESS, payload: data });
             toast.success(data.message);
+
+            // ✅ Appeler resolve avec la réponse
+            if (action.meta?.resolve) action.meta.resolve(data);
         } else {
-            toast.error("Aucune donnée n'a été ajouté."); 
-            yield put({ type: types.ADD_HISTORYKRI_FAILED, payload: "Échec lors de la creation de l'évenement" });
-        } 
+            toast.error("Aucune donnée n'a été ajoutée.");
+            yield put({ type: types.ADD_HISTORYKRI_FAILED, payload: "Échec lors de la création de l’historique KRI" });
+
+            // ❌ Appeler reject
+            if (action.meta?.reject) action.meta.reject(new Error("Erreur API"));
+        }
 
     } catch (error) {
-        toast.error("Aucune donnée n'a été ajouté.");
-        console.error(error);
-        yield put({ type: types.ADD_HISTORYKRI_FAILED, payload: error.message || "Une erreur s'est produite" });
+        toast.error("Erreur serveur.");
+        yield put({ type: types.ADD_HISTORYKRI_FAILED, payload: error.message });
+
+        // ❌ Appeler reject
+        if (action.meta?.reject) action.meta.reject(error);
     }
 }
 
@@ -72,7 +80,7 @@ function* deleteHistoryKRI(action) {
         if (data) {
             yield put({ type: types.DELETE_HISTORYKRI_SUCCESS, payload: data });
             toast.success('control test deleted successfully');
-            yield put({ type: types.GET_HISTORIESKRI_REQUEST});
+            yield put({ type: types.GET_HISTORIESKRI_REQUEST });
         } else {
             toast.error("Aucune donnée n'a été supprimé.");
             yield put({ type: types.DELETE_HISTORYKRI_FAILED, payload: "Échec lors de la suppression des données" });

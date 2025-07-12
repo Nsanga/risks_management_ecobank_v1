@@ -29,7 +29,7 @@ function* update(action) {
         let link = `${url}/api/v1/history/updateHistory/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.controlHistoryData));
         if (data.statut === 200) {
-            yield put({ type: types.UPDATE_CONTROLHISTORY_SUCCESS, payload: data.data.controlHistory});
+            yield put({ type: types.UPDATE_CONTROLHISTORY_SUCCESS, payload: data.data.controlHistory });
             toast.success(data.message);
         } else {
             yield put({ type: types.UPDATE_CONTROLHISTORY_FAILED, payload: "Échec lors de la modification des données" });
@@ -46,19 +46,31 @@ function* add(action) {
         const link = `${url}/api/v1/history/postHistory`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
 
-        if (data.statut === 200) { 
+        if (data.statut === 200) {
             yield put({ type: types.ADD_CONTROLHISTORY_SUCCESS, payload: data });
             toast.success(data.message);
-            yield put({ type: types.GET_CONTROLHISTORIES_REQUEST, payload: { type: action.payload.type } });
-        } else {
-            toast.error("Aucune donnée n'a été ajouté."); 
-            yield put({ type: types.ADD_CONTROLHISTORY_FAILED, payload: "Échec lors de la creation de l'évenement" });
-        } 
 
+            // ✅ Appelle resolve pour transmettre la réponse au composant
+            if (action.meta?.resolve) action.meta.resolve(data);
+
+            // Continue ta logique
+            yield put({
+                type: types.GET_CONTROLHISTORIES_REQUEST,
+                payload: { type: action.payload.type },
+            });
+        } else {
+            toast.error("Aucune donnée n'a été ajoutée.");
+            yield put({ type: types.ADD_CONTROLHISTORY_FAILED, payload: "Échec" });
+
+            // ❌ Appelle reject
+            if (action.meta?.reject) action.meta.reject(new Error("Échec serveur"));
+        }
     } catch (error) {
-        toast.error("Aucune donnée n'a été ajouté.");
-        console.error(error);
-        yield put({ type: types.ADD_CONTROLHISTORY_FAILED, payload: error.message || "Une erreur s'est produite" });
+        toast.error("Erreur serveur.");
+        yield put({ type: types.ADD_CONTROLHISTORY_FAILED, payload: error.message });
+
+        // ❌ Appelle reject avec l’erreur
+        if (action.meta?.reject) action.meta.reject(error);
     }
 }
 
@@ -71,7 +83,7 @@ function* deleteControlHistory(action) {
         if (data) {
             yield put({ type: types.DELETE_CONTROLHISTORY_SUCCESS, payload: data });
             toast.success('control test deleted successfully');
-            yield put({ type: types.GET_CONTROLHISTORIES_REQUEST});
+            yield put({ type: types.GET_CONTROLHISTORIES_REQUEST });
         } else {
             toast.error("Aucune donnée n'a été supprimé.");
             yield put({ type: types.DELETE_CONTROLHISTORY_FAILED, payload: "Échec lors de la suppression des données" });

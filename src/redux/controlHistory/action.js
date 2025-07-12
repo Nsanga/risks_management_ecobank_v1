@@ -9,11 +9,12 @@ export const updateControlHistory = (id, controlHistoryData) => ({
     payload: {id, controlHistoryData}
   });
 
-  export const AddControlHistory = (controlHistoryData) => ({
+  export const AddControlHistory = (controlHistoryData, resolve, reject) => ({
     type: types.ADD_CONTROLHISTORY_REQUEST,
-    payload: controlHistoryData
+    payload: controlHistoryData,
+    meta: { resolve, reject }, // les callbacks
   });
-
+  
   export const deleteControlHistory = (id) => ({
     type: types.DELETE_CONTROLHISTORY_REQUEST,
     payload: {id}
