@@ -27,11 +27,11 @@ function* update(action) {
     const { id } = action.payload;
     console.log("action:", action)
     try {
-        let link = `${url}/api/v1/history/updateHistory/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.HistoryKRIData));
-        if (data.message === "Success") {
+        let link = `${url}/api/v1/historiqueKRI/updateHistoriqueKRI/${id}`;
+        const data = yield putRequest(link, JSON.stringify(action.payload.historyKRIData));
+        if (data.statut === 200) {
             yield put({ type: types.UPDATE_HISTORYKRI_SUCCESS, payload: data.data.HistoryKRI});
-            toast.success("Entity updated successfully");
+            toast.success("Capture mis à jour avec succès.");
             yield put({ type: types.GET_HISTORIESKRI_REQUEST});
         } else {
             yield put({ type: types.UPDATE_HISTORYKRI_FAILED, payload: "Échec lors de la modification des données" });
