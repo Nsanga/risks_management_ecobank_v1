@@ -9,6 +9,7 @@ import {
   Flex,
   border,
   Input,
+  Text,
 } from "@chakra-ui/react";
 import Select from "react-select";
 import MultiSelectCheckbox from "./MultipleSelectCustom";
@@ -54,16 +55,53 @@ const IncidentLossReportForm = ({
     }
   };
 
+  // const handleDateChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const updatedFormData = {
+  //     ...formData,
+  //     [name]: value,
+  //   };
+
+  //   setFormData(updatedFormData);
+
+  //   // Notifier le parent des nouvelles sélections
+  //   if (onSelectionChange) {
+  //     onSelectionChange({
+  //       selectedStartDate: updatedFormData.start_date,
+  //       selectedEndDate: updatedFormData.end_date,
+  //       selectedEntities: updatedFormData.entity,
+  //     });
+  //   }
+  // };
+
   const handleDateChange = (e) => {
     const { name, value } = e.target;
-    const updatedFormData = {
+
+    let updatedFormData = {
       ...formData,
       [name]: value,
     };
 
+    // Correction automatique si incohérence
+    if (
+      name === "start_date" &&
+      formData.end_date &&
+      value > formData.end_date
+    ) {
+      updatedFormData.end_date = value;
+    }
+
+    if (
+      name === "end_date" &&
+      formData.start_date &&
+      value < formData.start_date
+    ) {
+      updatedFormData.start_date = value;
+    }
+
     setFormData(updatedFormData);
 
-    // Notifier le parent des nouvelles sélections
+    // Notifier le parent si besoin
     if (onSelectionChange) {
       onSelectionChange({
         selectedStartDate: updatedFormData.start_date,
@@ -102,7 +140,6 @@ const IncidentLossReportForm = ({
             />
           </Box>
         </Box>
-
         <Box display="flex" alignItems="center" w="100%">
           <FormLabel mb="0" minW="120px">
             Start Date
@@ -111,6 +148,7 @@ const IncidentLossReportForm = ({
             fontSize={12}
             type="date"
             name="start_date"
+            max={formData.end_date || undefined} // limite max dynamique
             value={formData.start_date}
             onChange={handleDateChange}
           />
@@ -124,17 +162,29 @@ const IncidentLossReportForm = ({
             fontSize={12}
             type="date"
             name="end_date"
+            min={formData.start_date || "1970-01-01"} // limite min dynamique
+            max={new Date().toISOString().split("T")[0]} // pas au-delà d'aujourd'hui
             value={formData.end_date}
             onChange={handleDateChange}
           />
         </Box>
+
+        {formData.start_date &&
+          formData.end_date &&
+          formData.start_date > formData.end_date && (
+            <Text fontSize="sm" color="red.500">
+              Les dates ne correspondent pas
+            </Text>
+          )}
       </FormControl>
 
       <Button
         onClick={handleOpenView}
         colorScheme="blue"
         size="lg"
-        disabled={!formData.entity?.length}
+        disabled={
+          !formData.entity?.length || !formData.start_date || !formData.end_date
+        }
       >
         {loading ? "Loading..." : "View Report"}
       </Button>
