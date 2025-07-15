@@ -24,16 +24,32 @@ function* list(action) {
     }
 }
 
+function* fetchAction(action) {
+    try {
+        let link = `${url}/api/v1/actionKRI/getActionByHistoryKRI`;
+        const data = yield postRequest(link, JSON.stringify(action.payload));
+        console.log(data)
+        if (data.statut === 200) {
+            yield put({ type: types.GET_ACTIONKRI_SUCCESS, payload: data });
+        } else {
+            yield put({ type: types.GET_ACTIONKRI_FAILED, payload: "echec recuperation des données" });
+        }
+    } catch (error) {
+        console.log(error); 
+        yield put({ type: types.GET_ACTIONKRI_FAILED, payload: error });
+    }
+}
+
 function* update(action) {
     const { id } = action.payload;
     try {
-        let link = `${url}/api/v1/history/updateHistory/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.HistoryKRIData));
-        console.log("data:::/", data)
-        if (data.message === "Success") {
-            yield put({ type: types.UPDATE_ACTIONKRI_SUCCESS, payload: data.data.HistoryKRI});
-            toast.success("Entity updated successfully");
-            yield put({ type: types.GET_ACTIONSKRI_REQUEST});
+        let link = `${url}/api/v1/actionKRI/updateActionKRI/${id}`;
+        const data = yield putRequest(link, JSON.stringify(action.payload.actionKRIData));
+        // console.log("data:::/", data)
+        if (data.statut === 200) {
+            yield put({ type: types.UPDATE_ACTIONKRI_SUCCESS, payload: data.data.actionKRI});
+            toast.success(data.message);
+            yield put(fetchAction(action));
         } else {
             yield put({ type: types.UPDATE_ACTIONKRI_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.message);
@@ -89,6 +105,7 @@ function* deleteActionKRI(action) {
 
 export default function* ActionKRISaga() {
     yield takeLatest(types.GET_ACTIONSKRI_REQUEST, list);
+    yield takeLatest(types.GET_ACTIONKRI_REQUEST, fetchAction);
     yield takeLatest(types.UPDATE_ACTIONKRI_REQUEST, update);
     yield takeLatest(types.ADD_ACTIONKRI_REQUEST, add);
     yield takeLatest(types.DELETE_ACTIONKRI_REQUEST, deleteActionKRI);

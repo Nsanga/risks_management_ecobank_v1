@@ -65,7 +65,7 @@ const History = ({
   });
   console.log("historiesKRI:", historiesKRI)
   const loading = useSelector(state => state.HistoryKRIReducer.loading);
-  const today = new Date().toISOString().split('T')[0];
+  const { actionKRI } = useSelector(state => state.ActionKRIReducer);
 
   // Récupère le dernier élément de l'historique
   const lastHistory = historiesKRI?.length > 0 ? historiesKRI[historiesKRI.length - 1] : null;
@@ -75,7 +75,7 @@ const History = ({
 
   // Conditions d'activation/désactivation des boutons
   const canAmend = !isHistory && !amend && historiesKRI.length > 0;
-  const canSave = !isHistory && amend;
+  const canSave = (!isHistory && amend) || (!isHistory && historiesKRI.length === 0);
 
   // Gestionnaire de changement pour les inputs
   const handleInputChange = (e) => {
@@ -123,79 +123,10 @@ const History = ({
     }
   };
 
-  const handleSave = async () => {
-    if (!formData.value) {
-      toast({
-        title: "Erreur",
-        description: "Value is required.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (compareValues(formData.value, kriData.escaladeKeyIndicator)) {
-      setFormData({
-        period: valuePeriod,
-        value: formData.value,
-        comment: formData.comment,
-        time: currentTime
-      })
-      onOpen(); // Affiche la modal de confirmation
-      setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
-    } else {
-      if (lastHistory) {
-        console.log("lastHistory:", lastHistory)
-        await performUpdate(); // Sauvegarde directement si la valeur est OK
-        // setAmend(false);
-      } else {
-        await performSave(); // Sauvegarde directement si la valeur est OK
-        setAmend(false);
-      }
-    }
-
-    console.log("valuePeriod::", valuePeriod)
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    setAmend(false);
-  }
-
-  const performSave = async () => {
+  const saveHistory = async (actionType = "create") => {
     try {
-      const idKeyIndicator = kriData._id; // Référence stable
+      const idKeyIndicator = kriData._id;
 
-      // 1. Sauvegarde de l'historique
-      const saveResponse = await dispatch(
-        AddHistoryKRI({
-          ...formData,
-          period: valuePeriod,
-          idKeyIndicator,
-          idEntity: kriData.entityReference,
-          time: currentTime,
-          author: localStorage.getItem("username"),
-        })
-      );
-
-      // 2. Réinitialisation du formulaire
-      setFormData({ period: "", value: "", comment: "" });
-
-      // 3. Rechargement de la liste (seulement si sauvegarde réussie)
-      if (saveResponse && !saveResponse.error) {
-        await dispatch(listHistoriesKRI(idKeyIndicator));
-      }
-
-      setShouldSave(false);
-    } catch (error) {
-      console.error("PerformSave error:", error); // Log complet
-    }
-  };
-
-  const performUpdate = async () => {
-    try {
-      const idKeyIndicator = kriData._id; // Référence stable
       const payload = {
         ...formData,
         period: valuePeriod,
@@ -203,28 +134,62 @@ const History = ({
         idEntity: kriData.entityReference,
         time: currentTime,
         author: localStorage.getItem("username"),
+      };
+
+      let saveResponse;
+
+      if (actionType === "update" && lastHistory?._id) {
+        console.log("Updating history:", lastHistory._id, payload);
+        saveResponse = await dispatch(updateHistoryKRI(lastHistory._id, payload));
+      } else {
+        console.log("Creating new history:", payload);
+        saveResponse = await dispatch(AddHistoryKRI(payload));
       }
 
-      console.log(lastHistory._id, payload);
-
-      // 1. Sauvegarde de l'historique
-      const saveResponse = await dispatch(
-        updateHistoryKRI(lastHistory._id, payload)
-      );
-
-      // 2. Réinitialisation du formulaire
-      setFormData({ period: "", value: "", comment: "" });
-
-      // 3. Rechargement de la liste (seulement si sauvegarde réussie)
       if (saveResponse && !saveResponse.error) {
         await dispatch(listHistoriesKRI(idKeyIndicator));
       }
 
+      setFormData({ period: "", value: "", comment: "" });
       setShouldSave(false);
     } catch (error) {
-      console.error("PerformSave error:", error); // Log complet
+      console.error(`❌ Error during ${actionType}HistoryKRI:`, error);
     }
   };
+
+  const handleSave = async () => {
+    if (!formData.value) {
+      return toast({
+        title: "Erreur",
+        description: "Value is required.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
+    const valueEscalated = compareValues(formData.value, kriData.escaladeKeyIndicator);
+
+    if (valueEscalated) {
+      setFormData(prev => ({
+        ...prev,
+        period: valuePeriod,
+        time: currentTime,
+      }));
+      onOpen();     // Affiche la modal de confirmation
+      setShouldSave(true); // Marque qu'on veut sauvegarder après confirmation
+    } else {
+      lastHistory ? await saveHistory("update") : await saveHistory("create");
+      setAmend(false);
+    }
+
+    console.log("valuePeriod::", valuePeriod);
+  };
+
+  const handleCancel = () => {
+    onCancel();
+    setAmend(false);
+  }
 
   const getValueColor = (value, thresholds) => {
     const { escaladeKeyIndicator, seuilKeyIndicator, toleranceKeyIndicator } =
@@ -281,22 +246,6 @@ const History = ({
 
     return "gray.600"; // Par défaut
   };
-
-  useEffect(() => {
-    if (historiesKRI.length === 0) {
-      // Activer automatiquement l’édition
-      setAmend(true);
-    } else {
-      // Revenir à l'état initial
-      setAmend(false);
-      setFormData({
-        period: valuePeriod,
-        value: "",
-        comment: "",
-        time: currentTime,
-      })
-    }
-  }, [historiesKRI]);
 
   return (
     <Box className="container" fontSize="12px" p={4}>
@@ -401,11 +350,11 @@ const History = ({
                 <Input
                   type="number"
                   size="sm"
-                  placeholder="Enter value..."
+                  placeholder="Enter value"
                   name="value"
                   value={formData.value}
                   onChange={handleInputChange}
-                  disabled={isHistory || !amend}
+                  disabled={!canSave}
                 />
               </HStack>
 
@@ -456,7 +405,7 @@ const History = ({
                   name="comment"
                   value={formData.comment}
                   onChange={handleInputChange}
-                  disabled={isHistory || !amend}
+                  disabled={!canSave}
                 />
               </Box>
             </VStack>
@@ -514,7 +463,9 @@ const History = ({
               profilesOptions={profilesOptions}
               formDataHistory={formData}
               setFormDataHistory={setFormData}
+              setAmend={setAmend}
               lastHistory={lastHistory}
+              actionKRI={actionKRI}
             />
           </ModalBody>
         </ModalContent>

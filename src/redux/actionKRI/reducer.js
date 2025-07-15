@@ -2,6 +2,7 @@ import * as types from './types';
 
 const INITIAL_STATE = {
   actionsKRI: [],
+  actionKRI: [],
   loading: false,
   error: null,
 };
@@ -25,6 +26,24 @@ function ActionKRIReducer(state = INITIAL_STATE, action) {
         ...state,
         loading: false,
         actionsKRI: [],
+      };
+      case types.GET_ACTIONKRI_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.GET_ACTIONKRI_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        actionKRI: action.payload.data,
+      };
+    case types.GET_ACTIONKRI_FAILED:
+      return {
+        ...state,
+        loading: false,
+        actionKRI: [], 
       };
     case types.UPDATE_ACTIONKRI_REQUEST:
       return {

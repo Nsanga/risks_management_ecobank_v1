@@ -29,8 +29,11 @@ import { AddActionKRI } from 'redux/actionKRI/action';
 import { listActionsKRI } from 'redux/actionKRI/action';
 import { AddHistoryKRI } from 'redux/historyKri/action';
 import { listHistoriesKRI } from 'redux/historyKri/action';
+import { fetchAction } from 'redux/actionKRI/action';
+import { updateHistoryKRI } from 'redux/historyKri/action';
+import { updateActionKRI } from 'redux/actionKRI/action';
 
-const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, formDataHistory, setFormDataHistory, dateFormatee, actionsKRI, lastHistory }) => {
+const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, formDataHistory, setFormDataHistory, actionKRI, actionsKRI, lastHistory, setAmend }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch()
   const toast = useToast();
@@ -114,6 +117,52 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
     });
   };
 
+  const saveOrUpdateHistory = async ({ idKeyIndicator, idEntity }) => {
+    const historyPayload = {
+      ...formDataHistory,
+      idKeyIndicator,
+      idEntity,
+      author: localStorage.getItem("username"),
+    };
+
+    if (lastHistory?._id) {
+      await dispatch(updateHistoryKRI(lastHistory._id, historyPayload));
+      return lastHistory._id;
+    }
+
+    const historyRes = await new Promise((resolve, reject) => {
+      dispatch(AddHistoryKRI(historyPayload, resolve, reject));
+    });
+
+    const id = historyRes?.data?._id;
+    if (!id) {
+      throw new Error("Échec de l’enregistrement de l’historique KRI.");
+    }
+
+    return id;
+  };
+
+  const saveOrUpdateAction = async (idHistoryKRI, { idKeyIndicator, idEntity }) => {
+    const actionPayload = {
+      ...formData,
+      idKeyIndicator,
+      idEntity,
+      idHistoryKRI,
+      owner: formData.owner.label,
+      nominee: formData.nominee.label,
+      reviewer: formData.reviewer?.label || null,
+      ownerEmail: formData.owner.email,
+      nomineeEmail: formData.nominee.email,
+      reviewerEmail: formData.reviewer?.email || null,
+    };
+  
+    if (actionKRI && actionKRI.length > 0) {
+      await dispatch(updateActionKRI(actionKRI[0]._id, actionPayload));
+    } else {
+      await dispatch(AddActionKRI(actionPayload));
+    }
+  };  
+
   const handleSave = async () => {
     if (!formData.owner || !formData.nominee || !formData.descriptionAction || !formData.targetDate) {
       toast({
@@ -129,51 +178,25 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
     setIsLoading(true);
 
     try {
-      const baseData = {
-        idKeyIndicator: kriData._id,
-        idEntity: kriData.entityReference
-      };
+      const idKeyIndicator = kriData._id;
+      const idEntity = kriData.entityReference;
 
-      // Création de l’historique KRI avec promesse manuelle
-      const historyPayload = {
-        ...formDataHistory,
-        ...baseData,
-        author: localStorage.getItem("username"),
-      };
+      // 1. Enregistrement ou mise à jour de l’historique
+      const idHistoryKRI = await saveOrUpdateHistory({ idKeyIndicator, idEntity });
 
-      const historyRes = await new Promise((resolve, reject) => {
-        dispatch(AddHistoryKRI(historyPayload, resolve, reject));
-      });
+      // 2. Enregistrement ou mise à jour de l’action
+      await saveOrUpdateAction(idHistoryKRI, { idKeyIndicator, idEntity }); 
 
-      const idHistoryKRI = historyRes?.data?._id;
+      // 3. Rafraîchissement des données
+      await Promise.all([
+        dispatch(listActionsKRI(idKeyIndicator)),
+        dispatch(listHistoriesKRI(idKeyIndicator)),
+      ]);
 
-      if (!idHistoryKRI) {
-        throw new Error("Échec de l’enregistrement de l’historique.");
-      }
-
-      // Création de l’action
-      const actionPayload = {
-        ...formData,
-        ...baseData,
-        owner: formData.owner.label,
-        nominee: formData.nominee.label,
-        reviewer: formData.reviewer?.label || null,
-        ownerEmail: formData.owner.email,
-        nomineeEmail: formData.nominee.email,
-        reviewerEmail: formData.reviewer?.email || null,
-        idHistoryKRI,
-      };
-
-      await dispatch(AddActionKRI(actionPayload));
-      await dispatch(listActionsKRI(kriData._id));
-      await dispatch(listHistoriesKRI(kriData._id));
-
+      // 4. Reset des formulaires
       resetFields();
-      setFormDataHistory({
-        period: "",
-        value: "",
-        comment: "",
-      });
+      setFormDataHistory({ period: "", value: "", comment: "" });
+      setAmend(false);
       onClose();
 
     } catch (error) {
@@ -190,26 +213,49 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
     }
   };
 
-  const handleUpdate = async () => {
-    if (!formData.owner || !formData.nominee || !formData.descriptionAction || !formData.targetDate) {
-      toast({
-        title: "Erreur",
-        description: "Description, Owner, Nominee and Target date fields are required.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    console.log(formData);
-  }
-
   useEffect(() => {
     if (kriData) {
       dispatch(listHistoriesKRI(kriData._id));
     }
   }, [kriData])
+
+  useEffect(() => {
+    if (lastHistory) {
+      dispatch(fetchAction(lastHistory._id));
+    }
+  }, [lastHistory])
+
+  useEffect(() => {
+    if (actionKRI && actionKRI.length > 0) {
+      const currentAction = actionKRI[0];
+      
+      // Trouver les profils correspondants dans profilesOptions
+      const findProfile = (name) => {
+        if (!name) return null;
+        return profilesOptions.find(profile => 
+          profile.label === name || profile.profile?.name === name
+        );
+      };
+  
+      setFormData({
+        reference: currentAction.reference,
+        descriptionAction: currentAction.descriptionAction,
+        commentary: currentAction.commentary,
+        progress: currentAction.progress,
+        log: currentAction.log,
+        actionFocus: currentAction.actionFocus,
+        owner: findProfile(currentAction.owner) || currentAction.owner,
+        nominee: findProfile(currentAction.nominee) || currentAction.nominee,
+        reviewer: findProfile(currentAction.reviewer) || currentAction.reviewer,
+        reviewDate: currentAction.reviewDate,
+        targetDate: currentAction.targetDate,
+        cost: currentAction.cost,
+        currency: currentAction.currency
+      });
+    } else {
+      resetFields();
+    }
+  }, [actionKRI, profilesOptions]); // Ajoutez profilesOptions aux dépendances
 
   return (
     <>
@@ -290,7 +336,7 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
             </Flex>
 
             {/* Onglets */}
-            <Tabs variant="solid-rounded" colorScheme="blue" w="100%" fontSize='12px'>
+            {/* <Tabs variant="solid-rounded" colorScheme="blue" w="100%" fontSize='12px'>
               <TabList>
                 <Tab>Commentary</Tab>
                 <Tab>Progress</Tab>
@@ -331,7 +377,7 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
                   />
                 </TabPanel>
               </TabPanels>
-            </Tabs>
+            </Tabs> */}
 
             {/* Bas du formulaire */}
             <Flex gap={4} flexWrap="wrap" w="100%" flexDirection='column'>
@@ -430,7 +476,7 @@ const ActionForm = ({ onClose, isActionTab = false, kriData, profilesOptions, fo
             <Button colorScheme="red" variant="solid" onClick={onClose}>Annuler</Button>
             <Button
               colorScheme="blue"
-              onClick={lastHistory ? handleUpdate : handleSave}
+              onClick={handleSave}
               disabled={isLoading}
             >
               {isLoading ? 'Save in progress ...' : 'Save'}
