@@ -118,35 +118,6 @@ const Dashboard = ({ stats, loading }) => {
     dispatch(allStats());
   }, [dispatch]);
 
-  const data = {
-    "status": 200,
-    "message": "Success",
-    "data": {
-      "events": {
-        "byStatus": [
-          {
-            "_id": null,
-            "count": 4
-          }
-        ]
-      },
-      "indicators": {
-        "total": 4,
-        "achieved": 0,
-        "averageProgress": null
-      },
-      "actions": {
-        "total": 0,
-        "completed": 0,
-        "overdue": 0
-      },
-      "risks": {
-        "totalControls": 0,
-        "averageEffectiveness": null
-      }
-    }
-  };
-
   const bgGradient = useColorModeValue(
     'linear(to-br, blue.50, purple.50)',
     'linear(to-br, gray.900, gray.800)'
@@ -186,9 +157,9 @@ const Dashboard = ({ stats, loading }) => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} w="full">
             {/* Events */}
             <StatsCard
-              title="Événements"
+              title="Event"
               value={stats?.events?.byStatus[0]?.count || 0}
-              subtitle="Total des événements enregistrés"
+              subtitle="Total event saved"
               icon={FaCalendar}
               color="blue.500"
               bgGradient="linear(to-r, blue.400, blue.600)"
@@ -208,19 +179,19 @@ const Dashboard = ({ stats, loading }) => {
             {/* Actions */}
             <StatsCard
               title="Actions"
-              value={stats?.actions?.total}
-              subtitle={`${stats?.actions?.completed} terminées, ${stats?.actions?.overdue} en retard`}
+              value={stats?.statAction?.allAction}
+              subtitle={`${stats?.statAction?.totalActionsKRI} KRI, ${stats?.statAction?.totalActionsRCSA} RCSA`}
               icon={FiActivity}
               color="orange.500"
               bgGradient="linear(to-r, orange.400, orange.600)"
-              progress={stats?.actions?.total > 0 ? (stats?.actions?.completed / stats?.actions?.total) * 100 : 0}
+              progress={stats?.statAction?.allAction > 0 ? ((stats?.statAction?.totalActionsKRI + stats?.statAction?.totalActionsRCSA) / stats?.actions?.total) * 100 : 0}
             />
 
             {/* Risks */}
             <StatsCard
               title="RCSA"
-              value={stats?.risks?.totalControls}
-              subtitle={stats?.risks?.averageEffectiveness ? `Efficacité moyenne: ${stats?.risks?.averageEffectiveness}%` : "Aucune donnée d'efficacité"}
+              value={stats?.statKriOrRcsa?.totalControlsRCSA + stats?.statKriOrRcsa?.totalKRI}
+              subtitle={`${stats?.statKriOrRcsa?.totalKRI} Risks, ${stats?.statKriOrRcsa?.totalControlsRCSA} Controls`}
               icon={FaShield}
               color="red.500"
               bgGradient="linear(to-r, red.400, red.600)"

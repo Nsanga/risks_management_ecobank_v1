@@ -41,10 +41,10 @@ const EventRecoveriesTable = ({ reports, loading }) => {
               <Tr key={idx}>
                 <Td style={{ border: "1px solid gray" }}>EVT{item.num_ref}</Td>
                 <Td style={{ border: "1px solid gray" }}>
-                  {item.details.entityOfDetection.description}
+                  {item.details.entityOfDetection?.description}
                 </Td>
                 <Td style={{ border: "1px solid gray" }}>
-                  {item.financials.data.actualRecovery?.total || 0}
+                  {item.financials?.data?.actualRecovery?.total || 0}
                 </Td>
                 <Td style={{ border: "1px solid gray" }}>
                   {item.additionnalInfo.find(info => info.category === "Causes")?.description || ""}
