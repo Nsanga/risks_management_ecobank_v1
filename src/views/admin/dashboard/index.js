@@ -168,8 +168,8 @@ const Dashboard = ({ stats, loading }) => {
             {/* Indicators */}
             <StatsCard
               title="KRI"
-              value={stats?.indicators?.total}
-              subtitle={`${stats?.indicators?.achieved} réalisés sur ${stats?.indicators?.total}`}
+              value={stats?.statKriOrRcsa?.totalKRI}
+              subtitle={`${stats?.indicators?.achieved} capturé sur ${stats?.statKriOrRcsa?.totalKRI}`}
               icon={FiTrendingUp}
               color="green.500"
               bgGradient="linear(to-r, green.400, green.600)"
@@ -191,7 +191,7 @@ const Dashboard = ({ stats, loading }) => {
             <StatsCard
               title="RCSA"
               value={stats?.statKriOrRcsa?.totalControlsRCSA + stats?.statKriOrRcsa?.totalKRI}
-              subtitle={`${stats?.statKriOrRcsa?.totalKRI} Risks, ${stats?.statKriOrRcsa?.totalControlsRCSA} Controls`}
+              subtitle={`${stats?.statKriOrRcsa?.totalControlsRCSA} Risks and Controls`}
               icon={FaShield}
               color="red.500"
               bgGradient="linear(to-r, red.400, red.600)"

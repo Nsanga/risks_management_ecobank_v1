@@ -27,7 +27,6 @@ import {
   ButtonGroup,
 } from "@chakra-ui/react";
 import { connect, useDispatch } from "react-redux";
-import { listKeyIndicator } from "redux/kri/action";
 import Loader from '../../../../assets/img/loader.gif';
 import Select from "react-select";
 import KeyIndicatorComponent from "./KeyIndicatorComponent"; // ajuste le path selon ton projet
@@ -37,6 +36,7 @@ import { updateKeyIndicator } from "redux/kri/action";
 import RefreshButton from "components/refreshButton";
 
 const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, setSelectedEntity, isRCSA = false }) => {
+  console.log("keyIndicator:", keyIndicator)
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -180,7 +180,7 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
           // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
         }
       } else {
-        await dispatch(listKeyIndicator());
+        dispatch(listEntityKeyIndicators({ entityId: null }))
       }
     };
 
@@ -217,8 +217,6 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
         console.error("Error fetching entity data:", error);
         // Gérer l'erreur ici (affichage à l'utilisateur, etc.)
       }
-    } else {
-      await dispatch(listKeyIndicator());
     }
 
     // Fermer la modal après sauvegarde
@@ -270,9 +268,7 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
         await Promise.all([
           dispatch(listEntityKeyIndicators({ entityId: selectedEntity?._id }))
         ]);
-      } else {
-        await dispatch(listKeyIndicator());
-      }
+      } 
       setIsRefreshing(false);
     }, 1000);
   }
@@ -459,7 +455,7 @@ const KriCard = ({ keyIndicator, loading, entities, profiles, selectedEntity, se
           </Box>
         </>
       ) : (
-        <Flex alignItems='center' justifyContent='center'>
+        <Flex alignItems='center' justifyContent='center' paddingY={8}>
           <Text fontSize='12px'>No Key Indicator found</Text>
         </Flex>
       )}

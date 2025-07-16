@@ -36,6 +36,7 @@ import { listProfiles } from "redux/profile/action";
 import { listEntityReports } from "redux/reports/action";
 import RiskAssessmentTable from "./components/RiskAssessmentTable";
 import { listEventsReports } from "redux/reports/action";
+import { listEntityIncidentReports } from "redux/incident-report/action";
 
 const Reports = () => {
   const [selectedForm, setSelectedForm] = useState(null);
@@ -53,6 +54,7 @@ const Reports = () => {
   const cardBg = useColorModeValue("white", "gray.700");
   const entities = useSelector(state => state.EntityReducer.entities);
   const reports = useSelector(state => state.ReportReducer.reports);
+  const {incident_reports, actual_incident_reports, loading_incident_reports}  = useSelector(state => state.IncidentReportReducer);
   const loading = useSelector(state => state.ReportReducer.loading);
   const dispatch = useDispatch();
 
@@ -104,12 +106,13 @@ const Reports = () => {
 
   const handleOpenIncidentTrendsAnalysisTable = () => {
     setIncidentTrendsAnalysisTable(true);
+    dispatch(listEntityIncidentReports({targetEntityId: selectedData?.entities}));
   };
   const handleOpenIncidentLossReportTable = () => {
-    console.log("Selected data:", selectedEventData);
-    console.log("Start date:", selectedEventData.start_date);
-    console.log("End date:", selectedEventData.end_date);
-    console.log("Entities:", selectedEventData.entities);
+    // console.log("Selected data:", selectedEventData);
+    // console.log("Start date:", selectedEventData.start_date);
+    // console.log("End date:", selectedEventData.end_date);
+    // console.log("Entities:", selectedEventData.entities);
     dispatch(listEventsReports({ startDate: selectedEventData.start_date, endDate: selectedEventData.end_date, targetEntityId: selectedEventData.entities }));
     setIncidentLossReportTable(true);
   };
@@ -137,7 +140,7 @@ const Reports = () => {
       case "key-indicator-analysis":
         return <KeyIndicatorAnalysisForm handleViewReport={handleOpenKIReport} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
       case "incident-trends-analysis":
-        return <IncidentTrendsAnalysisForm handleOpenView={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading={loading} />;
+        return <IncidentTrendsAnalysisForm handleOpenView={handleOpenIncidentTrendsAnalysisTable} onSelectionChange={handleSelectionChange} entities={entities} loading_incident_reports={loading_incident_reports} />;
       case "incident-loss-report":
         return <IncidentLossReportForm handleOpenView={handleOpenIncidentLossReportTable} onSelectionChange={handleSelectionEventChange} entities={entities} loading={loading} />;
       case "incident-event-report":
@@ -153,7 +156,7 @@ const Reports = () => {
     }
   };
 
-  console.log('lost event', reports)
+  console.log('lost event', incident_reports, actual_incident_reports)
 
   return (
     <Box mt="100px">
@@ -211,7 +214,7 @@ const Reports = () => {
             <ChevronLeftIcon />
             Back to Report's list
           </Flex>
-          <IncidentTrendsAnalysisTable reports={reports} loading={loading} />
+          <IncidentTrendsAnalysisTable incident_reports={incident_reports} actual_incident_reports={actual_incident_reports} loading_incident_reports={loading_incident_reports} />
         </Box>
       )}
       {openIncidentLossReportTable && (

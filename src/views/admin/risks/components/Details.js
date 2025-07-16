@@ -20,17 +20,6 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
   const [rag, setRag] = useState([]);
   const [formData, setFormData] = useState(detailsData || null);
 
-  function getCurrentTime() {
-    const currentDate = new Date();
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-
-    // Format HH:MM
-    const formattedTime = `${hours}:${minutes}`;
-
-    return formattedTime;
-  }
-
   const profilesOptions = profiles
     ?.filter((profile) => profile.activeUser)
     ?.map((profile, index) => {
@@ -114,7 +103,7 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
       onDetailsChange(newData);
       return newData;
     });
-  }; 
+  };
 
   const handleUploadLinks = (newLinks) => {
     setFormData((prevData) => {
@@ -394,7 +383,7 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
         <Flex justifyContent="space-between" pt={5}>
           <Flex flexDirection="column" gap={2}>
             <Flex gap={20} alignItems="center">
-              <Text fontSize={12}>approuvé :</Text>
+              <Text fontSize={12}>Approuvé :</Text>
               <Box width={200}>
                 <Input
                   placeholder="Sélectionner une Date"
@@ -402,12 +391,12 @@ const Details = ({ detailsData, onDetailsChange, entities, profiles }) => {
                   type="date"
                   value={
                     formData?.approved_date
-                      ? formData?.approved_date.slice(0, 10) // extrait "2025-07-15" de "2025-07-15T00:00:00.000Z"
-                      : ""
+                      ? formData.approved_date.slice(0, 10)
+                      : new Date().toISOString().slice(0, 10) // Date du jour au format YYYY-MM-DD
                   }
-                  onChange={(e) =>
-                    handleInputChange("approved_date", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("approved_date", e.target.value)}
+                  readOnly // Empêche la modification
+                  bg="gray.100" // Fond gris pour indiquer que le champ est en lecture seule
                 />
               </Box>
             </Flex>

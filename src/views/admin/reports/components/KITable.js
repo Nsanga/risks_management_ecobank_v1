@@ -1,5 +1,5 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import Loader from '../../../../assets/img/loader.gif'
 import { exportToExcel } from "utils/exportToExcel";
 import moment from "moment";

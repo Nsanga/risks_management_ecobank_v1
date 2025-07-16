@@ -8,6 +8,7 @@ import EntitySaga from 'redux/entity/saga';
 import EntityRiskControlSaga from 'redux/entityRiskControl/saga';
 import EventSaga from 'redux/events/saga';
 import HistoryKRISaga from 'redux/historyKri/saga';
+import IncidentReportSaga from 'redux/incident-report/saga';
 import KeyIndicatorSaga from 'redux/kri/saga';
 import LoginSaga from 'redux/login/saga';
 import PlateformeSaga from 'redux/plateforme/saga';
@@ -43,5 +44,6 @@ export default function* Sagas() {
     ActionKRISaga(),
     ReportSaga(),
     StatSaga(),
+    IncidentReportSaga(),
   ]);
 }

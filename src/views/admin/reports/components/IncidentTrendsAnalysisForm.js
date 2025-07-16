@@ -14,7 +14,7 @@ import MultiSelectCheckbox from "./MultipleSelectCustom";
 const IncidentTrendAnalysisForm = ({
   handleOpenView,
   entities,
-  loading,
+  loading_incident_reports,
   onSelectionChange,
 }) => {
   const [selectedEntity, setSelectedEntity] = useState(null);
@@ -101,7 +101,7 @@ const IncidentTrendAnalysisForm = ({
         size="lg"
         disabled={!formData.entity?.length}
       >
-        {loading ? "Loading..." : "View Report"}
+        {loading_incident_reports ? "Loading..." : "View Report"}
       </Button>
     </VStack>
   );

@@ -136,6 +136,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       const payload = {
         details: {
           ...safeDetails,
+          approved_date: new Date().toISOString().slice(0, 10),
           recorded_by: localStorage.getItem("username") || "inconnu",
         },
         commentary: {

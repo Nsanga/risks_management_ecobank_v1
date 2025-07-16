@@ -8,6 +8,7 @@ import EntityReducer from 'redux/entity/reducer';
 import EntityRiskControlReducer from 'redux/entityRiskControl/reducer';
 import EventReducer from 'redux/events/reducer';
 import HistoryKRIReducer from 'redux/historyKri/reducer';
+import IncidentReportReducer from 'redux/incident-report/reducer';
 import KeyIndicatorReducer from 'redux/kri/reducer';
 import LoginReducer from 'redux/login/reducer';
 import PlateformeReducer from 'redux/plateforme/reducer';
@@ -41,7 +42,8 @@ const rootReducer = combineReducers({
   HistoryKRIReducer,
   ActionKRIReducer,
   ReportReducer,
-  StatReducer
+  StatReducer,
+  IncidentReportReducer
 });
 
 export default rootReducer;

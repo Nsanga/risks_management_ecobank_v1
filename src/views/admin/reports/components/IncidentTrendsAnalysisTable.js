@@ -8,72 +8,122 @@ import {
   Th,
   Td,
   Text,
+  Flex,
+  Image,
   Heading,
+  useColorModeValue,
+  Card,
+  CardHeader,
+  CardBody,
+  Badge
 } from "@chakra-ui/react";
+import Loader from '../../../../assets/img/loader.gif';
+import moment from "moment";
 
-const IncidentTrendsAnalysisTable = () => {
+const IncidentTrendsAnalysisTable = ({ incident_reports, actual_incident_reports, loading_incident_reports }) => {
+  // Déplacer tous les hooks en haut du composant
+  const executed_by = localStorage.getItem("username") || "inconnu";
+  const executed_time = moment().format("DD/MM/YYYY HH:mm:ss");
+
+  // Tous les appels de hooks doivent être inconditionnels et en haut du composant
+  const headerBg = useColorModeValue("blue.600", "blue.800");
+  const headerColor = "white";
+  const rowHover = useColorModeValue("gray.50", "gray.700");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const cardBg = useColorModeValue("white", "gray.800");
+  const totalRowBg = useColorModeValue("blue.50", "blue.900");
+
   return (
-    <Box p={6}>
-      <Heading as="h3" size="md" mb={2} p={2}>
-        Incident Trends Analysis Table
-      </Heading>
-      <Table variant="simple" size="sm" border="1px solid #ccc">
-        <Thead bg="blue.500">
-          <Tr>
-            <Th color="white" textAlign="center" rowSpan={2}>
-              Year
-            </Th>
-            <Th color="white" textAlign="center" rowSpan={2}>
-              Month
-            </Th>
-            <Th color="white" textAlign="center" rowSpan={2}>
-              Entity
-            </Th>
-            <Th color="white" textAlign="center" colSpan={2}>
-              Actual Loss
-            </Th>
-            <Th color="white" textAlign="center" colSpan={2}>
-            YTD Losses 
-            </Th>
-          </Tr>
-          <Tr bg="blue.500">
-            <Th color="white" textAlign="center">
-              No. of Events
-            </Th>
-            <Th color="white" textAlign="center">
-              Losses Amount
-            </Th>
-            <Th color="white" textAlign="center">
-              No. of Events
-            </Th>
-            <Th color="white" textAlign="center">
-              Total Amount
-            </Th>
-          </Tr>
-        </Thead>
+    <Card bg={cardBg} boxShadow="md" borderRadius="lg" overflow="hidden">
+      <CardHeader pb={0}>
+        <Flex justify="space-between" align="center">
+          <Heading as="h3" size="md">
+            Incident Trends Analysis
+          </Heading>
+          <Badge colorScheme="blue" fontSize="0.8em">
+            Last update: {moment().format("DD MMM YYYY")}
+          </Badge>
+        </Flex>
+      </CardHeader>
 
-        <Tbody>
-          <Tr>
-            <Td textAlign="center">2023</Td>
-            <Td textAlign="center">Jul</Td>
-            <Td textAlign="center">ENT</Td>
-            <Td textAlign="center">1</Td>
-            <Td textAlign="center">7962</Td>
-            <Td textAlign="center">1</Td>
-            <Td textAlign="center">7962</Td>
-          </Tr>
-          <Tr fontWeight="bold">
-            <Td colSpan={3} textAlign="center">
-              Total
-            </Td>
-            <Td textAlign="center">1</Td>
-            <Td textAlign="center">7962</Td>
-            <Td textAlign="center">1</Td>
-            <Td textAlign="center">7962</Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </Box>
+      <CardBody>
+        {loading_incident_reports ? (
+          <Flex alignItems='center' justifyContent='center' minH="200px">
+            <Image src={Loader} alt="Loading..." boxSize="50px" />
+          </Flex>
+        ) : (
+          <Box overflowX="auto">
+            <Table variant="striped" size="sm" borderWidth="1px" borderColor={borderColor}>
+              <Thead bg={headerBg}>
+                <Tr>
+                  <Th color={headerColor} textAlign="center" rowSpan={2} borderRightWidth="1px" borderColor={borderColor}>
+                    Year
+                  </Th>
+                  <Th color={headerColor} textAlign="center" rowSpan={2} borderRightWidth="1px" borderColor={borderColor}>
+                    Month
+                  </Th>
+                  <Th color={headerColor} textAlign="center" rowSpan={2} borderRightWidth="1px" borderColor={borderColor}>
+                    Entity
+                  </Th>
+                  <Th color={headerColor} textAlign="center" colSpan={2} borderRightWidth="1px" borderColor={borderColor}>
+                    Actual Loss
+                  </Th>
+                  <Th color={headerColor} textAlign="center" colSpan={2}>
+                    YTD Losses
+                  </Th>
+                </Tr>
+                <Tr bg={headerBg}>
+                  <Th color={headerColor} textAlign="center">
+                    No. of Events
+                  </Th>
+                  <Th color={headerColor} textAlign="center" borderRightWidth="1px" borderColor={borderColor}>
+                    Losses Amount
+                  </Th>
+                  <Th color={headerColor} textAlign="center">
+                    No. of Events
+                  </Th>
+                  <Th color={headerColor} textAlign="center">
+                    Total Amount
+                  </Th>
+                </Tr>
+              </Thead>
+              
+              <Tbody>
+                {actual_incident_reports.map((actual_incident, index) => (
+                  <Tr key={index} _hover={{ bg: rowHover }} transition="background 0.2s">
+                    <Td textAlign="center">{actual_incident.year}</Td>
+                    <Td textAlign="center">{actual_incident.monthName}</Td>
+                    <Td textAlign="center">ENT</Td>
+                    <Td textAlign="center">{actual_incident.totalEventsMonth}</Td>
+                    <Td textAlign="center">7962</Td>
+                    <Td textAlign="center">{actual_incident.totalEventsMonth}</Td>
+                    <Td textAlign="center">7962</Td>
+                  </Tr>
+                ))}
+
+                <Tr fontWeight="bold" bg={totalRowBg}>
+                  <Td colSpan={3} textAlign="center">
+                    Total
+                  </Td>
+                  <Td textAlign="center">{incident_reports.length}</Td>
+                  <Td textAlign="center">7962</Td>
+                  <Td textAlign="center">{incident_reports.length}</Td>
+                  <Td textAlign="center">7962</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Box>
+        )}
+
+        {!loading_incident_reports && (
+          <Flex justify="flex-end" mt={4}>
+            <Text fontSize="xs" color="gray.500">
+              Generated by {executed_by} on {executed_time}
+            </Text>
+          </Flex>
+        )}
+      </CardBody>
+    </Card>
   );
 };
 
