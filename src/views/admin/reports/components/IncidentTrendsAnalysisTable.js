@@ -21,6 +21,7 @@ import Loader from '../../../../assets/img/loader.gif';
 import moment from "moment";
 
 const IncidentTrendsAnalysisTable = ({ incident_reports, actual_incident_reports, loading_incident_reports }) => {
+  console.log("actual_incident_reports:", actual_incident_reports);
   // Déplacer tous les hooks en haut du composant
   const executed_by = localStorage.getItem("username") || "inconnu";
   const executed_time = moment().format("DD/MM/YYYY HH:mm:ss");
@@ -87,19 +88,29 @@ const IncidentTrendsAnalysisTable = ({ incident_reports, actual_incident_reports
                   </Th>
                 </Tr>
               </Thead>
-              
+
               <Tbody>
-                {actual_incident_reports.map((actual_incident, index) => (
+                {actual_incident_reports.entities.map((actual_incident, index) => (
                   <Tr key={index} _hover={{ bg: rowHover }} transition="background 0.2s">
-                    <Td textAlign="center">{actual_incident.year}</Td>
-                    <Td textAlign="center">{actual_incident.monthName}</Td>
-                    <Td textAlign="center">ENT</Td>
+                    <Td textAlign="center">{actual_incident_reports.year}</Td>
+                    <Td textAlign="center">{actual_incident_reports.monthName}</Td>
+                    <Td textAlign="start">ENT {actual_incident.referenceId} - {actual_incident.description}</Td>
                     <Td textAlign="center">{actual_incident.totalEventsMonth}</Td>
                     <Td textAlign="center">7962</Td>
                     <Td textAlign="center">{actual_incident.totalEventsMonth}</Td>
                     <Td textAlign="center">7962</Td>
                   </Tr>
                 ))}
+
+                {/* <Tr _hover={{ bg: rowHover }} transition="background 0.2s">
+                  <Td textAlign="center">{actual_incident_reports.year}</Td>
+                  <Td textAlign="center">{actual_incident_reports.monthName}</Td>
+                  <Td textAlign="center">ENT</Td>
+                  <Td textAlign="center">{actual_incident_reports.totalEventsMonth}</Td>
+                  <Td textAlign="center">7962</Td>
+                  <Td textAlign="center">{actual_incident_reports.totalEventsMonth}</Td>
+                  <Td textAlign="center">7962</Td>
+                </Tr> */}
 
                 <Tr fontWeight="bold" bg={totalRowBg}>
                   <Td colSpan={3} textAlign="center">

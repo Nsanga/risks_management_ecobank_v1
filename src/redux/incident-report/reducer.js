@@ -2,7 +2,7 @@ import * as types from './types';
 
 const INITIAL_STATE = {
   incident_reports: [],
-  actual_incident_reports: [],
+  actual_incident_reports: {},
   loading_incident_reports: false,
   error: null,
 };
@@ -27,7 +27,7 @@ function IncidentReportReducer(state = INITIAL_STATE, action) {
         ...state,
         loading_incident_reports: false,
         incident_reports: [],
-        actual_incident_reports: [],
+        actual_incident_reports: {},
       };
     default:
       return state;
