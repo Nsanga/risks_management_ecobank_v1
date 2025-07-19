@@ -7,6 +7,7 @@ import {
   MdHome,
   MdLogout,
   MdOutlineMiscellaneousServices,
+  MdSettings,
   MdSettingsSystemDaydream,
 } from "react-icons/md";
 import { GiPlatform } from "react-icons/gi";
@@ -31,6 +32,7 @@ import Actions from "views/admin/actions";
 import Action from "views/admin/action";
 import KeyRiskIndicator from "views/admin/KRI";
 import Indicator from "views/admin/kri-search-result";
+import SettingsPage from "views/admin/settings";
 
 const routes = [
   {
@@ -119,6 +121,20 @@ const routes = [
     path: "/kri-search-result",
     icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
     component: Indicator,
+  },
+  {
+    name: "Settings",
+    layout: "/admin",
+    path: "/tenant-settings",
+    icon: (
+      <Icon
+        as={MdSettings}
+        width='20px'
+        height='20px'
+        color='inherit'
+      />
+    ),
+    component: SettingsPage,
   },
   // { 
   //   name: "Configuration",
