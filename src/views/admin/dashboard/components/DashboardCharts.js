@@ -41,7 +41,7 @@ const StatsPieCharts = ({ stats, userRole }) => {
       {/* Graphique Événements */}
       <Box boxShadow="md" p={4} borderRadius="lg">
         <Heading size="sm" mb={2}>Événements</Heading>
-        <Text fontSize="sm" mb={4}>Total pertes évitées: {stats?.events?.totalPerteSave || 0}</Text>
+        <Text fontSize="sm" mb={4}>Total pertes enregistré: {stats?.events?.totalPerteSave || 0}</Text>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie

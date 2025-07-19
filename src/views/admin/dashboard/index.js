@@ -172,7 +172,7 @@ const Dashboard = ({ stats, loading }) => {
             {/* Risks */}
             <StatsCard
               title="RCSA"
-              value={stats?.statKriOrRcsa?.totalControlsRCSA + stats?.statKriOrRcsa?.totalKRI}
+              value={stats?.statKriOrRcsa?.totalControlsRCSA}
               subtitle={`${stats?.statKriOrRcsa?.totalControlsRCSA} Risks and Controls`}
               icon={FaShield}
               color="red.500"
