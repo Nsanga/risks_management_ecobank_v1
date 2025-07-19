@@ -25,6 +25,7 @@ import Loader from "../../../assets/img/loader.gif";
 import { FaCalendar, FaShield, FaUser } from 'react-icons/fa6';
 import { FiActivity, FiTrendingUp } from 'react-icons/fi';
 import { allStats } from 'redux/stats/action';
+import StatsPieCharts from './components/DashboardCharts';
 
 const StatsCard = ({
   title,
@@ -125,7 +126,7 @@ const Dashboard = ({ stats, loading }) => {
 
   const headerBg = useColorModeValue('white', 'gray.800');
   const userRole = localStorage.getItem('role');
-
+  console.log("stats => ", stats);
   return (
     <Box minH="100vh" bg={bgGradient} p={8} mt={14}>
       {loading ? (
@@ -134,25 +135,6 @@ const Dashboard = ({ stats, loading }) => {
         </Flex>
       ) : (
         <VStack spacing={8} maxW="7xl" mx="auto">
-          {/* Header */}
-          {/* <Card w="full" bg={headerBg} shadow="lg" borderRadius="xl">
-          <CardBody p={6}>
-            <VStack spacing={2}>
-              <Heading
-                size="xl"
-                bgGradient="linear(to-r, blue.400, purple.500)"
-                bgClip="text"
-                textAlign="center"
-              >
-                Tableau de Bord des Statistiques
-              </Heading>
-              <Text color="gray.600" textAlign="center">
-                Vue d'ensemble de vos métriques et indicateurs clés
-              </Text>
-            </VStack>
-          </CardBody>
-        </Card> */}
-
           {/* Stats Grid */}
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} w="full">
             {/* Events */}
@@ -221,74 +203,7 @@ const Dashboard = ({ stats, loading }) => {
                 Détails des Métriques
               </Heading>
 
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-                <VStack align="stretch" spacing={4}>
-                  <Box>
-                    <HStack justify="space-between" mb={3}>
-                      <Text fontWeight="semibold" color="gray.700">État des Indicateurs</Text>
-                      <Badge colorScheme={stats?.indicators?.achieved === 0 ? 'red' : 'green'}>
-                        {stats?.indicators?.achieved === 0 ? 'À démarrer' : 'En cours'}
-                      </Badge>
-                    </HStack>
-                    <Progress
-                      value={stats?.indicators?.total > 0 ? (stats?.indicators?.achieved / stats?.indicators?.total) * 100 : 0}
-                      colorScheme="green"
-                      borderRadius="full"
-                      size="lg"
-                    />
-                    <Text fontSize="sm" color="gray.600" mt={2}>
-                      {stats?.indicators?.achieved} / {stats?.indicators?.total} indicateurs réalisés
-                    </Text>
-                  </Box>
-
-                  <Divider />
-
-                  <Box>
-                    <Text fontWeight="semibold" color="gray.700" mb={3}>Statut des Actions</Text>
-                    <VStack spacing={2} align="stretch">
-                      <HStack justify="space-between">
-                        <Text fontSize="sm">Total</Text>
-                        <Badge>{stats?.actions?.total}</Badge>
-                      </HStack>
-                      <HStack justify="space-between">
-                        <Text fontSize="sm">Terminées</Text>
-                        <Badge colorScheme="green">{stats?.actions?.completed}</Badge>
-                      </HStack>
-                      <HStack justify="space-between">
-                        <Text fontSize="sm">En retard</Text>
-                        <Badge colorScheme="red">{stats?.actions?.overdue}</Badge>
-                      </HStack>
-                    </VStack>
-                  </Box>
-                </VStack>
-
-                <VStack align="stretch" spacing={4}>
-                  <Box>
-                    <Text fontWeight="semibold" color="gray.700" mb={3}>Analyse des Risques</Text>
-                    <VStack spacing={3} align="stretch">
-                      <HStack justify="space-between">
-                        <Text fontSize="sm">Contrôles totaux</Text>
-                        <Badge colorScheme="blue">{stats?.risks?.totalControls}</Badge>
-                      </HStack>
-                      <HStack justify="space-between">
-                        <Text fontSize="sm">Efficacité moyenne</Text>
-                        <Badge colorScheme={stats?.risks?.averageEffectiveness ? 'green' : 'gray'}>
-                          {stats?.risks?.averageEffectiveness ? `${stats?.risks?.averageEffectiveness}%` : 'N/A'}
-                        </Badge>
-                      </HStack>
-                    </VStack>
-                  </Box>
-
-                  <Divider />
-
-                  <Box>
-                    <Text fontWeight="semibold" color="gray.700" mb={3}>Événements</Text>
-                    <Text fontSize="sm" color="gray.600">
-                      {stats?.events?.byStatus[0]?.count || 0} événements enregistrés au total
-                    </Text>
-                  </Box>
-                </VStack>
-              </SimpleGrid>
+              <StatsPieCharts stats={stats} userRole={userRole} />
             </CardBody>
           </Card>
         </VStack>
