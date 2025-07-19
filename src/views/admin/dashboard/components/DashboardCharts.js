@@ -40,8 +40,8 @@ const StatsPieCharts = ({ stats, userRole }) => {
     <SimpleGrid columns={[1, 2, 3]} spacing={6} p={4}>
       {/* Graphique Événements */}
       <Box boxShadow="md" p={4} borderRadius="lg">
-        <Heading size="sm" mb={2}>Événements</Heading>
-        <Text fontSize="sm" mb={4}>Total pertes enregistré: {stats?.events?.totalPerteSave || 0}</Text>
+        <Heading size="sm" mb={2}>Events</Heading>
+        <Text fontSize="sm" mb={4}>Total losses saved: {stats?.events?.totalPerteSave || 0}</Text>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
@@ -63,7 +63,7 @@ const StatsPieCharts = ({ stats, userRole }) => {
 
       {/* Graphique KRI */}
       <Box boxShadow="md" p={4} borderRadius="lg">
-        <Heading size="sm" mb={2}>Indicateurs KRI</Heading>
+        <Heading size="sm" mb={2}>KRI</Heading>
         <Text fontSize="sm" mb={4}>{stats?.indicators?.achieved} capturé sur {stats?.statKriOrRcsa?.totalKRI}</Text>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
@@ -110,7 +110,7 @@ const StatsPieCharts = ({ stats, userRole }) => {
 
       {/* Graphique RCSA */}
       <Box boxShadow="md" p={4} borderRadius="lg">
-        <Heading size="sm" mb={2}>Risques & Contrôles</Heading>
+        <Heading size="sm" mb={2}>RCSA</Heading>
         <Text fontSize="sm" mb={4}>{stats?.statKriOrRcsa?.totalControlsRCSA} Risks and Controls</Text>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
