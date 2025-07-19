@@ -200,7 +200,7 @@ const Dashboard = ({ stats, loading }) => {
           <Card w="full" bg={headerBg} shadow="lg" borderRadius="xl">
             <CardBody p={6}>
               <Heading size="md" mb={6} color="gray.700">
-                Détails des Métriques
+                Détails graphiques
               </Heading>
 
               <StatsPieCharts stats={stats} userRole={userRole} />

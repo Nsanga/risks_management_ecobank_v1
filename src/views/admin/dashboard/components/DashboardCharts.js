@@ -37,7 +37,7 @@ const StatsPieCharts = ({ stats, userRole }) => {
   };
 
   return (
-    <SimpleGrid columns={[1, 2, 3]} spacing={6} p={4}>
+    <SimpleGrid columns={[1, 2, 3]} spacing={2} p={4}>
       {/* Graphique Événements */}
       <Box boxShadow="md" p={4} borderRadius="lg">
         <Heading size="sm" mb={2}>Events</Heading>
