@@ -19,7 +19,7 @@ const columns = [
 ];
 
 const DynamicTable = ({ onDataChange, financesData }) => {
-    const [currency, setCurrency] = useState('USD');
+    const [currency, setCurrency] = useState('XAF');
     const [exchangeRates, setExchangeRates] = useState({
         USD: 1,
         USD_to_XAF: 625,
@@ -176,7 +176,8 @@ const DynamicTable = ({ onDataChange, financesData }) => {
                 <Flex flex="1" alignItems="center" gap={4}>
                     <Text fontSize={12} fontWeight='bold'>Devises :</Text>
                     <Box w="30%">
-                        <Select
+                        <Input value={currency} readOnly/>
+                        {/* <Select
                             value={currency}
                             onChange={(e) => handleCurrencyChange(e.target.value)}
                             fontSize={12}
@@ -185,7 +186,7 @@ const DynamicTable = ({ onDataChange, financesData }) => {
                             <option value="USD" >USD</option>
                             <option value="EUR" >EUR</option>
                             <option value="XAF" >XAF</option>
-                        </Select>
+                        </Select> */}
                     </Box>
                 </Flex>
             </Flex>
@@ -229,7 +230,7 @@ const DynamicTable = ({ onDataChange, financesData }) => {
                         </Tr>
                     </Tbody>
                 </Table>
-                <Box maxW="300px">
+                {/* <Box maxW="300px">
                     <Table variant="simple">
                         <TableCaption placement="top" fontSize={12}>
                             Taux journalier
@@ -267,7 +268,7 @@ const DynamicTable = ({ onDataChange, financesData }) => {
                             </Tr>
                         </Tbody>
                     </Table>
-                </Box>
+                </Box> */}
             </Flex>
         </div>
     );

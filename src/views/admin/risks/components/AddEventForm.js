@@ -76,7 +76,7 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
     count: steps.length,
   });
   const dispatch = useDispatch();
-  
+
   const handleNext = () => {
     // console.log('Payload reçu de details :', detailsData);
     console.log('Payload reçu de comment :', commentaryData);
@@ -124,14 +124,14 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-  
+
     try {
       // Vérification des données minimales
       const safeDetails = detailsData || {};
       const safeCommentary = commentaryData || {};
       const safeFinancials = financesData || {};
       const safeAdditional = additionalData && typeof additionalData === 'object' ? Object.values(additionalData) : [];
-  
+
       // Construction du payload
       const payload = {
         details: {
@@ -146,10 +146,10 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
         additionnalInfo: safeAdditional, // tableau [{ description, topLevel, category }, ...]
         approved: !!approved, // force à boolean
       };
-  
+
       // console.log('✅ Payload prêt à envoyer :', payload);
       // console.log('🗂️ Données additionnelles brutes :', additionalData);
-  
+
       // Enregistrement ou mise à jour
       if (event && event._id) {
         await dispatch(updateEvent(event._id, payload));
@@ -157,20 +157,69 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
       } else {
         await dispatch(AddEvent(payload));
       }
-  
+
       // Fermeture du modal
       onClose();
-  
+
       // Rafraîchissement de la liste principale
       await dispatch(listEvents());
-  
+
     } catch (error) {
       console.error("❌ Erreur lors de la soumission :", error);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
+  const handleSaveDraft = async () => {
+    setIsLoading(true);
+
+    try {
+      // Vérification des données minimales
+      const safeDetails = detailsData || {};
+      const safeCommentary = commentaryData || {};
+      const safeFinancials = financesData || {};
+      const safeAdditional = additionalData && typeof additionalData === 'object' ? Object.values(additionalData) : [];
+
+      // Construction du payload
+      const payload = {
+        details: {
+          ...safeDetails,
+          approved_date: new Date().toISOString().slice(0, 10),
+          recorded_by: localStorage.getItem("username") || "inconnu",
+        },
+        commentary: {
+          comment: safeCommentary.commentary || "", // champ texte seulement
+        },
+        financials: safeFinancials,
+        additionnalInfo: safeAdditional, // tableau [{ description, topLevel, category }, ...]
+        approved: !approved, // force à boolean
+      };
+
+      // console.log('✅ Payload prêt à envoyer :', payload);
+      // console.log('🗂️ Données additionnelles brutes :', additionalData);
+
+      // Enregistrement ou mise à jour
+      if (event && event._id) {
+        await dispatch(updateEvent(event._id, payload));
+        await dispatch(fetchEvent(event._id));
+      } else {
+        await dispatch(AddEvent(payload));
+      }
+
+      // Fermeture du modal
+      onClose();
+
+      // Rafraîchissement de la liste principale
+      await dispatch(listEvents());
+
+    } catch (error) {
+      console.error("❌ Erreur lors de la soumission :", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     console.log('event', event)
     if (event) {
@@ -314,28 +363,42 @@ function AddEventForm({ event, entities, profiles, isEdit, isAmendDisabled }) {
           <ModalFooter>
             <ButtonGroup mt={5} spacing={4}>
               {activeStep !== 0 && (
-                <Button
-                  onClick={handlePrev}
-                  variant="outline"
-                >
+                <Button onClick={handlePrev} variant="outline">
                   Retour
                 </Button>
               )}
               <Button colorScheme="red" mr={2} onClick={handleClose}>
                 Annuler
               </Button>
+
+              {/* Nouveau bouton Enregistrer */}
               <Button
-                onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
-                colorScheme="blue"
+                onClick={handleSaveDraft}
+                colorScheme="gray"
                 mr={2}
-                isDisabled={isLoading || activeStep === 0 && !isFirstStepValid()}
+                isDisabled={isLoading || (activeStep === 0 && !isFirstStepValid())}
               >
                 {isLoading ? (
                   <Flex alignItems="center" justifyContent="center" width="100%">
                     <Image src={Loader} alt="Loading..." height={25} width={25} />
                   </Flex>
                 ) : (
-                  <>{activeStep === steps.length - 1 ? (event ? " Modifier et approuver" : "Enregistrer et approuver") : 'Suivant'}</>
+                  "Enregistrer"
+                )}
+              </Button>
+
+              {/* Bouton Suivant/Approuver modifié */}
+              <Button
+                onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
+                colorScheme="blue"
+                isDisabled={isLoading || (activeStep === 0 && !isFirstStepValid())}
+              >
+                {isLoading ? (
+                  <Flex alignItems="center" justifyContent="center" width="100%">
+                    <Image src={Loader} alt="Loading..." height={25} width={25} />
+                  </Flex>
+                ) : (
+                  <>{activeStep === steps.length - 1 ? (event ? "Modifier et approuver" : "Enregistrer et approuver") : 'Suivant'}</>
                 )}
               </Button>
             </ButtonGroup>

@@ -2,36 +2,40 @@ import { Box, Button, Flex, GridItem, Input, Text, Textarea } from '@chakra-ui/r
 import React, { useEffect, useState } from 'react'
 
 const Commentary = ({ commentaryData, onCommentaryChange }) => {
-  const [comment, setComment] = useState(commentaryData || {});
+  console.log("commentaryData:", commentaryData); // Pour le débogage
 
-  const handleInputChange = (field, value) => {
-    setComment(prevData => {
-      const newData = { ...prevData, [field]: value };
-      onCommentaryChange(newData); // Notify parent about changes
-      return newData;
-    });
+  // Initialisation intelligente de l'état
+  const [comment, setComment] = useState(() => {
+    if (!commentaryData) return { comment: '' }; // Cas par défaut
+    if (typeof commentaryData === 'string') return { comment: commentaryData }; // Cas string
+    if (commentaryData.comment !== undefined) return commentaryData; // Cas objet avec propriété comment
+    return { comment: '' }; // Fallback
+  });
+
+  const handleInputChange = (value) => {
+    const newComment = { comment: value };
+    setComment(newComment);
+    onCommentaryChange(newComment); // Envoie toujours un objet au parent
   };
 
+  // Initialisation au premier rendu
   useEffect(() => {
-    if (commentaryData) {
-      setComment(commentaryData.comment || "");
-    }
-  }, [commentaryData]);
-
-  useEffect(() => {
-    if (comment) {
-      onCommentaryChange(comment);
-    }
-  }, []);
+    onCommentaryChange(comment);
+  }, []); // Seulement au montage
 
   return (
     <Box>
       <Flex direction="column" gap={4} flex="2">
         <Text fontWeight="bold" fontSize={12}>Commentaire</Text>
-        <Textarea size='sm' value={comment.commentary} onChange={(e) => handleInputChange('commentary', e.target.value)} />
+        <Textarea 
+          size='sm' 
+          value={comment.comment || ''} 
+          onChange={(e) => handleInputChange(e.target.value)} 
+          placeholder="Ajoutez votre commentaire ici..."
+        />
       </Flex>
     </Box>
   );
-}
+};
 
 export default Commentary;

@@ -30,9 +30,9 @@ const Additional = ({ onAdditionalChange, additionalData }) => {
 
   // Remplissage des descriptions à partir de l'objet additionalData
   useEffect(() => {
-    console.log('additionalData', additionalData);
+    // console.log('additionalData', additionalData);
 
-    const info = additionalData?.additionnalInfo;
+    const info = additionalData;
     if (!info) return;
 
     const descriptions = {};

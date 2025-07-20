@@ -4,7 +4,7 @@ import { Box, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 const StatsPieCharts = ({ stats, userRole }) => {
   // Couleurs pour les graphiques
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
-  
+
   // Préparation des données pour chaque graphique
   const eventsData = [
     { name: 'Events', value: stats?.events?.byStatus[0]?.count || 0 },
@@ -41,7 +41,7 @@ const StatsPieCharts = ({ stats, userRole }) => {
       {/* Graphique Événements */}
       <Box boxShadow="md" p={4} borderRadius="lg">
         <Heading size="sm" mb={2}>Events</Heading>
-        <Text fontSize="sm" mb={4}>Total losses saved: {stats?.events?.totalPerteSave || 0}</Text>
+        <Text fontSize="sm" mb={4}>Total amount: {stats?.events?.totalPerteSave || 0} {stats?.events?.currency}</Text>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
@@ -84,34 +84,10 @@ const StatsPieCharts = ({ stats, userRole }) => {
         </ResponsiveContainer>
       </Box>
 
-      {/* Graphique Actions */}
-      <Box boxShadow="md" p={4} borderRadius="lg">
-        <Heading size="sm" mb={2}>Actions</Heading>
-        <Text fontSize="sm" mb={4}>{stats?.statAction?.totalActionsKRI} KRI, {stats?.statAction?.totalActionsRCSA} RCSA</Text>
-        <ResponsiveContainer width="100%" height={200}>
-          <PieChart>
-            <Pie
-              data={actionsData}
-              cx="50%"
-              cy="50%"
-              label={renderCustomizedLabel}
-              outerRadius={80}
-              dataKey="value"
-            >
-              {actionsData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </Box>
-
       {/* Graphique RCSA */}
       <Box boxShadow="md" p={4} borderRadius="lg">
         <Heading size="sm" mb={2}>RCSA</Heading>
-        <Text fontSize="sm" mb={4}>{stats?.statKriOrRcsa?.totalControlsRCSA} Risks and Controls</Text>
+        <Text fontSize="sm" mb={4}>{stats?.statKriOrRcsa?.totalControlsRCSA} Controls</Text>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
@@ -130,31 +106,6 @@ const StatsPieCharts = ({ stats, userRole }) => {
           </PieChart>
         </ResponsiveContainer>
       </Box>
-
-      {/* Graphique Utilisateurs (conditionnel) */}
-      {usersData && (
-        <Box boxShadow="md" p={4} borderRadius="lg">
-          <Heading size="sm" mb={2}>Utilisateurs</Heading>
-          <Text fontSize="sm" mb={4}>Total: {stats?.profiles?.total || 0}</Text>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={usersData}
-                cx="50%"
-                cy="50%"
-                label={renderCustomizedLabel}
-                outerRadius={80}
-                dataKey="value"
-              >
-                {usersData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </Box>
-      )}
     </SimpleGrid>
   );
 };

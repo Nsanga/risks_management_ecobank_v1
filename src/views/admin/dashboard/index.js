@@ -141,7 +141,7 @@ const Dashboard = ({ stats, loading }) => {
             <StatsCard
               title="Event"
               value={stats?.events?.byStatus[0]?.count || 0}
-              subtitle={`Total losses saved: ${stats?.events?.totalPerteSave || 0}`}
+              subtitle={`Total losses saved: ${stats?.events?.totalPerteSave || 0} ${stats?.events?.currency}`}
               icon={FaCalendar}
               color="blue.500"
               bgGradient="linear(to-r, blue.400, blue.600)"
