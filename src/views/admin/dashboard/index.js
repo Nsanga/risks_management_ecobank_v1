@@ -31,6 +31,8 @@ const StatsCard = ({
   title,
   value,
   subtitle,
+  subtitle1,
+  subtitle2,
   icon,
   color,
   bgGradient,
@@ -86,6 +88,16 @@ const StatsCard = ({
             {subtitle}
           </Text>
         )}
+        {subtitle1 && (
+          <Text fontSize="sm" color={textColor}>
+            {subtitle1}
+          </Text>
+        )}
+        {subtitle2 && (
+          <Text fontSize="sm" color={textColor}>
+            {subtitle2}
+          </Text>
+        )}
 
         {progress !== undefined && progress !== null && (
           <Box mt={3}>
@@ -126,6 +138,8 @@ const Dashboard = ({ stats, loading }) => {
 
   const headerBg = useColorModeValue('white', 'gray.800');
   const userRole = localStorage.getItem('role');
+  const approved = stats?.events?.byStatus?.find(s => s._id === 'approved') || { count: 0 };
+  const rejected = stats?.events?.byStatus?.find(s => s._id === 'rejected') || { count: 0 };
   console.log("stats => ", stats);
   return (
     <Box minH="100vh" bg={bgGradient} p={8} mt={14}>
@@ -142,6 +156,8 @@ const Dashboard = ({ stats, loading }) => {
               title="Event"
               value={stats?.events?.byStatus[0]?.count || 0}
               subtitle={`Total losses saved: ${stats?.events?.totalPerteSave || 0} ${stats?.events?.currency}`}
+              subtitle1={`Approved Events: ${approved.count}`}
+              subtitle2={`Unapproved Events: ${rejected.count}`}
               icon={FaCalendar}
               color="blue.500"
               bgGradient="linear(to-r, blue.400, blue.600)"

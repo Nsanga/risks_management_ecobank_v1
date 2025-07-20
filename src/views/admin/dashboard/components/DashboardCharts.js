@@ -6,9 +6,13 @@ const StatsPieCharts = ({ stats, userRole }) => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   // Préparation des données pour chaque graphique
+  const approved = stats?.events?.byStatus?.find(s => s._id === 'approved') || { count: 0 };
+  const rejected = stats?.events?.byStatus?.find(s => s._id === 'rejected') || { count: 0 };
+  const totalEvents = stats?.events?.byStatus?.reduce((acc, curr) => acc + curr.count, 0) || 1;
+
   const eventsData = [
-    { name: 'Events', value: stats?.events?.byStatus[0]?.count || 0 },
-    { name: 'Others', value: (stats?.events?.totalPerteSave ? 1 : 0) } // Valeur illustrative
+    { name: 'Approved', value: Math.round((approved.count / totalEvents) * 100) },
+    { name: 'Unapproved', value: Math.round((rejected.count / totalEvents) * 100) } 
   ];
 
   const kriData = [
@@ -16,21 +20,10 @@ const StatsPieCharts = ({ stats, userRole }) => {
     { name: 'Manquants', value: (stats?.statKriOrRcsa?.totalKRI || 0) - (stats?.indicators?.achieved || 0) }
   ];
 
-  const actionsData = [
-    { name: 'Actions KRI', value: stats?.statAction?.totalActionsKRI || 0 },
-    { name: 'Actions RCSA', value: stats?.statAction?.totalActionsRCSA || 0 },
-    { name: 'Autres', value: (stats?.statAction?.allAction || 0) - ((stats?.statAction?.totalActionsKRI || 0) + (stats?.statAction?.totalActionsRCSA || 0)) }
-  ];
-
   const risksData = [
     { name: 'Contrôles RCSA', value: stats?.statKriOrRcsa?.totalControlsRCSA || 0 },
     { name: 'KRI', value: stats?.statKriOrRcsa?.totalKRI || 0 }
   ];
-
-  const usersData = userRole !== 'inputeurs' && userRole !== 'validated' ? [
-    { name: 'Actifs', value: stats?.profiles?.byStatus?.active || 0 },
-    { name: 'Inactifs', value: stats?.profiles?.byStatus?.inactive || 0 }
-  ] : null;
 
   const renderCustomizedLabel = ({ name, percent }) => {
     return `${name}: ${(percent * 100).toFixed(0)}%`;
