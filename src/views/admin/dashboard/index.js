@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Box,
   SimpleGrid,
@@ -18,14 +18,14 @@ import {
   Divider,
   useColorModeValue,
   Image,
-  Flex
-} from '@chakra-ui/react';
-import { connect, useDispatch } from 'react-redux';
+  Flex,
+} from "@chakra-ui/react";
+import { connect, useDispatch } from "react-redux";
 import Loader from "../../../assets/img/loader.gif";
-import { FaCalendar, FaShield, FaUser } from 'react-icons/fa6';
-import { FiActivity, FiTrendingUp } from 'react-icons/fi';
-import { allStats } from 'redux/stats/action';
-import StatsPieCharts from './components/DashboardCharts';
+import { FaCalendar, FaShield, FaUser } from "react-icons/fa6";
+import { FiActivity, FiTrendingUp } from "react-icons/fi";
+import { allStats } from "redux/stats/action";
+import StatsPieCharts from "./components/DashboardCharts";
 
 const StatsCard = ({
   title,
@@ -38,10 +38,10 @@ const StatsCard = ({
   bgGradient,
   progress,
   additionalInfo,
-  rightElement
+  rightElement,
 }) => {
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const cardBg = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.600", "gray.300");
 
   return (
     <Card
@@ -50,12 +50,9 @@ const StatsCard = ({
       borderRadius="xl"
       overflow="hidden"
       transition="all 0.3s"
-      _hover={{ transform: 'translateY(-4px)', shadow: '2xl' }}
+      _hover={{ transform: "translateY(-4px)", shadow: "2xl" }}
     >
-      <Box
-        h="4px"
-        bgGradient={bgGradient}
-      />
+      <Box h="4px" bgGradient={bgGradient} />
       <CardBody p={6}>
         <HStack justify="space-between" mb={4}>
           <Box flex={1}>
@@ -67,16 +64,12 @@ const StatsCard = ({
             </Text>
           </Box>
 
-          {rightElement && (
-            <Box alignSelf="flex-start">
-              {rightElement}
-            </Box>
-          )}
+          {rightElement && <Box alignSelf="flex-start">{rightElement}</Box>}
 
           <Box
             p={3}
             borderRadius="full"
-            bg={`${color.split('.')[0]}.50`}
+            bg={`${color.split(".")[0]}.50`}
             ml={2}
           >
             <Icon as={icon} w={6} h={6} color={color} />
@@ -103,7 +96,7 @@ const StatsCard = ({
           <Box mt={3}>
             <Progress
               value={progress}
-              colorScheme={color.split('.')[0]}
+              colorScheme={color.split(".")[0]}
               borderRadius="full"
               size="sm"
             />
@@ -113,33 +106,36 @@ const StatsCard = ({
           </Box>
         )}
 
-        {additionalInfo && (
-          <Box mt={3}>
-            {additionalInfo}
-          </Box>
-        )}
+        {additionalInfo && <Box mt={3}>{additionalInfo}</Box>}
       </CardBody>
     </Card>
   );
 };
 
 const Dashboard = ({ stats, loading }) => {
+  console.log("====================================");
+  console.log("stats", stats);
+  console.log("====================================");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(allStats());
   }, [dispatch]);
 
   const bgGradient = useColorModeValue(
-    'linear(to-br, blue.50, purple.50)',
-    'linear(to-br, gray.900, gray.800)'
+    "linear(to-br, blue.50, purple.50)",
+    "linear(to-br, gray.900, gray.800)"
   );
 
-  const headerBg = useColorModeValue('white', 'gray.800');
-  const userRole = localStorage.getItem('role');
-  const approved = stats?.events?.byStatus?.find(s => s._id === 'approved') || { count: 0 };
-  const rejected = stats?.events?.byStatus?.find(s => s._id === 'rejected') || { count: 0 };
+  const headerBg = useColorModeValue("white", "gray.800");
+  const userRole = localStorage.getItem("role");
+  const approved = stats?.events?.byStatus?.find(
+    (s) => s._id === "approved"
+  ) || { count: 0 };
+  const rejected = stats?.events?.byStatus?.find(
+    (s) => s._id === "rejected"
+  ) || { count: 0 };
   console.log("stats => ", stats);
   return (
     <Box minH="100vh" bg={bgGradient} p={8} mt={14}>
@@ -155,7 +151,9 @@ const Dashboard = ({ stats, loading }) => {
             <StatsCard
               title="Event"
               value={stats?.events?.byStatus[0]?.count || 0}
-              subtitle={`Total losses saved: ${stats?.events?.totalPerteSave || 0} ${stats?.events?.currency}`}
+              subtitle={`Total losses saved: ${
+                stats?.events?.totalPerteSave || 0
+              } ${stats?.events?.currency}`}
               subtitle1={`Approved Events: ${approved.count}`}
               subtitle2={`Unapproved Events: ${rejected.count}`}
               icon={FaCalendar}
@@ -167,11 +165,17 @@ const Dashboard = ({ stats, loading }) => {
             <StatsCard
               title="KRI"
               value={stats?.statKriOrRcsa?.totalKRI}
-              subtitle={`${stats?.indicators?.achieved} capturé sur ${stats?.statKriOrRcsa?.totalKRI}`}
+              subtitle={`${stats?.statKriOrRcsa?.nombreKeyIncatorTested} capturé sur ${stats?.statKriOrRcsa?.totalKRI}`}
+              subtitle2={`Pourcentage de captures : ${stats?.statKriOrRcsa?.pourcentageKeyIncatorTested}%`}
               icon={FiTrendingUp}
               color="green.500"
               bgGradient="linear(to-r, green.400, green.600)"
-              progress={stats?.indicators?.total > 0 ? (stats?.indicators?.achieved / stats?.indicators?.total) * 100 : 0}
+              progress={
+                stats?.indicators?.total > 0
+                  ? (stats?.indicators?.achieved / stats?.indicators?.total) *
+                    100
+                  : 0
+              }
             />
 
             {/* Actions */}
@@ -182,7 +186,14 @@ const Dashboard = ({ stats, loading }) => {
               icon={FiActivity}
               color="orange.500"
               bgGradient="linear(to-r, orange.400, orange.600)"
-              progress={stats?.statAction?.allAction > 0 ? ((stats?.statAction?.totalActionsKRI + stats?.statAction?.totalActionsRCSA) / stats?.actions?.total) * 100 : 0}
+              progress={
+                stats?.statAction?.allAction > 0
+                  ? ((stats?.statAction?.totalActionsKRI +
+                      stats?.statAction?.totalActionsRCSA) /
+                      stats?.actions?.total) *
+                    100
+                  : 0
+              }
             />
 
             {/* Risks */}
@@ -193,10 +204,12 @@ const Dashboard = ({ stats, loading }) => {
               icon={FaShield}
               color="red.500"
               bgGradient="linear(to-r, red.400, red.600)"
+              subtitle1={`${stats?.statKriOrRcsa?.nombreControlRcsaTested} capturé sur ${stats?.statKriOrRcsa?.totalControlsRCSA}`}
+              subtitle2={`Pourcentage de captures : ${stats?.statKriOrRcsa?.pourcentageControlRcsaTested}%`}
             />
 
             {/* User */}
-            {userRole !== 'inputeurs' && userRole !== 'validated' && (
+            {userRole !== "inputeurs" && userRole !== "validated" && (
               <StatsCard
                 title="Utilisateurs"
                 value={stats?.profiles?.total || 0}
@@ -205,8 +218,8 @@ const Dashboard = ({ stats, loading }) => {
                     ? `Actifs: ${stats.profiles.byStatus.active} | Inactifs: ${stats.profiles.byStatus.inactive}`
                     : "Chargement..."
                 }
-                icon={FaUser}  // Changé pour une icône utilisateur plus appropriée
-                color="purple.500"  // Changé la couleur pour différencier des risques
+                icon={FaUser} // Changé pour une icône utilisateur plus appropriée
+                color="purple.500" // Changé la couleur pour différencier des risques
                 bgGradient="linear(to-r, purple.400, purple.600)"
               />
             )}
