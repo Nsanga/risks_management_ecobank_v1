@@ -68,7 +68,7 @@ function* deleteEntity(action) {
     try {
         const link = `${url}/api/v1/entities/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, JSON.stringify(action.payload));
         if (data) {
             yield put({ type: types.DELETE_ENTITY_SUCCESS, payload: data });
             toast.success('Entity deleted successfully');
