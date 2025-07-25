@@ -10,6 +10,7 @@ import OperationalModelOptions from './OperationalModelOptions';
 import { AddProfile } from 'redux/profile/action';
 import { connect, useDispatch } from 'react-redux';
 import { updateProfile } from 'redux/profile/action';
+import { useTenant } from 'contexts/TenantProvider';
 
 const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, profiles, entities }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -33,6 +34,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     role: '',
     entity: '',
   });
+  const { tenant } = useTenant();
 
   useEffect(() => {
     if (selectedUser && selectedUser.userId) {
@@ -72,7 +74,8 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
   const dispatch = useDispatch();
 
   const handleSave = () => {  
-    dispatch(AddProfile(formData, {
+    const data = {...formData, tenantId: tenant}
+    dispatch(AddProfile(data, {
       onSuccess: () => {
         // Nettoyage et fermeture uniquement en cas de succès
         setFormData({

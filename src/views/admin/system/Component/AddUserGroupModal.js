@@ -7,6 +7,7 @@ import { connect, useDispatch } from 'react-redux';
 import { AddUserGroup } from 'redux/userGroup/action';
 import { updateUserGroup } from 'redux/userGroup/action';
 import DeleteModal from 'views/admin/event/components/DeleteModal';
+import { useTenant } from 'contexts/TenantProvider';
 
 const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
     const [isEditMode, setIsEditMode] = useState(!selectedUserGroup);
@@ -14,6 +15,7 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
     const [roles, setRoles] = useState([]);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const dispatch = useDispatch();
+    const { tenant } = useTenant();
 
     const roleOptions = [
         { value: 'admin-management', label: 'Management' },
@@ -33,7 +35,8 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
 
         const formData = {
             groupName,
-            roles: roleValues // Envoyer uniquement le tableau des valeurs des rôles
+            roles: roleValues, // Envoyer uniquement le tableau des valeurs des rôles
+            tenantId: tenant
         };
 
         try {
