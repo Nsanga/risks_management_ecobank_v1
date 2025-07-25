@@ -14,7 +14,7 @@ export const updateEntity = (id, entityData) => ({
     payload: entityData
   });
 
-  export const deleteEntity = (id) => ({
+  export const deleteEntity = (id, entityData) => ({
     type: types.DELETE_ENTITY_REQUEST,
-    payload: {id}
+    payload: {id, entityData}
   });

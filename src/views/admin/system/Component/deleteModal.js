@@ -20,21 +20,23 @@ import { useDispatch } from 'react-redux'
 import { deleteProfile } from 'redux/profile/action'
 import { deleteEntity } from 'redux/entity/action'
 import { deleteUserGroup } from 'redux/userGroup/action'
+import { useTenant } from 'contexts/TenantProvider'
 
 const DeleteModal = ({ selectedUser, selectedEntity, selectedUserGroup, disabled, onCloseAddUserGroupModal, onCloseAddEntityModal, onCloseAddProfileModal }) => {
     const { onOpen, isOpen, onClose } = useDisclosure()
     const [reason, setReason] = useState('')
     const dispatch = useDispatch()
+    const { tenant } = useTenant();
     
     const handleDelete = () => {
         if (selectedUser) {
-            dispatch(deleteProfile(selectedUser._id));
+            dispatch(deleteProfile(selectedUser._id, {tenantId: tenant}));
             onCloseAddProfileModal?.();
         } else if (selectedEntity) {
-            dispatch(deleteEntity(selectedEntity._id));
+            dispatch(deleteEntity(selectedEntity._id, {tenantId: tenant}));
             onCloseAddEntityModal?.();
         } else if (selectedUserGroup) {
-            dispatch(deleteUserGroup(selectedUserGroup._id));
+            dispatch(deleteUserGroup(selectedUserGroup._id, {tenantId: tenant}));
             onCloseAddUserGroupModal?.();
         }
         onClose();
