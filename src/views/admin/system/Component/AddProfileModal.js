@@ -180,7 +180,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
 
   const username = selectedUser?.surname + " " + selectedUser?.name;
 
-  const isSaveDisabled = !formData.userId || !formData.name || !formData.role || !formData.telephone || !formData.email || !formData.entity;
+  const isSaveDisabled = !formData.userId || !formData.name || !formData.role || !formData.telephone || !formData.email;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered scrollBehavior='inside'>
