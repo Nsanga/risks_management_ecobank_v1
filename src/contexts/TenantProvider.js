@@ -9,6 +9,7 @@ export const TenantProvider = ({ children }) => {
     useEffect(() => {
         const tenantId = getTenantFromSubdomain();
         setTenant(tenantId);
+        console.log("tenantId:", tenantId);
     }, []);
 
     return (
