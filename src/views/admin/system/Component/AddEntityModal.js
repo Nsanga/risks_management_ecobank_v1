@@ -12,6 +12,7 @@ import { updateEntity } from 'redux/entity/action';
 import { EditIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import DeleteModal from 'views/admin/event/components/DeleteModal';
+import { useTenant } from 'contexts/TenantProvider';
 
 const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -27,6 +28,8 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
     location: 'CAMEROUN',
     businessLine: ''
   });
+  const { tenant } = useTenant();
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormValues(prevValues => ({
@@ -54,6 +57,7 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
   const handleSave = () => {
     const updatedValues = {
       ...formValues,
+      tenantId: tenant
     };
     dispatch(AddEntity(updatedValues));
     setFormValues({

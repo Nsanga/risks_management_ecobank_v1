@@ -13,11 +13,13 @@ import {
 import { FiUpload, FiCheck, FiX, FiFile } from 'react-icons/fi';
 import axios from 'axios';
 import { url } from 'urlLoader';
+import { useTenant } from 'contexts/TenantProvider';
 
 const FileUploader = () => {
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const { tenant } = useTenant();
     const toast = useToast();
 
     const handleFileChange = (e) => {
@@ -44,6 +46,7 @@ const FileUploader = () => {
         setUploadProgress(0);
       
         const formData = new FormData();
+        formData.append('tenantId', tenant);
         formData.append('file', file); // 'file' est le nom du champ attendu par l'API
       
         try {
