@@ -6,10 +6,12 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 
 function* list() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/history/getHistory`;
         const data = yield getRequest(link, tenantId);;
         if (data.status === 200) {
@@ -26,8 +28,9 @@ function* list() {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/history/updateHistory/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.controlHistoryData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.controlHistoryData), tenantId);
         if (data.statut === 200) {
             yield put({ type: types.UPDATE_CONTROLHISTORY_SUCCESS, payload: data.data.controlHistory });
             toast.success(data.message);
@@ -43,8 +46,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/history/postHistory`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.statut === 200) {
             yield put({ type: types.ADD_CONTROLHISTORY_SUCCESS, payload: data });
@@ -63,7 +67,7 @@ function* add(action) {
             yield put({ type: types.ADD_CONTROLHISTORY_FAILED, payload: "Échec" });
 
             // ❌ Appelle reject
-            if (action.meta?.reject) action.meta.reject(new Error("Échec serveur"));
+            if (action.meta?.reject) action.meta.reject(new Error("Échec serveur"), tenantId);
         }
     } catch (error) {
         toast.error("Erreur serveur.");
@@ -77,6 +81,7 @@ function* add(action) {
 function* deleteControlHistory(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
 
         const data = yield deleteRequest(link, tenantId);

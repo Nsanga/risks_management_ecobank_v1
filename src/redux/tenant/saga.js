@@ -11,7 +11,7 @@ import { deleteRequest } from 'helper/api';
 function* list() {
     try {
         let link = `${url}/api/v1/tenant`;
-        const data = yield getRequest(link, tenantId);;
+        const data = yield getRequest(link);
         if (data.status === 200) {
             yield put({ type: types.GET_TENANTS_SUCCESS, payload: data });
         } else {
@@ -68,7 +68,7 @@ function* deleteTenant(action) {
     try {
         const link = `${url}/api/v1/tenant/${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link);
         if (data) {
             yield put({ type: types.DELETE_TENANT_SUCCESS, payload: data });
             toast.success('Tenant deleted successfully');
