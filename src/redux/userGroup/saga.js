@@ -6,12 +6,14 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 
-function* list(action) {
+function* list() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/user-groups/all`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);
         console.log(data)
         if (data.message === "Success") {
             yield put({ type: types.GET_USERGROUPS_SUCCESS, payload: data });
@@ -27,13 +29,14 @@ function* list(action) {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/user-groups/update/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.userGroupData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.userGroupData), tenantId);
         console.log("action.payload.userGroupData:::/", action.payload.userGroupData)
         if (data.status === 200) {
             yield put({ type: types.UPDATE_USERGROUP_SUCCESS, payload: data.data.userGroup });
             toast.success(data.data.message);
-            yield put({ type: types.GET_USERGROUPS_REQUEST});
+            yield put({ type: types.GET_USERGROUPS_REQUEST });
         } else {
             yield put({ type: types.UPDATE_USERGROUP_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.data.message);
@@ -46,8 +49,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/user-groups/create`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
         if (data.message === 'Created') {
@@ -69,13 +73,14 @@ function* add(action) {
 function* deleteUserGroup(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/user-groups/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_USERGROUP_SUCCESS, payload: data });
             toast.success('User group deleted successfully');
-            yield put({ type: types.GET_USERGROUPS_REQUEST});
+            yield put({ type: types.GET_USERGROUPS_REQUEST });
         } else {
             toast.error("Aucune donnée n'a été supprimé.");
             yield put({ type: types.DELETE_USERGROUP_FAILED, payload: "Échec lors de la suppression des données" });

@@ -12,7 +12,7 @@ function* list(action) {
     const { type } = action.payload;
     try {
         let link = `${url}/api/v1/campaign/list?type=${type}`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         console.log(data)
         if (data.message === "Success") {
             yield put({ type: types.GET_CAMPAIGNS_SUCCESS, payload: data });
@@ -72,7 +72,7 @@ function* deleteCampaign(action) {
     try {
         const link = `${url}/api/v1/campaign/delete?id=${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_CAMPAIGN_SUCCESS, payload: data });
             toast.success(data.data.message);
@@ -92,7 +92,7 @@ function* deleteCampaign(action) {
 function* listGroups() {
     try {
         let link = `${url}/api/v1/group/list`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_GROUPS_SUCCESS, payload: data });
         } else {
@@ -152,7 +152,7 @@ function* deleteGroup(action) {
     try {
         const link = `${url}/api/v1/group/delete?id=${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_GROUP_SUCCESS, payload: data });
             toast.success(data.data.message);

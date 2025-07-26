@@ -86,7 +86,7 @@ function* deleteActionKRI(action) {
     try {
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_ACTIONKRI_SUCCESS, payload: data });
             toast.success('control test deleted successfully');

@@ -5,16 +5,18 @@ import { getUnauthRequest } from 'helper/api';
 import { putUnauthRequest } from 'helper/api';
 import { postUnauthRequest } from 'helper/api';
 import { url } from 'urlLoader';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 function* loginRequest(action) {
   const { userId, password } = action.payload;
   try {
+    const tenantId = getTenantFromSubdomain();
     let link = `${url}/api/v1/user/login`;
 
     const data = yield postUnauthRequest(link, JSON.stringify({
       userId: userId,
       password: password
-    }));
+    }), tenantId);
 
     if (data && data.data?.token) {
       toast.success("Connexion reussie");

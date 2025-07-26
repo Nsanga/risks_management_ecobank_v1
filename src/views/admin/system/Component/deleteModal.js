@@ -30,13 +30,13 @@ const DeleteModal = ({ selectedUser, selectedEntity, selectedUserGroup, disabled
     
     const handleDelete = () => {
         if (selectedUser) {
-            dispatch(deleteProfile(selectedUser._id, {tenantId: tenant}));
+            dispatch(deleteProfile(selectedUser._id));
             onCloseAddProfileModal?.();
         } else if (selectedEntity) {
-            dispatch(deleteEntity(selectedEntity._id, {tenantId: tenant}));
+            dispatch(deleteEntity(selectedEntity._id));
             onCloseAddEntityModal?.();
         } else if (selectedUserGroup) {
-            dispatch(deleteUserGroup(selectedUserGroup._id, {tenantId: tenant}));
+            dispatch(deleteUserGroup(selectedUserGroup._id));
             onCloseAddUserGroupModal?.();
         }
         onClose();

@@ -10,7 +10,7 @@ import { deleteRequest } from 'helper/api';
 function* list() {
     try {
         let link = `${url}/api/v1/actions/getAction`;
-        const response = yield getRequest(link);
+        const response = yield getRequest(link, tenantId);;
         if (response.statut === 200) {
             // Assurez-vous d'extraire le tableau d'actions
             yield put({ type: types.GET_ALL_ACTIONS_SUCCESS, payload: { data: response.data } });
@@ -98,7 +98,7 @@ function* deleteAction(action) {
     try {
         const link = `${url}/api/v1/actions/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_ACTION_SUCCESS, payload: data });
             toast.success('Action deleted successfully');

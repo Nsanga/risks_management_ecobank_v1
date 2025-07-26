@@ -11,7 +11,7 @@ import { deleteRequest } from 'helper/api';
 function* list() {
     try {
         let link = `${url}/api/v1/history/getHistory`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         if (data.status === 200) {
             yield put({ type: types.GET_CONTROLHISTORIES_SUCCESS, payload: data });
         } else {
@@ -79,7 +79,7 @@ function* deleteControlHistory(action) {
     try {
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_CONTROLHISTORY_SUCCESS, payload: data });
             toast.success('control test deleted successfully');

@@ -6,11 +6,13 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 function* list() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/risks-controls/getKeyIndicator`;
-        const response = yield getRequest(link);
+        const response = yield getRequest(link, tenantId);;
         
         if (response.success === true) {
             // Récupérer tous les dataKeyIndicators de toutes les entités
@@ -39,8 +41,9 @@ function* list() {
 
 function* listByEntity(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/risks-controls/get-KeyIndicator`;
-        const response = yield postRequest(link, JSON.stringify(action.payload));
+        const response = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         if (response.success === true) {
             yield put({ type: types.GET_ENTITY_KRI_SUCCESS, payload: response.data.dataKeyIndicators });
         } else {
@@ -54,8 +57,9 @@ function* listByEntity(action) {
 
 function* update(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/risks-controls/updateKri`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.keyIndicatorData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.keyIndicatorData), tenantId);
         if (data.message === "Mise à jour réussie") {
             yield put({ type: types.UPDATE_KRI_SUCCESS, payload: data.data});
             toast.success("Risk indicator updated successfully");
@@ -71,8 +75,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/actions/postAction`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.statut === 200) { 
             yield put({ type: types.ADD_KRI_SUCCESS, payload: data });
@@ -93,9 +98,10 @@ function* add(action) {
 function* deleteKeyIndicator(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/actions/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_KRI_SUCCESS, payload: data });
             toast.success('Action deleted successfully');

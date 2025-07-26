@@ -8,7 +8,7 @@ import { putRequest } from 'helper/api';
 function* list() {
     try {
         let link = `${url}/api/v1/account/list`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         console.log('data:::::', data)
         if (data.message === "Success") {
             yield put({ type: types.GET_ACCOUNTS_SUCCESS, payload: data });

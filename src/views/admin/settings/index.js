@@ -26,8 +26,6 @@ const SettingsPage = () => {
     const [tenant, setTenant] = useState();
     const { tenants, loading } = useSelector((state) => state.TenantReducer);
 
-    const history = useHistory();
-
     const dispatch = useDispatch();
 
     useEffect(() => {
