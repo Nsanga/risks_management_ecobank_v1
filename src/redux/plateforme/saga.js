@@ -4,12 +4,14 @@ import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
 import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 
 function* list(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/plateforme/list`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_MESSAGE_SUCCESS, payload: data });
         } else {
@@ -24,6 +26,7 @@ function* list(action) {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/plateforme/update?id=${id}`;
         const data = yield putRequest(link, action.payload.plateformeData);
         console.log("data:::/", data)

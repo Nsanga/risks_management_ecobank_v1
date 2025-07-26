@@ -6,7 +6,6 @@ import { AddIcon } from '@chakra-ui/icons';
 import { connect, useDispatch } from 'react-redux';
 import AddEntityModal from './AddEntityModal';
 import { listEntities } from 'redux/entity/action';
-import Loader from '../../../../assets/img/loader.gif';
 import RefreshButton from 'components/refreshButton';
 
 const Entitynew = ({ entities, loading, profiles }) => {

@@ -17,6 +17,7 @@ import ReportReducer from 'redux/reports/reducer';
 import RiskControlReducer from 'redux/riskControl/reducer';
 import ServiceReducer from 'redux/service/reducer';
 import StatReducer from 'redux/stats/reducer';
+import TenantReducer from 'redux/tenant/reducer';
 import UserReducer from 'redux/user/reducer';
 import UserGroupReducer from 'redux/userGroup/reducer';
 
@@ -43,7 +44,8 @@ const rootReducer = combineReducers({
   ActionKRIReducer,
   ReportReducer,
   StatReducer,
-  IncidentReportReducer
+  IncidentReportReducer,
+  TenantReducer
 });
 
 export default rootReducer;

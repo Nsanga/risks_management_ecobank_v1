@@ -6,11 +6,13 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 function* listUser() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/user/list`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         console.log('data:::::', data)
         if (data.message === "Success") {
             yield put({ type: types.GET_USERS_SUCCESS, payload: data });
@@ -27,8 +29,9 @@ function* update(action) {
     const { phoneNumber } = action.payload;
     console.log('payload::', action)
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/user/update?phoneNumber=${phoneNumber}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.userData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.userData), tenantId);
         console.log("dataUser:::/", data)
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_USER_SUCCESS, payload: data.data });
@@ -46,8 +49,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/user/add`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
         if (data) {
@@ -66,13 +70,14 @@ function* add(action) {
     }
 }
 
-function* deleteUser (action) {
+function* deleteUser(action) {
     const { id } = action.payload;
-console.log('id', id)
+
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/user/delete?id=${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_USER_SUCCESS, payload: data });
             toast.success(data.data.message);

@@ -6,12 +6,14 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 
 function* list() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/risk-controls/all`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_RISKCONTROLS_SUCCESS, payload: data });
         } else {
@@ -26,8 +28,9 @@ function* list() {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/risk-controls/update/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.riskControlData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.riskControlData), tenantId);
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_RISKCONTROL_SUCCESS, payload: data.data.riskControl });
             toast.success(data.data.message);
@@ -43,8 +46,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/risk-controls/create`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.message === 'Created') {
             yield put({ type: types.ADD_RISKCONTROL_SUCCESS, payload: data });
@@ -64,9 +68,10 @@ function* add(action) {
 function* deleteRiskControl(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/risk-controls/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_RISKCONTROL_SUCCESS, payload: data });
             toast.success('Risk Control deleted successfully');

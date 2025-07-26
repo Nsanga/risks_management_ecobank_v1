@@ -4,11 +4,13 @@ import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
 import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 function* list() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/account/list`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);;
         console.log('data:::::', data)
         if (data.message === "Success") {
             yield put({ type: types.GET_ACCOUNTS_SUCCESS, payload: data });
@@ -23,8 +25,8 @@ function* list() {
 
 function* update(action) {
     const { id } = action.payload;
-    console.log('payload::', action)
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/account/update?id=${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.accountData));
         console.log("dataUser:::/", data)

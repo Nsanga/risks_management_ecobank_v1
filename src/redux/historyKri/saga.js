@@ -6,12 +6,14 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 
 function* list(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/historiqueKRI/getHistoriqueKRIByIdKeyIndicator`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         if (data.statut === 200) {
             yield put({ type: types.GET_HISTORIESKRI_SUCCESS, payload: data });
         } else {
@@ -27,12 +29,13 @@ function* update(action) {
     const { id } = action.payload;
     console.log("action:", action)
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/historiqueKRI/updateHistoriqueKRI/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.historyKRIData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.historyKRIData), tenantId);
         if (data.statut === 200) {
             yield put({ type: types.UPDATE_HISTORYKRI_SUCCESS, payload: data.data.HistoryKRI });
             toast.success("Capture mis à jour avec succès.");
-            yield put(list(action));
+            yield put(list(action), tenantId);
         } else {
             yield put({ type: types.UPDATE_HISTORYKRI_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.message);
@@ -45,8 +48,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/historiqueKRI/postHistoriqueKRI`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.statut === 201) {
             yield put({ type: types.ADD_HISTORYKRI_SUCCESS, payload: data });
@@ -59,7 +63,7 @@ function* add(action) {
             yield put({ type: types.ADD_HISTORYKRI_FAILED, payload: "Échec lors de la création de l’historique KRI" });
 
             // ❌ Appeler reject
-            if (action.meta?.reject) action.meta.reject(new Error("Erreur API"));
+            if (action.meta?.reject) action.meta.reject(new Error("Erreur API"), tenantId);
         }
 
     } catch (error) {
@@ -74,9 +78,10 @@ function* add(action) {
 function* deleteHistoryKRI(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_HISTORYKRI_SUCCESS, payload: data });
             toast.success('control test deleted successfully');

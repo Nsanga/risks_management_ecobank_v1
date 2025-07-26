@@ -6,12 +6,17 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
+function getTenantId() {
+    return getTenantFromSubdomain();
+}
 
-function* list(action) {
+function* list() {
     try {
+        const tenantId = getTenantId();
         let link = `${url}/api/v1/entities/all`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);
         if (data.message === "Success") {
             yield put({ type: types.GET_ENTITIES_SUCCESS, payload: data });
         } else {
@@ -26,12 +31,13 @@ function* list(action) {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantId();
         let link = `${url}/api/v1/entities/update/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.entityData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.entityData), tenantId);
         if (data.message === "Success") {
-            yield put({ type: types.UPDATE_ENTITY_SUCCESS, payload: data.data.entity});
+            yield put({ type: types.UPDATE_ENTITY_SUCCESS, payload: data.data.entity });
             toast.success("Entity updated successfully");
-            yield put({ type: types.GET_ENTITIES_REQUEST});
+            yield put({ type: types.GET_ENTITIES_REQUEST });
         } else {
             yield put({ type: types.UPDATE_ENTITY_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.message);
@@ -44,8 +50,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantId();
         const link = `${url}/api/v1/entities/create`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.message === 'Created') {
             yield put({ type: types.ADD_ENTITY_SUCCESS, payload: data });
@@ -66,13 +73,14 @@ function* add(action) {
 function* deleteEntity(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantId();
         const link = `${url}/api/v1/entities/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_ENTITY_SUCCESS, payload: data });
             toast.success('Entity deleted successfully');
-            yield put({ type: types.GET_ENTITIES_REQUEST});
+            yield put({ type: types.GET_ENTITIES_REQUEST });
         } else {
             toast.error("Aucune donnée n'a été supprimé.");
             yield put({ type: types.DELETE_ENTITY_FAILED, payload: "Échec lors de la suppression des données" });

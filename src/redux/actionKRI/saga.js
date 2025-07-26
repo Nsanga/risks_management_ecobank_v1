@@ -6,12 +6,13 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
-
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 function* list(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/actionKRI/getActionByIdKeyIndicator`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log(data)
         if (data.statut === 200) {
             yield put({ type: types.GET_ACTIONSKRI_SUCCESS, payload: data });
@@ -26,8 +27,9 @@ function* list(action) {
 
 function* fetchAction(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/actionKRI/getActionByHistoryKRI`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log(data)
         if (data.statut === 200) {
             yield put({ type: types.GET_ACTIONKRI_SUCCESS, payload: data });
@@ -43,13 +45,14 @@ function* fetchAction(action) {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/actionKRI/updateActionKRI/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.actionKRIData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.actionKRIData), tenantId);
         // console.log("data:::/", data)
         if (data.statut === 200) {
             yield put({ type: types.UPDATE_ACTIONKRI_SUCCESS, payload: data.data.actionKRI});
             toast.success(data.message);
-            yield put(fetchAction(action));
+            yield put(fetchAction(action), tenantId);
         } else {
             yield put({ type: types.UPDATE_ACTIONKRI_FAILED, payload: "Échec lors de la modification des données" });
             toast.error(data.message);
@@ -62,8 +65,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/actionKRI/postActionKRI`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
         if (data.statut === 200) { 
@@ -84,9 +88,10 @@ function* add(action) {
 function* deleteActionKRI(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_ACTIONKRI_SUCCESS, payload: data });
             toast.success('control test deleted successfully');

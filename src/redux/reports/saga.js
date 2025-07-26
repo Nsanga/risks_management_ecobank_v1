@@ -6,11 +6,13 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 function* listByEntity(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/actions/getRapport`;
-        const response = yield postRequest(link, JSON.stringify(action.payload));
+        const response = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         if (response.success === true) {
             yield put({ type: types.GET_ENTITY_REPORTS_SUCCESS, payload: { data: response.data } });
         } else {
@@ -24,8 +26,9 @@ function* listByEntity(action) {
 
 function* listEventReportByEntity(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/events/getRapport`;
-        const response = yield postRequest(link, JSON.stringify(action.payload));
+        const response = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         if (response.success === true) {
             yield put({ type: types.GET_EVENT_ENTITY_REPORTS_SUCCESS, payload: { data: response.data } });
         } else {
@@ -40,8 +43,9 @@ function* listEventReportByEntity(action) {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/actions/update/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.actionData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.actionData), tenantId);
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_REPORT_SUCCESS, payload: data.data.action });
             toast.success("Action updated successfully");
@@ -58,8 +62,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/actions/postAction`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.statut === 200) {
             yield put({ type: types.ADD_REPORT_SUCCESS, payload: data });
@@ -80,9 +85,10 @@ function* add(action) {
 function* deleteAction(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/actions/delete/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_REPORT_SUCCESS, payload: data });
             toast.success('Action deleted successfully');
