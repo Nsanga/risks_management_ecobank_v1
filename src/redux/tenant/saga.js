@@ -6,12 +6,14 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 
 function* list() {
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/tenant`;
-        const data = yield getRequest(link);
+        const data = yield getRequest(link, tenantId);
         if (data.status === 200) {
             yield put({ type: types.GET_TENANTS_SUCCESS, payload: data });
         } else {
@@ -26,8 +28,9 @@ function* list() {
 function* update(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/tenant/${id}`;
-        const data = yield putRequest(link, JSON.stringify(action.payload.tenantData));
+        const data = yield putRequest(link, JSON.stringify(action.payload.tenantData), tenantId);
         if (data.status === 200) {
             yield put({ type: types.UPDATE_TENANT_SUCCESS, payload: data.data.entity});
             toast.success("Tenant updated successfully");
@@ -44,8 +47,9 @@ function* update(action) {
 
 function* add(action) {
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/tenant`;
-        const data = yield postRequest(link, JSON.stringify(action.payload));
+        const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.status === 200) {
             yield put({ type: types.ADD_TENANT_SUCCESS, payload: data });
@@ -66,9 +70,10 @@ function* add(action) {
 function* deleteTenant(action) {
     const { id } = action.payload;
     try {
+        const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/tenant/${id}`;
 
-        const data = yield deleteRequest(link);
+        const data = yield deleteRequest(link, tenantId);
         if (data) {
             yield put({ type: types.DELETE_TENANT_SUCCESS, payload: data });
             toast.success('Tenant deleted successfully');
