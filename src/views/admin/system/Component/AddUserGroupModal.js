@@ -15,7 +15,6 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
     const [roles, setRoles] = useState([]);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const dispatch = useDispatch();
-    const { tenant } = useTenant();
 
     const roleOptions = [
         { value: 'admin-management', label: 'Management' },
@@ -36,7 +35,6 @@ const AddUserGroupModal = ({ isOpen, onClose, selectedUserGroup, loading }) => {
         const formData = {
             groupName,
             roles: roleValues, // Envoyer uniquement le tableau des valeurs des rôles
-            tenantId: tenant
         };
 
         try {
