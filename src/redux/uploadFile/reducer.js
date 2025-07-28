@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   response: null
 };
 
-export const uploadReducer = (state = INITIAL_STATE, action) => {
+export const UploadReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case types.UPLOAD_FILE_REQUEST:
       return {
@@ -31,10 +31,10 @@ export const uploadReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload
+        error: action.payload 
       };
 
-    case UPDATE_types.UPLOAD_PROGRESS:
+    case types.UPDATE_UPLOAD_PROGRESS:
       return {
         ...state,
         progress: action.payload

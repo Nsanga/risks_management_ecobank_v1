@@ -18,6 +18,7 @@ import RiskControlSaga from 'redux/riskControl/saga';
 import ServiceSaga from 'redux/service/saga';
 import StatSaga from 'redux/stats/saga';
 import TenantSaga from 'redux/tenant/saga';
+import FileUploadSaga from 'redux/uploadFile/saga';
 import UserSaga from 'redux/user/saga';
 import UserGroupSaga from 'redux/userGroup/saga';
 
@@ -47,5 +48,6 @@ export default function* Sagas() {
     StatSaga(),
     IncidentReportSaga(),
     TenantSaga(),
+    FileUploadSaga(),
   ]);
 }

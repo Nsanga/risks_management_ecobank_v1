@@ -20,17 +20,7 @@ const FileUploader = () => {
     const toast = useToast();
 
     // Récupération des états depuis le store Redux
-    const { 
-        loading, 
-        progress, 
-        error, 
-        success 
-    } = useSelector(state => ({
-        loading: state.upload.loading,
-        progress: state.upload.progress,
-        error: state.upload.error,
-        success: state.upload.success
-    }));
+    const { loading, progress, error, success } = useSelector(state => state.UploadReducer);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files?.[0];
@@ -52,10 +42,8 @@ const FileUploader = () => {
     // Gestion de l'upload
     const handleUpload = useCallback(() => {
         if (!file) return;
-        
-        dispatch(uploadFile({
-            file: file
-        }));
+
+        dispatch(uploadFile(file));
     }, [file, dispatch]);
 
     // Effets pour les notifications

@@ -59,6 +59,6 @@ function* uploadWithProgressWrapper(apiFn, url, formData, tenantId, onProgress) 
     );
 }
 
-export default function* fileUploadSaga() {
+export default function* FileUploadSaga() {
     yield takeLatest(types.UPLOAD_FILE_REQUEST, uploadFileSaga);
 }
