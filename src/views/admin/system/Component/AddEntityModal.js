@@ -28,7 +28,6 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
     location: 'CAMEROUN',
     businessLine: ''
   });
-  const { tenant } = useTenant();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -57,7 +56,6 @@ const AddEntityModal = ({ isOpen, onClose, selectedEntity, loading, profiles }) 
   const handleSave = () => {
     const updatedValues = {
       ...formValues,
-      tenantId: tenant
     };
     dispatch(AddEntity(updatedValues));
     setFormValues({
