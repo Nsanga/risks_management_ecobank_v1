@@ -54,9 +54,6 @@ export const postRequest = (url, data, tenantId) => request(json, tenantId, 'POS
 export const putRequest = (url, data, tenantId) => request(json, tenantId, 'PUT', url, data);
 export const deleteRequest = (url, data, tenantId) => request(json, tenantId, 'DELETE', url, data);
 
-export const postRequestFormData = (url, data, tenantId, options = {}) =>
-  request(null, tenantId, 'POST', url, data, options);
-
 export const putRequestFormData = (url, data, tenantId, options = {}) =>
   request(null, tenantId, 'PUT', url, data, options);
 
@@ -71,5 +68,45 @@ export const putUnauthRequest = (url, data, tenantId) =>
 
 export const deleteUnauthRequest = (url, data, tenantId) =>
   unAuthRequest(json, tenantId, 'DELETE', url, data);
+
+
+export const postRequestFormData = (url, data, tenantId, options = {}) => {
+  // Créer une nouvelle promesse pour gérer le suivi de progression
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Authorization', localStorage.getItem('token'));
+    if (tenantId) {
+      xhr.setRequestHeader('x-tenant-id', tenantId);
+    }
+
+    // Suivi de progression
+    if (options.onProgress) {
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable && typeof options.onProgress === 'function') {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          options.onProgress(progress);
+        }
+      };
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          resolve({ response, progress: 100 });
+        } catch (e) {
+          reject(new Error('Invalid JSON response'));
+        }
+      } else {
+        reject(new Error(xhr.statusText));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network Error'));
+    xhr.send(data);
+  });
+};
 
 // Assurez-vous que toutes les fonctions d'API sont correctement exportées

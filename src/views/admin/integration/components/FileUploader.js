@@ -11,16 +11,26 @@ import {
     Avatar
 } from '@chakra-ui/react';
 import { FiUpload, FiCheck, FiX, FiFile } from 'react-icons/fi';
-import axios from 'axios';
-import { url } from 'urlLoader';
-import { getTenantFromSubdomain } from 'utils/getTenant';
+import { useDispatch } from 'react-redux';
+import { uploadFile } from 'redux/uploadFile/action';
 
 const FileUploader = () => {
     const [file, setFile] = useState(null);
-    const [isUploading, setIsUploading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const tenantId = getTenantFromSubdomain();
+    const dispatch = useDispatch();
     const toast = useToast();
+
+    // Récupération des états depuis le store Redux
+    const { 
+        loading, 
+        progress, 
+        error, 
+        success 
+    } = useSelector(state => ({
+        loading: state.upload.loading,
+        progress: state.upload.progress,
+        error: state.upload.error,
+        success: state.upload.success
+    }));
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files?.[0];
@@ -39,71 +49,43 @@ const FileUploader = () => {
         }
     };
 
-    const handleUpload = useCallback(async () => {
+    // Gestion de l'upload
+    const handleUpload = useCallback(() => {
         if (!file) return;
+        
+        dispatch(uploadFile({
+            file: file
+        }));
+    }, [file, dispatch]);
 
-        setIsUploading(true);
-        setUploadProgress(0);
-
-        const formData = new FormData();
-        formData.append('file', file); // 'file' est le nom du champ attendu par l'API
-
-        try {
-            const response = await axios.post(`${url}/api/v1/risks-controls/upload`, formData, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'multipart/form-data',
-                    'x-tenant-id': tenantId
-                },
-                onUploadProgress: (progressEvent) => {
-                    if (progressEvent.total) {
-                        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                        setUploadProgress(progress);
-                    }
-                },
-            });
-
-            setIsUploading(false);
-            toast({
-                title: 'Upload réussi',
-                description: `${file.name} a été uploadé avec succès`,
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
-
-            // Réinitialiser après succès (optionnel)
-            setFile(null);
-            setUploadProgress(0);
-
-            // Retourner la réponse de l'API si nécessaire
-            return response.data;
-
-        } catch (error) {
-            setIsUploading(false);
-            setUploadProgress(0);
-
-            let errorMessage = "Échec de l'upload du fichier";
-            if (axios.isAxiosError(error)) {
-                errorMessage = error.response?.data?.message || error.message;
-            }
-
+    // Effets pour les notifications
+    React.useEffect(() => {
+        if (error) {
             toast({
                 title: 'Erreur',
-                description: errorMessage,
+                description: error,
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
             });
-
-            throw error;
         }
-    }, [file, toast]);
+    }, [error, toast]);
+
+    React.useEffect(() => {
+        if (success) {
+            toast({
+                title: 'Succès',
+                description: 'Fichier uploadé avec succès',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+            setFile(null); // Réinitialiser après succès
+        }
+    }, [success, toast]);
 
     const handleCancel = () => {
         setFile(null);
-        setUploadProgress(0);
-        setIsUploading(false);
     };
 
     const getFileIcon = () => {
@@ -187,7 +169,7 @@ const FileUploader = () => {
                                     {(file.size / 1024 / 1024).toFixed(2)} MB
                                 </Text>
                             </Box>
-                            {!isUploading ? (
+                            {!loading ? (
                                 <Icon
                                     as={FiX}
                                     boxSize={5}
@@ -198,23 +180,23 @@ const FileUploader = () => {
                             ) : null}
                         </Flex>
 
-                        {isUploading && (
+                        {loading && (
                             <Box w="full">
                                 <Progress
-                                    value={uploadProgress}
+                                    value={progress}
                                     size="sm"
                                     colorScheme="blue"
                                     borderRadius="full"
                                     mb={2}
                                 />
                                 <Text fontSize="sm" textAlign="right" color="gray.500">
-                                    {uploadProgress}%
+                                    {progress}%
                                 </Text>
                             </Box>
                         )}
 
                         <Flex w="full" justify="flex-end" gap={3}>
-                            {!isUploading && (
+                            {!loading && (
                                 <Button
                                     variant="outline"
                                     colorScheme="red"
@@ -226,12 +208,12 @@ const FileUploader = () => {
                             <Button
                                 colorScheme="blue"
                                 onClick={handleUpload}
-                                isLoading={isUploading}
+                                isLoading={loading}
                                 loadingText="Upload en cours..."
-                                rightIcon={!isUploading ? <FiCheck /> : undefined}
-                                isDisabled={isUploading}
+                                rightIcon={!loading ? <FiCheck /> : undefined}
+                                isDisabled={loading}
                             >
-                                {isUploading ? '' : 'Uploader'}
+                                {loading ? '' : 'Uploader'}
                             </Button>
                         </Flex>
                     </>
