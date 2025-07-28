@@ -13,13 +13,13 @@ import {
 import { FiUpload, FiCheck, FiX, FiFile } from 'react-icons/fi';
 import axios from 'axios';
 import { url } from 'urlLoader';
-import { useTenant } from 'contexts/TenantProvider';
+import { getTenantFromSubdomain } from 'utils/getTenant';
 
 const FileUploader = () => {
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const { tenant } = useTenant();
+    const tenantId = getTenantFromSubdomain();
     const toast = useToast();
 
     const handleFileChange = (e) => {
@@ -41,65 +41,65 @@ const FileUploader = () => {
 
     const handleUpload = useCallback(async () => {
         if (!file) return;
-      
+
         setIsUploading(true);
         setUploadProgress(0);
-      
+
         const formData = new FormData();
-        formData.append('tenantId', tenant);
         formData.append('file', file); // 'file' est le nom du champ attendu par l'API
-      
+
         try {
-          const response = await axios.post(`${url}/api/v1/risks-controls/upload`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              // Ajoutez ici les headers d'authentification si nécessaire
-              // 'Authorization': `Bearer ${yourToken}`
-            },
-            onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                setUploadProgress(progress);
-              }
-            },
-          });
-      
-          setIsUploading(false);
-          toast({
-            title: 'Upload réussi',
-            description: `${file.name} a été uploadé avec succès`,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
-      
-          // Réinitialiser après succès (optionnel)
-          setFile(null);
-          setUploadProgress(0);
-      
-          // Retourner la réponse de l'API si nécessaire
-          return response.data;
-      
+            const response = await axios.post(`${url}/api/v1/risks-controls/upload`, formData, {
+                headers: {
+                    'Authorization': localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data',
+                    'x-tenant-id': tenantId
+                    // Ajoutez ici les headers d'authentification si nécessaire
+                },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(progress);
+                    }
+                },
+            });
+
+            setIsUploading(false);
+            toast({
+                title: 'Upload réussi',
+                description: `${file.name} a été uploadé avec succès`,
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+
+            // Réinitialiser après succès (optionnel)
+            setFile(null);
+            setUploadProgress(0);
+
+            // Retourner la réponse de l'API si nécessaire
+            return response.data;
+
         } catch (error) {
-          setIsUploading(false);
-          setUploadProgress(0);
-      
-          let errorMessage = "Échec de l'upload du fichier";
-          if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data?.message || error.message;
-          }
-      
-          toast({
-            title: 'Erreur',
-            description: errorMessage,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
-      
-          throw error;
+            setIsUploading(false);
+            setUploadProgress(0);
+
+            let errorMessage = "Échec de l'upload du fichier";
+            if (axios.isAxiosError(error)) {
+                errorMessage = error.response?.data?.message || error.message;
+            }
+
+            toast({
+                title: 'Erreur',
+                description: errorMessage,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+
+            throw error;
         }
-      }, [file, toast]);
+    }, [file, toast]);
 
     const handleCancel = () => {
         setFile(null);

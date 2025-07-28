@@ -17,7 +17,7 @@ function* list() {
         const tenantId = getTenantId();
         let link = `${url}/api/v1/entities/all`;
         const data = yield getRequest(link, tenantId);
-        if (data.message === "Success") {
+        if (data.status === 200) {
             yield put({ type: types.GET_ENTITIES_SUCCESS, payload: data });
         } else {
             yield put({ type: types.GET_ENTITIES_FAILED, payload: "echec recuperation des données" });
@@ -34,7 +34,7 @@ function* update(action) {
         const tenantId = getTenantId();
         let link = `${url}/api/v1/entities/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityData), tenantId);
-        if (data.message === "Success") {
+        if (data.status === 200) {
             yield put({ type: types.UPDATE_ENTITY_SUCCESS, payload: data.data.entity });
             toast.success("Entity updated successfully");
             yield put({ type: types.GET_ENTITIES_REQUEST });
@@ -54,9 +54,9 @@ function* add(action) {
         const link = `${url}/api/v1/entities/create`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
-        if (data.message === 'Created') {
+        if (data.status === 201) {
             yield put({ type: types.ADD_ENTITY_SUCCESS, payload: data });
-            toast.success(data.data.message);
+            toast.success("Entity created successfully");
             yield put({ type: types.GET_ENTITIES_REQUEST, payload: { type: action.payload.type } });
         } else {
             toast.error("Aucune donnée n'a été ajouté.");

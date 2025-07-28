@@ -34,7 +34,6 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
     role: '',
     entity: '',
   });
-  const { tenant } = useTenant();
 
   useEffect(() => {
     if (selectedUser && selectedUser.userId) {
@@ -74,7 +73,7 @@ const AddProfileModal = ({ isOpen, onClose, loading, selectedUser, userGroups, p
   const dispatch = useDispatch();
 
   const handleSave = () => {  
-    const data = {...formData, tenantId: tenant}
+    const data = {...formData}
     dispatch(AddProfile(data, {
       onSuccess: () => {
         // Nettoyage et fermeture uniquement en cas de succès
