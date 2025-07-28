@@ -51,10 +51,9 @@ const FileUploader = () => {
         try {
             const response = await axios.post(`${url}/api/v1/risks-controls/upload`, formData, {
                 headers: {
-                    'Authorization': localStorage.getItem('token'),
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'multipart/form-data',
                     'x-tenant-id': tenantId
-                    // Ajoutez ici les headers d'authentification si nécessaire
                 },
                 onUploadProgress: (progressEvent) => {
                     if (progressEvent.total) {
