@@ -24,11 +24,11 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { listTenants } from "redux/tenant/action";
-import { url } from 'urlLoader';
+import { url } from "urlLoader";
 import { FiUpload, FiImage, FiX, FiSave } from "react-icons/fi";
 import { FaBuilding } from "react-icons/fa6";
 
-const TenantForm = ({ isOpen, onClose, tenant }) => {
+const TenantForm = ({ isOpen, onClose, tenant, viderTenantChoice }) => {
   const [form, setForm] = useState({
     name: "",
     tenantId: "",
@@ -144,10 +144,7 @@ const TenantForm = ({ isOpen, onClose, tenant }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
-      <ModalOverlay
-        bg="blackAlpha.600"
-        backdropFilter="blur(10px)"
-      />
+      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
       <ModalContent
         bg={bgColor}
         borderRadius="2xl"
@@ -157,21 +154,20 @@ const TenantForm = ({ isOpen, onClose, tenant }) => {
         mx={4}
       >
         {/* Header avec gradient */}
-        <Box
-          bgGradient={gradientBg}
-          borderTopRadius="2xl"
-          p={6}
-          color="white"
-        >
+        <Box bgGradient={gradientBg} borderTopRadius="2xl" p={6} color="white">
           <Flex align="center" justify="space-between">
             <Flex align="center" gap={3}>
               <Icon as={FaBuilding} fontSize="24px" />
               <Box>
                 <Text fontSize="xl" fontWeight="bold">
-                  {tenant ? "Mise à jour de l'organisation" : "Nouvelle Organisation"}
+                  {tenant
+                    ? "Mise à jour de l'organisation"
+                    : "Nouvelle Organisation"}
                 </Text>
                 <Text fontSize="sm" opacity={0.8}>
-                  {tenant ? "Modifiez les informations de votre organisation" : "Créez une nouvelle organisation"}
+                  {tenant
+                    ? "Modifiez les informations de votre organisation"
+                    : "Créez une nouvelle organisation"}
                 </Text>
               </Box>
             </Flex>
@@ -179,13 +175,16 @@ const TenantForm = ({ isOpen, onClose, tenant }) => {
               position="static"
               color="white"
               _hover={{ bg: "whiteAlpha.200" }}
+              onClick={() => {
+                onClose(); // ferme la modale
+                viderTenantChoice(); // nettoie la sélection
+              }}
             />
           </Flex>
         </Box>
 
         <ModalBody p={8}>
           <VStack spacing={6} align="stretch">
-            {/* Logo Section */}
             <Box>
               <FormLabel color={labelColor} fontWeight="semibold" mb={3}>
                 Logo de l'organisation
@@ -239,7 +238,6 @@ const TenantForm = ({ isOpen, onClose, tenant }) => {
 
             <Divider />
 
-            {/* Form Fields */}
             <FormControl>
               <FormLabel color={labelColor} fontWeight="semibold">
                 Nom de l'organisation
@@ -335,7 +333,11 @@ const TenantForm = ({ isOpen, onClose, tenant }) => {
         <ModalFooter p={8} pt={0}>
           <Flex gap={3} w="full" justify="flex-end">
             <Button
-              onClick={onClose}
+              // onClick={onClose}
+              onClick={() => {
+                onClose();
+                viderTenantChoice();
+              }}
               variant="ghost"
               size="lg"
               borderRadius="lg"

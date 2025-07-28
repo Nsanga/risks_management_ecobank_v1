@@ -33,7 +33,6 @@ const IncidentTrendsAnalysisTable = ({
   const [countEventYearEntity, setCountEventYearEntity] = useState(0);
   const [totalPerteMonth, setTotalPerteMonth] = useState(0);
   const [totalAllPertes, setTotalAllPertes] = useState(0);
-
   useEffect(() => {
     if (incident_reports && incident_reports.length > 0) {
       const info = incident_reports.find((item) => item?.infoSupp)?.infoSupp;
