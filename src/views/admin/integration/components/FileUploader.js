@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -11,7 +11,7 @@ import {
     Avatar
 } from '@chakra-ui/react';
 import { FiUpload, FiCheck, FiX, FiFile } from 'react-icons/fi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { uploadFile } from 'redux/uploadFile/action';
 
 const FileUploader = () => {
@@ -59,7 +59,7 @@ const FileUploader = () => {
     }, [file, dispatch]);
 
     // Effets pour les notifications
-    React.useEffect(() => {
+    useEffect(() => {
         if (error) {
             toast({
                 title: 'Erreur',
@@ -71,7 +71,7 @@ const FileUploader = () => {
         }
     }, [error, toast]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (success) {
             toast({
                 title: 'Succès',
