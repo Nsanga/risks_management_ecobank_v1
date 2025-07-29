@@ -102,7 +102,7 @@ function ModaleDeleteTenant({ isOpen, onClose, tenant }) {
           </Box>
         )}
          
-      </ModalContent>
+      </ModalContent> 
     </Modal>
   );
 }
