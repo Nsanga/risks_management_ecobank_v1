@@ -199,7 +199,7 @@ const Dashboard = ({ stats, loading }) => {
               subtitle={`${stats?.statKriOrRcsa?.totalControlsRCSA} Risks and Controls`}
               icon={FaShield}
               color="red.500"
-              bgGradient="linear(to-r, red.400, red.600)"
+              bgGradient="linear(to-r, red.400, red.600)" 
               subtitle1={`${stats?.statKriOrRcsa?.nombreControlRcsaTested} contrôls testé sur ${stats?.statKriOrRcsa?.totalControlsRCSA}`}
               subtitle2={`Pourcentage de captures : ${stats?.statKriOrRcsa?.pourcentageControlRcsaTested}%`}
             />

@@ -1,37 +1,18 @@
 import {
-  Alert,
-  AlertIcon,
   Box,
   Button,
-  Container,
   Flex,
   FormControl,
   FormLabel,
   Heading,
   Image,
   Input,
-  InputGroup,
-  InputLeftElement,
   Stack,
-  useToast,
 } from "@chakra-ui/react";
-// import { Logo } from './logo'
 import { PasswordField } from "./PasswordField";
 import { connect, useDispatch } from "react-redux";
 import { useState } from "react";
-import logo from "assets/img/logoMakeda.png";
 import { loginRequest } from "redux/login/action";
-
-const CameroonFlag = () => (
-  // Ajoutez ici le composant d'icône du drapeau du Cameroun
-  <Image
-    src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flag_of_Cameroon.svg/langfr-225px-Flag_of_Cameroon.svg.png"
-    alt="Drapeau du Cameroun"
-    w={8}
-    h={6}
-    borderRadius={3}
-  />
-);
 
 const SignIn = ({ error }) => {
   const dispatch = useDispatch();
@@ -97,7 +78,7 @@ const SignIn = ({ error }) => {
           <Box />
           <Stack spacing={6}>
               <Button
-                bg="blue.300"
+                bg="blue.500"
                 color="white"
                 isLoading={isLoading}
                 disabled={!userId || !password}

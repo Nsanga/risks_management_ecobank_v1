@@ -8,18 +8,15 @@ import { Provider } from 'react-redux';
 import store from './redux/setup';
 import App from './app.js';
 import { TenantProvider } from 'contexts/TenantProvider';
+import { DynamicChakraProvider } from 'contexts/DynamicChakraProvider.js';
 
 ReactDOM.render(
 	<Provider store={store}>
-		<ChakraProvider theme={theme}>
-			<React.StrictMode>
-				<ThemeEditorProvider>
-					<TenantProvider>
-						<App />
-					</TenantProvider>
-				</ThemeEditorProvider>
-			</React.StrictMode>
-		</ChakraProvider>
-	</Provider>,
+    <TenantProvider>
+      <DynamicChakraProvider>
+        <App />
+      </DynamicChakraProvider>
+    </TenantProvider>
+  </Provider>,
 	document.getElementById('root')
 );

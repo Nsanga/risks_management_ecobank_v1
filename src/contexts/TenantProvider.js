@@ -1,16 +1,17 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { getTenantFromSubdomain } from "utils/getTenant";
+import { useDispatch, useSelector } from "react-redux";
+import { getTenant } from "redux/tenant/action";
 
 const TenantContext = createContext();
 
 export const TenantProvider = ({ children }) => {
-    const [tenant, setTenant] = useState(null);
+    const tenant = useSelector((state) => state.TenantReducer.tenant);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        const tenantId = getTenantFromSubdomain();
-        setTenant(tenantId);
-    }, []);
-
+        dispatch(getTenant());
+      }, [dispatch]);
+      
     return (
         <TenantContext.Provider value={{ tenant }}>
             {children}

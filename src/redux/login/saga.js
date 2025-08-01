@@ -32,7 +32,7 @@ function* loginRequest(action) {
       localStorage.setItem('role', role);
       yield put({ type: types.LOGIN_SUCCESS, payload: { token: data.data.token, username: data.data.user.fullname } });
     } else {
-      toast.error("Connexion echouée.");
+      toast.error(data.message.error);
       yield put({ type: types.LOGIN_FAILURE, payload: data.message.error });
     }
 

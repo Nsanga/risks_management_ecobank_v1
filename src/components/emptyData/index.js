@@ -1,9 +1,11 @@
 import { Flex, Image, Text, useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
 import logo from '../../assets/img/logoMakeda.png'
+import { useTenant } from 'contexts/TenantProvider';
 
 const EmptyData = () => {
     const dataColor = useColorModeValue("navy.700", "white");
+    const { tenant } = useTenant();
 
     return (
         <Flex
@@ -13,7 +15,7 @@ const EmptyData = () => {
             height={{ sm: "10rem", lg: "30rem" }}
         >
             <Image
-                src={logo}
+                src={tenant?.logo || logo}
                 width={90}
                 mb={4}
             />

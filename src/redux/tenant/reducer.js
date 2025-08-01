@@ -2,6 +2,7 @@ import * as types from './types';
 
 const INITIAL_STATE = {
   tenants: [],
+  tenant: null,
   loading: false,
   error: null,
 };
@@ -26,7 +27,25 @@ function TenantReducer(state = INITIAL_STATE, action) {
         loading: false,
         tenants: [],
       };
-    case types.UPDATE_TENANT_REQUEST:
+    case types.GET_TENANT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case types.GET_TENANT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        tenant: action.payload.data.tenant,
+      };
+    case types.GET_TENANT_FAILED:
+      return {
+        ...state,
+        loading: false,
+        tenant: null,
+      };
+    case types.UPDATE_TENANT_REQUEST: 
       return {
         ...state,
         loading: true,

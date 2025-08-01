@@ -6,6 +6,8 @@ import { url } from 'urlLoader';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
+import { getTenantFromSubdomain } from 'utils/getTenant';
+import { getUnauthRequest } from 'helper/api';
 
 
 function* list() {
@@ -20,6 +22,23 @@ function* list() {
     } catch (error) {
         console.log(error);
         yield put({ type: types.GET_TENANTS_FAILED, payload: error });
+    }
+}
+
+function* fetchTenant() {
+    try {
+        const tenantId = getTenantFromSubdomain();
+        let link = `${url}/api/v1/tenant/tenant-by-tenant-id/${tenantId}`;
+        const data = yield getUnauthRequest(link);
+        console.log("data => ", data)
+        if (data.status === 200) {
+            yield put({ type: types.GET_TENANT_SUCCESS, payload: data });
+        } else {
+            yield put({ type: types.GET_TENANT_FAILED, payload: "echec recuperation des données" });
+        }
+    } catch (error) {
+        console.log(error);
+        yield put({ type: types.GET_TENANT_FAILED, payload: error });
     }
 }
 
@@ -87,6 +106,7 @@ function* deleteTenant(action) {
 
 export default function* TenantSaga() {
     yield takeLatest(types.GET_TENANTS_REQUEST, list);
+    yield takeLatest(types.GET_TENANT_REQUEST, fetchTenant);
     yield takeLatest(types.UPDATE_TENANT_REQUEST, update);
     yield takeLatest(types.ADD_TENANT_REQUEST, add);
     yield takeLatest(types.DELETE_TENANT_REQUEST, deleteTenant);
