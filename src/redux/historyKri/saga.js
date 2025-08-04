@@ -81,7 +81,7 @@ function* deleteHistoryKRI(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/history/deleteHistory/${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_HISTORYKRI_SUCCESS, payload: data });
             toast.success('control test deleted successfully');

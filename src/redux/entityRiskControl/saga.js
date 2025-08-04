@@ -69,7 +69,7 @@ function* deleteEntityRiskControl(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/risk-control/delete/${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_ENTITYRISKCONTROL_SUCCESS, payload: data });
             toast.success(data.message);

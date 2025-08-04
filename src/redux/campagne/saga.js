@@ -77,7 +77,7 @@ function* deleteCampaign(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/campaign/delete?id=${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_CAMPAIGN_SUCCESS, payload: data });
             toast.success(data.data.message);
@@ -161,7 +161,7 @@ function* deleteGroup(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/group/delete?id=${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_GROUP_SUCCESS, payload: data });
             toast.success(data.data.message);

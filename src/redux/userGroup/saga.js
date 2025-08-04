@@ -76,7 +76,7 @@ function* deleteUserGroup(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/user-groups/delete/${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_USERGROUP_SUCCESS, payload: data });
             toast.success('User group deleted successfully');

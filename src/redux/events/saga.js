@@ -103,7 +103,7 @@ function* deleteEvent(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/events/delete/${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_EVENT_SUCCESS, payload: data });
             toast.success(data.data.message);
