@@ -13,7 +13,7 @@ function* list() {
     try {
         const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/profiles/all`;
-        const data = yield getRequest(link, null, tenantId);;
+        const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_PROFILES_SUCCESS, payload: data });
         } else {
@@ -86,7 +86,7 @@ function* deleteProfile(action) {
         const tenantId = getTenantFromSubdomain();
         const link = `${url}/api/v1/profiles/delete/${id}`;
 
-        const data = yield deleteRequest(link, tenantId);
+        const data = yield deleteRequest(link, null, tenantId);
         if (data) {
             yield put({ type: types.DELETE_PROFILE_SUCCESS, payload: data });
             toast.success('Profile deleted successfully');
