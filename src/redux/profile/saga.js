@@ -13,7 +13,7 @@ function* list() {
     try {
         const tenantId = getTenantFromSubdomain();
         let link = `${url}/api/v1/profiles/all`;
-        const data = yield getRequest(link, tenantId);;
+        const data = yield getRequest(link, null, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_PROFILES_SUCCESS, payload: data });
         } else {
