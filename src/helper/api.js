@@ -52,7 +52,7 @@ const unAuthRequest = async (contentType, tenantId, method, url, data) => {
 export const getRequest = (url, tenantId) => request(json, tenantId, 'GET', url);
 export const postRequest = (url, data, tenantId) => request(json, tenantId, 'POST', url, data);
 export const putRequest = (url, data, tenantId) => request(json, tenantId, 'PUT', url, data);
-export const deleteRequest = (url, data, tenantId) => request(json, tenantId, 'DELETE', url, data);
+export const deleteRequest = (url, tenantId) => request(json, tenantId, 'DELETE', url, data);
 
 export const putRequestFormData = (url, data, tenantId, options = {}) =>
   request(null, tenantId, 'PUT', url, data, options);
