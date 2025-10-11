@@ -69,7 +69,7 @@ const SettingsPage = () => {
               colorScheme="blue"
               leftIcon={<AddIcon />}
               onClick={onOpen}
-            >
+            > 
               Ajouter une organisation
             </Button>
           </Flex>
