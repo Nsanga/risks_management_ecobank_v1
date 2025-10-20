@@ -1,7 +1,8 @@
 import * as types from './types';
 
-export const listActions = () => ({
+export const listActions = (type) => ({
   type: types.GET_ALL_ACTIONS_REQUEST,
+  payload: { type }
 });
 
 export const listControlActions = (idControl) => ({

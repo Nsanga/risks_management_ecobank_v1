@@ -8,10 +8,11 @@ import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
 import { getTenantFromSubdomain } from 'utils/getTenant';
 
-function* list() {
+function* list(action) {
+    const { type } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/actions/getAction`;
+        let link = `${url}/api/v1/actions/getAction?type=${type}`;
         const response = yield getRequest(link, tenantId);;
         if (response.statut === 200) {
             // Assurez-vous d'extraire le tableau d'actions
