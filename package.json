@@ -6,12 +6,11 @@
   "dependencies": {
     "@chakra-ui/icons": "^1.1.5",
     "@chakra-ui/react": "^2.8.2",
-    "@chakra-ui/system": "^1.12.1",
-    "@chakra-ui/theme-tools": "^1.3.6",
+    "@chakra-ui/system": "2.6.2",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@hypertheme-editor/chakra-ui": "^0.1.5",
+    "@hypertheme-editor/chakra-ui": "^0.2.2",
     "@reduxjs/toolkit": "1.9.7",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -72,7 +71,9 @@
     "sitemap": "babel-node ./sitemap-builder.js"
   },
   "resolutions": {
-    "react-error-overlay": "6.0.9"
+    "@emotion/react": "11.13.3",
+    "@emotion/styled": "11.13.0",
+    "@emotion/cache": "11.13.0"
   },
   "eslintConfig": {
     "extends": [

@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import 'assets/css/App.css';
-import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import AuthLayout from 'layouts/auth';
 import AdminLayout from 'layouts/admin';
-import isAuth from 'helper/isAuth';
 import { connect } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
+import { isAuth } from 'helper/isAuth';
 
 const App = ({ userAuth }) => {
-    const [authenticate, setAuthenticate] = useState(false)
-
-    useEffect(() => {
-        setAuthenticate(isAuth());
-    }, [userAuth]);
+    const authenticated = isAuth();
 
     return (
-        <HashRouter>
+        <BrowserRouter>
             <Toaster position="bottom-center" reverseOrder={false} />
-            {authenticate ? (
+            {authenticated ? (
                 <Switch>
                     <Route exact path="/admin/dashboard" render={(props) => <AdminLayout {...props} />} />
                     <Route exact path="/admin/events" render={(props) => <AdminLayout {...props} />} />
@@ -43,7 +39,7 @@ const App = ({ userAuth }) => {
                     <Redirect to="/auth/login" />
                 </Switch>
             )}
-        </HashRouter>
+        </BrowserRouter>
     )
 }
 

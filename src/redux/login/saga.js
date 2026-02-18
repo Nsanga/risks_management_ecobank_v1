@@ -20,7 +20,7 @@ function* loginRequest(action) {
 
     if (data && data.data?.token) {
       toast.success("Connexion reussie");
-      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('token_future_risk_management', data.data.token);
       const surname = data.data.user.surname || ''; // Utilise une chaîne vide si surname est undefined
       const name = data.data.user.name || ''; // Utilise une chaîne vide si name est undefined
 
