@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -12,7 +12,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* list() {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/user-groups/all`;
+        let link = `${API_CONFIG.url}/api/v1/user-groups/all`;
         const data = yield getRequest(link, tenantId);
         console.log(data)
         if (data.message === "Success") {
@@ -30,7 +30,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/user-groups/update/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/user-groups/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.userGroupData), tenantId);
         console.log("action.payload.userGroupData:::/", action.payload.userGroupData)
         if (data.status === 200) {
@@ -50,7 +50,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/user-groups/create`;
+        const link = `${API_CONFIG.url}/api/v1/user-groups/create`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
@@ -74,7 +74,7 @@ function* deleteUserGroup(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/user-groups/delete/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/user-groups/delete/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {

@@ -12,7 +12,7 @@ import {
 import { PasswordField } from "./PasswordField";
 import { connect, useDispatch } from "react-redux";
 import { useState } from "react";
-import { loginRequest } from "redux/login/action";
+import { loginRequest } from "reduxStore/login/action";
 
 const SignIn = ({ error }) => {
   const dispatch = useDispatch();

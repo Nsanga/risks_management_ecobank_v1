@@ -1,13 +1,13 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { getTenantFromSubdomain } from 'utils/getTenant';
 import { postRequestFormData } from 'helper/api';
 
 function* uploadFileSaga(action) {
     const { file } = action.payload;
     const tenantId = getTenantFromSubdomain();
-    const link = `${url}/api/v1/risks-controls/upload`;
+    const link = `${API_CONFIG.url}/api/v1/risks-controls/upload`;
     
     try {
         // Création du FormData

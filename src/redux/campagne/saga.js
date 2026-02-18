@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -13,7 +13,7 @@ function* list(action) {
     const { type } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/campaign/list?type=${type}`;
+        let link = `${API_CONFIG.url}/api/v1/campaign/list?type=${type}`;
         const data = yield getRequest(link, tenantId);;
         console.log(data)
         if (data.message === "Success") {
@@ -31,7 +31,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/campaign/update?id=${id}`;
+        let link = `${API_CONFIG.url}/api/v1/campaign/update?id=${id}`;
         const data = yield putRequest(link, action.payload.campaignData);
         console.log("data:::/", data)
         if (data.message === "Success") {
@@ -51,7 +51,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/campaign/add`;
+        const link = `${API_CONFIG.url}/api/v1/campaign/add`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
@@ -75,7 +75,7 @@ function* deleteCampaign(action) {
     const { id, type } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/campaign/delete?id=${id}`;
+        const link = `${API_CONFIG.url}/api/v1/campaign/delete?id=${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {
@@ -97,7 +97,7 @@ function* deleteCampaign(action) {
 function* listGroups() {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/group/list`;
+        let link = `${API_CONFIG.url}/api/v1/group/list`;
         const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_GROUPS_SUCCESS, payload: data });
@@ -113,7 +113,7 @@ function* listGroups() {
 function* addGroup(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/group/add`;
+        const link = `${API_CONFIG.url}/api/v1/group/add`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
@@ -137,7 +137,7 @@ function* updateGroup(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/group/update?id=${id}`;
+        let link = `${API_CONFIG.url}/api/v1/group/update?id=${id}`;
         const data = yield putRequest(link, action.payload.groupData);
         console.log("data:::/", data)
         if (data.message === "Success") {
@@ -159,7 +159,7 @@ function* deleteGroup(action) {
     console.log('id', id)
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/group/delete?id=${id}`;
+        const link = `${API_CONFIG.url}/api/v1/group/delete?id=${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {

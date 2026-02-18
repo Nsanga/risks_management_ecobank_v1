@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -12,7 +12,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* list(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/risks-controls/get-entity`;
+        const link = `${API_CONFIG.url}/api/v1/risks-controls/get-entity`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.success === true) {
@@ -30,7 +30,7 @@ function* fetchOne(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/risks-controls/specific-risk-or-control?idControl=${id}`;
+        const link = `${API_CONFIG.url}/api/v1/risks-controls/specific-risk-or-control?idControl=${id}`;
         const data = yield getRequest(link, tenantId);;
 
         if (data.success === true) {
@@ -47,7 +47,7 @@ function* fetchOne(action) {
 function* update(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/risks-controls/update`;
+        let link = `${API_CONFIG.url}/api/v1/risks-controls/update`;
         const data = yield putRequest(link, JSON.stringify(action.payload.entityRiskControlData), tenantId);
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_ENTITYRISKCONTROL_SUCCESS, payload: { data: data.data } });
@@ -67,7 +67,7 @@ function* deleteEntityRiskControl(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/risk-control/delete/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/risk-control/delete/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {
@@ -89,7 +89,7 @@ function* deleteEntityRiskControl(action) {
 function* copy(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/risks-controls/copy`;
+        const link = `${API_CONFIG.url}/api/v1/risks-controls/copy`;
         const data = yield call(postRequest, link, JSON.stringify(action.payload), tenantId);
 
         if (data.success === true) {
@@ -108,7 +108,7 @@ function* copy(action) {
 function* move(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/risks-controls/move`;
+        const link = `${API_CONFIG.url}/api/v1/risks-controls/move`;
         const data = yield call(postRequest, link, JSON.stringify(action.payload), tenantId);
 
         if (data.success === true) {

@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -11,7 +11,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* listByEntity(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/actions/getRapport`;
+        let link = `${API_CONFIG.url}/api/v1/actions/getRapport`;
         const response = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         if (response.success === true) {
             yield put({ type: types.GET_ENTITY_REPORTS_SUCCESS, payload: { data: response.data } });
@@ -27,7 +27,7 @@ function* listByEntity(action) {
 function* listEventReportByEntity(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/events/getRapport`;
+        let link = `${API_CONFIG.url}/api/v1/events/getRapport`;
         const response = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         if (response.success === true) {
             yield put({ type: types.GET_EVENT_ENTITY_REPORTS_SUCCESS, payload: { data: response.data } });
@@ -44,7 +44,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/actions/update/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/actions/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.actionData), tenantId);
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_REPORT_SUCCESS, payload: data.data.action });
@@ -63,7 +63,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/actions/postAction`;
+        const link = `${API_CONFIG.url}/api/v1/actions/postAction`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.statut === 200) {
@@ -86,7 +86,7 @@ function* deleteAction(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/actions/delete/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/actions/delete/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {

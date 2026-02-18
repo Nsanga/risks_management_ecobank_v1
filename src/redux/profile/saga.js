@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -12,7 +12,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* list() {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/profiles/all`;
+        let link = `${API_CONFIG.url}/api/v1/profiles/all`;
         const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_PROFILES_SUCCESS, payload: data });
@@ -29,7 +29,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/profiles/update/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/profiles/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.profileData), tenantId);
         if (data.message === "Success") {
             yield put({ type: types.UPDATE_PROFILE_SUCCESS, payload: data.data.profile });
@@ -48,7 +48,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/profiles/create`;
+        const link = `${API_CONFIG.url}/api/v1/profiles/create`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.status === 201) {
@@ -84,7 +84,7 @@ function* deleteProfile(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/profiles/delete/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/profiles/delete/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {

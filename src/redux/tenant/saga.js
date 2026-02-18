@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -12,7 +12,7 @@ import { getUnauthRequest } from 'helper/api';
 
 function* list() {
     try {
-        let link = `${url}/api/v1/tenant`;
+        let link = `${API_CONFIG.url}/api/v1/tenant`;
         const data = yield getRequest(link);
         if (data.status === 200) {
             yield put({ type: types.GET_TENANTS_SUCCESS, payload: data });
@@ -28,9 +28,8 @@ function* list() {
 function* fetchTenant() {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/tenant/tenant-by-tenant-id/${tenantId}`;
+        let link = `${API_CONFIG.url}/api/v1/tenant/tenant-by-tenant-id/${tenantId}`;
         const data = yield getUnauthRequest(link);
-        console.log("data => ", data)
         if (data.status === 200) {
             yield put({ type: types.GET_TENANT_SUCCESS, payload: data });
         } else {
@@ -45,7 +44,7 @@ function* fetchTenant() {
 function* update(action) {
     const { id } = action.payload;
     try {
-        let link = `${url}/api/v1/tenant/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/tenant/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.tenantData));
         if (data.status === 200) {
             yield put({ type: types.UPDATE_TENANT_SUCCESS, payload: data.data.entity});
@@ -63,7 +62,7 @@ function* update(action) {
 
 function* add(action) {
     try {
-        const link = `${url}/api/v1/tenant`;
+        const link = `${API_CONFIG.url}/api/v1/tenant`;
         const data = yield postRequest(link, JSON.stringify(action.payload));
 
         if (data.status === 200) {
@@ -85,7 +84,7 @@ function* add(action) {
 function* deleteTenant(action) {
     const { id } = action.payload;
     try {
-        const link = `${url}/api/v1/tenant/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/tenant/${id}`;
 
         const data = yield deleteRequest(link);
         if (data) {
