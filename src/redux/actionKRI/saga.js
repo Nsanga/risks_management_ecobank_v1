@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -11,7 +11,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* list(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/actionKRI/getActionByIdKeyIndicator`;
+        let link = `${API_CONFIG.url}/api/v1/actionKRI/getActionByIdKeyIndicator`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log(data)
         if (data.statut === 200) {
@@ -28,7 +28,7 @@ function* list(action) {
 function* fetchAction(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/actionKRI/getActionByHistoryKRI`;
+        let link = `${API_CONFIG.url}/api/v1/actionKRI/getActionByHistoryKRI`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log(data)
         if (data.statut === 200) {
@@ -46,7 +46,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/actionKRI/updateActionKRI/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/actionKRI/updateActionKRI/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.actionKRIData), tenantId);
         // console.log("data:::/", data)
         if (data.statut === 200) {
@@ -66,7 +66,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/actionKRI/postActionKRI`;
+        const link = `${API_CONFIG.url}/api/v1/actionKRI/postActionKRI`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
         console.log('dataADD::', data)
 
@@ -89,7 +89,7 @@ function* deleteActionKRI(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/history/deleteHistory/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/history/deleteHistory/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {

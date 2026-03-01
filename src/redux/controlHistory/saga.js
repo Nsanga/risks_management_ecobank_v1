@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -12,7 +12,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* list() {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/history/getHistory`;
+        let link = `${API_CONFIG.url}/api/v1/history/getHistory`;
         const data = yield getRequest(link, tenantId);;
         if (data.status === 200) {
             yield put({ type: types.GET_CONTROLHISTORIES_SUCCESS, payload: data });
@@ -29,7 +29,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/history/updateHistory/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/history/updateHistory/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.controlHistoryData), tenantId);
         if (data.statut === 200) {
             yield put({ type: types.UPDATE_CONTROLHISTORY_SUCCESS, payload: data.data.controlHistory });
@@ -47,7 +47,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/history/postHistory`;
+        const link = `${API_CONFIG.url}/api/v1/history/postHistory`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.statut === 200) {
@@ -82,7 +82,7 @@ function* deleteControlHistory(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/history/deleteHistory/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/history/deleteHistory/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {

@@ -1,9 +1,4 @@
-function isAuth() {
-    let flag = false;
+export const getToken = () =>
+  localStorage.getItem("token_future_risk_management");
 
-    //check user has JWT token
-    localStorage.getItem("token") ? flag = true : flag = false
-   
-    return flag
-}
-export default isAuth;
+export const isAuth = () => !!getToken();

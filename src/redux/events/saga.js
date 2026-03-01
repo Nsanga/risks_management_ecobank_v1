@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import * as types from './types';
 import toast from 'react-hot-toast';
 import { getRequest } from 'helper/api';
-import { url } from 'urlLoader';
+import { API_CONFIG } from 'config/api';
 import { putRequest } from 'helper/api';
 import { postRequest } from 'helper/api';
 import { deleteRequest } from 'helper/api';
@@ -12,7 +12,7 @@ import { getTenantFromSubdomain } from 'utils/getTenant';
 function* list() {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/events/all`;
+        let link = `${API_CONFIG.url}/api/v1/events/all`;
         const data = yield getRequest(link, tenantId);;
         if (data.message === "Success") {
             yield put({ type: types.GET_EVENTS_SUCCESS, payload: data });
@@ -28,7 +28,7 @@ function* list() {
 function* listByEntity(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/events/${action.payload}`;
+        let link = `${API_CONFIG.url}/api/v1/events/${action.payload}`;
         const data = yield getRequest(link, tenantId);;
         if (data.status === 200) {
             yield put({ type: types.GET_EVENTS_BY_ENTITY_SUCCESS, payload: data });
@@ -44,7 +44,7 @@ function* listByEntity(action) {
 function* fetchEvent(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/events/one/${action.payload}`;
+        let link = `${API_CONFIG.url}/api/v1/events/one/${action.payload}`;
         const data = yield getRequest(link, tenantId);;
         if (data.status === 200) {
             yield put({ type: types.GET_EVENT_SUCCESS, payload: data });
@@ -61,7 +61,7 @@ function* update(action) {
     const { id } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        let link = `${url}/api/v1/events/update/${id}`;
+        let link = `${API_CONFIG.url}/api/v1/events/update/${id}`;
         const data = yield putRequest(link, JSON.stringify(action.payload.eventData), tenantId);
         if (data.status === 200) {
             yield put({ type: types.UPDATE_EVENT_SUCCESS, payload: data.data.event });
@@ -79,7 +79,7 @@ function* update(action) {
 function* add(action) {
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/events/create`;
+        const link = `${API_CONFIG.url}/api/v1/events/create`;
         const data = yield postRequest(link, JSON.stringify(action.payload), tenantId);
 
         if (data.message === 'Created') {
@@ -101,7 +101,7 @@ function* deleteEvent(action) {
     const { id, type } = action.payload;
     try {
         const tenantId = getTenantFromSubdomain();
-        const link = `${url}/api/v1/events/delete/${id}`;
+        const link = `${API_CONFIG.url}/api/v1/events/delete/${id}`;
 
         const data = yield deleteRequest(link, null, tenantId);
         if (data) {
