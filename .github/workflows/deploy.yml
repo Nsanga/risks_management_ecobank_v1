@@ -13,26 +13,22 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_NAME: futurisk-frontend
+  APP_NAME: risks_management_ecobank_v1
 
   # ✅ Mets "build" si Create React App, ou "dist" si Vite
-  BUILD_DIR: dist
+  BUILD_DIR: build
 
-  # Chemin du site sur le serveur
-  DEPLOY_ROOT: /var/www/frontend/test_futuriskmanagement
+  # ✅ PROD (main)
+  DEPLOY_PATH: /var/www/frontend/risks_management_ecobank_v1
 
-  # Déploiement atomique
-  RELEASES_DIR: /var/www/frontend/test_futuriskmanagement/releases
-  CURRENT_LINK: /var/www/frontend/test_futuriskmanagement/current
-
-  # Healthcheck optionnel (laisser vide si tu n'en as pas)
-  HEALTHCHECK_URL: ""
+  # Dossier temporaire sur le serveur (staging)
+  TEMP_PATH: /tmp/deploy-risks_management_ecobank_v1
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     env:
       CI: "false"
@@ -73,7 +69,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -d "${BUILD_DIR}" || (echo "::error::Dossier ${BUILD_DIR} introuvable"; exit 1)
+          test -d "${BUILD_DIR}" || (echo "::error::Dossier ${BUILD_DIR} introuvable (mets BUILD_DIR=build ou dist)"; exit 1)
           ls -la "${BUILD_DIR}"
 
       - name: Vérification secrets SSH + port
@@ -86,15 +82,16 @@ jobs:
           fi
           echo "SSH_PORT=${SSH_PORT:-22}" >> "$GITHUB_ENV"
 
-      - name: Préparer SSH local
+      - name: Préparer SSH local (clé + known_hosts)
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
+          # clé multi-lignes OK
           echo "${SSH_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
-          # Fallback si la clé est stockée avec des \n littéraux
+          # fallback si le secret contient des \n littéraux
           if [[ "$(wc -l < ~/.ssh/id_rsa | tr -d ' ')" -lt 5 && "${SSH_KEY}" == *'\\n'* ]]; then
             printf '%b' "${SSH_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
           fi
@@ -103,73 +100,53 @@ jobs:
           ssh-keyscan -H -p "${SSH_PORT}" "${SSH_HOST}" >> ~/.ssh/known_hosts 2>/dev/null || true
           chmod 644 ~/.ssh/known_hosts || true
 
-      - name: Préparer le serveur (releases + current)
+      - name: Préparer le serveur (staging + dossiers)
         uses: appleboy/ssh-action@v1.2.2
         env:
-          DEPLOY_ROOT: ${{ env.DEPLOY_ROOT }}
-          RELEASES_DIR: ${{ env.RELEASES_DIR }}
-          CURRENT_LINK: ${{ env.CURRENT_LINK }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          TEMP_PATH: ${{ env.TEMP_PATH }}
         with:
           host: ${{ env.SSH_HOST }}
           username: ${{ env.SSH_USER }}
           port: ${{ env.SSH_PORT }}
           key: ${{ env.SSH_KEY }}
-          envs: DEPLOY_ROOT,RELEASES_DIR,CURRENT_LINK
+          envs: DEPLOY_PATH,TEMP_PATH
           script: |
             set -euo pipefail
-            sudo mkdir -p "$RELEASES_DIR"
-            sudo mkdir -p "$DEPLOY_ROOT"
-            # on garde current comme symlink (ou dossier si tu préfères)
-            if [ -e "$CURRENT_LINK" ] && [ ! -L "$CURRENT_LINK" ]; then
-              echo "⚠️ $CURRENT_LINK existe mais n'est pas un symlink. (OK, on continue)"
-            fi
+            sudo mkdir -p "$DEPLOY_PATH"
+            sudo mkdir -p "$TEMP_PATH"
+            sudo rm -rf "$TEMP_PATH"/*
 
-      - name: Upload vers une release (rsync)
+      - name: Transférer le build vers le staging (rsync)
         shell: bash
         run: |
           set -euo pipefail
-          RELEASE_ID="${GITHUB_SHA}"
-          REMOTE_RELEASE="${RELEASES_DIR}/${RELEASE_ID}"
-
-          ssh -p "$SSH_PORT" -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
-            "${SSH_USER}@${SSH_HOST}" "sudo mkdir -p '${REMOTE_RELEASE}'"
-
           rsync -az --delete \
             -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
             "${BUILD_DIR}/" \
-            "${SSH_USER}@${SSH_HOST}:${REMOTE_RELEASE}/"
+            "${SSH_USER}@${SSH_HOST}:${TEMP_PATH}/"
 
-      - name: Switch atomique + reload nginx + cleanup
+      - name: Publier (remplacer le contenu prod) + reload nginx
         uses: appleboy/ssh-action@v1.2.2
         env:
-          RELEASES_DIR: ${{ env.RELEASES_DIR }}
-          CURRENT_LINK: ${{ env.CURRENT_LINK }}
-          BUILD_DIR: ${{ env.BUILD_DIR }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          TEMP_PATH: ${{ env.TEMP_PATH }}
         with:
           host: ${{ env.SSH_HOST }}
           username: ${{ env.SSH_USER }}
           port: ${{ env.SSH_PORT }}
           key: ${{ env.SSH_KEY }}
-          envs: RELEASES_DIR,CURRENT_LINK,BUILD_DIR
+          envs: DEPLOY_PATH,TEMP_PATH
           script: |
             set -euo pipefail
-            RELEASE_ID="${GITHUB_SHA}"
-            NEW_RELEASE="${RELEASES_DIR}/${RELEASE_ID}"
 
-            if [ ! -d "$NEW_RELEASE" ]; then
-              echo "Release introuvable: $NEW_RELEASE"
-              exit 1
-            fi
-
-            # Symlink atomique
-            sudo ln -sfn "$NEW_RELEASE" "$CURRENT_LINK"
+            # Remplacement "propre" : on vide puis on copie depuis staging
+            sudo rm -rf "$DEPLOY_PATH"/*
+            sudo rsync -a --delete "$TEMP_PATH/" "$DEPLOY_PATH/"
+            sudo rm -rf "$TEMP_PATH"
 
             sudo nginx -t
             sudo systemctl reload nginx
-
-            # Garde les 5 dernières releases
-            cd "$RELEASES_DIR"
-            ls -1dt */ 2>/dev/null | tail -n +6 | xargs -r sudo rm -rf
 
   notification:
     needs: deploy
@@ -183,7 +160,6 @@ jobs:
       SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
       SMTP_FROM: ${{ vars.SMTP_FROM }}
       SMTP_TO: ${{ vars.SMTP_TO }}
-      APP_NAME: ${{ env.APP_NAME }}
 
     steps:
       - name: Vérifier config SMTP (optionnel)
@@ -208,9 +184,9 @@ jobs:
           password: ${{ env.SMTP_PASSWORD }}
           from: ${{ env.SMTP_FROM }}
           to: ${{ env.SMTP_TO }}
-          subject: "[SUCCÈS] Déploiement : ${{ env.APP_NAME }}"
+          subject: "[SUCCÈS] Déploiement : risks_management_ecobank_v1"
           body: |
-            Déploiement OK : ${{ env.APP_NAME }}
+            Déploiement OK : risks_management_ecobank_v1
             Branche : ${{ github.ref_name }}
             Commit : ${{ github.sha }}
             Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -226,14 +202,14 @@ jobs:
           password: ${{ env.SMTP_PASSWORD }}
           from: ${{ env.SMTP_FROM }}
           to: ${{ env.SMTP_TO }}
-          subject: "[ÉCHEC] Déploiement : ${{ env.APP_NAME }}"
+          subject: "[ÉCHEC] Déploiement : risks_management_ecobank_v1"
           body: |
-            Déploiement KO : ${{ env.APP_NAME }}
+            Déploiement KO : risks_management_ecobank_v1
             Branche : ${{ github.ref_name }}
             Commit : ${{ github.sha }}
             Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-      - name: SMTP manquant (ignoré)
+      - name: SMTP manquant (notification ignorée)
         if: ${{ steps.smtp.outputs.enabled != 'true' }}
         shell: bash
         run: echo "::warning::Variables SMTP manquantes. Notification ignorée."
