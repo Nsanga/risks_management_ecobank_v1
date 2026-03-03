@@ -26,7 +26,7 @@ jobs:
       - name: Configurer Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "18"
 
       # ✅ Cache npm manuel (fonctionne même sans package-lock.json)
       - name: Activer le cache npm (sans lockfile)
