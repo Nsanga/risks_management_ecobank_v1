@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build-et-deploiement:
     runs-on: ubuntu-latest
-    environment: Develop
+    environment: develop
     env:
       CI: false
 
@@ -56,7 +56,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm install
+          npm install --legacy-peer-deps
 
       - name: Construire l'application
         shell: bash
@@ -129,7 +129,7 @@ jobs:
   notification:
     needs: build-et-deploiement
     runs-on: ubuntu-latest
-    environment: Develop
+    environment: develop
     if: always()
     env:
       SMTP_HOST: ${{ vars.SMTP_HOST }}
