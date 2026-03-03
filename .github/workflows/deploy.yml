@@ -106,6 +106,9 @@ jobs:
             sudo systemctl reload nginx
             echo "✓ Déploiement réussi !"
 
+
+
+            
   notification:
     needs: build-et-deploiement
     runs-on: ubuntu-latest
@@ -131,6 +134,16 @@ jobs:
             echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Préparer les métadonnées email
+        id: mailmeta
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "run_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+          echo "commit_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          echo "when=$(date -u '+%Y-%m-%d %H:%M UTC')" >> "$GITHUB_OUTPUT"
+
       - name: Envoyer email de succès
         if: ${{ needs.build-et-deploiement.result == 'success' && steps.smtp.outputs.enabled == 'true' }}
         uses: dawidd6/action-send-mail@v3
@@ -142,12 +155,30 @@ jobs:
           password: ${{ env.SMTP_PASSWORD }}
           from: ${{ env.SMTP_FROM }}
           to: ${{ env.SMTP_TO }}
-          subject: "🎉 Déploiement Futuriskmanagement réussi !"
+          subject: "✅ Frontend Production déployé — Futuriskmanagement — #${{ steps.mailmeta.outputs.short_sha }}"
           body: |
-            🚀 Déploiement réussi.
-            Branche : ${{ github.ref_name }}
-            Commit : ${{ github.sha }}
-            Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            🎉 Bonjour,
+
+            Le déploiement de l’**application Frontend (ENV : Production)** a été réalisé avec succès. 🚀
+
+            📦 **Application :** Futuriskmanagement - Frontend
+            🌍 **Environnement :** Production
+            🔀 **Branche :** ${{ github.ref_name }}
+            🔐 **Commit :** ${{ github.sha }}
+            👤 **Auteur :** ${{ github.actor }}
+            🕒 **Date :** ${{ steps.mailmeta.outputs.when }}
+
+            🧾 **Message du commit :**
+            ${{ github.event.head_commit.message }}
+
+            🔗 **Liens utiles :**
+            • Run GitHub Actions : ${{ steps.mailmeta.outputs.run_url }}
+            • Commit : ${{ steps.mailmeta.outputs.commit_url }}
+
+            ✅ Nginx a été rechargé proprement.
+            🚀 Le Frontend Production est en ligne.
+
+            — CI/CD Automatique 🤖
 
       - name: Envoyer email d'échec
         if: ${{ needs.build-et-deploiement.result != 'success' && steps.smtp.outputs.enabled == 'true' }}
@@ -160,12 +191,26 @@ jobs:
           password: ${{ env.SMTP_PASSWORD }}
           from: ${{ env.SMTP_FROM }}
           to: ${{ env.SMTP_TO }}
-          subject: "❌ Déploiement Futuriskmanagement échoué"
+          subject: "🚨 ÉCHEC Déploiement — Frontend Production — #${{ steps.mailmeta.outputs.short_sha }}"
           body: |
-            ⚠️ Déploiement en échec.
-            Branche : ${{ github.ref_name }}
-            Commit : ${{ github.sha }}
-            Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            🚨 Bonjour,
+
+            Le déploiement de l’**application Frontend (ENV : Production)** a échoué.
+
+            📦 **Application :** Futuriskmanagement - Frontend
+            🌍 **Environnement :** Production
+            🔀 **Branche :** ${{ github.ref_name }}
+            🔐 **Commit :** ${{ github.sha }}
+            👤 **Auteur :** ${{ github.actor }}
+            🕒 **Date :** ${{ steps.mailmeta.outputs.when }}
+
+            🧾 **Message du commit :**
+            ${{ github.event.head_commit.message }}
+
+            🔎 Merci de vérifier le run CI :
+            ${{ steps.mailmeta.outputs.run_url }}
+
+            — CI/CD Automatique 🤖
 
       - name: SMTP manquant (notification ignorée)
         if: ${{ steps.smtp.outputs.enabled != 'true' }}
