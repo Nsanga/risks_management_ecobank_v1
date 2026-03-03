@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/static/css/main.491f59c2.css",
+    "main.js": "/static/js/main.9daee27d.js",
+    "static/js/213.fdfba798.chunk.js": "/static/js/213.fdfba798.chunk.js",
+    "static/js/455.9b38fa51.chunk.js": "/static/js/455.9b38fa51.chunk.js",
+    "static/media/logoMakeda.png": "/static/media/logoMakeda.597bd3fcb6b2336fc34f.png",
+    "static/media/Navbar.png": "/static/media/Navbar.f96a9f58c491b9acda99.png",
+    "static/media/loader.gif": "/static/media/loader.f3dfbcd8b3600a87b2b5.gif",
+    "index.html": "/index.html",
+    "main.491f59c2.css.map": "/static/css/main.491f59c2.css.map",
+    "main.9daee27d.js.map": "/static/js/main.9daee27d.js.map",
+    "213.fdfba798.chunk.js.map": "/static/js/213.fdfba798.chunk.js.map",
+    "455.9b38fa51.chunk.js.map": "/static/js/455.9b38fa51.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.491f59c2.css",
+    "static/js/main.9daee27d.js"
+  ]
+}

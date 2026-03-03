@@ -1,135 +1,242 @@
-name: Déploiement de l'application React
+name: Déploiement Frontend Test
 
 on:
   push:
-    branches: [main]
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-deploy-develop
+  cancel-in-progress: true
 
 jobs:
   build-et-deploiement:
     runs-on: ubuntu-latest
-    environment: production
+    environment: Develop
     env:
       CI: false
+
+      # ✅ CRA = build | Vite = dist
+      BUILD_DIR: build
+
+      # ✅ Serveur (TEST)
+      DEPLOY_PATH: /var/www/frontend/test_futuriskmanagement/build
+      APP_URL: https://test.futuriskmanagement.com
+
     steps:
       - name: Récupérer le code depuis le dépôt
-        uses: actions/checkout@v3
-
-      - name: Créer un fichier .env localement pour le build
-        run: |
-          echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" > .env
+        uses: actions/checkout@v4
 
       - name: Configurer Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+
+      # ✅ Cache npm manuel (fonctionne même sans package-lock.json)
+      - name: Activer le cache npm (sans lockfile)
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Créer un fichier .env localement pour le build
+        shell: bash
+        run: |
+          set -euo pipefail
+          # ✅ Astuce: si tu as des vars différentes par environnement GitHub (Develop vs Production),
+          # mets REACT_APP_API_URL dans les "Variables" du bon environment.
+          echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" > .env
 
       - name: Installer les dépendances
-        run: npm install
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install
 
       - name: Construire l'application
-        run: npm run build
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
 
-      - name: Vérifier le contenu du dossier build local (GitHub)
-        run: ls -la build
+      - name: Vérifier le contenu du dossier de build local (GitHub)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d "${BUILD_DIR}" || (echo "::error::Dossier ${BUILD_DIR} introuvable. Mets BUILD_DIR=build (CRA) ou dist (Vite)."; exit 1)
+          ls -la "${BUILD_DIR}"
 
-      - name: Vérification et création de la structure des dossiers sur le serveur
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Vérification et création de la structure des dossiers sur le serveur (TEST)
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
+          port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
-            echo "=== Vérification de la structure des dossiers ==="
-            if [ ! -d "/var/www" ]; then
-              sudo mkdir -p /var/www
-              echo "Répertoire /var/www créé"
-            else
-              echo "Répertoire /var/www existe déjà"
-            fi
-            if [ ! -d "/var/www/frontend" ]; then
-              sudo mkdir -p /var/www/frontend
-              echo "Répertoire /var/www/frontend créé"
-            else
-              echo "Répertoire /var/www/frontend existe déjà"
-            fi
-            if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
-              sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
-              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
-            else
-              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
-            fi
-            echo "=== Préparation du dossier build ==="
-            sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
-            sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
-            echo "Structure des dossiers vérifiée et dossier build préparé"
+            set -euo pipefail
+            echo "=== Préparation dossier TEST ==="
 
-      - name: Transférer le dossier build sur le serveur
+            sudo mkdir -p /var/www/frontend/test_futuriskmanagement
+
+            echo "=== Préparation du dossier de déploiement ==="
+            sudo rm -rf /var/www/frontend/test_futuriskmanagement/build
+            sudo mkdir -p /var/www/frontend/test_futuriskmanagement/build
+
+            echo "✓ Dossiers TEST prêts"
+
+      - name: Transférer le dossier build sur le serveur (TEST)
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
-          source: "build/"
-          target: "/var/www/frontend/risks_management_ecobank_v1/build/"
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: "${{ env.BUILD_DIR }}/"
+          target: "/var/www/frontend/test_futuriskmanagement/build/"
           strip_components: 1
 
-      - name: Redémarrer nginx
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Vérifier nginx + reload nginx + healthcheck
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
+          port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
-            echo "=== Redémarrage de nginx ==="
-            sudo systemctl restart nginx
-            echo "✓ Déploiement réussi !"
+            set -euo pipefail
+            echo "=== Test de configuration nginx ==="
+            sudo nginx -t
 
+            echo "=== Reload nginx ==="
+            sudo systemctl reload nginx
+
+            echo "=== Healthcheck (optionnel) ==="
+            if command -v curl >/dev/null 2>&1; then
+              curl -fsS --max-time 6 "https://test.futuriskmanagement.com" >/dev/null
+              echo "✓ Healthcheck OK : https://test.futuriskmanagement.com"
+            else
+              echo "curl non disponible, healthcheck ignoré"
+            fi
+
+            echo "✓ Déploiement TEST réussi !"
 
   notification:
     needs: build-et-deploiement
     runs-on: ubuntu-latest
-    environment: production
+    environment: Develop
     if: always()
+    env:
+      SMTP_HOST: ${{ vars.SMTP_HOST }}
+      SMTP_PORT: ${{ vars.SMTP_PORT }}
+      SMTP_USER: ${{ vars.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      SMTP_FROM: ${{ vars.SMTP_FROM }}
+      SMTP_TO: ${{ vars.SMTP_TO }}
+      APP_URL: https://test.futuriskmanagement.com
+
     steps:
-      - name: Construire la liste des destinataires
-        id: recipients
+      - name: Vérifier la configuration SMTP (optionnel)
+        id: smtp
+        shell: bash
         run: |
-          recipients="${{ vars.SMTP_TO }}"
-          if [ -n "${{ vars.SMTP_TO_2 }}" ]; then
-            recipients="$recipients, ${{ vars.SMTP_TO_2 }}"
+          set -euo pipefail
+          if [[ -n "${SMTP_HOST:-}" && -n "${SMTP_PORT:-}" && -n "${SMTP_USER:-}" && -n "${SMTP_PASSWORD:-}" && -n "${SMTP_FROM:-}" && -n "${SMTP_TO:-}" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
-          if [ -n "${{ vars.SMTP_TO_3 }}" ]; then
-            recipients="$recipients, ${{ vars.SMTP_TO_3 }}"
-          fi
-          echo "allEmails=$recipients" >> $GITHUB_OUTPUT
-          echo "Liste des destinataires : $recipients"
+
+      - name: Préparer les métadonnées email
+        id: mailmeta
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "run_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+          echo "commit_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          echo "when=$(date -u '+%Y-%m-%d %H:%M UTC')" >> "$GITHUB_OUTPUT"
 
       - name: Envoyer email de succès
-        if: ${{ needs.build-et-deploiement.result == 'success' }}
+        if: ${{ needs.build-et-deploiement.result == 'success' && steps.smtp.outputs.enabled == 'true' }}
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          subject: "🎉 Déploiement Futuriskmanagement réussi !"
-          body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          from: ${{ secrets.SMTP_FROM }}
-          to: ${{ steps.recipients.outputs.allEmails }}
+          server_address: ${{ env.SMTP_HOST }}
+          server_port: ${{ env.SMTP_PORT }}
+          secure: true
+          username: ${{ env.SMTP_USER }}
+          password: ${{ env.SMTP_PASSWORD }}
+          from: ${{ env.SMTP_FROM }}
+          to: ${{ env.SMTP_TO }}
+          subject: "✅ Frontend TEST déployé — ENV: Develop — #${{ steps.mailmeta.outputs.short_sha }}"
+          body: |
+            🎉 Bonjour,
+
+            Le déploiement de l’**application Frontend (TEST)** a réussi. ✅
+
+            📦 Application : Futuriskmanagement — Frontend
+            🌍 Environnement : Develop (TEST)
+            🔗 URL : ${{ env.APP_URL }}
+
+            🔀 Branche : ${{ github.ref_name }}
+            🔐 Commit : ${{ github.sha }}
+            👤 Auteur : ${{ github.actor }}
+            🕒 Date : ${{ steps.mailmeta.outputs.when }}
+
+            🧾 Message du commit :
+            ${{ github.event.head_commit.message }}
+
+            🔗 Liens utiles :
+            • Run GitHub Actions : ${{ steps.mailmeta.outputs.run_url }}
+            • Commit : ${{ steps.mailmeta.outputs.commit_url }}
+
+            🚀 Le Frontend TEST est en ligne.
+
+            — CI/CD Automatique 🤖
 
       - name: Envoyer email d'échec
-        if: ${{ needs.build-et-deploiement.result == 'failure' }}
+        if: ${{ needs.build-et-deploiement.result != 'success' && steps.smtp.outputs.enabled == 'true' }}
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          subject: "❌ Déploiement Futuriskmanagement échoué ❌"
-          body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          from: ${{ secrets.SMTP_FROM }}
-          to: ${{ steps.recipients.outputs.allEmails }}
+          server_address: ${{ env.SMTP_HOST }}
+          server_port: ${{ env.SMTP_PORT }}
+          secure: true
+          username: ${{ env.SMTP_USER }}
+          password: ${{ env.SMTP_PASSWORD }}
+          from: ${{ env.SMTP_FROM }}
+          to: ${{ env.SMTP_TO }}
+          subject: "🚨 ÉCHEC Déploiement — Frontend TEST — ENV: Develop — #${{ steps.mailmeta.outputs.short_sha }}"
+          body: |
+            🚨 Bonjour,
 
+            Le déploiement de l’**application Frontend (TEST)** a échoué.
+
+            📦 Application : Futuriskmanagement — Frontend
+            🌍 Environnement : Develop (TEST)
+            🔗 URL : ${{ env.APP_URL }}
+
+            🔀 Branche : ${{ github.ref_name }}
+            🔐 Commit : ${{ github.sha }}
+            👤 Auteur : ${{ github.actor }}
+            🕒 Date : ${{ steps.mailmeta.outputs.when }}
+
+            🧾 Message du commit :
+            ${{ github.event.head_commit.message }}
+
+            🔎 Merci de vérifier le run CI :
+            ${{ steps.mailmeta.outputs.run_url }}
+
+            🔗 Commit :
+            ${{ steps.mailmeta.outputs.commit_url }}
+
+            — CI/CD Automatique 🤖
+
+      - name: SMTP manquant (notification ignorée)
+        if: ${{ steps.smtp.outputs.enabled != 'true' }}
+        shell: bash
+        run: echo "::warning::Variables SMTP manquantes. Notification ignorée."
