@@ -1,135 +1,239 @@
-name: Déploiement de l'application React
+name: Déploiement React
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-deploy-main
+  cancel-in-progress: true
+
+env:
+  APP_NAME: futurisk-frontend
+
+  # ✅ Mets "build" si Create React App, ou "dist" si Vite
+  BUILD_DIR: dist
+
+  # Chemin du site sur le serveur
+  DEPLOY_ROOT: /var/www/frontend/test_futuriskmanagement
+
+  # Déploiement atomique
+  RELEASES_DIR: /var/www/frontend/test_futuriskmanagement/releases
+  CURRENT_LINK: /var/www/frontend/test_futuriskmanagement/current
+
+  # Healthcheck optionnel (laisser vide si tu n'en as pas)
+  HEALTHCHECK_URL: ""
 
 jobs:
-  build-et-deploiement:
+  deploy:
     runs-on: ubuntu-latest
     environment: production
-    env:
-      CI: false
-    steps:
-      - name: Récupérer le code depuis le dépôt
-        uses: actions/checkout@v3
+    timeout-minutes: 20
 
-      - name: Créer un fichier .env localement pour le build
+    env:
+      CI: "false"
+      SSH_HOST: ${{ secrets.SERVER_IP }}
+      SSH_USER: ${{ secrets.SERVER_USER }}
+      SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      SSH_PORT: ${{ secrets.SERVER_PORT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js + cache npm
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Créer le .env pour le build
+        shell: bash
         run: |
+          set -euo pipefail
           echo "REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }}" > .env
 
-      - name: Configurer Node.js
-        uses: actions/setup-node@v3
+      - name: Installer les dépendances (npm ci)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+
+      - name: Build
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+
+      - name: Vérifier le dossier de build
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d "${BUILD_DIR}" || (echo "::error::Dossier ${BUILD_DIR} introuvable"; exit 1)
+          ls -la "${BUILD_DIR}"
+
+      - name: Vérification secrets SSH + port
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${SSH_HOST:-}" || -z "${SSH_USER:-}" || -z "${SSH_KEY:-}" ]]; then
+            echo "::error::Secrets SSH manquants (SERVER_IP, SERVER_USER, SERVER_SSH_KEY)."
+            exit 1
+          fi
+          echo "SSH_PORT=${SSH_PORT:-22}" >> "$GITHUB_ENV"
+
+      - name: Préparer SSH local
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "${SSH_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
+          # Fallback si la clé est stockée avec des \n littéraux
+          if [[ "$(wc -l < ~/.ssh/id_rsa | tr -d ' ')" -lt 5 && "${SSH_KEY}" == *'\\n'* ]]; then
+            printf '%b' "${SSH_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
+          fi
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh-keyscan -H -p "${SSH_PORT}" "${SSH_HOST}" >> ~/.ssh/known_hosts 2>/dev/null || true
+          chmod 644 ~/.ssh/known_hosts || true
+
+      - name: Préparer le serveur (releases + current)
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          DEPLOY_ROOT: ${{ env.DEPLOY_ROOT }}
+          RELEASES_DIR: ${{ env.RELEASES_DIR }}
+          CURRENT_LINK: ${{ env.CURRENT_LINK }}
         with:
-          node-version: '20'
-
-      - name: Installer les dépendances
-        run: npm install
-
-      - name: Construire l'application
-        run: npm run build
-
-      - name: Vérifier le contenu du dossier build local (GitHub)
-        run: ls -la build
-
-      - name: Vérification et création de la structure des dossiers sur le serveur
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          port: ${{ env.SSH_PORT }}
+          key: ${{ env.SSH_KEY }}
+          envs: DEPLOY_ROOT,RELEASES_DIR,CURRENT_LINK
           script: |
-            echo "=== Vérification de la structure des dossiers ==="
-            if [ ! -d "/var/www" ]; then
-              sudo mkdir -p /var/www
-              echo "Répertoire /var/www créé"
-            else
-              echo "Répertoire /var/www existe déjà"
+            set -euo pipefail
+            sudo mkdir -p "$RELEASES_DIR"
+            sudo mkdir -p "$DEPLOY_ROOT"
+            # on garde current comme symlink (ou dossier si tu préfères)
+            if [ -e "$CURRENT_LINK" ] && [ ! -L "$CURRENT_LINK" ]; then
+              echo "⚠️ $CURRENT_LINK existe mais n'est pas un symlink. (OK, on continue)"
             fi
-            if [ ! -d "/var/www/frontend" ]; then
-              sudo mkdir -p /var/www/frontend
-              echo "Répertoire /var/www/frontend créé"
-            else
-              echo "Répertoire /var/www/frontend existe déjà"
-            fi
-            if [ ! -d "/var/www/frontend/risks_management_ecobank_v1" ]; then
-              sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1
-              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 créé"
-            else
-              echo "Répertoire /var/www/frontend/risks_management_ecobank_v1 existe déjà"
-            fi
-            echo "=== Préparation du dossier build ==="
-            sudo rm -rf /var/www/frontend/risks_management_ecobank_v1/build
-            sudo mkdir -p /var/www/frontend/risks_management_ecobank_v1/build
-            echo "Structure des dossiers vérifiée et dossier build préparé"
 
-      - name: Transférer le dossier build sur le serveur
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
-          source: "build/"
-          target: "/var/www/frontend/risks_management_ecobank_v1/build/"
-          strip_components: 1
+      - name: Upload vers une release (rsync)
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE_ID="${GITHUB_SHA}"
+          REMOTE_RELEASE="${RELEASES_DIR}/${RELEASE_ID}"
 
-      - name: Redémarrer nginx
-        uses: appleboy/ssh-action@v1.0.3
+          ssh -p "$SSH_PORT" -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+            "${SSH_USER}@${SSH_HOST}" "sudo mkdir -p '${REMOTE_RELEASE}'"
+
+          rsync -az --delete \
+            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+            "${BUILD_DIR}/" \
+            "${SSH_USER}@${SSH_HOST}:${REMOTE_RELEASE}/"
+
+      - name: Switch atomique + reload nginx + cleanup
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          RELEASES_DIR: ${{ env.RELEASES_DIR }}
+          CURRENT_LINK: ${{ env.CURRENT_LINK }}
+          BUILD_DIR: ${{ env.BUILD_DIR }}
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          port: ${{ env.SSH_PORT }}
+          key: ${{ env.SSH_KEY }}
+          envs: RELEASES_DIR,CURRENT_LINK,BUILD_DIR
           script: |
-            echo "=== Redémarrage de nginx ==="
-            sudo systemctl restart nginx
-            echo "✓ Déploiement réussi !"
+            set -euo pipefail
+            RELEASE_ID="${GITHUB_SHA}"
+            NEW_RELEASE="${RELEASES_DIR}/${RELEASE_ID}"
 
+            if [ ! -d "$NEW_RELEASE" ]; then
+              echo "Release introuvable: $NEW_RELEASE"
+              exit 1
+            fi
+
+            # Symlink atomique
+            sudo ln -sfn "$NEW_RELEASE" "$CURRENT_LINK"
+
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            # Garde les 5 dernières releases
+            cd "$RELEASES_DIR"
+            ls -1dt */ 2>/dev/null | tail -n +6 | xargs -r sudo rm -rf
 
   notification:
-    needs: build-et-deploiement
+    needs: deploy
     runs-on: ubuntu-latest
     environment: production
     if: always()
+    env:
+      SMTP_HOST: ${{ vars.SMTP_HOST }}
+      SMTP_PORT: ${{ vars.SMTP_PORT }}
+      SMTP_USER: ${{ vars.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      SMTP_FROM: ${{ vars.SMTP_FROM }}
+      SMTP_TO: ${{ vars.SMTP_TO }}
+      APP_NAME: ${{ env.APP_NAME }}
+
     steps:
-      - name: Construire la liste des destinataires
-        id: recipients
+      - name: Vérifier config SMTP (optionnel)
+        id: smtp
+        shell: bash
         run: |
-          recipients="${{ vars.SMTP_TO }}"
-          if [ -n "${{ vars.SMTP_TO_2 }}" ]; then
-            recipients="$recipients, ${{ vars.SMTP_TO_2 }}"
+          set -euo pipefail
+          if [[ -n "${SMTP_HOST:-}" && -n "${SMTP_PORT:-}" && -n "${SMTP_USER:-}" && -n "${SMTP_PASSWORD:-}" && -n "${SMTP_FROM:-}" && -n "${SMTP_TO:-}" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
-          if [ -n "${{ vars.SMTP_TO_3 }}" ]; then
-            recipients="$recipients, ${{ vars.SMTP_TO_3 }}"
-          fi
-          echo "allEmails=$recipients" >> $GITHUB_OUTPUT
-          echo "Liste des destinataires : $recipients"
 
-      - name: Envoyer email de succès
-        if: ${{ needs.build-et-deploiement.result == 'success' }}
+      - name: Email succès
+        if: ${{ needs.deploy.result == 'success' && steps.smtp.outputs.enabled == 'true' }}
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          subject: "🎉 Déploiement Futuriskmanagement réussi !"
-          body: "🚀 Le déploiement de l'application web Futuriskmanagement a été réalisé avec succès. Tout fonctionne parfaitement ! 👍"
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          from: ${{ secrets.SMTP_FROM }}
-          to: ${{ steps.recipients.outputs.allEmails }}
+          server_address: ${{ env.SMTP_HOST }}
+          server_port: ${{ env.SMTP_PORT }}
+          secure: false
+          username: ${{ env.SMTP_USER }}
+          password: ${{ env.SMTP_PASSWORD }}
+          from: ${{ env.SMTP_FROM }}
+          to: ${{ env.SMTP_TO }}
+          subject: "[SUCCÈS] Déploiement : ${{ env.APP_NAME }}"
+          body: |
+            Déploiement OK : ${{ env.APP_NAME }}
+            Branche : ${{ github.ref_name }}
+            Commit : ${{ github.sha }}
+            Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-      - name: Envoyer email d'échec
-        if: ${{ needs.build-et-deploiement.result == 'failure' }}
+      - name: Email échec
+        if: ${{ needs.deploy.result != 'success' && steps.smtp.outputs.enabled == 'true' }}
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          subject: "❌ Déploiement Futuriskmanagement échoué ❌"
-          body: "⚠️ Le déploiement de l'application web Futuriskmanagement a échoué. Veuillez vérifier les logs pour plus de détails. 😞"
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          from: ${{ secrets.SMTP_FROM }}
-          to: ${{ steps.recipients.outputs.allEmails }}
+          server_address: ${{ env.SMTP_HOST }}
+          server_port: ${{ env.SMTP_PORT }}
+          secure: false
+          username: ${{ env.SMTP_USER }}
+          password: ${{ env.SMTP_PASSWORD }}
+          from: ${{ env.SMTP_FROM }}
+          to: ${{ env.SMTP_TO }}
+          subject: "[ÉCHEC] Déploiement : ${{ env.APP_NAME }}"
+          body: |
+            Déploiement KO : ${{ env.APP_NAME }}
+            Branche : ${{ github.ref_name }}
+            Commit : ${{ github.sha }}
+            Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
+      - name: SMTP manquant (ignoré)
+        if: ${{ steps.smtp.outputs.enabled != 'true' }}
+        shell: bash
+        run: echo "::warning::Variables SMTP manquantes. Notification ignorée."
